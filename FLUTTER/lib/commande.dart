@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
+import 'profile.dart';
 
 void main() {
   runApp(CommandeApp());
@@ -33,14 +34,7 @@ class CommandeScreen extends StatelessWidget {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              print('Search button pressed');
-            },
-          ),
-        ],
+       
       ),
       body: Column(
         children: [
@@ -89,15 +83,15 @@ class CommandeScreen extends StatelessWidget {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Button 1',
+            label: '',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
-            label: 'Button 2',
+            label: '',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Button 3',
+            label: '',
           ),
         ],
         onTap: (index) {
@@ -114,6 +108,13 @@ class CommandeScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => CommandeApp()),
+            );
+          }
+          if (index == 2) {
+            // Navigate to the CommandePage when Button 2 is pressed
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfilePage()),
             );
           }
         },

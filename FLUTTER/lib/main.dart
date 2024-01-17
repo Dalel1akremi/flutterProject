@@ -60,15 +60,15 @@ class HomeScreen extends StatelessWidget {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Button 1',
+            label: '',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
-            label: 'Button 2',
+            label: '',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Button 3',
+            label: '',
           ),
         ],
         onTap: (index) {
