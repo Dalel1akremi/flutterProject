@@ -1,0 +1,12 @@
+com.example.demo.app-jetified-annotation-experimental-1.1.0-0 C:\Users\Dalell\.gradle\caches\transforms-3\02315cc9f75263553d2042718fc375ee\transformed\jetified-annotation-experimental-1.1.0\res
+com.example.demo.app-jetified-window-1.0.0-beta04-1 C:\Users\Dalell\.gradle\caches\transforms-3\076eb9235982ee06112d76594ea8585f\transformed\jetified-window-1.0.0-beta04\res
+com.example.demo.app-jetified-window-java-1.0.0-beta04-2 C:\Users\Dalell\.gradle\caches\transforms-3\99750bb863b6fe460a7b5da8686e778d\transformed\jetified-window-java-1.0.0-beta04\res
+com.example.demo.app-core-1.6.0-3 C:\Users\Dalell\.gradle\caches\transforms-3\d08c73bfb05384f2e52578171dbd141e\transformed\core-1.6.0\res
+com.example.demo.app-debug-4 C:\Users\Dalell\Desktop\flutterProject\FLUTTER\demo\android\app\src\debug\res
+com.example.demo.app-main-5 C:\Users\Dalell\Desktop\flutterProject\FLUTTER\demo\android\app\src\main\res
+com.example.demo.app-pngs-6 C:\Users\Dalell\Desktop\flutterProject\FLUTTER\demo\build\app\generated\res\pngs\debug
+com.example.demo.app-resValues-7 C:\Users\Dalell\Desktop\flutterProject\FLUTTER\demo\build\app\generated\res\resValues\debug
+com.example.demo.app-rs-8 C:\Users\Dalell\Desktop\flutterProject\FLUTTER\demo\build\app\generated\res\rs\debug
+com.example.demo.app-mergeDebugResources-9 C:\Users\Dalell\Desktop\flutterProject\FLUTTER\demo\build\app\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.example.demo.app-mergeDebugResources-10 C:\Users\Dalell\Desktop\flutterProject\FLUTTER\demo\build\app\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.example.demo.app-merged_res-11 C:\Users\Dalell\Desktop\flutterProject\FLUTTER\demo\build\app\intermediates\merged_res\debug
