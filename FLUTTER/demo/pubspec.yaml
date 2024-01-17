@@ -44,6 +44,8 @@ dev_dependencies:
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
+  google_fonts: ^6.1.0
+  font_awesome_flutter: ^10.6.0
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
 
@@ -59,8 +61,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
