@@ -11,7 +11,7 @@ const app = express();
 const PORT = 3000;
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/registration')
+mongoose.connect('mongodb://127.0.0.1:27017/registration')
 .then(() => console.log('Now connected to MongoDB!'))
     .catch(err => console.error('Something went wrong', err));;
 
@@ -20,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.post('/register', userController.registerUser);
+app.post('/login', userController.loginUser);
 app.get('/', viewController.renderIndex);
 
 app.listen(PORT, () => {
