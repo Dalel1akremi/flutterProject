@@ -1,0 +1,35 @@
+<!-- views/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration</title>
+</head>
+<body>
+  <h1>User Registration</h1>
+  <form action="/register" method="post">
+    <label for="nom">Nom:</label>
+    <input type="text" name="nom" required><br>
+
+    <label for="prenom">Prenom:</label>
+    <input type="text" name="prenom" required><br>
+
+    <label for="telephone">Telephone:</label>
+    <input type="text" name="telephone" required><br>
+
+    <label for="email">Email:</label>
+    <input type="email" name="email" required><br>
+
+    <label for="password">Password:</label>
+    <input type="password" name="password" required><br>
+
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" name="confirmPassword" required><br>
+
+    <button type="submit">Register</button>
+  </form>
+</body>
+</html>
