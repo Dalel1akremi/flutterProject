@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'commande.dart';
-import 'profile.dart';
+import 'pages/aboutRestaurant/commande.dart';
+import 'pages/aboutUser/profile.dart';
 
 void main() {
   runApp(MyApp());
