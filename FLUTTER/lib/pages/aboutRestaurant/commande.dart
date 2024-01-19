@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
-import 'profile.dart';
+import '../../main.dart';
+import '../aboutUser/profile.dart';
 
 void main() {
   runApp(CommandeApp());

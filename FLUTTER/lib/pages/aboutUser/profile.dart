@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http; // Import the http package
 import 'dart:convert';
 import 'registre.dart';
 import 'RchangePassword.dart';
+import '../../main.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -39,11 +40,9 @@ class _ProfilePageState extends State<ProfilePage> {
         String errorMessage = 'Error during login. Please try again.';
 
         if (error is http.ClientException) {
-          // Handle specific HTTP client exceptions
           errorMessage =
               'Network error. Please check your internet connection.';
         } else if (error is FormatException) {
-          // Handle JSON decoding errors
           errorMessage = 'Invalid response format from the server.';
         }
 
@@ -81,9 +80,17 @@ class _ProfilePageState extends State<ProfilePage> {
         final String userId = data['userId'];
 
         // TODO: Store the token locally (e.g., in shared preferences)
-        // TODO: Navigate to the next page or perform other necessary actions
+        // TODO: Perform necessary actions upon successful login
 
         print('Login successful! Token: $token, UserId: $userId');
+
+        // Navigate to the main page and replace the current route
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  MyApp()), // Replace MainPage with your actual main page
+        );
       } else {
         final data = json.decode(response.body);
         final String message = data['message'];
@@ -148,7 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   fontSize: 16.0,
                 ),
               ),
-               TextFormField(
+              TextFormField(
                 validator: (value) {
                   if (value?.isEmpty ?? true) {
                     return 'Enter your password';
@@ -230,7 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               RichText(
                 text: TextSpan(
-                  text: 'Conditions Générales d''utilisation ',
+                  text: 'Conditions Générales d' 'utilisation ',
                   style: TextStyle(
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
@@ -238,7 +245,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   // TODO: Add onTap callback for terms and conditions link
                 ),
               ),
-              
+
               RichText(
                 text: TextSpan(
                   text: 'Conditions Générales de Vente',
@@ -249,7 +256,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   // TODO: Add onTap callback for privacy policy link
                 ),
               ),
-             
+
               RichText(
                 text: TextSpan(
                   text: 'politique de confidentialité',
