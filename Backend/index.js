@@ -1,8 +1,7 @@
-// app.js
-
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors'); // Add this line
 
 const userController = require('./controllers/userController');
 const viewController = require('./controllers/viewController');
@@ -10,10 +9,13 @@ const viewController = require('./controllers/viewController');
 const app = express();
 const PORT = 3000;
 
+// Enable CORS
+app.use(cors());
+
 // Connect to MongoDB
 mongoose.connect('mongodb://127.0.0.1:27017/registration')
-.then(() => console.log('Now connected to MongoDB!'))
-    .catch(err => console.error('Something went wrong', err));;
+  .then(() => console.log('Now connected to MongoDB!'))
+  .catch(err => console.error('Something went wrong', err));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
