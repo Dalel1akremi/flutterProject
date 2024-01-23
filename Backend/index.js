@@ -10,7 +10,11 @@ const app = express();
 const PORT = 3000;
 
 // Enable CORS
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:49248',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
 
 // Connect to MongoDB
 mongoose.connect('mongodb://127.0.0.1:27017/registration')
@@ -25,6 +29,7 @@ app.post('/register', userController.registerUser);
 app.post('/login', userController.loginUser);
 app.get('/', viewController.renderIndex);
 app.post('/reset_password', userController.reset_password);
+app.post('/validate_code',userController.validate_code);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

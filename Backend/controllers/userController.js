@@ -89,11 +89,17 @@ const reset_password = async (req, res) => {
       return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
 
-    // Générer un code de validation aléatoire à 6 chiffres
+    // Générer un nouveau code de validation aléatoire à 6 chiffres
     const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Sauvegarder le code de validation dans la base de données
+    // Debugging: Log the generated validation code
+    console.log('Generated Validation Code:', validationCode);
+
+    // Update the user object with the new validation code
     user.validationCode = validationCode;
+    user.validationCodeTimestamp = Date.now();
+
+    // Save the user object with the new validation code
     await user.save();
 
     const transporter = nodemailer.createTransport({
@@ -103,12 +109,11 @@ const reset_password = async (req, res) => {
         pass: 'gqyi qqac kxxz qqrn',
       },
     });
-   
 
     // Envoyer le code de validation par e-mail
     const mailOptions = {
       from: '', // Put your email address here
-      to: email, // Change to user.email if you want to send it to the user's email
+      to: email,
       subject: 'Code de validation',
       text: `Votre code de validation est : ${validationCode}`,
       replyTo: email,
@@ -129,8 +134,56 @@ const reset_password = async (req, res) => {
   }
 };
 
+
+// Function to validate the code
+// Function to validate the code
+const validate_code = async (req, res) => {
+  const { email, validationCode } = req.body;
+
+  try {
+    // Recherche de l'utilisateur dans la base de données
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      // L'utilisateur n'existe pas
+      return res.status(404).json({ success: false, message: 'Utilisateur non trouvé.' });
+    }
+
+    // Debugging: Log the validation codes for comparison
+    console.log('Stored Validation Code:', user.validationCode);
+    console.log('Entered Validation Code:', validationCode);
+
+    // Check if the validation code is correct
+    if (user.validationCode !== validationCode) {
+      return res.status(400).json({ success: false, message: 'Code de validation incorrect.' });
+    }
+
+    // Check if the validation code has expired (more than 1 minute old)
+    const currentTime = Date.now();
+    const codeExpirationTime = user.validationCodeTimestamp + 1 * 60 * 1000; // 1 minute in milliseconds
+
+    if (currentTime > codeExpirationTime) {
+      return res.status(400).json({ success: false, message: 'Code de validation expiré.' });
+    }
+
+    // Reset validation code and timestamp in the database
+    user.validationCode = null;
+    user.validationCodeTimestamp = null;
+    await user.save();
+
+    // Perform further actions for password reset...
+    // For example, you can render a password reset form for the user to input a new password.
+
+    res.json({ success: true, message: 'Code de validation valide.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Erreur lors de la validation du code.' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   reset_password,
+  validate_code,
 };

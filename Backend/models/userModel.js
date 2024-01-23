@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
   telephone:String,
   email: String,
   password: String,
+  validationCode: String, // Add this line to include the validationCode field
+  validationCodeTimestamp: Date,
 });
 
 const User = mongoose.model('User', userSchema);
