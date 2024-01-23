@@ -118,6 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: Color.fromARGB(222, 212, 133, 14),
         title: const Text('Connexion'),
       ),
       body: Padding(
