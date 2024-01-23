@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/register', userController.registerUser);
 app.post('/login', userController.loginUser);
 app.get('/', viewController.renderIndex);
-
+app.post('/reset_password', userController.reset_password);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
