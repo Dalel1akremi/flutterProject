@@ -1,8 +1,7 @@
-
 // ignore_for_file: use_build_context_synchronously, avoid_print, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; 
+import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'registre.dart';
@@ -81,16 +80,11 @@ class _ProfilePageState extends State<ProfilePage> {
         final String token = data['token'];
         final String userId = data['userId'];
 
-       
-
         print('Login successful! Token: $token, UserId: $userId');
 
-       
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  MyApp()),
+          MaterialPageRoute(builder: (context) => MyApp()),
         );
       } else {
         final data = json.decode(response.body);
@@ -119,7 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
+        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: const Text('Connexion'),
       ),
       body: Padding(
@@ -136,8 +130,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   fontSize: 16.0,
                 ),
               ),
-               TextFormField(
-               validator: (value) {
+              TextFormField(
+                validator: (value) {
                   if (value?.isEmpty ?? true) {
                     return 'Enter a valid email address';
                   }
@@ -175,12 +169,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 obscureText: true,
               ),
-              const SizedBox(height: 8.0), 
+              const SizedBox(height: 8.0),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                  
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -202,13 +195,13 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () => _submit(context),
-                child: const Text(
-                  'Connexion',
-                  style: TextStyle(color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                   backgroundColor: Colors.black,
+                ),
+                child: const Text(
+                  'Connexion',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -227,71 +220,65 @@ class _ProfilePageState extends State<ProfilePage> {
                             RegistrationPage()), // Remplacez RegistrationPage par le nom de votre page d'inscription
                   );
                 },
-                child: const Text(
-                  'Inscription',
-                  style: TextStyle(color: Colors.black),
-                ),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                   backgroundColor: Colors.white,
                 ),
+                child: const Text(
+                  'Inscription',
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
-              SizedBox(height: 16.0),
-              Text(
+              const SizedBox(height: 16.0),
+              const Text(
                 'En continuant, vous acceptez nos : ',
                 style: TextStyle(fontSize: 14.0),
               ),
               RichText(
-                text: TextSpan(
+                text: const TextSpan(
                   text: 'Conditions Générales d' 'utilisation ',
                   style: TextStyle(
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
                   ),
-                 
                 ),
               ),
-
               RichText(
-                text: TextSpan(
+                text: const TextSpan(
                   text: 'Conditions Générales de Vente',
                   style: TextStyle(
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
                   ),
-                
                 ),
               ),
-
               RichText(
-                text: TextSpan(
+                text: const TextSpan(
                   text: 'politique de confidentialité',
                   style: TextStyle(
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
                   ),
-                 
                 ),
               ),
-             ElevatedButton(
-  onPressed: () => (context),
-  child: Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Image.asset(
-        'images/google_logo.png', // Ajoutez le logo Google à votre projet
-        height: 20.0,
-      ),
-      SizedBox(width: 10.0),
-      Text('Connecter avec Google'),
-    ],
-  ),
-  style: ElevatedButton.styleFrom(
-    minimumSize: const Size(double.infinity, 50),
-    backgroundColor: Colors.red,
-  ),
-),
-
+              ElevatedButton(
+                onPressed: () => (context),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: Colors.red,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'images/google_logo.png', // Ajoutez le logo Google à votre projet
+                      height: 20.0,
+                    ),
+                    const SizedBox(width: 10.0),
+                    const Text('Connecter avec Google'),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
