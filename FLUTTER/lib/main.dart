@@ -1,141 +1,185 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
-import 'pages/aboutRestaurant/commande.dart';
-import 'pages/aboutUser/profile.dart';
+import './pages/aboutRestaurant/acceuil.dart'; // Import the new screen file
+import './pages/aboutRestaurant/ReserverTable.dart'; // Import the ReserverTable screen file
+import './pages/aboutRestaurant/offers.dart'; // Import the Offers screen file
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomeScreen(),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  // Define your page titles
+  final List<String> pageTitles = ['Discover', 'Reserve Table', 'Offers'];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(222, 212, 133, 14),
-        title: Column(
+        title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Text(
-                'Liste des restaurants',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
+              padding: EdgeInsets.only(top: 8.0),
             ),
           ],
         ),
       ),
       body: Column(
         children: [
-          Container(
-            color: Color.fromARGB(181, 123, 106, 106),
-            padding: EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.location_on),
-                hintText: 'Saisissez votre adresse',
-                border: InputBorder.none,
+          // Top Half: Image
+          Center(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height / 2,
+              width: 1500, // Replace this with your desired width value
+              child: Container(
+                decoration: BoxDecoration(
+                  image: const DecorationImage(
+                    image: AssetImage('images/First.png'),
+                    fit: BoxFit.fitHeight,
+                  ),
+                  borderRadius: BorderRadius.circular(15.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 1,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
               ),
-              onChanged: (value) {
-                print('Search query: $value');
-              },
             ),
           ),
           Expanded(
-            child: RestaurantList(),
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+
+                // Add logic to navigate based on the selected page index
+                switch (index) {
+                  case 0:
+                    // Navigate to the Discover screen
+                     Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    );
+                    break;
+                  case 1:
+                    // Navigate to the ReserverTable screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReserverTableScreen()),
+                    );
+                    break;
+                  case 2:
+                    // Navigate to the Offers screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => OffersScreen()),
+                    );
+                    break;
+                }
+              },
+              children: [
+                // The existing content of HomeScreen
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Discover',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const AcceuilScreen()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                        ),
+                        child: const Text(
+                          'Get Started',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Add your ReserverTable screen here
+                const ReserverTableScreen(),
+                // Add your Offers screen here
+                const OffersScreen(),
+              ],
+            ),
+          ),
+          // Bottom Half: Three Centered Dots for Navigation
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              pageTitles.length,
+              (index) => buildDot(index),
+            ),
           ),
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '',
-          ),
-        ],
-        onTap: (index) {
-          // Handle bottom navigation bar taps
-          if (index == 0) {
-            // Navigate to the CommandePage when Button 2 is pressed
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-            );
-          }
-          if (index == 1) {
-            // Navigate to the CommandePage when Button 2 is pressed
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CommandeApp()),
-            );
-          }
-          if (index == 2) {
-            // Navigate to the CommandePage when Button 2 is pressed
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
-            );
-          }
-        },
       ),
     );
   }
-}
 
-class Restaurant {
-  String name;
-  String address;
-  String status;
-
-  Restaurant(this.name, this.address, this.status);
-}
-
-class RestaurantList extends StatefulWidget {
-  @override
-  _RestaurantListState createState() => _RestaurantListState();
-}
-
-class _RestaurantListState extends State<RestaurantList> {
-  List<Restaurant> _restaurants = [
-    Restaurant(
-        "MELTING POT", "43 Avenue du Général de Gaulle 93170 Bagnolet", ""),
-    Restaurant("BURGER WORLD", "33 RUE ERNEST RENAN 69120 VAULX-EN-VELIN", ""),
-    Restaurant("ICE CREAM", "24 B RUE LEONARD DE VINCI 91090 LISSES", ""),
-    Restaurant("elyes cashpad v2 b1", "123 12345 paris 123 123", ""),
-    Restaurant("SAFA STORE", "24 B RUE LEONARD DE VINCI 91090 LISSES", ""),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: _restaurants.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(_restaurants[index].name),
-          subtitle: Text(_restaurants[index].address),
-          trailing: Text(_restaurants[index].status),
-        );
-      },
+  Widget buildDot(int pageIndex) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Container(
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: _currentPage == pageIndex ? Colors.blue : Colors.grey,
+        ),
+      ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page!.round();
+      });
+    });
   }
 }
