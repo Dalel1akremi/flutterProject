@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, sort_child_properties_last
+// ignore_for_file: avoid_print, sort_child_properties_last, body_might_complete_normally_nullable, library_private_types_in_public_api, use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;

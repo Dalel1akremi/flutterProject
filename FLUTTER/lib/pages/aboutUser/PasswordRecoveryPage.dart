@@ -1,6 +1,8 @@
+// ignore_for_file: dead_code
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'nouvelPassword.dart';
+import 'NouveauPasswordPage.dart';
 
 class PasswordRecoveryPage extends StatefulWidget {
   @override

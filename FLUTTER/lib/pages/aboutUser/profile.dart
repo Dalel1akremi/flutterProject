@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'registre.dart';
-import 'RchangePassword.dart';
+import 'PasswordRecoveryPage.dart';
 import '../../main.dart';
 
 class ProfilePage extends StatefulWidget {
