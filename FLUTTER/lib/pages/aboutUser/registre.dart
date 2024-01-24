@@ -1,4 +1,6 @@
-import 'package:demo/main.dart';
+// ignore_for_file: sort_child_properties_last, use_build_context_synchronously, library_private_types_in_public_api, use_key_in_widget_constructors, unused_import, dead_code
+
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -120,7 +122,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ProfilePage(),
+          builder: (context) => const ProfilePage(),
         ),
       );
         }
