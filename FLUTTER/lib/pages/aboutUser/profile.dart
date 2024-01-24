@@ -1,7 +1,9 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, prefer_const_declarations, avoid_print
+
+// ignore_for_file: use_build_context_synchronously, avoid_print, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // Import the http package
+import 'package:http/http.dart' as http; 
+import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'registre.dart';
 import 'RchangePassword.dart';
@@ -58,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> loginUser(
       BuildContext context, String email, String password) async {
-    final String apiUrl = "http://localhost:3000/login";
+    const String apiUrl = "http://localhost:3000/login";
 
     try {
       final response = await http.post(
@@ -79,17 +81,16 @@ class _ProfilePageState extends State<ProfilePage> {
         final String token = data['token'];
         final String userId = data['userId'];
 
-        // TODO: Store the token locally (e.g., in shared preferences)
-        // TODO: Perform necessary actions upon successful login
+       
 
         print('Login successful! Token: $token, UserId: $userId');
 
-        // Navigate to the main page and replace the current route
+       
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  MyApp()), // Replace MainPage with your actual main page
+                  MyApp()),
         );
       } else {
         final data = json.decode(response.body);
@@ -118,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         backgroundColor: Color.fromARGB(222, 212, 133, 14),
+         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: const Text('Connexion'),
       ),
       body: Padding(
@@ -135,12 +136,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   fontSize: 16.0,
                 ),
               ),
-              TextFormField(
-                validator: (value) {
-                  if (value?.isEmpty ?? true || !value!.contains('@')) {
+               TextFormField(
+               validator: (value) {
+                  if (value?.isEmpty ?? true) {
                     return 'Enter a valid email address';
                   }
-                  return null; // Return null for successful validation
+                  if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                      .hasMatch(value!)) {
+                    return 'Enter a valid email address';
+                  }
+                  return null;
                 },
                 onSaved: (value) => email = value ?? '',
                 decoration: const InputDecoration(
@@ -170,12 +175,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 obscureText: true,
               ),
-              const SizedBox(height: 8.0), // Added space
+              const SizedBox(height: 8.0), 
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // TODO: Navigate to the password recovery page
+                  
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -243,7 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
                   ),
-                  // TODO: Add onTap callback for terms and conditions link
+                 
                 ),
               ),
 
@@ -254,7 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
                   ),
-                  // TODO: Add onTap callback for privacy policy link
+                
                 ),
               ),
 
@@ -265,9 +270,28 @@ class _ProfilePageState extends State<ProfilePage> {
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
                   ),
-                  // TODO: Add onTap callback for cookies policy link
+                 
                 ),
               ),
+             ElevatedButton(
+  onPressed: () => (context),
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Image.asset(
+        'images/google_logo.png', // Ajoutez le logo Google à votre projet
+        height: 20.0,
+      ),
+      SizedBox(width: 10.0),
+      Text('Connecter avec Google'),
+    ],
+  ),
+  style: ElevatedButton.styleFrom(
+    minimumSize: const Size(double.infinity, 50),
+    backgroundColor: Colors.red,
+  ),
+),
+
             ],
           ),
         ),
