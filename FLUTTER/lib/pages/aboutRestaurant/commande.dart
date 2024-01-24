@@ -1,15 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../../main.dart';
+import './acceuil.dart';
 import '../aboutUser/profile.dart';
 
 void main() {
-  runApp(CommandeApp());
+  runApp(const CommandeApp());
 }
 
 class CommandeApp extends StatelessWidget {
+  const CommandeApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: CommandeScreen(),
     );
@@ -17,16 +20,18 @@ class CommandeApp extends StatelessWidget {
 }
 
 class CommandeScreen extends StatelessWidget {
+  const CommandeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(222, 212, 133, 14),
-        title: Column(
+        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
+        title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+              padding: EdgeInsets.only(top: 8.0),
               child: Text(
                 'Mes commandes',
                 style: TextStyle(fontSize: 20, color: Colors.white),
@@ -39,17 +44,19 @@ class CommandeScreen extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            color: Color.fromARGB(181, 123, 106, 106),
-            padding: EdgeInsets.all(8.0),
+            color: const Color.fromARGB(181, 123, 106, 106),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
                   onPressed: () {
                     // Handle "En cours" button press
-                    print('En cours button pressed');
+                    if (kDebugMode) {
+                      print('En cours button pressed');
+                    }
                   },
-                  child: Row(
+                  child: const Row(
                     children: [
                       SizedBox(width: 16.0),
                       Text(
@@ -62,9 +69,11 @@ class CommandeScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     // Handle "Passés" button press
-                    print('Passés button pressed');
+                    if (kDebugMode) {
+                      print('Passés button pressed');
+                    }
                   },
-                  child: Row(
+                  child: const Row(
                     children: [
                       SizedBox(width: 16.0),
                       Text(
@@ -80,7 +89,7 @@ class CommandeScreen extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '',
@@ -100,21 +109,21 @@ class CommandeScreen extends StatelessWidget {
             // Navigate to the CommandePage when Button 2 is pressed
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
+              MaterialPageRoute(builder: (context) => const AcceuilScreen()),
             );
           }
           if (index == 1) {
             // Navigate to the CommandePage when Button 2 is pressed
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CommandeApp()),
+              MaterialPageRoute(builder: (context) => const CommandeApp()),
             );
           }
           if (index == 2) {
             // Navigate to the CommandePage when Button 2 is pressed
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
+              MaterialPageRoute(builder: (context) => const ProfilePage()),
             );
           }
         },
