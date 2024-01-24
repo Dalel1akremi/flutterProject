@@ -11,9 +11,6 @@ const PORT = 3000;
 
 // Enable CORS
 app.use(cors({
-  origin: 'http://localhost:49248',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
 }));
 
 // Connect to MongoDB
@@ -30,6 +27,7 @@ app.post('/login', userController.loginUser);
 app.get('/', viewController.renderIndex);
 app.post('/reset_password', userController.reset_password);
 app.post('/validate_code',userController.validate_code);
+app.post('/new_password',userController.new_password);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

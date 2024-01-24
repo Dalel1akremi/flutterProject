@@ -180,10 +180,42 @@ const validate_code = async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur lors de la validation du code.' });
   }
 };
+const new_password= async (req, res) => {
+  const { email, newPassword, confirmNewPassword } = req.body;
 
+  try {
+    // Find the user in the database
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      // User not found
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    // Validate the new password
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({ success: false, message: 'Passwords do not match.' });
+    }
+
+    // Hash the new password before saving it
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    // Update the user's password with the hashed password
+    user.password = hashedPassword;
+
+    // Save the updated user object
+    await user.save();
+
+    res.json({ success: true, message: 'Password updated successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error updating password.' });
+  }
+};
 module.exports = {
   registerUser,
   loginUser,
   reset_password,
   validate_code,
+  new_password,
 };
