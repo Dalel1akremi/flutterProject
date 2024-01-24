@@ -1,36 +1,17 @@
-// ignore_for_file: use_key_in_widget_constructors
-
 import 'package:flutter/material.dart';
-import './pages/aboutRestaurant/acceuil.dart'; // Import the new screen file
-import './pages/aboutRestaurant/ReserverTable.dart'; // Import the ReserverTable screen file
-import './pages/aboutRestaurant/offers.dart'; // Import the Offers screen file
+import 'offers.dart';
+import 'acceuil.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ReserverTableScreen extends StatefulWidget {
+  const ReserverTableScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
-    );
-  }
+  _ReserverTableScreenState createState() => _ReserverTableScreenState();
 }
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
+class _ReserverTableScreenState extends State<ReserverTableScreen> {
   final PageController _pageController = PageController();
-  int _currentPage = 0;
+  int _currentPage = 1; // Set the initial page index to 1
 
   // Define your page titles
   final List<String> pageTitles = ['Discover', 'Reserve Table', 'Offers'];
@@ -58,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   image: const DecorationImage(
-                    image: AssetImage('images/First.png'),
+                    image: AssetImage('images/Second.jpg'),
                     fit: BoxFit.fitHeight,
                   ),
                   borderRadius: BorderRadius.circular(15.0),
@@ -85,24 +66,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Add logic to navigate based on the selected page index
                 switch (index) {
                   case 0:
-                    // Navigate to the Discover screen
-                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomeScreen()),
-                    );
-                    break;
-                  case 1:
-                    // Navigate to the ReserverTable screen
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ReserverTableScreen()),
+                      MaterialPageRoute(builder: (context) => AcceuilScreen()),
                     );
                     break;
                   case 2:
-                    // Navigate to the Offers screen
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => OffersScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const OffersScreen()),
                     );
                     break;
                 }
@@ -115,14 +88,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       const Text(
                         'Discover',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const AcceuilScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => const AcceuilScreen()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -139,8 +114,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                // Add your ReserverTable screen here
-                const ReserverTableScreen(),
+                // Add your ReserverTable screen here (Note: Consider using a different widget here, or you might end up in an infinite loop)
+                Container(
+                  color: Colors.white,
+                  child: const Center(
+                    child: Text(
+                      'ReserverTableScreen Content',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
                 // Add your Offers screen here
                 const OffersScreen(),
               ],

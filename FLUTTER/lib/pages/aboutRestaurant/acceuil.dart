@@ -1,26 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import './acceuil.dart';
+import './commande.dart';
 import '../aboutUser/profile.dart';
 
 void main() {
-  runApp(const CommandeApp());
+  runApp(const AcceuilApp());
 }
 
-class CommandeApp extends StatelessWidget {
-  const CommandeApp({super.key});
-
+class AcceuilApp extends StatelessWidget {
+  const AcceuilApp({super.key});
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CommandeScreen(),
+      home: AcceuilScreen(),
     );
   }
 }
 
-class CommandeScreen extends StatelessWidget {
-  const CommandeScreen({super.key});
+class AcceuilScreen extends StatelessWidget {
+  const AcceuilScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,68 +32,43 @@ class CommandeScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 8.0),
               child: Text(
-                'Mes commandes',
+                'Liste des restaurants',
                 style: TextStyle(fontSize: 20, color: Colors.white),
               ),
             ),
           ],
         ),
-       
       ),
       body: Column(
         children: [
           Container(
             color: const Color.fromARGB(181, 123, 106, 106),
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    // Handle "En cours" button press
-                    if (kDebugMode) {
-                      print('En cours button pressed');
-                    }
-                  },
-                  child: const Row(
-                    children: [
-                      SizedBox(width: 16.0),
-                      Text(
-                        'En cours',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Handle "Passés" button press
-                    if (kDebugMode) {
-                      print('Passés button pressed');
-                    }
-                  },
-                  child: const Row(
-                    children: [
-                      SizedBox(width: 16.0),
-                      Text(
-                        'Passés',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            child: TextField(
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.location_on),
+                hintText: 'Saisissez votre adresse',
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                if (kDebugMode) {
+                  print('Search query: $value');
+                }
+              },
             ),
+          ),
+          const Expanded(
+            child: RestaurantList(),
           ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(
+         BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '',
           ),
-          BottomNavigationBarItem(
+         BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
             label: '',
           ),
@@ -128,6 +102,47 @@ class CommandeScreen extends StatelessWidget {
           }
         },
       ),
+    );
+  }
+}
+
+class Restaurant {
+  String name;
+  String address;
+  String status;
+
+  Restaurant(this.name, this.address, this.status);
+}
+
+class RestaurantList extends StatefulWidget {
+  const RestaurantList({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _RestaurantListState createState() => _RestaurantListState();
+}
+
+class _RestaurantListState extends State<RestaurantList> {
+  final List<Restaurant> _restaurants = [
+    Restaurant(
+        "MELTING POT", "43 Avenue du Général de Gaulle 93170 Bagnolet", ""),
+    Restaurant("BURGER WORLD", "33 RUE ERNEST RENAN 69120 VAULX-EN-VELIN", ""),
+    Restaurant("ICE CREAM", "24 B RUE LEONARD DE VINCI 91090 LISSES", ""),
+    Restaurant("elyes cashpad v2 b1", "123 12345 paris 123 123", ""),
+    Restaurant("SAFA STORE", "24 B RUE LEONARD DE VINCI 91090 LISSES", ""),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: _restaurants.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(_restaurants[index].name),
+          subtitle: Text(_restaurants[index].address),
+          trailing: Text(_restaurants[index].status),
+        );
+      },
     );
   }
 }
