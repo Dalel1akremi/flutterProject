@@ -13,8 +13,11 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
+    return const MaterialApp(
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomeScreen(),
@@ -26,9 +29,9 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
+
 class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
