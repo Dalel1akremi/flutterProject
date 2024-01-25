@@ -1,14 +1,18 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import './commande.dart';
 import '../aboutUser/profile.dart';
+import 'RestaurantDetail.dart';
 
 void main() {
   runApp(const AcceuilApp());
 }
 
 class AcceuilApp extends StatelessWidget {
-  const AcceuilApp({super.key});
+  const AcceuilApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -19,7 +23,7 @@ class AcceuilApp extends StatelessWidget {
 }
 
 class AcceuilScreen extends StatelessWidget {
-  const AcceuilScreen({super.key});
+  const AcceuilScreen({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,18 +61,18 @@ class AcceuilScreen extends StatelessWidget {
               },
             ),
           ),
-          const Expanded(
+          Expanded(
             child: RestaurantList(),
           ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-         BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '',
           ),
-         BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
             label: '',
           ),
@@ -80,21 +84,21 @@ class AcceuilScreen extends StatelessWidget {
         onTap: (index) {
           // Handle bottom navigation bar taps
           if (index == 0) {
-            // Navigate to the CommandePage when Button 2 is pressed
+            // Navigate to the AcceuilScreen when Button 1 is pressed
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const AcceuilScreen()),
             );
           }
           if (index == 1) {
-            // Navigate to the CommandePage when Button 2 is pressed
+            // Navigate to the CommandeApp when Button 2 is pressed
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const CommandeApp()),
             );
           }
           if (index == 2) {
-            // Navigate to the CommandePage when Button 2 is pressed
+            // Navigate to the ProfilePage when Button 3 is pressed
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProfilePage()),
@@ -114,33 +118,52 @@ class Restaurant {
   Restaurant(this.name, this.address, this.status);
 }
 
-class RestaurantList extends StatefulWidget {
-  const RestaurantList({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _RestaurantListState createState() => _RestaurantListState();
-}
-
-class _RestaurantListState extends State<RestaurantList> {
-  final List<Restaurant> _restaurants = [
-    Restaurant(
-        "MELTING POT", "43 Avenue du Général de Gaulle 93170 Bagnolet", ""),
-    Restaurant("BURGER WORLD", "33 RUE ERNEST RENAN 69120 VAULX-EN-VELIN", ""),
-    Restaurant("ICE CREAM", "24 B RUE LEONARD DE VINCI 91090 LISSES", ""),
-    Restaurant("elyes cashpad v2 b1", "123 12345 paris 123 123", ""),
-    Restaurant("SAFA STORE", "24 B RUE LEONARD DE VINCI 91090 LISSES", ""),
-  ];
-
+class RestaurantList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final List<Restaurant> _restaurants = [
+      Restaurant("MELTING POT", "43 Avenue du Général de Gaulle 93170 Bagnolet", ""),
+    ];
+
     return ListView.builder(
       itemCount: _restaurants.length,
       itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(_restaurants[index].name),
-          subtitle: Text(_restaurants[index].address),
-          trailing: Text(_restaurants[index].status),
+        return Column(
+          children: [
+            TextButton(
+              onPressed: () {
+                // Utilize the Navigator widget to navigate to the new page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        RestaurantDetail(restaurant: _restaurants[index]),
+                  ),
+                );
+              },
+            
+              child: ListTile(
+                leading: Image.asset(
+                  'images/First.png', // Replace with your image asset path
+                  width: 100, // Adjust the width as needed
+                  height: 200, // Adjust the height as needed
+                  fit: BoxFit.cover,
+                ),
+                title: Text(
+                  _restaurants[index].name,
+                  style: TextStyle(
+                    decoration: TextDecoration.underline, // Add underline
+                  ),
+                ),
+                subtitle: Text(_restaurants[index].address),
+                trailing: Text(_restaurants[index].status),
+              ),
+            ),
+            Divider(
+              color: Colors.black,
+              thickness: 1, // Adjust the thickness as needed
+            ),
+          ],
         );
       },
     );
