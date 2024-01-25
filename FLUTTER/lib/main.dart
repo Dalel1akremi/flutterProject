@@ -27,7 +27,6 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-
 class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
@@ -38,42 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 8.0),
-            ),
-          ],
-        ),
-      ),
+     backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Top Half: Image
-          Center(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height / 2,
-              width: 1500, // Replace this with your desired width value
-              child: Container(
-                decoration: BoxDecoration(
-                  image: const DecorationImage(
-                    image: AssetImage('images/First.png'),
-                    fit: BoxFit.fitHeight,
-                  ),
-                  borderRadius: BorderRadius.circular(15.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 1,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
           Expanded(
             child: PageView(
               controller: _pageController,
@@ -81,43 +47,46 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() {
                   _currentPage = index;
                 });
-
-                // Add logic to navigate based on the selected page index
-                switch (index) {
-                  case 0:
-                    // Navigate to the Discover screen
-                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomeScreen()),
-                    );
-                    break;
-                  case 1:
-                    // Navigate to the ReserverTable screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ReserverTableScreen()),
-                    );
-                    break;
-                  case 2:
-                    // Navigate to the Offers screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => OffersScreen()),
-                    );
-                    break;
-                }
               },
               children: [
-                // The existing content of HomeScreen
+                // First Page with Image
                 Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Discover',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 1.5,
+                        width: 1500, // Replace this with your desired width value
+                        child: Container(
+                          decoration: BoxDecoration(
+                            image: const DecorationImage(
+                              image: AssetImage('images/First.png'),
+                              fit: BoxFit.fitHeight,
+                            ),
+                            borderRadius: BorderRadius.circular(15.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 1,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 20),
+                        const Text(
+                    'Découvrir',
+                    style: TextStyle(fontSize: 30),
+                    
+                  ),
+                  const SizedBox(height: 10),
+                      const Text(
+                    'Rechercher les restaurants les mieux notés à proximité de votre région',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(
@@ -129,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           backgroundColor: Colors.grey,
                         ),
                         child: const Text(
-                          'Get Started',
+                          'Commencer',
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.white,
@@ -139,8 +108,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+
                 // Add your ReserverTable screen here
                 const ReserverTableScreen(),
+
                 // Add your Offers screen here
                 const OffersScreen(),
               ],
