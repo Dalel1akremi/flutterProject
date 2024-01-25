@@ -66,6 +66,7 @@ flutter:
     - images/google_logo.png
     - images/First.png
     - images/Second.jpg
+    - images/Third.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
