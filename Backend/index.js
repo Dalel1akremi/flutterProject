@@ -78,6 +78,8 @@ app.post('/porfeuille', paiement.porfeuille);
 >>>>>>> d06e0d2 (feat: add `creatCategorie` api)
 app.get('/getCompositions',CompositionDeBController.getCompositions);
 app.post('/createItem', itemController.createItem);
+app.get('/getItem', itemController.getItem);
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

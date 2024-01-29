@@ -138,3 +138,13 @@ exports.getItem = async (req, res) => {
    
   }
 };
+exports.getItem = async (req, res) => {
+                    try {
+                      // Récupération de toutes les catégories depuis la base de données
+                      const item = await Items.find({}, ' nom type prix description isArchived image quantite max_quantite is_Menu nom_cat id');
+                      res.status(200).json({message:"succée de recuperation des items",data:item ,status:res.statusCode});
+                    } catch (error) {
+                      console.error(error);
+                      res.status(500).json({ message: 'Erreur lors de la récupération des items' });
+                    }
+                  };
