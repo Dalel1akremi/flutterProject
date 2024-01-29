@@ -35,6 +35,8 @@ app.get('/getCategories', categoriesController.getCategories);
 app.post('/insererComposition',CompositionDeBController.insererComposition);
 app.get('/getCompositions',CompositionDeBController.getCompositions);
 app.post('/createItem', itemController.createItem);
+app.get('/getItem', itemController.getItem);
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
