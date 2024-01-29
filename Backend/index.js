@@ -5,7 +5,9 @@ const cors = require('cors'); // Add this line
 
 const userController = require('./controllers/userController');
 const viewController = require('./controllers/viewController');
+const categoriesController = require('./controllers/categoriesController');
 const CompositionDeBController=require('./controllers/CompositionDeBController');
+
 const app = express();
 const PORT = 3000;
 
@@ -28,6 +30,8 @@ app.get('/', viewController.renderIndex);
 app.post('/reset_password', userController.reset_password);
 app.post('/validate_code',userController.validate_code);
 app.post('/new_password',userController.new_password);
+app.post('/createCategorie', categoriesController.createCategorie);
+app.get('/getCategories', categoriesController.getCategories);
 app.post('/insererComposition',CompositionDeBController.insererComposition);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
