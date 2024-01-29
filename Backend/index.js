@@ -79,6 +79,8 @@ app.post('/porfeuille', paiement.porfeuille);
 app.get('/getCompositions',CompositionDeBController.getCompositions);
 app.post('/createItem', itemController.createItem);
 app.get('/getItem', itemController.getItem);
+app.post('/createMenu', menuController.createMenu);
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
