@@ -5,9 +5,12 @@ const cors = require('cors'); // Add this line
 
 const userController = require('./controllers/userController');
 const viewController = require('./controllers/viewController');
+<<<<<<< HEAD
+const CompositionDeBController=require('./controllers/CompositionDeBController');
+=======
 const categoriesController = require('./controllers/categoriesController');
 
-
+>>>>>>> d06e0d2 (feat: add `creatCategorie` api)
 const app = express();
 const PORT = 3000;
 
@@ -30,9 +33,13 @@ app.get('/', viewController.renderIndex);
 app.post('/reset_password', userController.reset_password);
 app.post('/validate_code',userController.validate_code);
 app.post('/new_password',userController.new_password);
+<<<<<<< HEAD
+app.post('/insererComposition',CompositionDeBController.insererComposition);
+=======
 app.post('/createCategorie', categoriesController.createCategorie);
-app.get('/getCategories', categoriesController.getCategories);
 
+>>>>>>> d06e0d2 (feat: add `creatCategorie` api)
+app.get('/getCompositions',CompositionDeBController.getCompositions);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
