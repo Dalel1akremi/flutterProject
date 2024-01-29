@@ -19,7 +19,7 @@ exports.createCategorie = async (req, res) => {
                     try {
                       // Récupération de toutes les catégories depuis la base de données
                       const categories = await Categories.find({}, 'nom_cat type_cat');
-                      res.status(200).json(categories);
+                      res.status(200).json({message:"succée de recuperation des categories",data:categories,status:res.statusCode});
                     } catch (error) {
                       console.error(error);
                       res.status(500).json({ message: 'Erreur lors de la récupération des catégories' });
