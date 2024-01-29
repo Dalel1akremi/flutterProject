@@ -30,6 +30,23 @@ const insererComposition = async (req, res) => {
       res.status(500).json({ error: 'Erreur lors de l\'enregistrement de la composition' });
     }
   };
+  const getCompositions = async (req, res) => {
+    try {
+      // Récupérer toutes les compositions de la base de données
+      const compositions = await Composition.find();
   
-  module.exports = { insererComposition };
+      // Envoyer une réponse réussie avec les données récupérées
+      res.status(200).json({ message: 'Compositions récupérées avec succès', data: compositions, Statut: res.statusCode });
+    } catch (erreur) {
+      console.error('Erreur lors de la récupération des compositions:', erreur.message);
+  
+      // Envoyer une réponse d'erreur
+      res.status(500).json({ error: 'Erreur lors de la récupération des compositions' });
+    }
+  };
+  module.exports = 
+  {
+    insererComposition,
+    getCompositions,
+ };
   
