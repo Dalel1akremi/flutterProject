@@ -171,7 +171,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => NextPage(selectedRetraitMode),
+                        builder: (context) => NextPage(selectedRetraitMode,widget.restaurant),
                       ),
                     );
                   }
