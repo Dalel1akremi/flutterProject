@@ -29,6 +29,8 @@ app.post('/reset_password', userController.reset_password);
 app.post('/validate_code',userController.validate_code);
 app.post('/new_password',userController.new_password);
 app.post('/insererComposition',CompositionDeBController.insererComposition);
+app.get('/getCompositions',CompositionDeBController.getCompositions);
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
