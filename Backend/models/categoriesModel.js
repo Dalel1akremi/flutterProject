@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 
 const categoriesSchema = new mongoose.Schema({
   nom_cat: String,
-  type:String,
+  type_cat:String,
 });
 
 const Categories = mongoose.model('Categories', categoriesSchema);
