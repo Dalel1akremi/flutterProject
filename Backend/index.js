@@ -9,7 +9,7 @@ const userController = require('./controllers/userController');
 const viewController = require('./controllers/viewController');
 <<<<<<< HEAD
 const CompositionDeBController=require('./controllers/CompositionDeBController');
-=======
+const itemController =require( './controllers/itemController');=======
 const categoriesController = require('./controllers/categoriesController');
 const CompositionDeBController=require('./controllers/CompositionDeBController');
 const itemController =require( './controllers/itemController');
@@ -77,6 +77,7 @@ app.post('/porfeuille', paiement.porfeuille);
 
 >>>>>>> d06e0d2 (feat: add `creatCategorie` api)
 app.get('/getCompositions',CompositionDeBController.getCompositions);
+app.post('/createItem', itemController.createItem);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
