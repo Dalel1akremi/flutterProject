@@ -7,6 +7,9 @@ const path = require('path');
 
 const userController = require('./controllers/userController');
 const viewController = require('./controllers/viewController');
+<<<<<<< HEAD
+const CompositionDeBController=require('./controllers/CompositionDeBController');
+=======
 const categoriesController = require('./controllers/categoriesController');
 const CompositionDeBController=require('./controllers/CompositionDeBController');
 const itemController =require( './controllers/itemController');
@@ -54,8 +57,11 @@ app.put('/updateUser', userController.updateUser);
 app.get('/searchAddress', userController.searchAddress);
 
 app.post('/reset_password', userController.reset_password);
-app.post('/validate_code', userController.validate_code);
-app.put('/new_password', userController.new_password);
+app.post('/validate_code',userController.validate_code);
+app.post('/new_password',userController.new_password);
+<<<<<<< HEAD
+app.post('/insererComposition',CompositionDeBController.insererComposition);
+=======
 app.post('/createCategorie', categoriesController.createCategorie);
 app.get('/getCategories', categoriesController.getCategories);
 app.post('/insererComposition', CompositionDeBController.insererComposition);
@@ -69,6 +75,8 @@ app.get('/getMenu', menuController.getMenu);
 app.post('/porfeuille', paiement.porfeuille);
 
 
+>>>>>>> d06e0d2 (feat: add `creatCategorie` api)
+app.get('/getCompositions',CompositionDeBController.getCompositions);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
