@@ -8,6 +8,7 @@ const viewController = require('./controllers/viewController');
 const categoriesController = require('./controllers/categoriesController');
 const CompositionDeBController=require('./controllers/CompositionDeBController');
 const itemController =require( './controllers/itemController');
+const menuController =require( './controllers/menuController');
 const app = express();
 const PORT = 3000;
 
@@ -36,6 +37,8 @@ app.post('/insererComposition',CompositionDeBController.insererComposition);
 app.get('/getCompositions',CompositionDeBController.getCompositions);
 app.post('/createItem', itemController.createItem);
 app.get('/getItem', itemController.getItem);
+app.post('/createMenu', menuController.createMenu);
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
