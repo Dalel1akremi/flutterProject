@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+// Import the 'Restaurant' and 'Category' classes from 'acceuil.dart'
 import 'acceuil.dart';
 
 class NextPage extends StatefulWidget {
   final String selectedMode;
   final Restaurant restaurant;
 
-  const NextPage(this.selectedMode, this.restaurant);
+  const NextPage(this.selectedMode, this.restaurant, {Key? key})
+      : super(key: key);
 
   @override
   _NextPageState createState() => _NextPageState();
@@ -44,16 +47,76 @@ class _NextPageState extends State<NextPage> {
   }
 
   Widget _buildMenuForCategory(Category category) {
-    if (_categories.isNotEmpty &&
-        _selectedCategoryIndex >= 0 &&
-        _selectedCategoryIndex < _categories.length) {
-      return Center(
-        child: Text('Menu for ${category.nomCat} category'),
+  if (_categories.isNotEmpty &&
+      _selectedCategoryIndex >= 0 &&
+      _selectedCategoryIndex < _categories.length) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: fetchMenu(category.nomCat),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error loading menu: ${snapshot.error}');
+        } else {
+          return Column(
+            children: snapshot.data!.map((menuItem) {
+              return GestureDetector(
+                onTap: () {
+                  // Handle link press, e.g., navigate to a details page
+                },
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  margin: EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Item Name: ${menuItem['nom']}'),
+                      Text('Description: ${menuItem['description']}'),
+                      Text('Image: ${menuItem['image']}'),
+                      Text('Price: ${menuItem['prix']}'),
+                      // Add more Text widgets for additional information
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        }
+      },
+    );
+  } else {
+    return const Center(
+      child: Text('No categories available or invalid index.'),
+    );
+  }
+}
+
+  Future<List<Map<String, dynamic>>> fetchMenu(String nomCat) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:3000/getMenu?nom_cat=$nomCat'),
       );
-    } else {
-      return Center(
-        child: Text('No categories available or invalid index.'),
-      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic>? responseData = json.decode(response.body)['data'];
+
+        if (responseData != null) {
+          return responseData.cast<Map<String, dynamic>>();
+        } else {
+          print('Error fetching menu: Response data is null');
+          return [];
+        }
+      } else {
+        throw Exception(
+            'Failed to fetch menu. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching menu: $error');
+      return [];
     }
   }
 
@@ -66,7 +129,7 @@ class _NextPageState extends State<NextPage> {
       ),
       body: Column(
         children: [
-          Container(
+          SizedBox(
             height: 56,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -79,18 +142,26 @@ class _NextPageState extends State<NextPage> {
                     });
                   },
                   child: Container(
-                    width: MediaQuery.of(context).size.width / _categories.length,
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    color: _selectedCategoryIndex == index ? Colors.grey[200]: Colors.white ,
+                    width:
+                        MediaQuery.of(context).size.width / _categories.length,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    color: _selectedCategoryIndex == index
+                        ? Colors.grey[200]
+                        : Colors.white,
                     child: Center(
                       child: Row(
                         children: [
-                          Icon(Icons.restaurant_menu, color: _selectedCategoryIndex == index ? Colors.purple : Colors.black),
-                          SizedBox(width: 8),
+                          Icon(Icons.restaurant_menu,
+                              color: _selectedCategoryIndex == index
+                                  ? Colors.purple
+                                  : Colors.black),
+                          const SizedBox(width: 8),
                           Text(
                             _categories[index].nomCat,
                             style: TextStyle(
-                              color: _selectedCategoryIndex == index ? Colors.purple : Colors.black,
+                              color: _selectedCategoryIndex == index
+                                  ? Colors.purple
+                                  : Colors.black,
                             ),
                           ),
                         ],
@@ -120,8 +191,12 @@ class Category {
   Category({required this.nomCat});
 
   factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(
-      nomCat: json['nom_cat'] as String,
-    );
+    final String? categoryNomCat = json['nom_cat'] as String?;
+    if (categoryNomCat != null && categoryNomCat.isNotEmpty) {
+      return Category(nomCat: categoryNomCat);
+    } else {
+      print("Warning: 'nom_cat' is null or empty in JSON data");
+      return Category(nomCat: 'Default Category');
+    }
   }
 }
