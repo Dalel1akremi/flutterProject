@@ -18,39 +18,45 @@ class RestaurantDetail extends StatefulWidget {
 class _RestaurantDetailState extends State<RestaurantDetail> {
   String selectedRetraitMode = ''; // Variable to store the selected mode
 
-  void _showDeliveryTimeDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Choisissez l\'heure de livraison'),
-          content: const Column(
+void _showDeliveryTimeDialog() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Choisissez l\'heure de livraison'),
+        content: Container(
+          height: 300, // Set the height here
+          child: const Column(
             children: [
               // Add your time picker widget here
               // For example:
               TimePickerWidget(),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Annuler'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Handle the selected time
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Valider'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Handle the selected time
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: const Text('Valider'),
+          ),
+        ],
+      );
+    },
+  );
+}
 
+
+
+  
    @override
   Widget build(BuildContext context) {
     return Scaffold(
