@@ -1,3 +1,5 @@
+
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'acceuil.dart';
 import 'CategoryPage.dart';
@@ -9,6 +11,7 @@ class RestaurantDetail extends StatefulWidget {
       : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _RestaurantDetailState createState() => _RestaurantDetailState();
 }
 
@@ -20,7 +23,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Choisissez l\'heure de livraison'),
+          title: const Text('Choisissez l\'heure de livraison'),
           content: Column(
             children: [
               // Add your time picker widget here
@@ -33,14 +36,14 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text('Annuler'),
+              child: const Text('Annuler'),
             ),
             TextButton(
               onPressed: () {
                 // Handle the selected time
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text('Valider'),
+              child: const Text('Valider'),
             ),
           ],
         );
@@ -63,8 +66,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
             children: [
  Center(
               child: SizedBox(
-                height: MediaQuery.of(context).size.height / 2,
-                width: 1500, // Replace this with your desired width value
+                height: MediaQuery.of(context).size.height / 3.5,
+                width: 1000, // Replace this with your desired width value
                 child: Container(
                   decoration: BoxDecoration(
                     image: const DecorationImage(
@@ -84,10 +87,12 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ),
               ),
             ),
-              SizedBox(height: 16),
+              const SizedBox(height: 10),
 
               // Restaurant Address Container
               Container(
+                width: 1500, // Set the width as needed
+                height: 100,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(10),
@@ -96,7 +101,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                   const Text(
                       'Adresse:',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -106,8 +111,10 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ),
               ),
               
-    SizedBox(height: 16),
+    const SizedBox(height: 10),
               Container(
+                width: 1500, // Set the width as needed
+                height: 200,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(10),
@@ -116,14 +123,14 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                 const   Text(
                       'Mode de retrait*:',
                       style: TextStyle(fontSize: 18),
                     ),
                     Column(
                       children: [
                         RadioListTile(
-                          title: Text('A Emporter'),
+                          title: const Text('A Emporter'),
                           value: 'Option 1',
                           groupValue: selectedRetraitMode,
                          onChanged: (value) {
@@ -134,7 +141,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           },
                         ),
                         RadioListTile(
-                          title: Text('Sur  place'),
+                          title: const Text('Sur  place'),
                           value: 'Option 2',
                           groupValue: selectedRetraitMode,
                          onChanged: (value) {
@@ -145,7 +152,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           },
                         ),
                         RadioListTile(
-                          title: Text('En Livraison'),
+                          title: const Text('En Livraison'),
                           value: 'Option 3',
                           groupValue: selectedRetraitMode,
                           onChanged: (value) {
@@ -161,7 +168,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 ),
               ),
 
-              SizedBox(height: 16),
+              const SizedBox(height: 10),
 
               // Add an ElevatedButton to navigate to the next page
               ElevatedButton(
@@ -176,13 +183,13 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                     );
                   }
                 },
-                child: const Text(
-                  'Commander dans ce restaurant',
-                  style: TextStyle(color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                   backgroundColor: Colors.black,
+                ),
+                child: const Text(
+                  'Commander dans ce restaurant',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ],
@@ -195,7 +202,10 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
 // Example TimePickerWidget (customize as needed)
 class TimePickerWidget extends StatefulWidget {
+  const TimePickerWidget({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _TimePickerWidgetState createState() => _TimePickerWidgetState();
 }
 
@@ -220,9 +230,9 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
       children: [
         ElevatedButton(
           onPressed: () => _selectTime(context),
-          child: Text('Choisir l\'heure'),
+          child: const Text('Choisir l\'heure'),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         Text('Heure sélectionnée: ${selectedTime.format(context)}'),
       ],
     );
