@@ -38,6 +38,7 @@ app.get('/getCompositions',CompositionDeBController.getCompositions);
 app.post('/createItem', itemController.createItem);
 app.get('/getItem', itemController.getItem);
 app.post('/createMenu', menuController.createMenu);
+app.get('/getMenu', menuController.getMenu);
 
 
 app.listen(PORT, () => {

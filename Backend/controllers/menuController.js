@@ -50,4 +50,20 @@ exports.createMenu = async (req, res) => {
                       sendResponse(res, 500, 'Erreur lors de la création du menu', null, error.message);
                     }
                   };
+                  exports.getMenu = async (req, res) => {
+                    try {
+                      const { type } = req.query;
                   
+                      // Fetch menus based on the provided type
+                      const menus = await Menu.find({ type });
+                  
+                      if (menus.length === 0) {
+                        sendResponse(res, 404, 'Aucun menu trouvé pour ce type', null);
+                      } else {
+                        sendResponse(res, 200, 'Menus récupérés avec succès', menus);
+                      }
+                    } catch (error) {
+                      console.error(error);
+                      sendResponse(res, 500, 'Erreur lors de la récupération des menus', null, error.message);
+                    }
+                  };
