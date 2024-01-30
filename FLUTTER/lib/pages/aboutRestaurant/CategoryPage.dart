@@ -25,15 +25,18 @@ class _NextPageState extends State<NextPage> {
 
   Future<void> fetchCategories() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost:3000/getCategories'));
+      final response =
+          await http.get(Uri.parse('http://localhost:3000/getCategories'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body)['data'];
         setState(() {
-          _categories = responseData.map((json) => Category.fromJson(json)).toList();
+          _categories =
+              responseData.map((json) => Category.fromJson(json)).toList();
         });
       } else {
-        throw Exception('Failed to fetch categories. Status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to fetch categories. Status code: ${response.statusCode}');
       }
     } catch (error) {
       print('Error fetching categories: $error');
@@ -41,7 +44,9 @@ class _NextPageState extends State<NextPage> {
   }
 
   Widget _buildMenuForCategory(Category category) {
-    if (_categories.isNotEmpty && _selectedCategoryIndex >= 0 && _selectedCategoryIndex < _categories.length) {
+    if (_categories.isNotEmpty &&
+        _selectedCategoryIndex >= 0 &&
+        _selectedCategoryIndex < _categories.length) {
       return Center(
         child: Text('Menu for ${category.nomCat} category'),
       );
@@ -61,26 +66,49 @@ class _NextPageState extends State<NextPage> {
       ),
       body: Column(
         children: [
+          Container(
+            height: 56,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _categories.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedCategoryIndex = index;
+                    });
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width / _categories.length,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    color: _selectedCategoryIndex == index ? Colors.grey[200]: Colors.white ,
+                    child: Center(
+                      child: Row(
+                        children: [
+                          Icon(Icons.restaurant_menu, color: _selectedCategoryIndex == index ? Colors.purple : Colors.black),
+                          SizedBox(width: 8),
+                          Text(
+                            _categories[index].nomCat,
+                            style: TextStyle(
+                              color: _selectedCategoryIndex == index ? Colors.purple : Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
           Expanded(
-            child: _buildMenuForCategory(_categories.isNotEmpty ? _categories[_selectedCategoryIndex] : Category(nomCat: '')),
+            child: Center(
+              child: _buildMenuForCategory(_categories.isNotEmpty
+                  ? _categories[_selectedCategoryIndex]
+                  : Category(nomCat: '')),
+            ),
           ),
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: _categories
-            .map(
-              (category) => BottomNavigationBarItem(
-                icon: Icon(Icons.restaurant_menu),
-                label: category.nomCat,
-              ),
-            )
-            .toList(),
-        currentIndex: _selectedCategoryIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedCategoryIndex = index;
-          });
-        },
       ),
     );
   }
