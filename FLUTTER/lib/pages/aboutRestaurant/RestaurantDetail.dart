@@ -24,7 +24,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Choisissez l\'heure de livraison'),
-          content: Column(
+          content: const Column(
             children: [
               // Add your time picker widget here
               // For example:
