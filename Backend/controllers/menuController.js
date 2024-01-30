@@ -52,10 +52,10 @@ exports.createMenu = async (req, res) => {
                   };
                   exports.getMenu = async (req, res) => {
                     try {
-                      const { type } = req.query;
+                      const { nom_cat } = req.query;
                   
                       // Fetch menus based on the provided type
-                      const menus = await Menu.find({ type });
+                      const menus = await Menu.find({ nom_cat });
                   
                       if (menus.length === 0) {
                         sendResponse(res, 404, 'Aucun menu trouvé pour ce type', null);
