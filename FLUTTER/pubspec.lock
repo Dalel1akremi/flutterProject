@@ -325,6 +325,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  stripe_payment:
+    dependency: "direct main"
+    description:
+      name: stripe_payment
+      sha256: "8c84e07127f821fdcb63697461fff3a68a693eee4286c28a4cb313517c46e9d6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.4"
   term_glyph:
     dependency: transitive
     description:
