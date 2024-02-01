@@ -12,6 +12,7 @@ const categoriesController = require('./controllers/categoriesController');
 
 >>>>>>> d06e0d2 (feat: add `creatCategorie` api)
 const menuController =require( './controllers/menuController');
+const paiement =require( './controllers/paiement');
 const app = express();
 const PORT = 3000;
 
@@ -45,6 +46,7 @@ app.post('/createItem', itemController.createItem);
 app.get('/getItem', itemController.getItem);
 app.post('/createMenu', menuController.createMenu);
 app.get('/getMenu', menuController.getMenu);
+app.post('/process_payment', paiement.process_payment);
 
 
 app.listen(PORT, () => {
