@@ -9,6 +9,7 @@ const categoriesController = require('./controllers/categoriesController');
 const CompositionDeBController=require('./controllers/CompositionDeBController');
 const itemController =require( './controllers/itemController');
 const menuController =require( './controllers/menuController');
+const paiement =require( './controllers/paiement');
 const app = express();
 const PORT = 3000;
 
@@ -39,6 +40,7 @@ app.post('/createItem', itemController.createItem);
 app.get('/getItem', itemController.getItem);
 app.post('/createMenu', menuController.createMenu);
 app.get('/getMenu', menuController.getMenu);
+app.post('/process_payment', paiement.process_payment);
 
 
 app.listen(PORT, () => {
