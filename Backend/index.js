@@ -80,7 +80,9 @@ app.post('/porfeuille', paiement.porfeuille);
 app.get('/getCompositions',CompositionDeBController.getCompositions);
 app.post('/createItem', itemController.createItem);
 app.get('/getItem', itemController.getItem);
-app.post('/createMenu', menuController.createMenu);
+
+// Corrected createMenu route
+app.post('/createMenu', upload.single('image'), menuController.createMenu);
 app.get('/getMenu', menuController.getMenu);
 app.post('/process_payment', paiement.process_payment);
 

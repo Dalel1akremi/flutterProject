@@ -1,7 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
- // Import the new screen file
 import './pages/aboutRestaurant/acceuil.dart'; // Import the new screen file
 import './pages/aboutRestaurant/ReserverTable.dart'; // Import the ReserverTable screen file
 import './pages/aboutRestaurant/offers.dart'; // Import the Offers screen file
@@ -96,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) =>  const AcceuilApp()),
+                            MaterialPageRoute(builder: (context) => const AcceuilScreen()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
