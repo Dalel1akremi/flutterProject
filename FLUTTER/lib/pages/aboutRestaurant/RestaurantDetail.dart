@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'acceuil.dart';
 import 'CategoryPage.dart';
-
 class RestaurantDetail extends StatefulWidget {
   final Restaurant restaurant;
 
@@ -11,53 +10,61 @@ class RestaurantDetail extends StatefulWidget {
       : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _RestaurantDetailState createState() => _RestaurantDetailState();
 }
 
 class _RestaurantDetailState extends State<RestaurantDetail> {
-  String selectedRetraitMode = ''; // Variable to store the selected mode
+  String selectedRetraitMode = '';
+  late TimeOfDay selectedTime; // Déclarer selectedTime ici
 
-void _showDeliveryTimeDialog() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Choisissez l\'heure de livraison'),
-        content: Container(
-          height: 300, // Set the height here
-          child: const Column(
-            children: [
-              // Add your time picker widget here
-              // For example:
-              TimePickerWidget(),
-            ],
+  @override
+  void initState() {
+    super.initState();
+    selectedTime = TimeOfDay.now();
+  }
+
+  void _showDeliveryTimeDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Choisissez l\'heure de livraison'),
+          content: Container(
+            height: 300,
+            child: Column(
+              children: [
+                TimePickerWidget(
+                  onTimeSelected: (time) {
+                    // Mettre à jour la valeur de selectedTime ici
+                    setState(() {
+                      selectedTime = time;
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-            },
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Handle the selected time
-              Navigator.of(context).pop(); // Close the dialog
-            },
-            child: const Text('Valider'),
-          ),
-        ],
-      );
-    },
-  );
-}
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Annuler'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Gérer l'heure sélectionnée
+                Navigator.of(context).pop();
+              },
+              child: const Text('Valider'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-
-
-  
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -70,34 +77,32 @@ void _showDeliveryTimeDialog() {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
- Center(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height / 3.5,
-                width: 1000, // Replace this with your desired width value
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: const DecorationImage(
-                      image: AssetImage('images/First.png'),
-                      fit: BoxFit.fitHeight,
-                    ),
-                    borderRadius: BorderRadius.circular(15.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 1,
-                        offset: const Offset(0, 3),
+              Center(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height / 3.5,
+                  width: 1000,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: const DecorationImage(
+                        image: AssetImage('images/First.png'),
+                        fit: BoxFit.fitHeight,
                       ),
-                    ],
+                      borderRadius: BorderRadius.circular(15.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 1,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
               const SizedBox(height: 10),
-
-              // Restaurant Address Container
               Container(
-                width: 1500, // Set the width as needed
+                width: 1500,
                 height: 100,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
@@ -107,19 +112,17 @@ void _showDeliveryTimeDialog() {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                   const Text(
+                    const Text(
                       'Adresse:',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(widget.restaurant.address),
                   ],
                 ),
               ),
-              
-    const SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
-                width: 1500, // Set the width as needed
+                width: 1500,
                 height: 200,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
@@ -129,7 +132,7 @@ void _showDeliveryTimeDialog() {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                 const   Text(
+                    const Text(
                       'Mode de retrait*:',
                       style: TextStyle(fontSize: 18),
                     ),
@@ -139,7 +142,7 @@ void _showDeliveryTimeDialog() {
                           title: const Text('A Emporter'),
                           value: 'Option 1',
                           groupValue: selectedRetraitMode,
-                         onChanged: (value) {
+                          onChanged: (value) {
                             setState(() {
                               selectedRetraitMode = value.toString();
                               _showDeliveryTimeDialog();
@@ -147,10 +150,10 @@ void _showDeliveryTimeDialog() {
                           },
                         ),
                         RadioListTile(
-                          title: const Text('Sur  place'),
+                          title: const Text('Sur place'),
                           value: 'Option 2',
                           groupValue: selectedRetraitMode,
-                         onChanged: (value) {
+                          onChanged: (value) {
                             setState(() {
                               selectedRetraitMode = value.toString();
                               _showDeliveryTimeDialog();
@@ -173,18 +176,18 @@ void _showDeliveryTimeDialog() {
                   ],
                 ),
               ),
-
               const SizedBox(height: 10),
-
-              // Add an ElevatedButton to navigate to the next page
               ElevatedButton(
                 onPressed: () {
                   if (selectedRetraitMode.isNotEmpty) {
-                    // Navigate to the next page with the selected mode
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => NextPage(selectedRetraitMode,widget.restaurant),
+                        builder: (context) => NextPage(
+                          selectedRetraitMode: selectedRetraitMode,
+                          restaurant: widget.restaurant,
+                          selectedTime: selectedTime,
+                        ),
                       ),
                     );
                   }
@@ -206,17 +209,23 @@ void _showDeliveryTimeDialog() {
   }
 }
 
-// Example TimePickerWidget (customize as needed)
 class TimePickerWidget extends StatefulWidget {
-  const TimePickerWidget({super.key});
+  final Function(TimeOfDay) onTimeSelected;
+
+  const TimePickerWidget({Key? key, required this.onTimeSelected}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _TimePickerWidgetState createState() => _TimePickerWidgetState();
 }
 
 class _TimePickerWidgetState extends State<TimePickerWidget> {
-  TimeOfDay selectedTime = TimeOfDay.now();
+  late TimeOfDay selectedTime;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedTime = TimeOfDay.now();
+  }
 
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
@@ -227,6 +236,9 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
       setState(() {
         selectedTime = pickedTime;
       });
+
+      // Appeler la fonction de retour pour informer le parent de la sélection de l'heure
+      widget.onTimeSelected(selectedTime);
     }
   }
 
@@ -244,3 +256,4 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
     );
   }
 }
+

@@ -1,8 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import './../aboutRestaurant/acceuil.dart';
 
 class PaymentScreen extends StatefulWidget {
+  final String selectedRetraitMode;
+  final Restaurant restaurant;
+  final TimeOfDay selectedTime;
+
+  const PaymentScreen({
+    Key? key,
+    required this.selectedRetraitMode,
+    required this.restaurant,
+    required this.selectedTime,
+  }) : super(key: key);
+
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
 }
@@ -14,7 +26,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   String paymentMethod = 'pm_card_visa';
 
   Future<void> processPayment() async {
-    final String apiUrl = 'http://localhost:3000/process_payment'; // Remplacez par l'URL de votre serveur
+    final String apiUrl =
+        'http://localhost:3000/process_payment'; // Remplacez par l'URL de votre serveur
 
     try {
       final response = await http.post(
@@ -51,16 +64,26 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Processing Payment'),
+        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
+        title: Text(widget.restaurant.name),
       ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // Appeler la fonction de traitement du paiement
-            processPayment();
-          },
-          child: Text('Process Payment'),
-        ),
+      body: Column(
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+           
+              Text('Heure de retrait : ${widget.selectedTime.format(context)}'),
+            ],
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Appeler la fonction de traitement du paiement
+              processPayment();
+            },
+            child: Text('Process Payment'),
+          ),
+        ], // Correction de la balise < ici
       ),
     );
   }
