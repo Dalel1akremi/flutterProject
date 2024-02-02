@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-// Import the 'Restaurant' and 'Category' classes from 'acceuil.dart'
 import 'acceuil.dart';
+import './../aboutPaiement/paiement.dart';
+import './RestaurantDetail.dart';
 
 class NextPage extends StatefulWidget {
-  final String selectedMode;
+  final String selectedRetraitMode;
   final Restaurant restaurant;
+  final TimeOfDay selectedTime;
 
-  const NextPage(this.selectedMode, this.restaurant, {Key? key})
-      : super(key: key);
+  const NextPage({
+    Key? key,
+    required this.selectedRetraitMode,
+    required this.restaurant,
+    required this.selectedTime,
+  }) : super(key: key);
 
   @override
   _NextPageState createState() => _NextPageState();
@@ -19,7 +24,8 @@ class NextPage extends StatefulWidget {
 class _NextPageState extends State<NextPage> {
   List<Category> _categories = [];
   int _selectedCategoryIndex = 0;
-
+ TimeOfDay selectedTime = TimeOfDay.now(); 
+  String selectedRetraitMode = '';
   @override
   void initState() {
     super.initState();
@@ -47,53 +53,53 @@ class _NextPageState extends State<NextPage> {
   }
 
   Widget _buildMenuForCategory(Category category) {
-  if (_categories.isNotEmpty &&
-      _selectedCategoryIndex >= 0 &&
-      _selectedCategoryIndex < _categories.length) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: fetchMenu(category.nomCat),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error loading menu: ${snapshot.error}');
-        } else {
-          return Column(
-            children: snapshot.data!.map((menuItem) {
-              return GestureDetector(
-                onTap: () {
-                  // Handle link press, e.g., navigate to a details page
-                },
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  margin: EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
+    if (_categories.isNotEmpty &&
+        _selectedCategoryIndex >= 0 &&
+        _selectedCategoryIndex < _categories.length) {
+      return FutureBuilder<List<Map<String, dynamic>>>(
+        future: fetchMenu(category.nomCat),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text('Error loading menu: ${snapshot.error}');
+          } else {
+            return Column(
+              children: snapshot.data!.map((menuItem) {
+                return GestureDetector(
+                  onTap: () {
+                    // Handle link press, e.g., navigate to a details page
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    margin: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Item Name: ${menuItem['nom']}'),
+                        Text('Description: ${menuItem['description']}'),
+                        Text('Image: ${menuItem['image']}'),
+                        Text('Price: ${menuItem['prix']}'),
+                        // Add more Text widgets for additional information
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Item Name: ${menuItem['nom']}'),
-                      Text('Description: ${menuItem['description']}'),
-                      Text('Image: ${menuItem['image']}'),
-                      Text('Price: ${menuItem['prix']}'),
-                      // Add more Text widgets for additional information
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          );
-        }
-      },
-    );
-  } else {
-    return const Center(
-      child: Text('No categories available or invalid index.'),
-    );
+                );
+              }).toList(),
+            );
+          }
+        },
+      );
+    } else {
+      return const Center(
+        child: Text('No categories available or invalid index.'),
+      );
+    }
   }
-}
 
   Future<List<Map<String, dynamic>>> fetchMenu(String nomCat) async {
     try {
@@ -129,6 +135,7 @@ class _NextPageState extends State<NextPage> {
       ),
       body: Column(
         children: [
+         
           SizedBox(
             height: 56,
             child: ListView.builder(
@@ -178,6 +185,34 @@ class _NextPageState extends State<NextPage> {
                   ? _categories[_selectedCategoryIndex]
                   : Category(nomCat: '')),
             ),
+          ),
+          // Ajout du bouton de paiement
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PaymentScreen(
+                      selectedRetraitMode: selectedRetraitMode,
+                      restaurant: widget.restaurant,
+                      selectedTime: selectedTime,
+                    ),
+                  ),
+                );
+              },
+            
+            
+            style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: Colors.blueGrey[200],
+                ),
+                child: const Text(
+                  'paiement',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
           ),
         ],
       ),
