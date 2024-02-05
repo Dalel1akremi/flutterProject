@@ -1,51 +1,23 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const busboy = require('express-busboy');
+
 const Menu = require('../models/menuModel');
-const path = require('path');
-const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
-
-const sendResponse = (res, status, message, data = null, error = null) => {
-  res.status(status).json({ status, message, data, error });
-};
-
-const uploadImage = async (filename, buffer) => {
-  const uniqueFilename = `${uuidv4()}_${filename}`;
-  const imagePath = path.join(__dirname, '../public/images/', uniqueFilename);
-
-  // Use asynchronous file writing to avoid blocking the event loop
-  await fs.promises.writeFile(imagePath, buffer);
-
-  // Create a URL based on the image path
-  const imageUrl = `/public/images/${uniqueFilename}`;
-  return imageUrl;
-};
-const app = express();
-// Set up express-busboy middleware
-busboy.extend(app, {
-  upload: true,
-  path: './public/images',
-  allowedPath: /./,
-});
 
 exports.createMenu = async (req, res) => {
   try {
+    const { body, file } = req;
+
     const {
       nom,
       type,
       prix,
       description,
       isArchived,
-      image: imageUrl,
       quantite,
       max_quantite,
       is_Menu,
       nom_cat,
       id,
-    } = req.body;
+    } = body;
+    const imageUrl = file ? `localhost:3000/images/${file.filename}` : null;
 
     // Validate data types
     const validatedPrix = parseFloat(prix);
@@ -66,14 +38,22 @@ exports.createMenu = async (req, res) => {
     }
 
     if (isNaN(validatedPrix) || isNaN(validatedQuantite) || isNaN(validatedMaxQuantite)) {
-      sendResponse(res, 400, 'Invalid data types in request body', null);
+      
+      res.json({
+        status: 400,
+        message: 'Invalid data types in request body'
+      });
       return;
     }
 
     const existingMenu = await Menu.findOne({ nom });
 
     if (existingMenu) {
-      sendResponse(res, 400, 'Ce menu existe déjà', null);
+      
+      res.json({
+        status: 400,
+        message: 'Ce menu existe déjà'
+      });
       return;
     }
     console.log('New Menu Data:', {
@@ -99,14 +79,22 @@ exports.createMenu = async (req, res) => {
       is_Menu: validatedIsMenu,
       nom_cat,
       id,
+      image: imageUrl,
     });
 
-    const data = await newMenu.save();
-    console.log("data: ", data);
-    sendResponse(res, 201, 'Menu créé avec succès', newMenu);
+    const savedMenu = await newMenu.save();
+    res.json({
+      status: 200,
+      message: 'Menu item created successfully',
+      data: savedMenu,
+    });
   } catch (error) {
     console.error(error);
-    sendResponse(res, 500, 'Erreur lors de la création du menu', null, error.message);
+    res.status(500).json({
+      status: 500,
+      message: 'Error creating menu item',
+      error: error.message,
+    });
   }
 };
 
@@ -120,9 +108,20 @@ exports.getMenu = async (req, res) => {
     const menus = await Menu.find({ nom_cat });
 
     if (menus.length === 0) {
-      sendResponse(res, 404, 'Aucun menu trouvé pour ce type', null);
+      
+      res.json({
+        status: 404,
+        message: 'Aucun menu trouvé pour ce type',
+        
+      });
     } else {
-      sendResponse(res, 200, 'Menus récupérés avec succès', menus);
+      
+      res.json({
+        status: 200,
+        message: 'Menus récupérés avec succès',
+        data:menus
+        
+      });
     }
   } catch (error) {
     console.error(error);
