@@ -8,7 +8,7 @@ const gateway = new braintree.BraintreeGateway({
   privateKey: '1e8816ff7d4dbc7b2374b02173217aff',
 });
 
-const process_payment = async (req, res) => {
+const porfeuille = async (req, res) => {
   const { cardNumber, expirationDate, cvv } = req.body;
 
   try {
@@ -35,5 +35,5 @@ const process_payment = async (req, res) => {
 };
 
 module.exports = {
-    process_payment,
+  porfeuille,
 };
