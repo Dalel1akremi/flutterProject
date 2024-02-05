@@ -9,10 +9,7 @@ nom: { type: String, unique: true },
   prix: Number,
   description: String,
   isArchived: Boolean,
-  image: {
-    data: Buffer,
-    contentType: String
-},
+  image: String,
   quantite: Number,
   max_quantite: Number,
   is_Menu: Boolean,
