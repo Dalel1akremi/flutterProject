@@ -8,7 +8,11 @@ const gateway = new braintree.BraintreeGateway({
   privateKey: '1e8816ff7d4dbc7b2374b02173217aff',
 });
 
+<<<<<<< HEAD
 const porfeuille = async (req, res) => {
+=======
+const process_payment = async (req, res) => {
+>>>>>>> 81e6548 (feat :add `porfeuille `api backend)
   const { cardNumber, expirationDate, cvv } = req.body;
 
   try {
@@ -33,6 +37,7 @@ const porfeuille = async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout de la carte' });
   }
 };
+<<<<<<< HEAD
 const process_payment = async (req, res) => {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -65,4 +70,9 @@ process_payment,
 
 module.exports = {
   porfeuille,
+=======
+
+module.exports = {
+    process_payment,
+>>>>>>> 81e6548 (feat :add `porfeuille `api backend)
 };
