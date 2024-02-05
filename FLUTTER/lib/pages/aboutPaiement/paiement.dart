@@ -27,7 +27,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> processPayment() async {
     final String apiUrl =
-        'http://localhost:3000/process_payment'; // Remplacez par l'URL de votre serveur
+        'http://localhost:3000/'; // Remplacez par l'URL de votre serveur
 
     try {
       final response = await http.post(
