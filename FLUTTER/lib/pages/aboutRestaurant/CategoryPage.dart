@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'acceuil.dart';
 import './../aboutPaiement/paiement.dart';
-
+import 'ItemDetailsPage.dart';
 
 class NextPage extends StatefulWidget {
   final String selectedRetraitMode;
@@ -74,6 +74,12 @@ class _NextPageState extends State<NextPage> {
               return GestureDetector(
                 onTap: () {
                   // Handle link press, e.g., navigate to a details page
+                   Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ItemDetailsPage(nomMenu: menuItem['nom'])
+          ),
+        );
                 },
                 child: Container(
                   padding: const EdgeInsets.all(16),
