@@ -68,6 +68,7 @@ app.get('/getCategories', categoriesController.getCategories);
 app.post('/insererComposition', CompositionDeBController.insererComposition);
 app.get('/getCompositions', CompositionDeBController.getCompositions);
 app.post('/createItem', upload.single('image'),itemController.createItem);
+<<<<<<< HEAD
 app.get('/getItem', itemController.getItem);
 
 // Corrected createMenu route
@@ -79,6 +80,8 @@ app.post('/porfeuille', paiement.porfeuille);
 >>>>>>> d06e0d2 (feat: add `creatCategorie` api)
 app.get('/getCompositions',CompositionDeBController.getCompositions);
 app.post('/createItem', itemController.createItem);
+=======
+>>>>>>> 7f07aee (feat:fix `itemController`)
 app.get('/getItem', itemController.getItem);
 
 // Corrected createMenu route

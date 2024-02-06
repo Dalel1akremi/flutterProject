@@ -16,7 +16,11 @@ exports.createItem = async (req, res) => {
       is_Menu,
       id_cat,
       id,
+<<<<<<< HEAD
       id_menu,
+=======
+      nom,
+>>>>>>> 7f07aee (feat:fix `itemController`)
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
     // Validate data types
@@ -50,7 +54,11 @@ exports.createItem = async (req, res) => {
       return;
     }
 
+<<<<<<< HEAD
     const existingItem = await Items.findOne({nom_item });
+=======
+    const existingItem = await Items.findOne({ nom });
+>>>>>>> 7f07aee (feat:fix `itemController`)
 
     if (existingItem) {
       
@@ -69,9 +77,15 @@ exports.createItem = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
+<<<<<<< HEAD
       id_cat,
       id,
       id_menu,  // Log the id field
+=======
+      nom_cat,
+      id,
+      nom,  // Log the id field
+>>>>>>> 7f07aee (feat:fix `itemController`)
     });
     const newItem = new Items({
       nom_item,
@@ -82,9 +96,15 @@ exports.createItem = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
+<<<<<<< HEAD
       id_cat,
       id,
       id_menu, 
+=======
+      nom_cat,
+      id,
+      nom, 
+>>>>>>> 7f07aee (feat:fix `itemController`)
       image: imageUrl,
     });
 
@@ -101,6 +121,7 @@ exports.createItem = async (req, res) => {
       message: 'Error creating menu item',
       error: error.message,
     });
+<<<<<<< HEAD
   }
 };
 
@@ -136,15 +157,42 @@ exports.getItem = async (req, res) => {
       
     });
    
+=======
+>>>>>>> 7f07aee (feat:fix `itemController`)
   }
 };
+
 exports.getItem = async (req, res) => {
-                    try {
-                      // Récupération de toutes les catégories depuis la base de données
-                      const item = await Items.find({}, ' nom type prix description isArchived image quantite max_quantite is_Menu nom_cat id');
-                      res.status(200).json({message:"succée de recuperation des items",data:item ,status:res.statusCode});
-                    } catch (error) {
-                      console.error(error);
-                      res.status(500).json({ message: 'Erreur lors de la récupération des items' });
-                    }
-                  };
+  try {
+    const { nom } = req.query;
+
+    // Fetch menus based on the provided type
+    const Item = await Items.find({ nom });
+
+    if (Item.length === 0) {
+      
+      res.json({
+        status: 404,
+        message: 'Aucun item trouvé pour ce type',
+        
+      });
+    } else {
+      
+      res.json({
+        status: 200,
+        message: 'Items récupérés avec succès',
+        data:Item
+        
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.json({
+      status: 500,
+      message: 'Erreur lors de la récupération des items',
+      error:error.message
+      
+    });
+   
+  }
+};
