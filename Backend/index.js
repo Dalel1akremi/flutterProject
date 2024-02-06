@@ -61,10 +61,10 @@ app.post('/new_password',userController.new_password);
 app.post('/insererComposition',CompositionDeBController.insererComposition);
 =======
 app.post('/createCategorie', categoriesController.createCategorie);
-
->>>>>>> d06e0d2 (feat: add `creatCategorie` api)
-app.get('/getCompositions',CompositionDeBController.getCompositions);
-app.post('/createItem', itemController.createItem);
+app.get('/getCategories', categoriesController.getCategories);
+app.post('/insererComposition', CompositionDeBController.insererComposition);
+app.get('/getCompositions', CompositionDeBController.getCompositions);
+app.post('/createItem', upload.single('image'),itemController.createItem);
 app.get('/getItem', itemController.getItem);
 
 // Corrected createMenu route
