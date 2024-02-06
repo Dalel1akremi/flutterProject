@@ -212,10 +212,36 @@ const new_password= async (req, res) => {
     res.status(500).json({ success: false, message: 'Error updating password.' });
   }
 };
+const getUser = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Rechercher l'utilisateur dans la base de données en fonction de l'email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      // Aucun utilisateur trouvé avec cet email
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Renvoyer les données de l'utilisateur
+    res.status(200).json({
+      nom: user.nom,
+      prenom: user.prenom,
+      telephone: user.telephone,
+      email: user.email,
+      // Vous pouvez inclure d'autres champs selon les besoins
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 module.exports = {
   registerUser,
   loginUser,
   reset_password,
   validate_code,
   new_password,
+  getUser,
 };
