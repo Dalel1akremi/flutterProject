@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'profile.dart';
+import 'login.dart';
 import 'package:flutter/services.dart';
 import 'dart:developer';
 
@@ -122,7 +122,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const ProfilePage(),
+          builder: (context) => const loginPage(),
         ),
       );
         }
