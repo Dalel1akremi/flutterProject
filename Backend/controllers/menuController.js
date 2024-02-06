@@ -17,7 +17,7 @@ exports.createMenu = async (req, res) => {
       nom_cat,
       id,
     } = body;
-    const imageUrl = file ? `localhost:3000/images/${file.filename}` : null;
+    const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
 
     // Validate data types
     const validatedPrix = parseFloat(prix);
