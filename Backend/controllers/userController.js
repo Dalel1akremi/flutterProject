@@ -66,12 +66,12 @@ const loginUser = async (req, res) => {
 
     // Création d'un jeton JWT
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email ,nom: user.nom},
       'your-secret-key', // Remplacez par une clé secrète plus sécurisée dans un environnement de production
       { expiresIn: '1h' } // Durée de validité du jeton (1 heure dans cet exemple)
     );
 
-    res.status(200).json({ token, userId: user._id, message: 'Login successful' });
+    res.status(200).json({ token, userId: user._id,nom: user.nom, message: 'Login successful' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -213,27 +213,20 @@ const new_password= async (req, res) => {
   }
 };
 const getUser = async (req, res) => {
-  const { email } = req.body;
-
   try {
-    // Rechercher l'utilisateur dans la base de données en fonction de l'email
-    const user = await User.findOne({ email });
+    // For simplicity, assuming you have only one user in the database
+    const user = await User.findOne();
 
-    if (!user) {
-      // Aucun utilisateur trouvé avec cet email
-      return res.status(404).json({ message: 'User not found' });
+    if (user) {
+      // Return user data as JSON
+      res.json(user);
+    } else {
+      // If no user is found, return a 404 status
+      res.status(404).json({ message: 'User not found' });
     }
-
-    // Renvoyer les données de l'utilisateur
-    res.status(200).json({
-      nom: user.nom,
-      prenom: user.prenom,
-      telephone: user.telephone,
-      email: user.email,
-      // Vous pouvez inclure d'autres champs selon les besoins
-    });
   } catch (error) {
     console.error(error);
+    // Return a 500 status for server errors
     res.status(500).json({ message: 'Internal server error' });
   }
 };
