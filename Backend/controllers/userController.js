@@ -230,6 +230,41 @@ const getUser = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+const updateUser = async (req, res) => {
+  const {  nom, prenom, telephone } = req.body;
+
+  const userEmail = req.query.email; // Utiliser le paramètre de requête pour l'email
+
+  try {
+    // Vérifier si l'utilisateur existe
+    const existingUser = await User.findOne({ email: userEmail });
+
+    if (!existingUser) {
+      // L'utilisateur n'existe pas
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Mettre à jour uniquement les champs spécifiés (nom, prenom, telephone)
+    if (nom) {
+      existingUser.nom = nom;
+    }
+    if (prenom) {
+      existingUser.prenom = prenom;
+    }
+    if (telephone) {
+      existingUser.telephone = telephone;
+    }
+
+    // Sauvegarder les modifications
+    await existingUser.save();
+
+    res.status(200).json({ message: 'User updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -237,4 +272,5 @@ module.exports = {
   validate_code,
   new_password,
   getUser,
+  updateUser,
 };
