@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'acceuil.dart';
 import './../aboutPaiement/paiement.dart';
-import './RestaurantDetail.dart';
+
 
 class NextPage extends StatefulWidget {
   final String selectedRetraitMode;

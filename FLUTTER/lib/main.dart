@@ -1,6 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
+ // Import the new screen file
 import './pages/aboutRestaurant/acceuil.dart'; // Import the new screen file
 import './pages/aboutRestaurant/ReserverTable.dart'; // Import the ReserverTable screen file
 import './pages/aboutRestaurant/offers.dart'; // Import the Offers screen file
@@ -25,6 +26,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 class _HomeScreenState extends State<HomeScreen> {
@@ -91,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) =>  AcceuilApp()),
+                            MaterialPageRoute(builder: (context) =>  const AcceuilApp()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
