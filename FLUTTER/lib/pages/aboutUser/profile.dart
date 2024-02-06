@@ -1,287 +1,290 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print, library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
+import 'login.dart';
+import './../aboutPaiement/porfeuille.dart';
+import 'identifiant.dart';
 import 'dart:convert';
-import 'registre.dart';
-import 'PasswordRecoveryPage.dart';
-import '../../main.dart';
+import 'package:http/http.dart' as http;
+import './../aboutRestaurant/acceuil.dart';
+import './../aboutRestaurant/commande.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
-
-  @override
-  _ProfilePageState createState() => _ProfilePageState();
+void main() {
+  runApp(MyApp());
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  final _formKey = GlobalKey<FormState>();
-  String email = '';
-  String password = '';
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
 
-  void _submit(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+class _MyAppState extends State<MyApp> {
+  late String userEmail;
+  late String nom;
 
-      if (email.isEmpty || password.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please enter both email and password.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
+  @override
+  void initState() {
+    super.initState();
+    // Appel de la fonction pour récupérer l'email depuis le backend
+    fetchUserEmail();
+  }
 
-      try {
-        await loginUser(context, email, password);
-      } catch (error) {
-        print('Error during login: $error');
-        String errorMessage = 'Error during login. Please try again.';
+  // Fonction pour récupérer l'email depuis le backend
+  Future<void> fetchUserEmail() async {
+    final response = await http.get(Uri.parse('http://localhost:3000/getUser'));
 
-        if (error is http.ClientException) {
-          errorMessage =
-              'Network error. Please check your internet connection.';
-        } else if (error is FormatException) {
-          errorMessage = 'Invalid response format from the server.';
-        }
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final email = data[
+          'email']; // Assurez-vous d'ajuster la clé selon votre structure de données
+      final userNom = data['nom'];
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      setState(() {
+        userEmail = email;
+        nom = userNom;
+      });
+    } else {
+      // Gérer les erreurs lors de la récupération de l'email
+      print('Failed to load user email');
     }
   }
 
-  Future<void> loginUser(
-      BuildContext context, String email, String password) async {
-    const String apiUrl = "http://localhost:3000/login";
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
-      );
-
-      print('Response: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final String token = data['token'];
-        final String userId = data['userId'];
-
-        print('Login successful! Token: $token, UserId: $userId');
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MyApp()),
-        );
-      } else {
-        final data = json.decode(response.body);
-        final String message = data['message'];
-
-        print('Login failed! Message: $message');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login failed: $message'),
-            backgroundColor: Colors.red,
+  @override
+  Widget build(BuildContext context) {
+    // Vérifier si l'email est récupéré avant de construire l'interface utilisateur
+    if (userEmail == null) {
+      return MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
           ),
-        );
-      }
-    } catch (error) {
-      print('Error during login: $error');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Error during login.'),
-          backgroundColor: Colors.red,
         ),
       );
     }
+
+    return MaterialApp(
+      home: ProfilePage(email: userEmail, nom: nom),
+    );
   }
+}
+
+class ProfilePage extends StatelessWidget {
+  final String email;
+  final String nom;
+
+  const ProfilePage({Key? key, required this.email, required this.nom})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: const Text('Connexion'),
+        title: Text('Bonjour $nom'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text(
-                'Email',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
-              ),
-              TextFormField(
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Enter a valid email address';
-                  }
-                  if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
-                      .hasMatch(value!)) {
-                    return 'Enter a valid email address';
-                  }
-                  return null;
-                },
-                onSaved: (value) => email = value ?? '',
-                decoration: const InputDecoration(
-                  labelText: 'Saisissez votre e-mail',
-                  prefixIcon: Icon(Icons.email),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              const Text(
-                'Mot de passe',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
-              ),
-              TextFormField(
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Enter your password';
-                  }
-                  return null;
-                },
-                onSaved: (value) => password = value ?? '',
-                decoration: const InputDecoration(
-                  labelText: 'Saisissez votre mot de passe',
-                  prefixIcon: Icon(Icons.lock),
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 8.0),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PasswordRecoveryPage(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileDetailsPage(email: email),
+                  ),
+                );
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.person),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.black,
+                            width: 1.5,
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                  child: RichText(
-                    text: const TextSpan(
-                      text: 'Mot de passe oublié',
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Colors.blue,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Profil',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () => _submit(context),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.black,
-                ),
-                child: const Text(
-                  'Connexion',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              const Align(
-                alignment: Alignment.center,
-                child: Text('ou'),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  // Naviguer vers la page d'inscription
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            RegistrationPage()), // Remplacez RegistrationPage par le nom de votre page d'inscription
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.white,
-                ),
-                child: const Text(
-                  'Inscription',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              const Text(
-                'En continuant, vous acceptez nos : ',
-                style: TextStyle(fontSize: 14.0),
-              ),
-              RichText(
-                text: const TextSpan(
-                  text: 'Conditions Générales d' 'utilisation ',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
+            ),
+            SizedBox(height: 16),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddressPage(),
                   ),
-                ),
-              ),
-              RichText(
-                text: const TextSpan(
-                  text: 'Conditions Générales de Vente',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
-                  ),
-                ),
-              ),
-              RichText(
-                text: const TextSpan(
-                  text: 'politique de confidentialité',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () => (context),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.red,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'images/google_logo.png', // Ajoutez le logo Google à votre projet
-                      height: 20.0,
+                );
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.location_on),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.black,
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Adresse',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 10.0),
-                    const Text('Connecter avec Google'),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 16),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Portefeuille(),
+                  ),
+                );
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.credit_card),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.black,
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Moyens de Paiement',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => loginPage(),
+                  ),
+                );
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.exit_to_app),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.black,
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Déconnexion',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: '',
+          ),
+        ],
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AcceuilScreen()),
+            );
+          }
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CommandeApp()),
+            );
+          }
+          if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const loginPage()),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class AddressPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Adresse'),
       ),
     );
   }
