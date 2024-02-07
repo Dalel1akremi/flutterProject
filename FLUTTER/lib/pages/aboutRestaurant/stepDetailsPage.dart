@@ -11,7 +11,7 @@ class StepDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Détails de l\'étape'),
+        title: const Text('Détails de l\'étape'),
       ),
       body: Center(
         child: Column(
