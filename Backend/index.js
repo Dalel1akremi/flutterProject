@@ -58,7 +58,7 @@ app.post('/createCategorie', categoriesController.createCategorie);
 app.get('/getCategories', categoriesController.getCategories);
 app.post('/insererComposition', CompositionDeBController.insererComposition);
 app.get('/getCompositions', CompositionDeBController.getCompositions);
-app.post('/createItem', itemController.createItem);
+app.post('/createItem', upload.single('image'),itemController.createItem);
 app.get('/getItem', itemController.getItem);
 
 // Corrected createMenu route
