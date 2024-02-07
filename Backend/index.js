@@ -60,6 +60,8 @@ app.post('/new_password',userController.new_password);
 <<<<<<< HEAD
 app.post('/insererComposition',CompositionDeBController.insererComposition);
 =======
+app.post('/validate_code', userController.validate_code);
+app.put('/new_password', userController.new_password);
 app.post('/createCategorie', categoriesController.createCategorie);
 app.get('/getCategories', categoriesController.getCategories);
 app.post('/insererComposition', CompositionDeBController.insererComposition);

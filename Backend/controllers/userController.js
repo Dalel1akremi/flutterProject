@@ -180,14 +180,19 @@ const validate_code = async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur lors de la validation du code.' });
   }
 };
-const new_password= async (req, res) => {
-  const { email, newPassword, confirmNewPassword } = req.body;
+// ...
+
+// ...
+
+const new_password = async (req, res) => {
+  const { newPassword, confirmNewPassword } = req.body;
+  const userEmail = req.query.email || req.body.email;
 
   try {
-    // Find the user in the database
-    const user = await User.findOne({ email });
+    // Vérifier si l'utilisateur existe
+    const existingUser = await User.findOne({ email: userEmail });
 
-    if (!user) {
+    if (!existingUser) {
       // User not found
       return res.status(404).json({ success: false, message: 'User not found.' });
     }
@@ -199,19 +204,33 @@ const new_password= async (req, res) => {
 
     // Hash the new password before saving it
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    
+
     // Update the user's password with the hashed password
-    user.password = hashedPassword;
+    existingUser.password = hashedPassword;
 
     // Save the updated user object
-    await user.save();
+    await existingUser.save();
 
     res.json({ success: true, message: 'Password updated successfully.' });
   } catch (error) {
     console.error(error);
+
+    // Handle different types of errors
+    if (error.name === 'MongoError' && error.code === 11000) {
+      // Duplicate key error (e.g., unique constraint violation)
+      return res.status(400).json({ success: false, message: 'Duplicate key error.' });
+    }
+
+    // Handle other errors
     res.status(500).json({ success: false, message: 'Error updating password.' });
   }
 };
+
+// ...
+
+
+// ...
+
 const getUser = async (req, res) => {
   try {
     // For simplicity, assuming you have only one user in the database

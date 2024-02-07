@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../main.dart';
 import 'dart:convert';
+
 class NouveauPasswordPage extends StatefulWidget {
+  final String? email; // Make email nullable
+
+  const NouveauPasswordPage({Key? key, required this.email}) : super(key: key);
   @override
   _NouveauPasswordPageState createState() => _NouveauPasswordPageState();
 }
@@ -37,38 +41,38 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
       return;
     }
 
-    // Your API endpoint for updating the password
-  
+    if (widget.email != null) {
+      try {
+        final response = await http.put(
+          Uri.parse(
+              'http://localhost:3000/new_password?email=${Uri.encodeQueryComponent(widget.email!)}'),
+          body: {
+            'newPassword': newPassword,
+            'confirmNewPassword': confirmNewPassword,
+          },
+        );
 
-    try {
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/new_password'),
-        body: {
-          'email': 'yakinebenali5@gmail.com', // Provide the user's email
-          'newPassword': newPassword,
-          'confirmNewPassword': confirmNewPassword,
-        },
-      );
+        final responseData = json.decode(response.body);
 
-      final responseData = json.decode(response.body);
+        if (response.statusCode == 200 && responseData['success']) {
+          // Password updated successfully
+          print('Password updated successfully');
 
-      if (response.statusCode == 200 && responseData['success']) {
-        // Password updated successfully
-        print('Password updated successfully');
-
-        // Navigate to the main page
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MyApp()),
-        ); // Replace with your actual route
-      } else {
-        // Handle other API response statuses
-        print('Error updating password: ${responseData['message']}');
+          // Navigate to the main page
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => MyApp()),
+          ); // Replace with your actual route
+        } else {
+          // Handle other API response statuses
+          print('Error updating password: ${responseData['message']}');
+        }
+      } catch (error) {
+        // Handle network or other errors
+        print('Error: $error');
       }
-    } catch (error) {
-      // Handle network or other errors
-      print('Error: $error');
+    } else {
+      print('Email is null. Cannot update password.');
     }
   }
 
@@ -126,14 +130,7 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
               onPressed: () {
                 updatePassword();
               },
-              child: const Text(
-                'Continuer ',
-                style: TextStyle(color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-                backgroundColor: Colors.black,
-              ),
+              child: const Text('Continuer'),
             ),
           ],
         ),
