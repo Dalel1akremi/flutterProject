@@ -1,10 +1,12 @@
-// ignore_for_file: dead_code
+// ignore_for_file: dead_code, use_build_context_synchronously, avoid_print, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'NouveauPasswordPage.dart';
 
 class PasswordRecoveryPage extends StatefulWidget {
+  const PasswordRecoveryPage({super.key});
+
   @override
   _PasswordRecoveryPageState createState() => _PasswordRecoveryPageState();
 }
@@ -75,7 +77,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
       if (response.statusCode == 200) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => NouveauPasswordPage()),
+          MaterialPageRoute(builder: (context) => NouveauPasswordPage(email:email)),
         );
       } else {
         // Handle error - display an error message to the user
@@ -91,35 +93,35 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(222, 212, 133, 14),
-        title: Text('Mot de passe oubliée'),
+        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
+        title: const Text('Mot de passe oubliée'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: 16.0),
-            Text(
+            const SizedBox(height: 16.0),
+            const Text(
               'Pas d\'inquiétude, nous allons vous envoyer le code de validation à l\'adresse suivante :',
               style: TextStyle(fontSize: 16.0),
             ),
-            Text(
+            const Text(
               'Reinitialise mon mot de passe',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
               ),
             ),
-            SizedBox(height: 16.0),
-            Text(
+            const SizedBox(height: 16.0),
+            const Text(
               'E-mail',
               style: TextStyle(fontSize: 16.0),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextFormField(
               controller: emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Saisissez votre Email',
                 prefixIcon: Icon(Icons.email),
               ),
@@ -132,23 +134,23 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                 return null;
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: isEmailValid
                   ? () {
                       sendResetPasswordRequest();
                     }
                   : null,
-              child: const Text(
-                'je réinitialise mon mot de passe',
-                style: TextStyle(color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
                 backgroundColor: Colors.black,
               ),
+              child: const Text(
+                'je réinitialise mon mot de passe',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
               emailMessage,
               style: TextStyle(
@@ -156,26 +158,26 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                 fontSize: 16.0,
               ),
             ),
-            SizedBox(height: 16.0),
-            Text(
+            const SizedBox(height: 16.0),
+            const Text(
               'Merci de vérifier vos courriers indésirables après avoir cliqué sur *Je réinitialise mon mot de passe"',
               style: TextStyle(fontSize: 16.0),
             ),
-            Text(
+            const Text(
               'Reinitialise mon mot de passe',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
               ),
             ),
-            Text(
+            const Text(
               'Code',
               style: TextStyle(fontSize: 16.0),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextFormField(
               controller: validationCodeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'saissisez le Code de 6 chiffre ',
                 prefixIcon: Icon(Icons.lock),
               ),
@@ -188,18 +190,18 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                 return null;
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 validateCode();
               },
-              child: const Text(
-                'Valider le code ',
-                style: TextStyle(color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
                 backgroundColor: Colors.black,
+              ),
+              child: const Text(
+                'Valider le code ',
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],
@@ -210,7 +212,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: PasswordRecoveryPage(),
   ));
 }
