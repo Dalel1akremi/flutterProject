@@ -1,8 +1,12 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print, library_private_types_in_public_api
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Portefeuille extends StatefulWidget {
+  const Portefeuille({super.key});
+
   @override
   _PortefeuilleState createState() => _PortefeuilleState();
 }
@@ -18,7 +22,7 @@ class _PortefeuilleState extends State<Portefeuille> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: Text('Portfeuille payline'),
+        title: const Text('Portfeuille payline'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,31 +31,31 @@ class _PortefeuilleState extends State<Portefeuille> {
           children: [
            TextField(
   controller: cardNumberController,
-  decoration: InputDecoration(
+  decoration: const InputDecoration(
     labelText: 'Numéro de carte',
     prefixIcon: Icon(Icons.credit_card), // Icône de carte de crédit
   ),
 ),
 TextField(
   controller: expirationDateController,
-  decoration: InputDecoration(
+  decoration: const InputDecoration(
     labelText: 'Date d\'expiration (MM/YY)',
     prefixIcon: Icon(Icons.calendar_today), // Icône du calendrier
   ),
 ),
 TextField(
   controller: cvvController,
-  decoration: InputDecoration(
+  decoration: const InputDecoration(
     labelText: 'CVV',
     prefixIcon: Icon(Icons.lock), // Icône de verrou
   ),
 ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () async {
                 await sendPaymentRequest();
               },
-              child: Text('Enregistrer la carte'),
+              child: const Text('Enregistrer la carte'),
             ),
           ],
         ),
@@ -60,7 +64,7 @@ TextField(
   }
 
   Future<void> sendPaymentRequest() async {
-    final String apiUrl = 'http://localhost:3000/porfeuille';
+    const String apiUrl = 'http://localhost:3000/porfeuille';
 
     Map<String, dynamic> paymentData = {
       "cardNumber": cardNumberController.text,
@@ -88,7 +92,7 @@ TextField(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 ),
               ],
             );
@@ -104,14 +108,14 @@ TextField(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Erreur'),
-            content: Text('Erreur lors de la requête HTTP'),
+            title: const Text('Erreur'),
+            content: const Text('Erreur lors de la requête HTTP'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );

@@ -1,7 +1,8 @@
 // Import necessary packages
+// ignore_for_file: library_private_types_in_public_api, file_names
+
 import 'package:flutter/material.dart';
-import 'offers.dart';
-import 'acceuil.dart';
+
 
 class ReserverTableScreen extends StatefulWidget {
   const ReserverTableScreen({Key? key}) : super(key: key);
@@ -11,8 +12,7 @@ class ReserverTableScreen extends StatefulWidget {
 }
 
 class _ReserverTableScreenState extends State<ReserverTableScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 1; // Set the initial page index to 1
+// Set the initial page index to 1
 
   // Define your page titles
   final List<String> pageTitles = ['Discover', 'Reserve Table', 'Offers'];

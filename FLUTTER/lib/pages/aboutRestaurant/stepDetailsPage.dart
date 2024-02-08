@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 
 class StepDetailsPage extends StatelessWidget {
@@ -22,17 +24,17 @@ class StepDetailsPage extends StatelessWidget {
               width: 200, // Adjust the width as needed
               height: 150, // Adjust the height as needed
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               'Nom du menu: $nomMenu',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Retour'),
+              child: const Text('Retour'),
             ),
           ],
         ),

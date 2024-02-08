@@ -1,4 +1,5 @@
 
+// ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'acceuil.dart';
@@ -29,7 +30,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Choisissez l\'heure de livraison'),
-          content: Container(
+          content: SizedBox(
             height: 300,
             child: Column(
               children: [

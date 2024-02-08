@@ -1,4 +1,5 @@
-// ignore_for_file: avoid_print, sort_child_properties_last, body_might_complete_normally_nullable, library_private_types_in_public_api, use_key_in_widget_constructors
+
+// ignore_for_file: file_names, avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +11,7 @@ class NouveauPasswordPage extends StatefulWidget {
 
   const NouveauPasswordPage({Key? key, required this.email}) : super(key: key);
   @override
+  // ignore: library_private_types_in_public_api
   _NouveauPasswordPageState createState() => _NouveauPasswordPageState();
 }
 
@@ -19,6 +21,8 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
       TextEditingController();
 
   String? validatePassword(String value) {
+    return null;
+  
     // Password validation logic...
     // Return null if the password is valid, otherwise return an error message.
   }
@@ -61,7 +65,7 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
           // Navigate to the main page
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => MyApp()),
+            MaterialPageRoute(builder: (context) => const MyApp()),
           ); // Replace with your actual route
         } else {
           // Handle other API response statuses

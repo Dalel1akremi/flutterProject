@@ -1,4 +1,6 @@
 // ignore: file_names
+// ignore_for_file: avoid_print, file_names, duplicate_ignore
+
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

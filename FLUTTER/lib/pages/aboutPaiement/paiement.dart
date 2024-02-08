@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -26,8 +28,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   String paymentMethod = 'pm_card_visa';
 
   Future<void> processPayment() async {
-    final String apiUrl =
-        'http://localhost:3000/'; // Remplacez par l'URL de votre serveur
+    const String apiUrl = 'http://localhost:3000/'; // Remplacez par l'URL de votre serveur
 
     try {
       final response = await http.post(
@@ -81,7 +82,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               // Appeler la fonction de traitement du paiement
               processPayment();
             },
-            child: Text('Process Payment'),
+            child: const Text('Process Payment'),
           ),
         ], // Correction de la balise < ici
       ),
