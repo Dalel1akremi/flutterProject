@@ -86,7 +86,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
     }
   }
 
-   void initState() {
+   @override
+     void initState() {
     super.initState();
     email = widget.email;
     getUserData();

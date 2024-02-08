@@ -1,8 +1,7 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print, library_private_types_in_public_api
+// ignore_for_file: use_build_context_synchronously, avoid_print, library_private_types_in_public_api, camel_case_types
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'registre.dart';
 import 'PasswordRecoveryPage.dart';
@@ -177,7 +176,7 @@ class _loginPageState extends State<loginPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PasswordRecoveryPage(),
+                        builder: (context) => const PasswordRecoveryPage(),
                       ),
                     );
                   },

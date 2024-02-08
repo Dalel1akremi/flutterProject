@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ReserverTable.dart';
-import 'acceuil.dart';
+
 
 class OffersScreen extends StatelessWidget {
   const OffersScreen({Key? key}) : super(key: key);

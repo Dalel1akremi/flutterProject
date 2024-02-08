@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'login.dart';
 import './../aboutPaiement/porfeuille.dart';
@@ -8,10 +10,12 @@ import './../aboutRestaurant/acceuil.dart';
 import './../aboutRestaurant/commande.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -50,16 +54,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     // Vérifier si l'email est récupéré avant de construire l'interface utilisateur
-    if (userEmail == null) {
-      return MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    }
-
     return MaterialApp(
       home: ProfilePage(email: userEmail, nom: nom),
     );
@@ -96,11 +90,11 @@ class ProfilePage extends StatelessWidget {
               },
               child: Row(
                 children: [
-                  Icon(Icons.person),
-                  SizedBox(width: 15),
+                  const Icon(Icons.person),
+                  const SizedBox(width: 15),
                   Expanded(
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
                             color: Colors.black,
@@ -108,8 +102,8 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
                         child: Text(
                           'Profil',
                           style: TextStyle(
@@ -122,23 +116,23 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             InkWell(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddressPage(),
+                    builder: (context) => const AddressPage(),
                   ),
                 );
               },
               child: Row(
                 children: [
-                  Icon(Icons.location_on),
-                  SizedBox(width: 15),
+                  const Icon(Icons.location_on),
+                  const SizedBox(width: 15),
                   Expanded(
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
                             color: Colors.black,
@@ -146,8 +140,8 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
                         child: Text(
                           'Adresse',
                           style: TextStyle(
@@ -160,23 +154,23 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             InkWell(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Portefeuille(),
+                    builder: (context) => const Portefeuille(),
                   ),
                 );
               },
               child: Row(
                 children: [
-                  Icon(Icons.credit_card),
-                  SizedBox(width: 15),
+                  const Icon(Icons.credit_card),
+                  const SizedBox(width: 15),
                   Expanded(
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
                             color: Colors.black,
@@ -184,8 +178,8 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
                         child: Text(
                           'Moyens de Paiement',
                           style: TextStyle(
@@ -198,23 +192,23 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             InkWell(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => loginPage(),
+                    builder: (context) => const loginPage(),
                   ),
                 );
               },
               child: Row(
                 children: [
-                  Icon(Icons.exit_to_app),
-                  SizedBox(width: 15),
+                  const Icon(Icons.exit_to_app),
+                  const SizedBox(width: 15),
                   Expanded(
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
                             color: Colors.black,
@@ -222,8 +216,8 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
                         child: Text(
                           'Déconnexion',
                           style: TextStyle(
@@ -280,11 +274,13 @@ class ProfilePage extends StatelessWidget {
 }
 
 class AddressPage extends StatelessWidget {
+  const AddressPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Adresse'),
+        title: const Text('Adresse'),
       ),
     );
   }

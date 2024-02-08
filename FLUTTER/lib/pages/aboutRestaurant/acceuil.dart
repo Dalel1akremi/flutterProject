@@ -23,8 +23,10 @@ class AcceuilApp extends StatelessWidget {
 }
 
 class AcceuilScreen extends StatelessWidget {
-  const AcceuilScreen({Key? key});
+  const AcceuilScreen({super.key});
 
+ 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +63,7 @@ class AcceuilScreen extends StatelessWidget {
               },
             ),
           ),
-          Expanded(
+          const Expanded(
             child: RestaurantList(),
           ),
         ],
@@ -119,14 +121,16 @@ class Restaurant {
 }
 
 class RestaurantList extends StatelessWidget {
+  const RestaurantList({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final List<Restaurant> _restaurants = [
+    final List<Restaurant> restaurants = [
       Restaurant("MELTING POT", "43 Avenue du Général de Gaulle 93170 Bagnolet", ""),
     ];
 
     return ListView.builder(
-      itemCount: _restaurants.length,
+      itemCount: restaurants.length,
       itemBuilder: (context, index) {
         return Column(
           children: [
@@ -137,7 +141,7 @@ class RestaurantList extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        RestaurantDetail(restaurant: _restaurants[index]),
+                        RestaurantDetail(restaurant: restaurants[index]),
                   ),
                 );
               },
@@ -150,16 +154,16 @@ class RestaurantList extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
                 title: Text(
-                  _restaurants[index].name,
-                  style: TextStyle(
+                  restaurants[index].name,
+                  style: const TextStyle(
                     decoration: TextDecoration.underline, // Add underline
                   ),
                 ),
-                subtitle: Text(_restaurants[index].address),
-                trailing: Text(_restaurants[index].status),
+                subtitle: Text(restaurants[index].address),
+                trailing: Text(restaurants[index].status),
               ),
             ),
-            Divider(
+            const Divider(
               color: Colors.black,
               thickness: 1, // Adjust the thickness as needed
             ),
