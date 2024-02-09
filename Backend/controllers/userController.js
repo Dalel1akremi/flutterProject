@@ -3,8 +3,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 const  nodemailer = require("nodemailer");
-const  crypto= require("crypto");
 
+const  crypto= require("crypto");
+const GeocodedAd=require ('../models/AdresseModel');
+const axios = require('axios');
 const registerUser = async (req, res) => {
   const { nom, prenom, telephone, email, password, confirmPassword } = req.body;
 
@@ -284,6 +286,49 @@ const updateUser = async (req, res) => {
   }
 };
 
+
+const searchAddress = async (req, res) => {
+  const { country, city, street, streetNumber } = req.body;
+  const { _id } = req.query; // Assurez-vous que votre ID utilisateur est dans les en-têtes
+
+  if (!_id) {
+    return res.status(400).json({ message: 'L\'ID utilisateur est manquant dans les en-têtes.' });
+  }
+
+  const searchQuery = `${streetNumber} ${street}, ${city}, ${country}`;
+
+  try {
+    // Effectuez une requête à Nominatim
+    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+      params: {
+        q: searchQuery,
+        format: 'json',
+      },
+    });
+
+    if (response.data.length > 0) {
+      // Enregistrez les résultats de géocodage dans la base de données
+      const geocodedAddress = new GeocodedAd({
+        _id: _id,  // Utilisez l'ID automatique de MongoDB tel quel
+        country,
+        city,
+        street,
+        streetNumber,
+        geocodedResults: response.data,
+      });
+
+      await geocodedAddress.save();
+
+      res.json({ message: 'Résultats de géocodage enregistrés :', results: response.data });
+    } else {
+      res.json({ message: 'Aucun résultat de géocodage trouvé.' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Erreur lors du géocodage de l\'adresse.');
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -292,4 +337,6 @@ module.exports = {
   new_password,
   getUser,
   updateUser,
+  searchAddress,
+
 };
