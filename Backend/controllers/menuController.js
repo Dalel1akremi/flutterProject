@@ -14,17 +14,20 @@ exports.createMenu = async (req, res) => {
       quantite,
       max_quantite,
       is_Menu,
-      nom_cat,
+      is_Redirect,
+      id_cat,
       id,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
 
     // Validate data types
     const validatedPrix = parseFloat(prix);
-    const validatedIsArchived = Boolean(isArchived);
+    const validatedIsArchived = isArchived==='true';
     const validatedQuantite = parseInt(quantite);
     const validatedMaxQuantite = parseInt(max_quantite);
-    const validatedIsMenu = Boolean(is_Menu);
+    const validatedIsMenu = is_Menu === 'true';
+    const validatedIsRedirect=is_Redirect==='true';
+    
 
     // Check if validation fails
     if (isNaN(validatedPrix)) {
@@ -65,7 +68,8 @@ exports.createMenu = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-      nom_cat,
+      is_Redirect:validatedIsRedirect,
+      id_cat,
       id,  // Log the id field
     });
     const newMenu = new Menu({
@@ -77,7 +81,8 @@ exports.createMenu = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-      nom_cat,
+      is_Redirect:validatedIsRedirect,
+      id_cat,
       id,
       image: imageUrl,
     });
@@ -85,14 +90,14 @@ exports.createMenu = async (req, res) => {
     const savedMenu = await newMenu.save();
     res.json({
       status: 200,
-      message: 'Menu item created successfully',
+      message: 'Menu crée avec succée ',
       data: savedMenu,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: 'Error creating menu item',
+      message: 'Erreur lors de la création de menu ',
       error: error.message,
     });
   }
@@ -100,28 +105,21 @@ exports.createMenu = async (req, res) => {
 
 
 
+const sendResponse = (res, statusCode, message, data = null, errorMessage = null) => {
+  res.status(statusCode).json({ status: statusCode, message, data, error: errorMessage });
+};
+
 exports.getMenu = async (req, res) => {
   try {
-    const { nom_cat } = req.query;
+    const { id_cat } = req.query;
 
     // Fetch menus based on the provided type
-    const menus = await Menu.find({ nom_cat });
+    const menus = await Menu.find({ id_cat });
 
     if (menus.length === 0) {
-      
-      res.json({
-        status: 404,
-        message: 'Aucun menu trouvé pour ce type',
-        
-      });
+      sendResponse(res, 404, 'Aucun menu trouvé pour ce type');
     } else {
-      
-      res.json({
-        status: 200,
-        message: 'Menus récupérés avec succès',
-        data:menus
-        
-      });
+      sendResponse(res, 200, 'Menus récupérés avec succès', menus);
     }
   } catch (error) {
     console.error(error);
