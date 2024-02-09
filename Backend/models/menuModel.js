@@ -8,14 +8,18 @@ nom: { type: String, unique: true },
   type: String,
   prix: Number,
   description: String,
-  isArchived: Boolean,
+  isArchived:{ type: Boolean, validate: [isValidBoolean, 'isArchived must be true or false'] },
   image: String,
   quantite: Number,
   max_quantite: Number,
-  is_Menu: Boolean,
-  nom_cat: { type: String, ref: 'Categories' },
+  is_Menu:  { type: Boolean, validate: [isValidBoolean, 'is_Menu must be true or false'] },
+  is_Redirect: { type: Boolean, validate: [isValidBoolean, 'is_Redirect must be true or false'] },
+  id_cat: { type:Number, ref: 'Categories' },
   id: { type: Schema.Types.ObjectId, ref: 'CompositionDeBase' },
 });
+function isValidBoolean(value) {
+  return typeof value === 'boolean';
+}
 menuSchema.pre('save', async function (next) {
                     try {
                       if (!this.id_menu) {
