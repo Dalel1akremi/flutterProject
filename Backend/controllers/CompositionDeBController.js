@@ -1,4 +1,4 @@
-const Composition = require('../models/CompositionDeBase');
+const Composition = require('../models/CompositionModel');
 
 const insererComposition = async (req, res) => {
     const { nom, image } = req.body;

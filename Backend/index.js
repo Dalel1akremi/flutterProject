@@ -54,6 +54,8 @@ app.post('/login', userController.loginUser);
 app.get('/', viewController.renderIndex);
 app.get('/getUser', userController.getUser);
 app.put('/updateUser', userController.updateUser);
+app.get('/searchAddress', userController.searchAddress);
+
 app.post('/reset_password', userController.reset_password);
 app.post('/validate_code',userController.validate_code);
 app.post('/new_password',userController.new_password);
