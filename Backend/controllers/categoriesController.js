@@ -2,26 +2,50 @@ const Categories = require('../models/categoriesModel');
 exports.createCategorie = async (req, res) => {
                     try {
                       const { nom_cat, type_cat } = req.body;
+                      const existingCategorie = await Categories.findOne({ nom_cat });
+
+                      if (existingCategorie) {
+                        
+                        res.json({
+                          status: 400,
+                          message: 'Ce menu existe déjà'
+                        });
+                        return;
+                      }
+                      const newCategorie = new Categories({
+                        nom_cat,
+                        type_cat,
+                        
+                      });
                   
-                      // Création d'une nouvelle catégorie
-                      const nouvelleCategorie = new Categories({ nom_cat, type_cat });
+                      const savedCategorie = await newCategorie.save();
+    res.json({
+      status: 200,
+      message: 'Ma categorie a ete cree avec succees ',
+      data: savedCategorie,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Erreur lors de la creation de categorie',
+      error: error.message,
+    });
+  }
+};
                   
-                      // Enregistrement de la catégorie dans la base de données
-                      await nouvelleCategorie.save();
-                  
-                      res.status(201).json({ message: 'Catégorie créée avec succès',data:nouvelleCategorie,status:res.statusCode });
-                    } catch (error) {
-                      console.error(error);
-                      res.status(500).json({ message: 'Erreur lors de la création de la catégorie' });
-                    }
-                  };
-                  exports.getCategories = async (req, res) => {
-                    try {
-                      // Récupération de toutes les catégories depuis la base de données
-                      const categories = await Categories.find({}, 'nom_cat type_cat');
-                      res.status(200).json({message:"succée de recuperation des categories",data:categories,status:res.statusCode});
-                    } catch (error) {
-                      console.error(error);
-                      res.status(500).json({ message: 'Erreur lors de la récupération des catégories' });
-                    }
-                  };
+const sendResponse = (res, statusCode, message, data = null) => {
+  res.status(statusCode).json({ message, data, status: statusCode });
+};
+
+exports.getCategories = async (req, res) => {
+  try {
+    // Récupération de toutes les catégories depuis la base de données
+    const categories = await Categories.find({}, 'nom_cat type_cat id_cat');
+    sendResponse(res, 200, "Succès de récupération des catégories", categories);
+  } catch (error) {
+    console.error(error);
+    sendResponse(res, 500, "Erreur lors de la récupération des catégories");
+  }
+};
+

@@ -14,9 +14,9 @@ exports.createItem = async (req, res) => {
       quantite,
       max_quantite,
       is_Menu,
-      nom_cat,
+      id_cat,
       id,
-      nom,
+      id_menu,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
     // Validate data types
@@ -50,7 +50,7 @@ exports.createItem = async (req, res) => {
       return;
     }
 
-    const existingItem = await Items.findOne({ nom });
+    const existingItem = await Items.findOne({nom_item });
 
     if (existingItem) {
       
@@ -69,9 +69,9 @@ exports.createItem = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-      nom_cat,
+      id_cat,
       id,
-      nom,  // Log the id field
+      id_menu,  // Log the id field
     });
     const newItem = new Items({
       nom_item,
@@ -82,9 +82,9 @@ exports.createItem = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-      nom_cat,
+      id_cat,
       id,
-      nom, 
+      id_menu, 
       image: imageUrl,
     });
 
@@ -106,10 +106,10 @@ exports.createItem = async (req, res) => {
 
 exports.getItem = async (req, res) => {
   try {
-    const { nom } = req.query;
+    const { id_menu } = req.query;
 
     // Fetch menus based on the provided type
-    const Item = await Items.find({ nom });
+    const Item = await Items.find({ id_menu });
 
     if (Item.length === 0) {
       
