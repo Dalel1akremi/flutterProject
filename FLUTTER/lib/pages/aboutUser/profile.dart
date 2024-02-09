@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import './../aboutRestaurant/acceuil.dart';
 import './../aboutRestaurant/commande.dart';
+import 'adresse.dart';
 
 void main() {
   runApp(const MyApp());
@@ -268,19 +269,6 @@ class ProfilePage extends StatelessWidget {
             );
           }
         },
-      ),
-    );
-  }
-}
-
-class AddressPage extends StatelessWidget {
-  const AddressPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Adresse'),
       ),
     );
   }
