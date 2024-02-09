@@ -1,5 +1,4 @@
-// ignore_for_file: file_names
-
+// ignore: file_names
 import 'package:flutter/material.dart';
 
 class StepDetailsPage extends StatelessWidget {
@@ -20,22 +19,106 @@ class StepDetailsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.network(
-              img,
-              width: 200, // Adjust the width as needed
-              height: 150, // Adjust the height as needed
+              widget.img,
+              width: 300,
+              height: 250,
             ),
             const SizedBox(height: 20),
-            Text(
-              'Nom du menu: $nomMenu',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Remarque: ",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      width: 300,
+                      height: 100,
+                      child: Card(
+                        elevation: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: TextField(
+                            controller: _remarkController,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Entrez une remarque',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Retour'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _value = _value > 0 ? _value - 1 : 0;
+                    });
+                  },
+                  icon: const Icon(Icons.remove),
+                  iconSize: 30,
+                ),
+                Text(
+                  '$_value',
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _value++;
+                    });
+                  },
+                  icon: const Icon(Icons.add),
+                  iconSize: 30,
+                ),
+              ],
             ),
+           SizedBox(
+  width: 1000,
+  height: 50,
+  child: ElevatedButton(
+    onPressed: () {
+      Navigator.pop(context);
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.green, // Change background color as needed
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Vous avez ajouté $_value article${_value != 1 ? 's' : ''}',
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        Text(
+          'Prix total: $totalPrice',
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
           ],
         ),
       ),
