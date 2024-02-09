@@ -40,18 +40,15 @@ class _NextPageState extends State<NextPage> {
 
   Future<void> fetchCategories() async {
     try {
-      final response =
-          await http.get(Uri.parse('http://localhost:3000/getCategories'));
+      final response = await http.get(Uri.parse('http://localhost:3000/getCategories'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body)['data'];
         setState(() {
-          _categories =
-              responseData.map((json) => Category.fromJson(json)).toList();
+          _categories = responseData.map((json) => Category.fromJson(json)).toList();
         });
       } else {
-        throw Exception(
-            'Failed to fetch categories. Status code: ${response.statusCode}');
+        throw Exception('Failed to fetch categories. Status code: ${response.statusCode}');
       }
     } catch (error) {
       if (kDebugMode) {
@@ -61,6 +58,7 @@ class _NextPageState extends State<NextPage> {
   }
 
   Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
+<<<<<<< HEAD
     try {
       final response = await http
           .get(Uri.parse('http://localhost:3000/getMenu?id_cat=$idCat'));
@@ -87,6 +85,33 @@ class _NextPageState extends State<NextPage> {
       return [];
     }
   }
+=======
+  try {
+    final response = await http.get(Uri.parse('http://localhost:3000/getMenu?id_cat=$idCat'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic>? responseData = json.decode(response.body)['data'];
+
+      if (responseData != null) {
+        return responseData.cast<Map<String, dynamic>>();
+      } else {
+        if (kDebugMode) {
+          print('Error fetching menu: Response data is null');
+        }
+        return [];
+      }
+    } else {
+      throw Exception('Failed to fetch menu. Status code: ${response.statusCode}');
+    }
+  } catch (error) {
+    if (kDebugMode) {
+      print('Error fetching menu: $error');
+    }
+    return [];
+  }
+}
+
+>>>>>>> 6dddd11 (feat:fix `category`,`item` and `step` dart pages)
 
   @override
   Widget build(BuildContext context) {
@@ -110,26 +135,19 @@ class _NextPageState extends State<NextPage> {
                     });
                   },
                   child: Container(
-                    width:
-                        MediaQuery.of(context).size.width / _categories.length,
+                    width: MediaQuery.of(context).size.width / _categories.length,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    color: _selectedCategoryIndex == index
-                        ? Colors.grey[200]
-                        : Colors.white,
+                    color: _selectedCategoryIndex == index ? Colors.grey[200] : Colors.white,
                     child: Center(
                       child: Row(
                         children: [
                           Icon(Icons.restaurant_menu,
-                              color: _selectedCategoryIndex == index
-                                  ? Colors.purple
-                                  : Colors.black),
+                              color: _selectedCategoryIndex == index ? Colors.purple : Colors.black),
                           const SizedBox(width: 8),
                           Text(
                             _categories[index].nomCat,
                             style: TextStyle(
-                              color: _selectedCategoryIndex == index
-                                  ? Colors.purple
-                                  : Colors.black,
+                              color: _selectedCategoryIndex == index ? Colors.purple : Colors.black,
                             ),
                           ),
                         ],
@@ -191,6 +209,7 @@ class _NextPageState extends State<NextPage> {
             children: snapshot.data!.map<Widget>((menuItem) {
               return GestureDetector(
                 onTap: () {
+<<<<<<< HEAD
                   if (menuItem['is_Redirect'] == true) {
                     Navigator.push(
                       context,
@@ -215,6 +234,14 @@ class _NextPageState extends State<NextPage> {
                       ),
                     );
                   }
+=======
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ItemDetailsPage(idMenu: menuItem['id_menu'],nomMenu:menuItem['nom']),
+                    ),
+                  );
+>>>>>>> 6dddd11 (feat:fix `category`,`item` and `step` dart pages)
                 },
                 child: Container(
                   padding: const EdgeInsets.all(16),
@@ -254,6 +281,7 @@ class _NextPageState extends State<NextPage> {
                               ),
                             ),
                             const SizedBox(height: 8),
+<<<<<<< HEAD
                             // Check if is_Redirect is true, if true, do not display price
                             if (!(menuItem['is_Redirect'] == true))
                               Text(
@@ -263,6 +291,15 @@ class _NextPageState extends State<NextPage> {
                                   fontSize: 16,
                                 ),
                               ),
+=======
+                            Text(
+                              'Prix: ${menuItem['prix']}£',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+>>>>>>> 6dddd11 (feat:fix `category`,`item` and `step` dart pages)
                           ],
                         ),
                       ),
@@ -290,10 +327,15 @@ class Category {
   factory Category.fromJson(Map<String, dynamic> json) {
     final int? categoryId = json['id_cat'] as int?;
     final String? categoryNomCat = json['nom_cat'] as String?;
+<<<<<<< HEAD
 
     if (categoryId != null &&
         categoryNomCat != null &&
         categoryNomCat.isNotEmpty) {
+=======
+    
+    if (categoryId != null && categoryNomCat != null && categoryNomCat.isNotEmpty) {
+>>>>>>> 6dddd11 (feat:fix `category`,`item` and `step` dart pages)
       return Category(idCat: categoryId, nomCat: categoryNomCat);
     } else {
       print("Warning: 'id_cat' or 'nom_cat' is null or empty in JSON data");

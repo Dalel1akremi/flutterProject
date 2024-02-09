@@ -92,7 +92,11 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
+<<<<<<< HEAD
                       _value = _value > 1 ? _value - 1 : 1;
+=======
+                      _value = _value > 0 ? _value - 1 : 0;
+>>>>>>> 6dddd11 (feat:fix `category`,`item` and `step` dart pages)
                     });
                   },
                   icon: const Icon(Icons.remove),
