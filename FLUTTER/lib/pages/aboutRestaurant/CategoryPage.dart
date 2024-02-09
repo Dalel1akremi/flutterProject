@@ -1,4 +1,3 @@
-// ignore: file_names
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,15 +19,15 @@ class NextPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _NextPageState createState() => _NextPageState();
 }
 
 class _NextPageState extends State<NextPage> {
   List<Category> _categories = [];
   int _selectedCategoryIndex = 0;
- TimeOfDay selectedTime = TimeOfDay.now(); 
   String selectedRetraitMode = '';
+  TimeOfDay selectedTime = TimeOfDay.now();
+
   @override
   void initState() {
     super.initState();
@@ -37,18 +36,15 @@ class _NextPageState extends State<NextPage> {
 
   Future<void> fetchCategories() async {
     try {
-      final response =
-          await http.get(Uri.parse('http://localhost:3000/getCategories'));
+      final response = await http.get(Uri.parse('http://localhost:3000/getCategories'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body)['data'];
         setState(() {
-          _categories =
-              responseData.map((json) => Category.fromJson(json)).toList();
+          _categories = responseData.map((json) => Category.fromJson(json)).toList();
         });
       } else {
-        throw Exception(
-            'Failed to fetch categories. Status code: ${response.statusCode}');
+        throw Exception('Failed to fetch categories. Status code: ${response.statusCode}');
       }
     } catch (error) {
       if (kDebugMode) {
@@ -57,136 +53,32 @@ class _NextPageState extends State<NextPage> {
     }
   }
 
- Widget _buildMenuForCategory(Category category) {
-  if (_categories.isNotEmpty &&
-      _selectedCategoryIndex >= 0 &&
-      _selectedCategoryIndex < _categories.length) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: fetchMenu(category.nomCat),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error loading menu: ${snapshot.error}');
-        } else {
-          return Column(
-            children: snapshot.data!.map((menuItem) {
-              return GestureDetector(
-                onTap: () {
-                  // Handle link press, e.g., navigate to a details page
-                   Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ItemDetailsPage(nomMenu: menuItem['nom'])
-          ),
-        );
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Left side: Image
-                      Image.network(
-                        menuItem['image'],
-                        width: 150, // Adjust the width as needed
-                        height: 100, // Adjust the height as needed
-                      ),
-                      const SizedBox(width: 16), // Adjust the spacing as needed
-                      // Right side: Name and Price
-                      Expanded(
-  child: Padding(
-    padding: const EdgeInsets.only(left: 20), // Adjust the left padding as needed
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Name
-        Text(
-          '${menuItem['nom']}',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20, // Change the font size as needed
-          ),
-        ),
-        const SizedBox(height: 8),
-        // Description
-        Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: Text(
-            '${menuItem['description']}',
-            style: const TextStyle(
-              fontWeight: FontWeight.normal,
-              fontSize: 16, // Change the font size as needed
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        // Price
-        Padding(
-          padding: const EdgeInsets.only(left: 950), // Adjust the left padding as needed
-          child: Text(
-            'Prix: ${menuItem['prix']}£',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16, // Change the font size as needed
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-),
+  Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
+  try {
+    final response = await http.get(Uri.parse('http://localhost:3000/getMenu?id_cat=$idCat'));
 
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          );
+    if (response.statusCode == 200) {
+      final List<dynamic>? responseData = json.decode(response.body)['data'];
+
+      if (responseData != null) {
+        return responseData.cast<Map<String, dynamic>>();
+      } else {
+        if (kDebugMode) {
+          print('Error fetching menu: Response data is null');
         }
-      },
-    );
-  } else {
-    return const Center(
-      child: Text('No categories available or invalid index.'),
-    );
+        return [];
+      }
+    } else {
+      throw Exception('Failed to fetch menu. Status code: ${response.statusCode}');
+    }
+  } catch (error) {
+    if (kDebugMode) {
+      print('Error fetching menu: $error');
+    }
+    return [];
   }
 }
 
-
-  Future<List<Map<String, dynamic>>> fetchMenu(String nomCat) async {
-    try {
-      final response = await http.get(
-        Uri.parse('http://localhost:3000/getMenu?nom_cat=$nomCat'),
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic>? responseData = json.decode(response.body)['data'];
-
-        if (responseData != null) {
-          return responseData.cast<Map<String, dynamic>>();
-        } else {
-          if (kDebugMode) {
-            print('Error fetching menu: Response data is null');
-          }
-          return [];
-        }
-      } else {
-        throw Exception(
-            'Failed to fetch menu. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      if (kDebugMode) {
-        print('Error fetching menu: $error');
-      }
-      return [];
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +89,6 @@ class _NextPageState extends State<NextPage> {
       ),
       body: Column(
         children: [
-         
           SizedBox(
             height: 56,
             child: ListView.builder(
@@ -211,26 +102,19 @@ class _NextPageState extends State<NextPage> {
                     });
                   },
                   child: Container(
-                    width:
-                        MediaQuery.of(context).size.width / _categories.length,
+                    width: MediaQuery.of(context).size.width / _categories.length,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    color: _selectedCategoryIndex == index
-                        ? Colors.grey[200]
-                        : Colors.white,
+                    color: _selectedCategoryIndex == index ? Colors.grey[200] : Colors.white,
                     child: Center(
                       child: Row(
                         children: [
                           Icon(Icons.restaurant_menu,
-                              color: _selectedCategoryIndex == index
-                                  ? Colors.purple
-                                  : Colors.black),
+                              color: _selectedCategoryIndex == index ? Colors.purple : Colors.black),
                           const SizedBox(width: 8),
                           Text(
                             _categories[index].nomCat,
                             style: TextStyle(
-                              color: _selectedCategoryIndex == index
-                                  ? Colors.purple
-                                  : Colors.black,
+                              color: _selectedCategoryIndex == index ? Colors.purple : Colors.black,
                             ),
                           ),
                         ],
@@ -245,7 +129,7 @@ class _NextPageState extends State<NextPage> {
             child: Center(
               child: _buildMenuForCategory(_categories.isNotEmpty
                   ? _categories[_selectedCategoryIndex]
-                  : Category(nomCat: '')),
+                  : Category(idCat: 1, nomCat: '')),
             ),
           ),
           // Ajout du bouton de paiement
@@ -264,36 +148,119 @@ class _NextPageState extends State<NextPage> {
                   ),
                 );
               },
-            
-            
-            style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.blueGrey[200],
-                ),
-                child: const Text(
-                  'paiement',
-                  style: TextStyle(color: Colors.white),
-                ),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: Colors.blueGrey[200],
               ),
+              child: const Text(
+                'Paiement',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildMenuForCategory(Category category) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: fetchMenu(category.idCat), // Fetch menu for selected category
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error loading menu: ${snapshot.error}');
+        } else {
+          return ListView(
+            children: snapshot.data!.map<Widget>((menuItem) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ItemDetailsPage(idMenu: menuItem['id_menu'],nomMenu:menuItem['nom']),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Left side: Image
+                      Image.network(
+                        menuItem['image'],
+                        width: 150,
+                        height: 100,
+                      ),
+                      const SizedBox(width: 16),
+                      // Right side: Name, Description, and Price
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${menuItem['nom']}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${menuItem['description']}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Prix: ${menuItem['prix']}£',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        }
+      },
+    );
+  }
 }
 
 class Category {
+  final int idCat;
   final String nomCat;
 
-  Category({required this.nomCat});
+  Category({
+    required this.idCat,
+    required this.nomCat,
+  });
 
   factory Category.fromJson(Map<String, dynamic> json) {
+    final int? categoryId = json['id_cat'] as int?;
     final String? categoryNomCat = json['nom_cat'] as String?;
-    if (categoryNomCat != null && categoryNomCat.isNotEmpty) {
-      return Category(nomCat: categoryNomCat);
+    
+    if (categoryId != null && categoryNomCat != null && categoryNomCat.isNotEmpty) {
+      return Category(idCat: categoryId, nomCat: categoryNomCat);
     } else {
-      print("Warning: 'nom_cat' is null or empty in JSON data");
-      return Category(nomCat: 'Default Category');
+      print("Warning: 'id_cat' or 'nom_cat' is null or empty in JSON data");
+      return Category(idCat: 0, nomCat: 'Default Category');
     }
   }
 }
