@@ -1,24 +1,26 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 
-class StepDetailsPage extends StatelessWidget {
-  final String nomMenu;
+class StepMenuPage extends StatefulWidget {
+  final int idMenu;
   final String img;
+  final String nomMenu;
+  final int prix;
 
-  const StepDetailsPage({
+  const StepMenuPage({
     Key? key,
-    required this.idItem,
-    required this.nomItem,
+    required this.idMenu,
+    required this.nomMenu,
     required this.img,
     required this.prix,
   }) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _StepDetailsPageState createState() => _StepDetailsPageState();
+  _StepMenuPageState createState() => _StepMenuPageState();
 }
 
-class _StepDetailsPageState extends State<StepDetailsPage> {
+class _StepMenuPageState extends State<StepMenuPage> {
   int _value = 1; // State for the value
   final TextEditingController _remarkController = TextEditingController();
  @override
@@ -34,9 +36,12 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    int totalPrice = _value * widget.prix;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Détails de l\'étape'),
+        title: Text(widget.nomMenu),
+        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
       ),
       body: Center(
         child: Column(
@@ -87,7 +92,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      _value = _value > 1 ? _value - 1 : 1;
+                     _value = _value > 1 ? _value - 1 : 1; // Valeur minimale est 1
                     });
                   },
                   icon: const Icon(Icons.remove),
@@ -109,40 +114,40 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                 ),
               ],
             ),
-           SizedBox(
-  width: 1000,
-  height: 50,
-  child: ElevatedButton(
-    onPressed: () {
-      Navigator.pop(context);
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.green, // Change background color as needed
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Vous avez ajouté $_value article${_value != 1 ? 's' : ''}',
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        Text(
-          'Prix total: $totalPrice',
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ],
-    ),
-  ),
-),
-
+            SizedBox(
+              width: 1000,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Colors.green, // Change background color as needed
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Vous avez ajouté $_value article au panier${_value != 1 ? 's' : ''}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      'Prix total: $totalPrice',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
