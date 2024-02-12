@@ -21,45 +21,86 @@ class PaymentScreen extends StatefulWidget {
   _PaymentScreenState createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
-  // Remplacez ces valeurs par les informations de paiement réelles
-  double amount = 100.0;
-  String currency = 'usd';
-  String paymentMethod = 'pm_card_visa';
 
-  Future<void> processPayment() async {
-    const String apiUrl = 'http://localhost:3000/'; // Remplacez par l'URL de votre serveur
+class _PaymentScreenState extends State<PaymentScreen> {
+  double montantAPayer = 0.0; // Initialisez le montant à payer
+
+  @override
+  void initState() {
+    super.initState();
+    // Appelez une fonction pour récupérer le montant du panier
+    getMontantPanier();
+  }
+
+  Future<void> getMontantPanier() async {
+    const String apiUrl = 'http://localhost:3000/recupererMontantPanier'; // Mettez à jour l'URL de l'API
 
     try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
+      final response = await http.get(
+        Uri.parse('$apiUrl?email=${widget.email}'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'amount': amount,
-          'currency': currency,
-          'paymentMethod': paymentMethod,
-        }),
       );
 
       if (response.statusCode == 200) {
-        // Le paiement a été traité avec succès
         final Map<String, dynamic> responseData = jsonDecode(response.body);
+
         if (responseData['success'] == true) {
-          // Gérer le succès du paiement
-          print('Paiement réussi');
+          setState(() {
+            // Mettez à jour le montant à payer avec la valeur du panier
+            montantAPayer = responseData['montantPanier'];
+          });
         } else {
-          // Gérer l'échec du paiement
-          print('Erreur lors du paiement');
+          print('Erreur lors de la récupération du montant du panier: ${responseData['message']}');
         }
       } else {
-        // Gérer les erreurs de requête vers le serveur
         print('Erreur lors de la requête au serveur: ${response.reasonPhrase}');
       }
     } catch (error) {
-      // Gérer les erreurs d'exception
       print('Erreur inattendue: $error');
     }
   }
+
+  Future<void> processPayment() async {
+    const String apiUrl = 'http://localhost:3000/recupererCarte'; // Mettez à jour l'URL de l'API
+
+    try {
+      final response = await http.get(
+        Uri.parse('$apiUrl?email=${widget.email}'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+        if (responseData['success'] == true) {
+          // Le paiement a été traité avec succès
+          final paymentResponse = await http.post(
+            Uri.parse('http://localhost:3000/effecuterPaiement'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'montant': montantAPayer, // Utilisez le montant du panier récupéré
+              'carte': responseData['carte'], // Utilisez le détail de la carte récupérée
+            }),
+          );
+
+          final paymentData = jsonDecode(paymentResponse.body);
+
+          if (paymentData['success'] == true) {
+            print('Paiement réussi');
+          } else {
+            print('Erreur lors du paiement: ${paymentData['message']}');
+          }
+        } else {
+          print('Erreur lors de la récupération de la carte: ${responseData['message']}');
+        }
+      } else {
+        print('Erreur lors de la requête au serveur: ${response.reasonPhrase}');
+      }
+    } catch (error) {
+      print('Erreur inattendue: $error');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +123,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               // Appeler la fonction de traitement du paiement
               processPayment();
             },
-            child: const Text('Process Payment'),
+            child: const Text('Valider la commande'),
           ),
         ], // Correction de la balise < ici
       ),
