@@ -6,6 +6,9 @@ const gateway = new braintree.BraintreeGateway({
   merchantId: 'njxddktr78b76t3z',
   publicKey: 'rqyt73bwxp7wsv9y',
   privateKey: '36aab07db19d6ca6b8f74c0fa75867be',
+  merchantId: 'njxddktr78b76t3z',
+  publicKey: 'rqyt73bwxp7wsv9y',
+  privateKey: '36aab07db19d6ca6b8f74c0fa75867be',
 });
 
 const porfeuille = async (req, res) => {
@@ -23,6 +26,7 @@ const porfeuille = async (req, res) => {
 
     // Création d'un token Braintree pour la carte
     const carteBraintree = await gateway.paymentMethod.create({
+      customerId: '87802661003', // Remplacez par l'ID de votre client dans Braintree
       customerId: '87802661003', // Remplacez par l'ID de votre client dans Braintree
       paymentMethodNonce: 'fake-valid-nonce', // Utilisez un nonce valide pour l'environnement de test
     });
@@ -85,6 +89,8 @@ const effectuerPaiement = async (carte, montant) => {
 
 module.exports = {
   porfeuille,
+  recupererCarteParId,
+  
   recupererCarteParId,
   
 };
