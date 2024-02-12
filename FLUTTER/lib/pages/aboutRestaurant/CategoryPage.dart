@@ -63,6 +63,9 @@ class _NextPageState extends State<NextPage> {
   Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
     try {
       final response = await http
           .get(Uri.parse('http://localhost:3000/getMenu?id_cat=$idCat'));
@@ -89,6 +92,7 @@ class _NextPageState extends State<NextPage> {
       return [];
     }
   }
+<<<<<<< HEAD
 =======
   try {
     final response = await http.get(Uri.parse('http://localhost:3000/getMenu?id_cat=$idCat'));
@@ -126,6 +130,8 @@ class _NextPageState extends State<NextPage> {
 >>>>>>> 6dddd11 (feat:fix `category`,`item` and `step` dart pages)
 =======
 >>>>>>> 096f5bc (feat:add `stepMenuPage` and fix the `stepDetailsPage`)
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
 
   @override
   Widget build(BuildContext context) {
@@ -232,8 +238,11 @@ class _NextPageState extends State<NextPage> {
                 onTap: () {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 096f5bc (feat:add `stepMenuPage` and fix the `stepDetailsPage`)
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
                   if (menuItem['is_Redirect'] == true) {
                     Navigator.push(
                       context,
@@ -259,6 +268,7 @@ class _NextPageState extends State<NextPage> {
                     );
                   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                   Navigator.push(
                     context,
@@ -269,6 +279,8 @@ class _NextPageState extends State<NextPage> {
 >>>>>>> 6dddd11 (feat:fix `category`,`item` and `step` dart pages)
 =======
 >>>>>>> 096f5bc (feat:add `stepMenuPage` and fix the `stepDetailsPage`)
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
                 },
                 child: Container(
                   padding: const EdgeInsets.all(16),
@@ -310,8 +322,11 @@ class _NextPageState extends State<NextPage> {
                             const SizedBox(height: 8),
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 096f5bc (feat:add `stepMenuPage` and fix the `stepDetailsPage`)
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
                             // Check if is_Redirect is true, if true, do not display price
                             if (!(menuItem['is_Redirect'] == true))
                               Text(
@@ -320,6 +335,7 @@ class _NextPageState extends State<NextPage> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
+<<<<<<< HEAD
 <<<<<<< HEAD
                               ),
 =======
@@ -334,6 +350,9 @@ class _NextPageState extends State<NextPage> {
 =======
                               ),
 >>>>>>> 096f5bc (feat:add `stepMenuPage` and fix the `stepDetailsPage`)
+=======
+                              ),
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
                           ],
                         ),
                       ),
@@ -363,12 +382,16 @@ class Category {
     final String? categoryNomCat = json['nom_cat'] as String?;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 096f5bc (feat:add `stepMenuPage` and fix the `stepDetailsPage`)
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
 
     if (categoryId != null &&
         categoryNomCat != null &&
         categoryNomCat.isNotEmpty) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
     
@@ -376,6 +399,8 @@ class Category {
 >>>>>>> 6dddd11 (feat:fix `category`,`item` and `step` dart pages)
 =======
 >>>>>>> 096f5bc (feat:add `stepMenuPage` and fix the `stepDetailsPage`)
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
       return Category(idCat: categoryId, nomCat: categoryNomCat);
     } else {
       print("Warning: 'id_cat' or 'nom_cat' is null or empty in JSON data");

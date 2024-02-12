@@ -66,10 +66,14 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
           Navigator.pushReplacement(
             context,
 <<<<<<< HEAD
+<<<<<<< HEAD
             MaterialPageRoute(builder: (context) => const MyApp()),
 =======
             MaterialPageRoute(builder: (context) => MyApp()),
 >>>>>>> 2a56b9e (finished `updatepassword`dart and backend)
+=======
+            MaterialPageRoute(builder: (context) => const MyApp()),
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
           ); // Replace with your actual route
         } else {
           // Handle other API response statuses

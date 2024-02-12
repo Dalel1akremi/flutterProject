@@ -152,11 +152,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+<<<<<<< HEAD
   flutter_web_plugins:
     dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
   font_awesome_flutter:
     dependency: "direct main"
     description:
@@ -213,6 +216,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.10.2+1"
+<<<<<<< HEAD
   google_sign_in:
     dependency: "direct main"
     description:
@@ -253,6 +257,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.10.2+1"
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
   http:
     dependency: "direct main"
     description:

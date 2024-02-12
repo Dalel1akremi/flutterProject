@@ -11,11 +11,18 @@ const viewController = require('./controllers/viewController');
 const CompositionDeBController=require('./controllers/CompositionDeBController');
 const itemController =require( './controllers/itemController');=======
 const categoriesController = require('./controllers/categoriesController');
+<<<<<<< HEAD
 const CompositionDeBController=require('./controllers/CompositionDeBController');
 const itemController =require( './controllers/itemController');
 const menuController =require( './controllers/menuController');
 const paiement =require( './controllers/paiement');
 const paiement =require( './controllers/paiement');
+=======
+
+>>>>>>> d06e0d2 (feat: add `creatCategorie` api)
+const menuController =require( './controllers/menuController');
+const paiement =require( './controllers/paiement');
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
 const app = express();
 const PORT = 3000;
 
@@ -71,6 +78,9 @@ app.post('/insererComposition', CompositionDeBController.insererComposition);
 app.get('/getCompositions', CompositionDeBController.getCompositions);
 app.post('/createItem', upload.single('image'),itemController.createItem);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
 app.get('/getItem', itemController.getItem);
 
 // Corrected createMenu route
@@ -79,6 +89,7 @@ app.get('/getMenu', menuController.getMenu);
 app.post('/porfeuille', paiement.porfeuille);
 
 
+<<<<<<< HEAD
 >>>>>>> d06e0d2 (feat: add `creatCategorie` api)
 app.get('/getCompositions',CompositionDeBController.getCompositions);
 app.post('/createItem', itemController.createItem);
@@ -92,6 +103,8 @@ app.get('/getMenu', menuController.getMenu);
 app.post('/process_payment', paiement.process_payment);
 
 
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

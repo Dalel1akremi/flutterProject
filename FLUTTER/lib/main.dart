@@ -13,12 +13,18 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+<<<<<<< HEAD
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
     return const MaterialApp(
+=======
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
       debugShowCheckedModeBanner: false,
       home: HomeScreen(),
     );
@@ -32,7 +38,10 @@ class HomeScreen extends StatefulWidget {
   // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
 class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
@@ -133,6 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+<<<<<<< HEAD
     );
   }
 
@@ -160,3 +170,32 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 }
+=======
+    );
+  }
+
+  Widget buildDot(int pageIndex) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Container(
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: _currentPage == pageIndex ? Colors.blue : Colors.grey,
+        ),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page!.round();
+      });
+    });
+  }
+}
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2

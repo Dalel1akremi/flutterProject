@@ -90,6 +90,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                     setState(() {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                       _value = _value > 1 ? _value - 1 : 1;
 =======
                       _value = _value > 0 ? _value - 1 : 0;
@@ -97,6 +98,9 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
 =======
                       _value = _value > 1 ? _value - 1 : 1;
 >>>>>>> 096f5bc (feat:add `stepMenuPage` and fix the `stepDetailsPage`)
+=======
+                      _value = _value > 1 ? _value - 1 : 1;
+>>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
                     });
                   },
                   icon: const Icon(Icons.remove),
