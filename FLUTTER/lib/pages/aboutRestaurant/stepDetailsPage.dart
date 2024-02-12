@@ -88,19 +88,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-                      _value = _value > 1 ? _value - 1 : 1;
-=======
                       _value = _value > 0 ? _value - 1 : 0;
->>>>>>> 6dddd11 (feat:fix `category`,`item` and `step` dart pages)
-=======
-                      _value = _value > 1 ? _value - 1 : 1;
->>>>>>> 096f5bc (feat:add `stepMenuPage` and fix the `stepDetailsPage`)
-=======
-                      _value = _value > 1 ? _value - 1 : 1;
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
                     });
                   },
                   icon: const Icon(Icons.remove),
