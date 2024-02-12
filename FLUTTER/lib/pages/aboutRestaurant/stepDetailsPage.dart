@@ -21,13 +21,9 @@ class StepDetailsPage extends StatefulWidget {
 }
 
 class _StepDetailsPageState extends State<StepDetailsPage> {
-  int _value = 1; // State for the value
+  int _value = 0; // State for the value
   final TextEditingController _remarkController = TextEditingController();
- @override
-  void initState() {
-    super.initState();
-    _value = 1; // Initialisation à 1 lorsque la page est créée
-  }
+
   @override
   void dispose() {
     _remarkController.dispose();
