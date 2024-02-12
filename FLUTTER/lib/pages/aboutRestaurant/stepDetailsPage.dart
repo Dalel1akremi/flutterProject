@@ -1,9 +1,11 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 
-class StepDetailsPage extends StatelessWidget {
-  final String nomMenu;
+class StepDetailsPage extends StatefulWidget {
+  final int idItem;
   final String img;
+  final String nomItem;
+  final int prix;
 
   const StepDetailsPage({
     Key? key,
@@ -19,13 +21,9 @@ class StepDetailsPage extends StatelessWidget {
 }
 
 class _StepDetailsPageState extends State<StepDetailsPage> {
-  int _value = 1; // State for the value
+  int _value = 0; // State for the value
   final TextEditingController _remarkController = TextEditingController();
- @override
-  void initState() {
-    super.initState();
-    _value = 1; // Initialisation à 1 lorsque la page est créée
-  }
+
   @override
   void dispose() {
     _remarkController.dispose();
@@ -34,9 +32,12 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    int totalPrice = _value * widget.prix;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Détails de l\'étape'),
+        title: Text(widget.nomItem),
+        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
       ),
       body: Center(
         child: Column(
