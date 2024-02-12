@@ -16,15 +16,7 @@ exports.createItem = async (req, res) => {
       is_Menu,
       id_cat,
       id,
-<<<<<<< HEAD
-<<<<<<< HEAD
       id_menu,
-=======
-      nom,
->>>>>>> 7f07aee (feat:fix `itemController`)
-=======
-      id_menu,
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
     // Validate data types
@@ -58,15 +50,7 @@ exports.createItem = async (req, res) => {
       return;
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     const existingItem = await Items.findOne({nom_item });
-=======
-    const existingItem = await Items.findOne({ nom });
->>>>>>> 7f07aee (feat:fix `itemController`)
-=======
-    const existingItem = await Items.findOne({nom_item });
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
 
     if (existingItem) {
       
@@ -85,21 +69,9 @@ exports.createItem = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-<<<<<<< HEAD
-<<<<<<< HEAD
       id_cat,
       id,
       id_menu,  // Log the id field
-=======
-      nom_cat,
-      id,
-      nom,  // Log the id field
->>>>>>> 7f07aee (feat:fix `itemController`)
-=======
-      id_cat,
-      id,
-      id_menu,  // Log the id field
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
     });
     const newItem = new Items({
       nom_item,
@@ -110,21 +82,9 @@ exports.createItem = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-<<<<<<< HEAD
-<<<<<<< HEAD
       id_cat,
       id,
       id_menu, 
-=======
-      nom_cat,
-      id,
-      nom, 
->>>>>>> 7f07aee (feat:fix `itemController`)
-=======
-      id_cat,
-      id,
-      id_menu, 
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
       image: imageUrl,
     });
 
@@ -141,10 +101,6 @@ exports.createItem = async (req, res) => {
       message: 'Error creating menu item',
       error: error.message,
     });
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
   }
 };
 
@@ -180,45 +136,5 @@ exports.getItem = async (req, res) => {
       
     });
    
-<<<<<<< HEAD
-=======
->>>>>>> 7f07aee (feat:fix `itemController`)
-  }
-};
-
-exports.getItem = async (req, res) => {
-  try {
-    const { nom } = req.query;
-
-    // Fetch menus based on the provided type
-    const Item = await Items.find({ nom });
-
-    if (Item.length === 0) {
-      
-      res.json({
-        status: 404,
-        message: 'Aucun item trouvé pour ce type',
-        
-      });
-    } else {
-      
-      res.json({
-        status: 200,
-        message: 'Items récupérés avec succès',
-        data:Item
-        
-      });
-    }
-  } catch (error) {
-    console.error(error);
-    res.json({
-      status: 500,
-      message: 'Erreur lors de la récupération des items',
-      error:error.message
-      
-    });
-   
-=======
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
   }
 };

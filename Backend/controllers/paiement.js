@@ -3,20 +3,12 @@ const Payment = require('./../models/paiement');
 const braintree = require('braintree');
 const gateway = new braintree.BraintreeGateway({
   environment: braintree.Environment.Sandbox,
-  merchantId: 'cfgs2n5nw3r5385q',
-  publicKey: 'wqmpp5jmjmywjhm8',
-  privateKey: '1e8816ff7d4dbc7b2374b02173217aff',
+  merchantId: 'njxddktr78b76t3z',
+  publicKey: 'rqyt73bwxp7wsv9y',
+  privateKey: '36aab07db19d6ca6b8f74c0fa75867be',
 });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 const porfeuille = async (req, res) => {
-=======
-const process_payment = async (req, res) => {
->>>>>>> 81e6548 (feat :add `porfeuille `api backend)
-=======
-const porfeuille = async (req, res) => {
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
   const { cardNumber, expirationDate, cvv } = req.body;
 
   try {
@@ -31,7 +23,7 @@ const porfeuille = async (req, res) => {
 
     // Création d'un token Braintree pour la carte
     const carteBraintree = await gateway.paymentMethod.create({
-      customerId: 'ID_DU_CLIENT', // Remplacez par l'ID de votre client dans Braintree
+      customerId: '87802661003', // Remplacez par l'ID de votre client dans Braintree
       paymentMethodNonce: 'fake-valid-nonce', // Utilisez un nonce valide pour l'environnement de test
     });
 
@@ -41,48 +33,58 @@ const porfeuille = async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout de la carte' });
   }
 };
-<<<<<<< HEAD
-<<<<<<< HEAD
-const process_payment = async (req, res) => {
+const recupererCarteParId = async (req, res) => {
+  const _id = req.query._id;
+
   try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: req.body.amount,
-      currency: req.body.currency,
-      payment_method: req.body.paymentMethod,
-      confirm: true, // La confirmation est automatique par défaut
-      return_url: 'https://dashboard.stripe.com/test/apikeys', // Remplacez par l'URL de retour appropriée sur votre site
-    });
+    // Vérifier si la carte existe
+    const existingCard = await Payment.findOne({ id: id });
 
-    // Utilisez le modèle de paiement pour enregistrer les détails du paiement dans la base de données MongoDB
-    const payment = new Payment({
-      amount: req.body.amount,
-      currency: req.body.currency,
-      paymentMethod: paymentIntent.payment_method,
-    });
+    if (!existingCard) {
+      // La carte n'existe pas
+      return res.status(404).json({ success: false, message: 'Card not found' });
+    }
 
-    await payment.save();
+    // Récupérer le montant à partir du corps de la requête
+    const montantAPayer = req.body.montant;
 
-    res.status(200).json({ success: true });
+    if (!montantAPayer) {
+      return res.status(400).json({ success: false, message: 'Montant à payer manquant dans la requête' });
+    }
+
+    // Création d'une transaction avec la carte récupérée et le montant du panier
+    const transactionResult = await effectuerPaiement(existingCard, montantAPayer);
+
+    // Vous pouvez également utiliser le token Braintree associé à la carte ici
+
+    res.json({ success: true, message: 'Paiement effectué avec succès', transaction: transactionResult });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Erreur lors du traitement du paiement.' });
+    res.status(500).json({ success: false, message: 'Erreur lors du paiement' });
   }
 };
 
-module.exports = {
-process_payment,
+// Fonction pour effectuer le paiement avec une carte et un montant
+const effectuerPaiement = async (carte, montant) => {
+  try {
+    
+    const result = await gateway.transaction.sale({
+      amount: montant, // Montant du paiement provenant du panier
+      paymentMethodNonce: 'fake-valid-nonce', // Utilisez un nonce valide pour l'environnement de test
+      options: {
+        submitForSettlement: true,
+      },
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };
 
-module.exports = {
-  porfeuille,
-=======
-
-module.exports = {
-    process_payment,
->>>>>>> 81e6548 (feat :add `porfeuille `api backend)
-=======
 
 module.exports = {
   porfeuille,
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
+  recupererCarteParId,
+  
 };

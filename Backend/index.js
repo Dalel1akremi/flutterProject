@@ -7,22 +7,11 @@ const path = require('path');
 
 const userController = require('./controllers/userController');
 const viewController = require('./controllers/viewController');
-<<<<<<< HEAD
-const CompositionDeBController=require('./controllers/CompositionDeBController');
-const itemController =require( './controllers/itemController');=======
 const categoriesController = require('./controllers/categoriesController');
-<<<<<<< HEAD
 const CompositionDeBController=require('./controllers/CompositionDeBController');
 const itemController =require( './controllers/itemController');
 const menuController =require( './controllers/menuController');
 const paiement =require( './controllers/paiement');
-const paiement =require( './controllers/paiement');
-=======
-
->>>>>>> d06e0d2 (feat: add `creatCategorie` api)
-const menuController =require( './controllers/menuController');
-const paiement =require( './controllers/paiement');
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
 const app = express();
 const PORT = 3000;
 
@@ -65,11 +54,6 @@ app.put('/updateUser', userController.updateUser);
 app.get('/searchAddress', userController.searchAddress);
 
 app.post('/reset_password', userController.reset_password);
-app.post('/validate_code',userController.validate_code);
-app.post('/new_password',userController.new_password);
-<<<<<<< HEAD
-app.post('/insererComposition',CompositionDeBController.insererComposition);
-=======
 app.post('/validate_code', userController.validate_code);
 app.put('/new_password', userController.new_password);
 app.post('/createCategorie', categoriesController.createCategorie);
@@ -77,34 +61,15 @@ app.get('/getCategories', categoriesController.getCategories);
 app.post('/insererComposition', CompositionDeBController.insererComposition);
 app.get('/getCompositions', CompositionDeBController.getCompositions);
 app.post('/createItem', upload.single('image'),itemController.createItem);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
 app.get('/getItem', itemController.getItem);
 
 // Corrected createMenu route
 app.post('/createMenu', upload.single('image'), menuController.createMenu);
 app.get('/getMenu', menuController.getMenu);
 app.post('/porfeuille', paiement.porfeuille);
+app.get('/recupererCarteParId', paiement.recupererCarteParId);
 
-
-<<<<<<< HEAD
->>>>>>> d06e0d2 (feat: add `creatCategorie` api)
-app.get('/getCompositions',CompositionDeBController.getCompositions);
-app.post('/createItem', itemController.createItem);
-=======
->>>>>>> 7f07aee (feat:fix `itemController`)
-app.get('/getItem', itemController.getItem);
-
-// Corrected createMenu route
-app.post('/createMenu', upload.single('image'), menuController.createMenu);
-app.get('/getMenu', menuController.getMenu);
-app.post('/process_payment', paiement.process_payment);
-
-
-=======
->>>>>>> 585e03ad591721c2ad1d0b5a55a8239c17d878b2
+// app.post('/effectuerPaiement', paiement.effectuerPaiement);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

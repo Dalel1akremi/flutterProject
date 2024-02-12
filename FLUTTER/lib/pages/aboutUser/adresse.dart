@@ -57,10 +57,10 @@ class _AddressPageState extends State<AddressPage> {
               ),
               onChanged: (value) async {
                 try {
-                  final id = '65c1f9956fa9e01382eb8572';  // Remplacez cette valeur par votre ID utilisateur
-                  final country = 'France';  // Remplacez par la saisie utilisateur ou une valeur par défaut
-                  final city = 'Paris';  // Remplacez par la saisie utilisateur ou une valeur par défaut
-                  final street = 'Champs-Élysées';  // Remplacez par la saisie utilisateur ou une valeur par défaut
+                  const id = '65c1f9956fa9e01382eb8572';  // Remplacez cette valeur par votre ID utilisateur
+                  const country = 'France';  // Remplacez par la saisie utilisateur ou une valeur par défaut
+                  const city = 'Paris';  // Remplacez par la saisie utilisateur ou une valeur par défaut
+                  const street = 'Champs-Élysées';  // Remplacez par la saisie utilisateur ou une valeur par défaut
                   final streetNumber = value;  // Utilisez la valeur entrée par l'utilisateur
 
                   final results = await addressService.searchAddress(

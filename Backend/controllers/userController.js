@@ -272,7 +272,8 @@ const updateUser = async (req, res) => {
     if (prenom) {
       existingUser.prenom = prenom;
     }
-    if (telephone) {
+    if (telephone)
+ {
       existingUser.telephone = telephone;
     }
 
@@ -309,7 +310,7 @@ const searchAddress = async (req, res) => {
     if (response.data.length > 0) {
       // Enregistrez les résultats de géocodage dans la base de données
       const geocodedAddress = new GeocodedAd({
-        _id: _id,  // Utilisez l'ID automatique de MongoDB tel quel
+        id: id,  // Utilisez l'ID automatique de MongoDB tel quel
         country,
         city,
         street,

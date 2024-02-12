@@ -21,7 +21,7 @@ class StepDetailsPage extends StatefulWidget {
 }
 
 class _StepDetailsPageState extends State<StepDetailsPage> {
-  int _value = 0; // State for the value
+  int _value = 1; // State for the value
   final TextEditingController _remarkController = TextEditingController();
 
   @override
@@ -88,7 +88,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      _value = _value > 0 ? _value - 1 : 0;
+                      _value = _value > 1 ? _value - 1 : 1;
                     });
                   },
                   icon: const Icon(Icons.remove),
