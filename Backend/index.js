@@ -67,8 +67,7 @@ app.get('/getItem', itemController.getItem);
 app.post('/createMenu', upload.single('image'), menuController.createMenu);
 app.get('/getMenu', menuController.getMenu);
 app.post('/porfeuille', paiement.porfeuille);
-
-
+app.get('/recupererCarteParId', paiement.recupererCarteParId);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
