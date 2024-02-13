@@ -1,11 +1,14 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'CategoryPage.dart';
+import 'acceuil.dart';
 
 class StepDetailsPage extends StatefulWidget {
   final int idItem;
   final String img;
   final String nomItem;
   final int prix;
+  final Restaurant restaurant;
 
   const StepDetailsPage({
     Key? key,
@@ -13,6 +16,7 @@ class StepDetailsPage extends StatefulWidget {
     required this.nomItem,
     required this.img,
     required this.prix,
+    required this.restaurant,
   }) : super(key: key);
 
   @override
@@ -22,7 +26,15 @@ class StepDetailsPage extends StatefulWidget {
 
 class _StepDetailsPageState extends State<StepDetailsPage> {
   int _value = 1; // State for the value
+  String selectedRetraitMode = '';
+  late TimeOfDay selectedTime;
   final TextEditingController _remarkController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    selectedTime = TimeOfDay.now();
+  }
 
   @override
   void dispose() {
@@ -110,40 +122,61 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                 ),
               ],
             ),
-           SizedBox(
-  width: 1000,
-  height: 50,
-  child: ElevatedButton(
-    onPressed: () {
-      Navigator.pop(context);
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.green, // Change background color as needed
+            SizedBox(
+              width: 1000,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NextPage(
+                        selectedRetraitMode: selectedRetraitMode,
+                        restaurant: widget.restaurant,
+                        selectedTime: selectedTime,
+                      
+                      ),
+                      settings: RouteSettings(
+      arguments: {'numberOfItems': _value, 'totalPrice': totalPrice},
     ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Vous avez ajouté $_value article${_value != 1 ? 's' : ''}',
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        Text(
-          'Prix total: $totalPrice',
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ],
-    ),
-  ),
-),
-
+                    ),
+                 ).then((result) {
+                    if (result != null) {
+                      setState(() {
+                        _value = result['numberOfItems'];
+                        totalPrice = result['totalPrice'];
+                      });
+                    }
+                  });
+                  
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Colors.green, // Change background color as needed
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Ajouter $_value article${_value != 1 ? 's' : ''}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      ' $totalPrice £',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
