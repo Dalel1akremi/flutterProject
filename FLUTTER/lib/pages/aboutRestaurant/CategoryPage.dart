@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'acceuil.dart';
-import './../aboutPaiement/paiement.dart';
+import './../aboutPaiement/panier.dart';
 import 'ItemDetailsPage.dart';
 import 'stepMenuPage.dart';
 
@@ -88,6 +88,7 @@ class _NextPageState extends State<NextPage> {
     }
   }
 
+  
   @override
   Widget build(BuildContext context) {
     // Extracting arguments
@@ -103,6 +104,7 @@ class _NextPageState extends State<NextPage> {
       ),
       body: Column(
         children: [
+          
           SizedBox(
             height: 56,
             child: ListView.builder(
@@ -161,11 +163,14 @@ class _NextPageState extends State<NextPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PaymentScreen(
-                      selectedRetraitMode: selectedRetraitMode,
+                    builder: (context) => PanierPage(
+                      selectedRetraitMode: widget.selectedRetraitMode,
                       restaurant: widget.restaurant,
-                      selectedTime: selectedTime,
+                      selectedTime: widget.selectedTime,
+                      numberOfItems:numberOfItems,
+                      totalPrice:totalPrice,
                     ),
+                    
                   ),
                 );
               },
