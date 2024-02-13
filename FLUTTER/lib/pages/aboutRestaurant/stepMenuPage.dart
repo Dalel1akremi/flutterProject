@@ -137,6 +137,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
       selectedRetraitMode: selectedRetraitMode,
       restaurant: widget.restaurant,
       selectedTime: selectedTime,
+      
     ),
     settings: RouteSettings(
       arguments: {'numberOfItems': _value, 'totalPrice': totalPrice},

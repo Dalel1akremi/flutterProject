@@ -37,7 +37,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     try {
       final response = await http.get(
-        Uri.parse('$apiUrl?email=${widget.email}'),
+        Uri.parse('$apiUrl'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -65,7 +65,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     try {
       final response = await http.get(
-        Uri.parse('$apiUrl?email=${widget.email}'),
+        Uri.parse('$apiUrl'),
         headers: {'Content-Type': 'application/json'},
       );
 
