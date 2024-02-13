@@ -1,4 +1,3 @@
-
 // ignore_for_file: file_names
 
 import 'dart:convert';
@@ -6,11 +5,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'stepDetailsPage.dart';
+import 'acceuil.dart';
 
 class ItemDetailsPage extends StatelessWidget {
   final int idMenu; // Change type to int
   final String nomMenu;
-  const ItemDetailsPage({Key? key, required this.idMenu, required this.nomMenu})
+  final Restaurant restaurant;
+  const ItemDetailsPage(
+      {Key? key,
+      required this.restaurant,
+      required this.idMenu,
+      required this.nomMenu})
       : super(key: key);
 
   @override
@@ -76,69 +81,72 @@ class ItemDetailsPage extends StatelessWidget {
   }
 
   Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => StepDetailsPage(
-            idItem: item['id_item'] ?? '', 
-             nomItem: item['nom_item'] ?? '', // Provide default value if id_menu is null
-            img: item['image'] ?? '',
-            prix:item ['prix'] ?? '', // Provide default value if image is null
-          ),
-        ),
-      );
-    },
-    child: Container(
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.network(
-            item['image'] ?? '', // Provide default value if image is null
-            width: 150,
-            height: 100,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${item['nom_item'] ?? ''}', // Provide default value if nom_item is null
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '${item['description'] ?? ''}', // Provide default value if description is null
-                  style: const TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Prix: ${item['prix'] ?? ''}£', // Provide default value if prix is null
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StepDetailsPage(
+              restaurant: restaurant,
+              idItem: item['id_item'] ?? '',
+              nomItem: item['nom_item'] ??
+                  '', // Provide default value if id_menu is null
+              img: item['image'] ?? '',
+              prix:
+                  item['prix'] ?? '', // Provide default value if image is null
             ),
           ),
-        ],
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.network(
+              item['image'] ?? '', // Provide default value if image is null
+              width: 150,
+              height: 100,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${item['nom_item'] ?? ''}', // Provide default value if nom_item is null
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${item['description'] ?? ''}', // Provide default value if description is null
+                    style: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Prix: ${item['prix'] ?? ''}£', // Provide default value if prix is null
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

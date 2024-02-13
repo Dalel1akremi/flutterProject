@@ -90,6 +90,12 @@ class _NextPageState extends State<NextPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Extracting arguments
+    final Map<String, dynamic>? args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+    // Accessing numberOfItems and totalPrice
+    final int numberOfItems = args?['numberOfItems'] ?? 0;
+    final int totalPrice = args?['totalPrice'] ?? 0;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -165,12 +171,34 @@ class _NextPageState extends State<NextPage> {
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
-                backgroundColor: Colors.blueGrey[200],
+                backgroundColor: Colors.green,
               ),
-              child: const Text(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Text(
                 'Paiement',
                 style: TextStyle(color: Colors.white),
               ),
+                    Text(
+                      ' $totalPrice £',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              
             ),
           ),
         ],
@@ -198,6 +226,7 @@ class _NextPageState extends State<NextPage> {
                         builder: (context) => ItemDetailsPage(
                           idMenu: menuItem['id_menu'],
                           nomMenu: menuItem['nom'],
+                            restaurant: widget.restaurant,
                         ),
                       ),
                     );
@@ -209,7 +238,10 @@ class _NextPageState extends State<NextPage> {
                           idMenu: menuItem['id_menu'],
                           nomMenu: menuItem['nom'],
                           img: menuItem['image'],
-                          prix: menuItem['prix'],
+                          prix: menuItem['prix'], 
+                         selectedRetraitMode: selectedRetraitMode,
+                        restaurant: widget.restaurant,
+                        selectedTime: selectedTime,
                           // Pass any necessary parameters to StepMenuPage
                         ),
                       ),

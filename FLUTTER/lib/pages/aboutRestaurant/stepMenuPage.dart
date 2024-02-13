@@ -1,11 +1,16 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'acceuil.dart';
+import 'CategoryPage.dart';
 
 class StepMenuPage extends StatefulWidget {
   final int idMenu;
   final String img;
   final String nomMenu;
   final int prix;
+  final Restaurant restaurant;
+  final String selectedRetraitMode;
+  final TimeOfDay selectedTime;
 
   const StepMenuPage({
     Key? key,
@@ -13,6 +18,9 @@ class StepMenuPage extends StatefulWidget {
     required this.nomMenu,
     required this.img,
     required this.prix,
+    required this.restaurant,
+    required this.selectedRetraitMode,
+    required this.selectedTime,
   }) : super(key: key);
 
   @override
@@ -21,13 +29,16 @@ class StepMenuPage extends StatefulWidget {
 }
 
 class _StepMenuPageState extends State<StepMenuPage> {
-  int _value = 1; // State for the value
+  int _value = 1;
+  String selectedRetraitMode = '';
+  late TimeOfDay selectedTime; // State for the value
   final TextEditingController _remarkController = TextEditingController();
- @override
+  @override
   void initState() {
     super.initState();
-    _value = 1; // Initialisation à 1 lorsque la page est créée
+    selectedTime = TimeOfDay.now();
   }
+
   @override
   void dispose() {
     _remarkController.dispose();
@@ -92,7 +103,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                     _value = _value > 1 ? _value - 1 : 1; // Valeur minimale est 1
+                      _value = _value > 1 ? _value - 1 : 1;
                     });
                   },
                   icon: const Icon(Icons.remove),
@@ -119,7 +130,26 @@ class _StepMenuPageState extends State<StepMenuPage> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => NextPage(
+      selectedRetraitMode: selectedRetraitMode,
+      restaurant: widget.restaurant,
+      selectedTime: selectedTime,
+    ),
+    settings: RouteSettings(
+      arguments: {'numberOfItems': _value, 'totalPrice': totalPrice},
+    ),
+  ),
+).then((result) {
+  if (result != null) {
+    setState(() {
+      _value = result['numberOfItems'];
+      totalPrice = result['totalPrice'];
+    });
+  }
+});
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
@@ -129,7 +159,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Vous avez ajouté $_value article au panier${_value != 1 ? 's' : ''}',
+                      'Ajouter $_value article au panier${_value != 1 ? 's' : ''}',
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -137,7 +167,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                       ),
                     ),
                     Text(
-                      'Prix total: $totalPrice',
+                      ' $totalPrice £',
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
