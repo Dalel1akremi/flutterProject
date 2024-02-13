@@ -13,13 +13,14 @@ const gateway = new braintree.BraintreeGateway({
 
 const porfeuille = async (req, res) => {
   const { cardNumber, expirationDate, cvv } = req.body;
-
+  const email = req.query.email;
   try {
     // Ajout de la carte à MongoDB
     const nouvelleCarte = new Payment({
       cardNumber,
       expirationDate,
       cvv,
+   email
     });
 
     await nouvelleCarte.save();
@@ -38,11 +39,11 @@ const porfeuille = async (req, res) => {
   }
 };
 const recupererCarteParId = async (req, res) => {
-  const _id = req.query._id;
+  const email = req.query.email;
 
   try {
     // Vérifier si la carte existe
-    const existingCard = await Payment.findOne({ id: id });
+    const existingCard = await Payment.findOne({ email: email });
 
     if (!existingCard) {
       // La carte n'existe pas
