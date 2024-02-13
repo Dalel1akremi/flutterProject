@@ -1,16 +1,15 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_print
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import './../aboutRestaurant/acceuil.dart';
 
+// ignore: must_be_immutable
 class PaymentScreen extends StatefulWidget {
-  final String selectedRetraitMode;
+  String selectedRetraitMode;
   final Restaurant restaurant;
   final TimeOfDay selectedTime;
 
-  const PaymentScreen({
+  PaymentScreen({
     Key? key,
     required this.selectedRetraitMode,
     required this.restaurant,
@@ -21,19 +20,23 @@ class PaymentScreen extends StatefulWidget {
   _PaymentScreenState createState() => _PaymentScreenState();
 }
 
-
 class _PaymentScreenState extends State<PaymentScreen> {
   double montantAPayer = 0.0; // Initialisez le montant à payer
+  String selectedRetraitMode = '';
+
+  TimeOfDay? newSelectedTime;
 
   @override
   void initState() {
     super.initState();
     // Appelez une fonction pour récupérer le montant du panier
     getMontantPanier();
+    print('Selected Retrait Mode: ${widget.selectedRetraitMode}');
   }
 
   Future<void> getMontantPanier() async {
-    const String apiUrl = 'http://localhost:3000/recupererMontantPanier'; // Mettez à jour l'URL de l'API
+    const String apiUrl =
+        'http://localhost:3000/recupererMontantPanier'; // Mettez à jour l'URL de l'API
 
     try {
       final response = await http.get(
@@ -50,7 +53,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
             montantAPayer = responseData['montantPanier'];
           });
         } else {
-          print('Erreur lors de la récupération du montant du panier: ${responseData['message']}');
+          print(
+              'Erreur lors de la récupération du montant du panier: ${responseData['message']}');
         }
       } else {
         print('Erreur lors de la requête au serveur: ${response.reasonPhrase}');
@@ -61,7 +65,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> processPayment() async {
-    const String apiUrl = 'http://localhost:3000/recupererCarte'; // Mettez à jour l'URL de l'API
+    const String apiUrl =
+        'http://localhost:3000/recupererCarte'; // Mettez à jour l'URL de l'API
 
     try {
       final response = await http.get(
@@ -78,8 +83,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Uri.parse('http://localhost:3000/effecuterPaiement'),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({
-              'montant': montantAPayer, // Utilisez le montant du panier récupéré
-              'carte': responseData['carte'], // Utilisez le détail de la carte récupérée
+              'montant':
+                  montantAPayer, // Utilisez le montant du panier récupéré
+              'carte': responseData['carte'],
+              // Utilisez le détail de la carte récupérée
             }),
           );
 
@@ -91,7 +98,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
             print('Erreur lors du paiement: ${paymentData['message']}');
           }
         } else {
-          print('Erreur lors de la récupération de la carte: ${responseData['message']}');
+          print(
+              'Erreur lors de la récupération de la carte: ${responseData['message']}');
         }
       } else {
         print('Erreur lors de la requête au serveur: ${response.reasonPhrase}');
@@ -101,31 +109,186 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
   }
 
+  String mapRetraitMode(String value) {
+    switch (value) {
+      case 'Option 1':
+        return 'A Emporter';
+      case 'Option 2':
+        return 'Sur place';
+      case 'Option 3':
+        return 'en livraison';
+      // Add other cases as needed
+      default:
+        return value;
+    }
+  }
+
+  Future<void> showEditDialog() async {
+    Map<String, dynamic>? newSelections = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String? selectedRetraitMode = widget.selectedRetraitMode;
+        TimeOfDay? selectedTime = newSelectedTime ?? widget.selectedTime;
+
+        return AlertDialog(
+          title: Text('Modifier la commande'),
+          content: Column(
+            children: [
+              DropdownButton<String>(
+                value: selectedRetraitMode,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedRetraitMode = newValue!;
+                  });
+                },
+                items: <String>['Option 1', 'Option 2', 'Option 3']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(mapRetraitMode(value)),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  // Affichez le sélecteur d'heure et mettez à jour la nouvelle heure
+                  TimeOfDay? pickedTime = await showTimePicker(
+                    context: context,
+                    initialTime: selectedTime ?? TimeOfDay.now(),
+                  );
+
+                  if (pickedTime != null) {
+                    setState(() {
+                      selectedTime = pickedTime;
+                    });
+                  }
+                },
+                child: Text('Modifier l\'heure'),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(
+                  context,
+                  {
+                    'retraitMode': selectedRetraitMode,
+                    'selectedTime': selectedTime,
+                  },
+                );
+              },
+              child: Text('Enregistrer'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (newSelections != null) {
+      setState(() {
+        widget.selectedRetraitMode = newSelections['retraitMode'];
+        newSelectedTime = newSelections['selectedTime'];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: Text(widget.restaurant.name),
+        title: const Text("Récapitulatif de la commande "),
       ),
       body: Column(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Commande ${mapRetraitMode(widget.selectedRetraitMode)}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Heure de retrait : ${newSelectedTime ?? widget.selectedTime.format(context)}',
+                          ),
+                          Divider(), // Divider after "Heure de retrait"
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    showEditDialog();
+                  },
+                ),
+              ],
+            ),
+          ),
+          Divider(),
+        
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-           
-              Text('Heure de retrait : ${widget.selectedTime.format(context)}'),
+              Text(
+                'Total', // Replace with your variable
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Spacer(),
+              Text(
+                '\$${montantAPayer.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              // Appeler la fonction de traitement du paiement
-              processPayment();
-            },
-            child: const Text('Valider la commande'),
+          Divider(), // Divider after "Total"
+          Spacer(), // Spacer to push the button to the bottom
+          Container(
+            width: double.infinity,
+            color: Colors.green, // Set the background color to green
+            child: ElevatedButton(
+              onPressed: () {
+                // Utilize the processPayment function
+                processPayment();
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: Colors.green, // Set the button color to green
+              ),
+              child: const Text(
+                'Valider la commande',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ),
-        ], // Correction de la balise < ici
+        ],
       ),
     );
   }
