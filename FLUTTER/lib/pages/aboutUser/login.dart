@@ -83,7 +83,7 @@ class _loginPageState extends State<loginPage> {
 
        Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfilePage(email:email,nom:nom),),
+              MaterialPageRoute(builder: (context) => ProfilePage(email:email,nom:nom,userId:userId),),
             );
       } else {
         final data = json.decode(response.body);

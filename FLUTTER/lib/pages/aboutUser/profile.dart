@@ -10,21 +10,21 @@ import './../aboutRestaurant/acceuil.dart';
 import './../aboutRestaurant/commande.dart';
 import 'adresse.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+   final String email;
+
+  const MyApp({Key? key, required this.email}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  late String userEmail;
+  late String email;
   late String nom;
-
+  late String userId;
   @override
   void initState() {
     super.initState();
@@ -32,20 +32,20 @@ class _MyAppState extends State<MyApp> {
     fetchUserEmail();
   }
 
-  // Fonction pour récupérer l'email depuis le backend
   Future<void> fetchUserEmail() async {
     final response = await http.get(Uri.parse('http://localhost:3000/getUser'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final email = data[
-          'email']; // Assurez-vous d'ajuster la clé selon votre structure de données
+      
       final userNom = data['nom'];
-
+      final userId = data['_id'];
+     
       setState(() {
-        userEmail = email;
+        email =  widget.email;
         nom = userNom;
       });
+       
     } else {
       // Gérer les erreurs lors de la récupération de l'email
       print('Failed to load user email');
@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     // Vérifier si l'email est récupéré avant de construire l'interface utilisateur
     return MaterialApp(
-      home: ProfilePage(email: userEmail, nom: nom),
+      home: ProfilePage(email: email, nom: nom,userId:userId),
     );
   }
 }
@@ -64,8 +64,8 @@ class _MyAppState extends State<MyApp> {
 class ProfilePage extends StatelessWidget {
   final String email;
   final String nom;
-
-  const ProfilePage({Key? key, required this.email, required this.nom})
+  final String userId;
+  const ProfilePage({Key? key, required this.email, required this.nom,required this.userId})
       : super(key: key);
 
   @override
@@ -74,6 +74,7 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: Text('Bonjour $nom'),
+        
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -123,7 +124,7 @@ class ProfilePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AddressPage(),
+                    builder: (context) => AddressSearchScreen(userId:userId),
                   ),
                 );
               },

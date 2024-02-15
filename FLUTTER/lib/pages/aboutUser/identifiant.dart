@@ -19,38 +19,44 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   late String nom;
   late String prenom;
   late String numero;
+  late String userId;
   late String email;
 
   final TextEditingController nomController = TextEditingController();
   final TextEditingController prenomController = TextEditingController();
   final TextEditingController numeroController = TextEditingController();
 
-  Future<void> getUserData() async {
-    try {
-      final response =
-          await http.get(Uri.parse('http://localhost:3000/getUser'));
+Future<void> getUserData() async {
+  try {
+    final response = await http.get(Uri.parse('http://localhost:3000/getUser'));
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> userData = json.decode(response.body);
+    if (response.statusCode == 200) {
+      final Map<String, dynamic>? userData = json.decode(response.body);
 
+      if (userData != null && userData.containsKey('nom') && userData.containsKey('prenom') && userData.containsKey('telephone')) {
         setState(() {
           nom = userData['nom'];
           prenom = userData['prenom'];
           numero = userData['telephone'];
+          userId = userData['_id'] ?? ''; // Assign an empty string if userId is null
           email = widget.email;
         });
 
         nomController.text = nom;
         prenomController.text = prenom;
         numeroController.text = numero;
+        print('UserId: $userId');
       } else {
         print('Failed to load user data. Response: ${response.body}');
-        throw Exception('Failed to load user data');
       }
-    } catch (error) {
-      print('Error during HTTP request: $error');
+    } else {
+      print('Failed to load user data. Response: ${response.body}');
     }
+  } catch (error) {
+    print('Error during HTTP request: $error');
   }
+}
+
 
   Future<void> updateUserData(String userEmail) async {
     final Map<String, dynamic> updatedData = {
@@ -74,7 +80,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProfilePage(email: userEmail, nom: nom),
+            builder: (context) => ProfilePage(email: userEmail, nom: nom,userId:userId),
           ),
         );
       } else {
@@ -86,12 +92,13 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
     }
   }
 
-   @override
-     void initState() {
+  @override
+  void initState() {
     super.initState();
     email = widget.email;
     getUserData();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,9 +126,11 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
                     decoration: const InputDecoration(),
                   ),
                 ),
+
               ],
             ),
-            Row(
+           
+              Row(
               children: [
                 const Icon(Icons.person),
                 const SizedBox(width: 8),

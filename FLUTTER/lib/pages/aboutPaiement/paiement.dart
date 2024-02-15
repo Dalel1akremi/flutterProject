@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, library_private_types_in_public_api
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +23,7 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  double montantAPayer = 0.0; // Initialisez le montant à payer
+  double montantAPayer = 0.0; 
   String selectedRetraitMode = '';
 
   TimeOfDay? newSelectedTime;
@@ -29,18 +31,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   void initState() {
     super.initState();
-    // Appelez une fonction pour récupérer le montant du panier
+    
     getMontantPanier();
     print('Selected Retrait Mode: ${widget.selectedRetraitMode}');
   }
 
   Future<void> getMontantPanier() async {
-    const String apiUrl =
-        'http://localhost:3000/recupererMontantPanier'; // Mettez à jour l'URL de l'API
-
+  
     try {
       final response = await http.get(
-        Uri.parse('$apiUrl'),
+        Uri.parse('http://localhost:3000/recupererMontantPanier'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -65,12 +65,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> processPayment() async {
-    const String apiUrl =
-        'http://localhost:3000/recupererCarte'; // Mettez à jour l'URL de l'API
+    
 
     try {
       final response = await http.get(
-        Uri.parse('$apiUrl'),
+        Uri.parse('http://localhost:3000/recupererCarte'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -131,7 +130,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         TimeOfDay? selectedTime = newSelectedTime ?? widget.selectedTime;
 
         return AlertDialog(
-          title: Text('Modifier la commande'),
+          title: const Text('Modifier la commande'),
           content: Column(
             children: [
               DropdownButton<String>(
@@ -164,7 +163,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     });
                   }
                 },
-                child: Text('Modifier l\'heure'),
+                child: const Text('Modifier l\'heure'),
               ),
             ],
           ),
@@ -173,7 +172,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Annuler'),
+              child: const Text('Annuler'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -185,7 +184,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   },
                 );
               },
-              child: Text('Enregistrer'),
+              child: const Text('Enregistrer'),
             ),
           ],
         );
@@ -220,7 +219,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     children: [
                       Text(
                         'Commande ${mapRetraitMode(widget.selectedRetraitMode)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -231,14 +230,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           Text(
                             'Heure de retrait : ${newSelectedTime ?? widget.selectedTime.format(context)}',
                           ),
-                          Divider(), // Divider after "Heure de retrait"
+                          const Divider(), // Divider after "Heure de retrait"
                         ],
                       ),
                     ],
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.edit),
+                  icon: const Icon(Icons.edit),
                   onPressed: () {
                     showEditDialog();
                   },
@@ -246,30 +245,30 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ],
             ),
           ),
-          Divider(),
+          const Divider(),
         
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Total', // Replace with your variable
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Text(
                 '\$${montantAPayer.toStringAsFixed(2)}',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          Divider(), // Divider after "Total"
-          Spacer(), // Spacer to push the button to the bottom
+          const Divider(), // Divider after "Total"
+          const Spacer(), // Spacer to push the button to the bottom
           Container(
             width: double.infinity,
             color: Colors.green, // Set the background color to green
