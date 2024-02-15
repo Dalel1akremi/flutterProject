@@ -137,44 +137,40 @@ const reset_password = async (req, res) => {
 };
 
 
-// Function to validate the code
-// Function to validate the code
+
+
 const validate_code = async (req, res) => {
   const { email, validationCode } = req.body;
 
   try {
-    // Recherche de l'utilisateur dans la base de données
+  
     const user = await User.findOne({ email });
 
     if (!user) {
-      // L'utilisateur n'existe pas
+   
       return res.status(404).json({ success: false, message: 'Utilisateur non trouvé.' });
     }
 
-    // Debugging: Log the validation codes for comparison
+   
     console.log('Stored Validation Code:', user.validationCode);
     console.log('Entered Validation Code:', validationCode);
 
-    // Check if the validation code is correct
+
     if (user.validationCode !== validationCode) {
       return res.status(400).json({ success: false, message: 'Code de validation incorrect.' });
     }
 
-    // Check if the validation code has expired (more than 1 minute old)
+   
     const currentTime = Date.now();
-    const codeExpirationTime = user.validationCodeTimestamp + 1 * 60 * 1000; // 1 minute in milliseconds
+    const codeExpirationTime = user.validationCodeTimestamp + 1 * 60 * 1000; 
 
     if (currentTime > codeExpirationTime) {
       return res.status(400).json({ success: false, message: 'Code de validation expiré.' });
     }
 
-    // Reset validation code and timestamp in the database
     user.validationCode = null;
     user.validationCodeTimestamp = null;
     await user.save();
-
-    // Perform further actions for password reset...
-    // For example, you can render a password reset form for the user to input a new password.
 
     res.json({ success: true, message: 'Code de validation valide.' });
   } catch (error) {
@@ -182,90 +178,78 @@ const validate_code = async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur lors de la validation du code.' });
   }
 };
-// ...
-
-// ...
 
 const new_password = async (req, res) => {
   const { newPassword, confirmNewPassword } = req.body;
   const userEmail = req.query.email || req.body.email;
 
   try {
-    // Vérifier si l'utilisateur existe
+
     const existingUser = await User.findOne({ email: userEmail });
 
     if (!existingUser) {
-      // User not found
+    
       return res.status(404).json({ success: false, message: 'User not found.' });
     }
 
-    // Validate the new password
+
     if (newPassword !== confirmNewPassword) {
       return res.status(400).json({ success: false, message: 'Passwords do not match.' });
     }
 
-    // Hash the new password before saving it
+    
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update the user's password with the hashed password
     existingUser.password = hashedPassword;
 
-    // Save the updated user object
     await existingUser.save();
 
     res.json({ success: true, message: 'Password updated successfully.' });
   } catch (error) {
     console.error(error);
 
-    // Handle different types of errors
+   
     if (error.name === 'MongoError' && error.code === 11000) {
-      // Duplicate key error (e.g., unique constraint violation)
+    
       return res.status(400).json({ success: false, message: 'Duplicate key error.' });
     }
 
-    // Handle other errors
+   
     res.status(500).json({ success: false, message: 'Error updating password.' });
   }
 };
 
-// ...
-
-
-// ...
 
 const getUser = async (req, res) => {
-  try {
-    // For simplicity, assuming you have only one user in the database
-    const user = await User.findOne();
+ 
+  try{
+ 
+  const user = await User.findOne();
 
-    if (user) {
-      // Return user data as JSON
-      res.json(user);
-    } else {
-      // If no user is found, return a 404 status
-      res.status(404).json({ message: 'User not found' });
-    }
-  } catch (error) {
-    console.error(error);
-    // Return a 500 status for server errors
-    res.status(500).json({ message: 'Internal server error' });
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).json({ message: 'User not found' });
   }
+} catch (error) {
+  console.error(error);
+  res.status(500).json({ message: 'Internal server error' });
+}
 };
 const updateUser = async (req, res) => {
   const {  nom, prenom, telephone } = req.body;
 
-  const userEmail = req.query.email; // Utiliser le paramètre de requête pour l'email
-
+  const userEmail = req.query.email;
   try {
-    // Vérifier si l'utilisateur existe
+ 
     const existingUser = await User.findOne({ email: userEmail });
 
     if (!existingUser) {
-      // L'utilisateur n'existe pas
+ 
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Mettre à jour uniquement les champs spécifiés (nom, prenom, telephone)
+    
     if (nom) {
       existingUser.nom = nom;
     }
@@ -309,24 +293,79 @@ const searchAddress = async (req, res) => {
 
     if (response.data.length > 0) {
       // Enregistrez les résultats de géocodage dans la base de données
+      const firstGeocodedResult = response.data[0];
       const geocodedAddress = new GeocodedAd({
-        id: id,  // Utilisez l'ID automatique de MongoDB tel quel
+        _id: _id,  // Utilisez l'ID automatique de MongoDB tel quel
         country,
         city,
         street,
         streetNumber,
-        geocodedResults: response.data,
+        geocodedResults: firstGeocodedResult,
       });
 
       await geocodedAddress.save();
 
-      res.json({ message: 'Résultats de géocodage enregistrés :', results: response.data });
+      res.json({ message: 'Résultats de géocodage enregistrés ', results:firstGeocodedResult});
     } else {
       res.json({ message: 'Aucun résultat de géocodage trouvé.' });
     }
   } catch (error) {
     console.error(error);
     res.status(500).send('Erreur lors du géocodage de l\'adresse.');
+  }
+};
+const getGeocodedDetails = async (req, res) => {
+  const { _id } = req.query; // User ID
+
+  try {
+    // Find the geocoded address in the database based on user ID
+    const geocodedAddress = await GeocodedAd.findOne({ _id });
+
+    if (!geocodedAddress) {
+      return res.status(404).json({ message: 'Aucun résultat de géocodage trouvé pour cet utilisateur.' });
+    }
+
+    
+    const { country, city, street, streetNumber } = geocodedAddress;
+
+    res.json({status: 200,
+      message: 'Détails de géocodage récupérés :',
+      geocodedDetails: { country, city, street, streetNumber },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Erreur lors de la récupération des détails de géocodage.');
+  }
+};
+const updateGeocodedDetails = async (req, res) => {
+  const { _id } = req.query; // User ID
+  const { country, city, street, streetNumber } = req.body; // Updated geocoded details
+
+  try {
+    // Find the geocoded address in the database based on user ID
+    const geocodedAddress = await GeocodedAd.findOne({ _id });
+
+    if (!geocodedAddress) {
+      return res.status(404).json({ message: 'Aucun résultat de géocodage trouvé pour cet utilisateur.' });
+    }
+
+    // Update the geocoded details
+    geocodedAddress.country = country;
+    geocodedAddress.city = city;
+    geocodedAddress.street = street;
+    geocodedAddress.streetNumber = streetNumber;
+
+    // Save the updated geocoded details
+    await geocodedAddress.save();
+
+    res.json({
+      status: 200,
+      message: 'Détails de géocodage mis à jour avec succès.',
+      geocodedDetails: { country, city, street, streetNumber },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Erreur lors de la mise à jour des détails de géocodage.');
   }
 };
 
@@ -339,5 +378,6 @@ module.exports = {
   getUser,
   updateUser,
   searchAddress,
-
+  getGeocodedDetails,
+  updateGeocodedDetails,
 };

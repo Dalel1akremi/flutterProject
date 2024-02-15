@@ -51,8 +51,9 @@ app.post('/login', userController.loginUser);
 app.get('/', viewController.renderIndex);
 app.get('/getUser', userController.getUser);
 app.put('/updateUser', userController.updateUser);
-app.get('/searchAddress', userController.searchAddress);
-
+app.post('/searchAddress', userController.searchAddress);
+app.get('/getGeocodedDetails', userController.getGeocodedDetails);
+app.put('/updateGeocodedDetails', userController.updateGeocodedDetails);
 app.post('/reset_password', userController.reset_password);
 app.post('/validate_code', userController.validate_code);
 app.put('/new_password', userController.new_password);
