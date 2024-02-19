@@ -6,9 +6,9 @@ exports.createItem = async (req, res) => {
     const { body, file } = req;
 
     const {
-      nom_item,
+      id_item,
+      nom,
       prix,
-      isObligatoire,
       description,
       isArchived,
       quantite,
@@ -16,12 +16,10 @@ exports.createItem = async (req, res) => {
       is_Menu,
       id_cat,
       id,
-      id_menu,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
     // Validate data types
     const validatedPrix = parseFloat(prix);
-    const validatedIsObligatoire = Boolean(isObligatoire);
     const validatedIsArchived = Boolean(isArchived);
     const validatedQuantite = parseInt(quantite);
     const validatedMaxQuantite = parseInt(max_quantite);
@@ -31,9 +29,7 @@ exports.createItem = async (req, res) => {
     if (isNaN(validatedPrix)) {
       console.error('Invalid prix:', prix);
     }
-    if (isNaN(validatedIsObligatoire)) {
-      console.error('Invalid data for obligatoire:', isObligatoire);
-    }
+  
     if (isNaN(validatedQuantite)) {
       console.error('Invalid quantite:', quantite);
     }
@@ -50,7 +46,7 @@ exports.createItem = async (req, res) => {
       return;
     }
 
-    const existingItem = await Items.findOne({nom_item });
+    const existingItem = await Items.findOne({nom });
 
     if (existingItem) {
       
@@ -61,9 +57,9 @@ exports.createItem = async (req, res) => {
       return;
     }
     console.log('New Item Data:', {
-      nom_item,
+      id_item,
+      nom,
       prix:validatedPrix,
-      isObligatoire:validatedIsObligatoire,
       description,
       isArchived:validatedIsArchived,
       quantite: validatedQuantite,
@@ -71,12 +67,12 @@ exports.createItem = async (req, res) => {
       is_Menu: validatedIsMenu,
       id_cat,
       id,
-      id_menu,  // Log the id field
+       // Log the id field
     });
     const newItem = new Items({
-      nom_item,
+      id_item,
+      nom,
       prix:validatedPrix,
-      isObligatoire:validatedIsObligatoire,
       description,
       isArchived:validatedIsArchived,
       quantite: validatedQuantite,
@@ -84,7 +80,6 @@ exports.createItem = async (req, res) => {
       is_Menu: validatedIsMenu,
       id_cat,
       id,
-      id_menu, 
       image: imageUrl,
     });
 
@@ -106,10 +101,10 @@ exports.createItem = async (req, res) => {
 
 exports.getItem = async (req, res) => {
   try {
-    const { id_menu } = req.query;
+    const { id_item} = req.query;
 
     // Fetch menus based on the provided type
-    const Item = await Items.find({ id_menu });
+    const Item = await Items.find({ id_item });
 
     if (Item.length === 0) {
       

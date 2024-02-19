@@ -26,7 +26,7 @@ exports.createMenu = async (req, res) => {
     const validatedMaxQuantite = parseInt(max_quantite);
     const validatedIsMenu = is_Menu === 'true';
     const validatedIsRedirect=is_Redirect==='true';
-    
+  
 
     // Check if validation fails
     if (isNaN(validatedPrix)) {
@@ -48,7 +48,7 @@ exports.createMenu = async (req, res) => {
       return;
     }
 
-    const existingMenu = await Menu.findOne({ nom });
+    const existingMenu = await Menu.findOne({ nom});
 
     if (existingMenu) {
       
