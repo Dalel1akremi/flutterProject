@@ -33,77 +33,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   void initState() {
     super.initState();
-    
-    getMontantPanier();
-    print('Selected Retrait Mode: ${widget.selectedRetraitMode}');
-  }
-
-  Future<void> getMontantPanier() async {
-  
-    try {
-      final response = await http.get(
-        Uri.parse('http://localhost:3000/recupererMontantPanier'),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
-
-        if (responseData['success'] == true) {
-          setState(() {
-            // Mettez à jour le montant à payer avec la valeur du panier
-            montantAPayer = responseData['montantPanier'];
-          });
-        } else {
-          print(
-              'Erreur lors de la récupération du montant du panier: ${responseData['message']}');
-        }
-      } else {
-        print('Erreur lors de la requête au serveur: ${response.reasonPhrase}');
-      }
-    } catch (error) {
-      print('Erreur inattendue: $error');
-    }
   }
 
   Future<void> processPayment() async {
-    
-
+    final email = 'yakinebenali5@gmail.com';
     try {
-      final response = await http.get(
-        Uri.parse('http://localhost:3000/recupererCarte'),
+      // Directly use widget.totalPrice instead of fetching from API
+      final paymentResponse = await http.post(
+        Uri.parse('http://localhost:3000/recupererCarteParId?email=$email'),
         headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'montant': widget.totalPrice,
+          // Utilize the details of the retrieved card
+        }),
       );
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
+      final paymentData = jsonDecode(paymentResponse.body);
 
-        if (responseData['success'] == true) {
-          // Le paiement a été traité avec succès
-          final paymentResponse = await http.post(
-            Uri.parse('http://localhost:3000/effecuterPaiement'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'montant':
-                  montantAPayer, // Utilisez le montant du panier récupéré
-              'carte': responseData['carte'],
-              // Utilisez le détail de la carte récupérée
-            }),
-          );
-
-          final paymentData = jsonDecode(paymentResponse.body);
-
-          if (paymentData['success'] == true) {
-            print('Paiement réussi');
-          } else {
-            print('Erreur lors du paiement: ${paymentData['message']}');
-          }
-        } else {
-          print(
-              'Erreur lors de la récupération de la carte: ${responseData['message']}');
-        }
+      if (paymentData['success'] == true) {
+        print('Paiement réussi');
       } else {
-        print('Erreur lors de la requête au serveur: ${response.reasonPhrase}');
+        print('Erreur lors du paiement: ${paymentData['message']}');
       }
     } catch (error) {
       print('Erreur inattendue: $error');
@@ -130,7 +80,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       builder: (BuildContext context) {
         String? selectedRetraitMode = widget.selectedRetraitMode;
         TimeOfDay? selectedTime = newSelectedTime ?? widget.selectedTime;
-
+     
         return AlertDialog(
           title: const Text('Modifier la commande'),
           content: Column(
@@ -261,7 +211,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
               const Spacer(),
               Text(
-                '\$${montantAPayer.toStringAsFixed(2)}',
+                '\$${widget.totalPrice}',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
