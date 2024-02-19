@@ -3,7 +3,7 @@
 const { boolean } = require('joi');
 const  { Schema, model } =require( 'mongoose');
 
-const itemsSchema = new Schema({
+const RedirectSchema = new Schema({
 
   id_item: { type:Number, ref: 'menus' },
   nom: { type: String, unique: true },
@@ -23,6 +23,6 @@ function isValidBoolean(value) {
   return typeof value === 'boolean';
 }
  
-const Items = model('Items', itemsSchema);
+const Redirect = model('Redirect', RedirectSchema);
 
-module.exports = Items;
+module.exports = Redirect;

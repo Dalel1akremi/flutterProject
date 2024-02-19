@@ -2,7 +2,7 @@
 
 const  { Schema, model } =require( 'mongoose');
 
-const menuSchema = new Schema({
+const itemSchema = new Schema({
   id_item: { type: Number, unique: true },
  nom: { type: String, unique: true },
   type: String,
@@ -32,6 +32,6 @@ menuSchema.pre('save', async function (next) {
                     }
                   });
                 
-const Menu = model('Menu', menuSchema);
+const item = model('Item', itemSchema);
 
-module.exports = Menu;
+module.exports = item;

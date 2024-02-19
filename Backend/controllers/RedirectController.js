@@ -1,37 +1,35 @@
-const Menu = require('../models/menuModel');
+// controllers/itemController.js
 
-exports.createMenu = async (req, res) => {
+const Redirect =require( '../models/RedirectModel');
+exports.createRedirect = async (req, res) => {
   try {
     const { body, file } = req;
 
     const {
+      id_item,
       nom,
-      type,
       prix,
       description,
       isArchived,
       quantite,
       max_quantite,
       is_Menu,
-      is_Redirect,
       id_cat,
       id,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
-
     // Validate data types
     const validatedPrix = parseFloat(prix);
-    const validatedIsArchived = isArchived==='true';
+    const validatedIsArchived = Boolean(isArchived);
     const validatedQuantite = parseInt(quantite);
     const validatedMaxQuantite = parseInt(max_quantite);
-    const validatedIsMenu = is_Menu === 'true';
-    const validatedIsRedirect=is_Redirect==='true';
-  
+    const validatedIsMenu = Boolean(is_Menu);
 
     // Check if validation fails
     if (isNaN(validatedPrix)) {
       console.error('Invalid prix:', prix);
     }
+  
     if (isNaN(validatedQuantite)) {
       console.error('Invalid quantite:', quantite);
     }
@@ -48,80 +46,90 @@ exports.createMenu = async (req, res) => {
       return;
     }
 
-    const existingMenu = await Menu.findOne({ nom});
+    const existingRedirect = await Redirect.findOne({nom });
 
-    if (existingMenu) {
+    if (existingRedirect) {
       
       res.json({
         status: 400,
-        message: 'Ce menu existe déjà'
+        message: 'Cet Redirect existe déjà'
       });
       return;
     }
-    console.log('New Menu Data:', {
+    console.log('New Redirect Data:', {
+      id_item,
       nom,
-      type,
-      prix: validatedPrix,
+      prix:validatedPrix,
       description,
-      isArchived: validatedIsArchived,
+      isArchived:validatedIsArchived,
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-      is_Redirect:validatedIsRedirect,
       id_cat,
-      id,  // Log the id field
+      id,
+       // Log the id field
     });
-    const newMenu = new Menu({
+    const newRedirect = new Redirect({
+      id_item,
       nom,
-      type,
-      prix: validatedPrix,
+      prix:validatedPrix,
       description,
-      isArchived: validatedIsArchived,
+      isArchived:validatedIsArchived,
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-      is_Redirect:validatedIsRedirect,
       id_cat,
       id,
       image: imageUrl,
     });
 
-    const savedMenu = await newMenu.save();
+    const savedRedirect = await newRedirect.save();
     res.json({
       status: 200,
-      message: 'Menu crée avec succée ',
-      data: savedMenu,
+      message: 'Redirect created successfully',
+      data: savedRedirect,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: 'Erreur lors de la création de menu ',
+      message: 'Error creating Redirect',
       error: error.message,
     });
   }
 };
 
-
-
-const sendResponse = (res, statusCode, message, data = null, errorMessage = null) => {
-  res.status(statusCode).json({ status: statusCode, message, data, error: errorMessage });
-};
-
-exports.getMenu = async (req, res) => {
+exports.getRedirect= async (req, res) => {
   try {
-    const { id_cat } = req.query;
+    const { id_item} = req.query;
 
     // Fetch menus based on the provided type
-    const menus = await Menu.find({ id_cat });
+    const Redirect = await Redirect.find({ id_item });
 
-    if (menus.length === 0) {
-      sendResponse(res, 404, 'Aucun menu trouvé pour ce type');
+    if (Redirect.length === 0) {
+      
+      res.json({
+        status: 404,
+        message: 'Aucun Redirect trouvé pour ce type',
+        
+      });
     } else {
-      sendResponse(res, 200, 'Menus récupérés avec succès', menus);
+      
+      res.json({
+        status: 200,
+        message: 'Redirect récupérés avec succès',
+        data:Item
+        
+      });
     }
   } catch (error) {
     console.error(error);
-    sendResponse(res, 500, 'Erreur lors de la récupération des menus', null, error.message);
+    res.json({
+      status: 500,
+      message: 'Erreur lors de la récupération des Redirects',
+      error:error.message
+      
+    });
+   
   }
 };
