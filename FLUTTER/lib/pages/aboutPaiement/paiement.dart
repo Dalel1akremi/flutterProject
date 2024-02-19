@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import './../aboutRestaurant/acceuil.dart';
 
+
 // ignore: must_be_immutable
 class PaymentScreen extends StatefulWidget {
-  String selectedRetraitMode;
+   String selectedRetraitMode;
   final Restaurant restaurant;
   final TimeOfDay selectedTime;
-
+ final int totalPrice;
   PaymentScreen({
     Key? key,
+    required this.totalPrice,
     required this.selectedRetraitMode,
     required this.restaurant,
     required this.selectedTime,
@@ -247,7 +249,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
           ),
           Divider(),
-        
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

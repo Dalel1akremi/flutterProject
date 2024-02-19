@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import './../aboutRestaurant/acceuil.dart';
+import './../global.dart';
+import 'paiement.dart';
 
 class PanierPage extends StatefulWidget {
   final int numberOfItems;
@@ -7,7 +9,8 @@ class PanierPage extends StatefulWidget {
   final String selectedRetraitMode;
   final TimeOfDay selectedTime;
   final Restaurant restaurant;
-
+  final String nom;
+  final List<Article> panier;
   const PanierPage({
     Key? key,
     required this.numberOfItems,
@@ -15,9 +18,12 @@ class PanierPage extends StatefulWidget {
     required this.selectedRetraitMode,
     required this.selectedTime,
     required this.restaurant,
+    required this.nom,
+    required this.panier,
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _PanierPageState createState() => _PanierPageState();
 }
 
@@ -69,31 +75,33 @@ class _PanierPageState extends State<PanierPage> {
             ),
           ),
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Nombre d\'articles: ${widget.numberOfItems}',
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Prix total: ${widget.totalPrice} £',
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  const SizedBox(height: 40),
-                ],
-              ),
+            child: ListView.builder(
+              itemCount: widget.panier.length,
+              itemBuilder: (context, index) {
+                final article = widget.panier[index];
+                return ListTile(
+                  title: Text(article.nom),
+                  subtitle: Text('Prix: ${article.prix} £'),
+                  trailing: Text('Quantité: ${article.quantite}'),
+                );
+              },
             ),
           ),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // Implement any logic you want when the user proceeds from the cart
-                // For example, you could navigate to a payment screen here
-                Navigator.pop(context); // Close the cart page and go back
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PaymentScreen(
+                      selectedRetraitMode: widget.selectedRetraitMode,
+                      restaurant: widget.restaurant,
+                      selectedTime: widget.selectedTime,
+                      totalPrice: widget.totalPrice,
+                    ),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(150, 50),

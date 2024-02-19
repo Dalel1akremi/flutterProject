@@ -1,5 +1,3 @@
-// ignore_for_file: file_names
-
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,25 +6,34 @@ import 'stepDetailsPage.dart';
 import 'acceuil.dart';
 
 class ItemDetailsPage extends StatelessWidget {
-  final int idMenu; // Change type to int
-  final String nomMenu;
+  final int id_item;
+  final String img;
+  
+  final String nom;
+  final int prix;
   final Restaurant restaurant;
-  const ItemDetailsPage(
-      {Key? key,
-      required this.restaurant,
-      required this.idMenu,
-      required this.nomMenu})
-      : super(key: key);
+  final String selectedRetraitMode;
+  final TimeOfDay selectedTime;
+  const ItemDetailsPage({
+    Key? key,
+    required this.id_item,
+    required this.nom,
+    required this.img,
+    required this.prix,
+    required this.restaurant,
+    required this.selectedRetraitMode,
+    required this.selectedTime,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(' $nomMenu'),
+        title: Text(nom),
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
       ),
-      body: FutureBuilder<dynamic>(
-        future: fetchItemDetails(idMenu),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: fetchItemDetails(id_item),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -36,38 +43,38 @@ class ItemDetailsPage extends StatelessWidget {
             return Center(
               child: Text('Erreur: ${snapshot.error}'),
             );
+          } else if (snapshot.hasData) {
+            final List<Map<String, dynamic>> items = snapshot.data!;
+            return ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                return buildItemDetails(context, items[index]);
+              },
+            );
           } else {
-            final dynamic item = snapshot.data!;
-            if (item is List) {
-              return ListView.builder(
-                itemCount: item.length,
-                itemBuilder: (context, index) {
-                  return buildItemDetails(context, item[index]);
-                },
-              );
-            } else if (item is Map<String, dynamic>) {
-              return buildItemDetails(context, item);
-            } else {
-              return const Center(
-                child: Text('Données invalides reçues du serveur.'),
-              );
-            }
+            return const Center(
+              child: Text('Aucune donnée reçue du serveur.'),
+            );
           }
         },
       ),
     );
   }
 
-  Future<dynamic> fetchItemDetails(int idMenu) async {
-    // Change parameter type to int
+  Future<List<Map<String, dynamic>>> fetchItemDetails(int id_item) async {
     try {
       final response = await http.get(
-        Uri.parse(
-            'http://localhost:3000/getItem?id_menu=$idMenu'), // Convert idMenu to string
+        Uri.parse('http://localhost:3000/getItem?id_item=$id_item'),
       );
       if (response.statusCode == 200) {
         final dynamic responseData = json.decode(response.body)['data'];
-        return responseData;
+        if (responseData is List) {
+          return List<Map<String, dynamic>>.from(responseData);
+        } else if (responseData is Map<String, dynamic>) {
+          return [responseData];
+        } else {
+          throw Exception('Response data is invalid.');
+        }
       } else {
         throw Exception(
             'Failed to fetch menu. Status code: ${response.statusCode}');
@@ -88,12 +95,11 @@ class ItemDetailsPage extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => StepDetailsPage(
               restaurant: restaurant,
-              idItem: item['id_item'] ?? '',
-              nomItem: item['nom_item'] ??
-                  '', // Provide default value if id_menu is null
+              id_item: item['id_item'] ?? 0,
+              nom: item['nom'] ?? '',
               img: item['image'] ?? '',
-              prix:
-                  item['prix'] ?? '', // Provide default value if image is null
+              prix: item['prix'] ?? 0,
+              selectedRetraitMode: selectedRetraitMode,
             ),
           ),
         );
@@ -109,7 +115,7 @@ class ItemDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.network(
-              item['image'] ?? '', // Provide default value if image is null
+              item['image'] ?? '',
               width: 150,
               height: 100,
             ),
@@ -119,7 +125,7 @@ class ItemDetailsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${item['nom_item'] ?? ''}', // Provide default value if nom_item is null
+                    item['nom'] ?? '',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -127,7 +133,7 @@ class ItemDetailsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${item['description'] ?? ''}', // Provide default value if description is null
+                    item['description'] ?? '',
                     style: const TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 16,
@@ -135,7 +141,7 @@ class ItemDetailsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Prix: ${item['prix'] ?? ''}£', // Provide default value if prix is null
+                    'Prix: ${item['prix'] ?? ''}£',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,

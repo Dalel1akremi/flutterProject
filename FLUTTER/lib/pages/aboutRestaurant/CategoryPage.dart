@@ -1,6 +1,3 @@
-// ignore: file_names
-// ignore_for_file: avoid_print, file_names, duplicate_ignore
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -9,17 +6,24 @@ import 'acceuil.dart';
 import './../aboutPaiement/panier.dart';
 import 'ItemDetailsPage.dart';
 import 'stepMenuPage.dart';
+import './../global.dart';
 
 class NextPage extends StatefulWidget {
   final String selectedRetraitMode;
   final Restaurant restaurant;
   final TimeOfDay selectedTime;
+  final String nom;
+  
+  final List<Article> panier;
 
   const NextPage({
     Key? key,
     required this.selectedRetraitMode,
     required this.restaurant,
     required this.selectedTime,
+    
+    required this.nom,
+    required this.panier,
   }) : super(key: key);
 
   @override
@@ -29,8 +33,6 @@ class NextPage extends StatefulWidget {
 class _NextPageState extends State<NextPage> {
   List<Category> _categories = [];
   int _selectedCategoryIndex = 0;
-  String selectedRetraitMode = '';
-  TimeOfDay selectedTime = TimeOfDay.now();
 
   @override
   void initState() {
@@ -88,15 +90,15 @@ class _NextPageState extends State<NextPage> {
     }
   }
 
-  
   @override
   Widget build(BuildContext context) {
-    // Extracting arguments
-    final Map<String, dynamic>? args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    int totalPrice = 0;
+    int numberOfItems = 0;
+    for (var article in widget.panier) {
+      totalPrice += article.prix * article.quantite;
+      numberOfItems += article.quantite;
+    }
 
-    // Accessing numberOfItems and totalPrice
-    final int numberOfItems = args?['numberOfItems'] ?? 0;
-    final int totalPrice = args?['totalPrice'] ?? 0;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -104,7 +106,6 @@ class _NextPageState extends State<NextPage> {
       ),
       body: Column(
         children: [
-          
           SizedBox(
             height: 56,
             child: ListView.builder(
@@ -164,13 +165,14 @@ class _NextPageState extends State<NextPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => PanierPage(
+                      nom:widget.nom,
                       selectedRetraitMode: widget.selectedRetraitMode,
                       restaurant: widget.restaurant,
                       selectedTime: widget.selectedTime,
-                      numberOfItems:numberOfItems,
-                      totalPrice:totalPrice,
+                      numberOfItems: numberOfItems,
+                      totalPrice: totalPrice,
+                       panier: Panier().articles,
                     ),
-                    
                   ),
                 );
               },
@@ -179,31 +181,30 @@ class _NextPageState extends State<NextPage> {
                 backgroundColor: Colors.green,
               ),
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
-                    const Text(
-                'Paiement',
-                style: TextStyle(color: Colors.white),
+                  ),
+                  const Text(
+                    'Paiement',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    ' $totalPrice £',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-                    Text(
-                      ' $totalPrice £',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              
             ),
           ),
         ],
@@ -229,9 +230,14 @@ class _NextPageState extends State<NextPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ItemDetailsPage(
-                          idMenu: menuItem['id_menu'],
-                          nomMenu: menuItem['nom'],
-                            restaurant: widget.restaurant,
+                           id_item: menuItem['id_item'],
+                          nom: menuItem['nom'],
+                          img: menuItem['image'],
+                          prix: menuItem['prix'],
+                          selectedTime: widget.selectedTime,
+                          restaurant: widget.restaurant,
+                          selectedRetraitMode: widget.selectedRetraitMode,
+            
                         ),
                       ),
                     );
@@ -240,13 +246,14 @@ class _NextPageState extends State<NextPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => StepMenuPage(
-                          idMenu: menuItem['id_menu'],
-                          nomMenu: menuItem['nom'],
+                         id_item: menuItem['id_item'],
+                          nom: menuItem['nom'],
                           img: menuItem['image'],
-                          prix: menuItem['prix'], 
-                         selectedRetraitMode: selectedRetraitMode,
-                        restaurant: widget.restaurant,
-                        selectedTime: selectedTime,
+                          prix: menuItem['prix'],
+                          selectedTime: widget.selectedTime,
+                          restaurant: widget.restaurant,
+                          selectedRetraitMode: widget.selectedRetraitMode,
+
                           // Pass any necessary parameters to StepMenuPage
                         ),
                       ),

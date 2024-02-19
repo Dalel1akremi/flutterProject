@@ -1,22 +1,24 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
 import 'CategoryPage.dart';
 import 'acceuil.dart';
+import './../global.dart'; 
 
 class StepDetailsPage extends StatefulWidget {
-  final int idItem;
+  final int id_item;
   final String img;
-  final String nomItem;
   final int prix;
   final Restaurant restaurant;
+  final String nom;
+  final String selectedRetraitMode;
 
   const StepDetailsPage({
     Key? key,
-    required this.idItem,
-    required this.nomItem,
+    required this.id_item,
     required this.img,
     required this.prix,
     required this.restaurant,
+    required this.nom,
+    required this.selectedRetraitMode,
   }) : super(key: key);
 
   @override
@@ -26,8 +28,8 @@ class StepDetailsPage extends StatefulWidget {
 
 class _StepDetailsPageState extends State<StepDetailsPage> {
   int _value = 1; // State for the value
-  String selectedRetraitMode = '';
   late TimeOfDay selectedTime;
+  String selectedRetraitMode = '';
   final TextEditingController _remarkController = TextEditingController();
 
   @override
@@ -48,7 +50,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.nomItem),
+        title: Text(widget.nom),
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
       ),
       body: Center(
@@ -126,33 +128,46 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
               width: 1000,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NextPage(
-                        selectedRetraitMode: selectedRetraitMode,
-                        restaurant: widget.restaurant,
-                        selectedTime: selectedTime,
-                      
-                      ),
+               onPressed: () {
+  // Creating the article object
+  Article article = Article(
+    id_item: widget.id_item,
+    nom: widget.nom,
+    img: widget.img,
+    prix: widget.prix,
+    restaurant: widget.restaurant,
+    quantite: _value,
+  );
+  // Adding the article to the cart
+  Panier().ajouterAuPanier1(article);
+  // Navigating to the next page
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => NextPage(
+        selectedRetraitMode: widget.selectedRetraitMode,
+        restaurant: widget.restaurant,
+        selectedTime: selectedTime,
+        nom: widget.nom,
+        panier: Panier().articles,
+      ),
+    
                       settings: RouteSettings(
-      arguments: {'numberOfItems': _value, 'totalPrice': totalPrice},
-    ),
+                        arguments: {article},
+                      ),
                     ),
-                 ).then((result) {
+                  ).then((result) {
                     if (result != null) {
                       setState(() {
-                        _value = result['numberOfItems'];
-                        totalPrice = result['totalPrice'];
+                        article.quantite = result['numberOfItems'];
+                        article.prix = result['totalPrice'];
+                        
                       });
                     }
                   });
-                  
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Colors.green, // Change background color as needed
+                  backgroundColor: Colors.green, // Change background color as needed
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
