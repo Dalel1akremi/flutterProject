@@ -1,12 +1,12 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
 import 'acceuil.dart';
 import 'CategoryPage.dart';
+import './../global.dart';
 
 class StepMenuPage extends StatefulWidget {
-  final int idMenu;
+  final int id_item;
   final String img;
-  final String nomMenu;
+  final String nom;
   final int prix;
   final Restaurant restaurant;
   final String selectedRetraitMode;
@@ -14,8 +14,8 @@ class StepMenuPage extends StatefulWidget {
 
   const StepMenuPage({
     Key? key,
-    required this.idMenu,
-    required this.nomMenu,
+    required this.id_item,
+    required this.nom,
     required this.img,
     required this.prix,
     required this.restaurant,
@@ -24,19 +24,18 @@ class StepMenuPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _StepMenuPageState createState() => _StepMenuPageState();
 }
 
 class _StepMenuPageState extends State<StepMenuPage> {
   int _value = 1;
-  String selectedRetraitMode = '';
-  late TimeOfDay selectedTime; // State for the value
+  late TimeOfDay selectedTime;
   final TextEditingController _remarkController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    selectedTime = TimeOfDay.now();
+    selectedTime = widget.selectedTime;
   }
 
   @override
@@ -48,10 +47,11 @@ class _StepMenuPageState extends State<StepMenuPage> {
   @override
   Widget build(BuildContext context) {
     int totalPrice = _value * widget.prix;
+    int id_item = widget.id_item;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.nomMenu),
+        title: Text(widget.nom),
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
       ),
       body: Center(
@@ -130,37 +130,51 @@ class _StepMenuPageState extends State<StepMenuPage> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
+                  // Création de l'objet article
+                  Article article = Article(
+                    id_item: widget.id_item,
+                    nom: widget.nom,
+                    img: widget.img,
+                    prix: widget.prix,
+                    restaurant: widget.restaurant,
+                    quantite: _value,
+                  );
+
+                  // Ajout de l'article au panier
+                  Panier().ajouterAuPanier1(article);
+
+                  // Navigation vers la page suivante
                   Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => NextPage(
-      selectedRetraitMode: selectedRetraitMode,
-      restaurant: widget.restaurant,
-      selectedTime: selectedTime,
-      
-    ),
-    settings: RouteSettings(
-      arguments: {'numberOfItems': _value, 'totalPrice': totalPrice},
-    ),
-  ),
-).then((result) {
-  if (result != null) {
-    setState(() {
-      _value = result['numberOfItems'];
-      totalPrice = result['totalPrice'];
-    });
-  }
-});
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NextPage(
+                        selectedRetraitMode: widget.selectedRetraitMode,
+                        restaurant: widget.restaurant,
+                        selectedTime: selectedTime,
+                        nom: widget.nom,
+                        panier: Panier().articles,
+                      ),
+                      settings: RouteSettings(
+                        arguments: {'article': article},
+                      ),
+                    ),
+                  ).then((result) {
+                    if (result != null) {
+                      setState(() {
+                        article.quantite = result['numberOfItems'];
+                        article.prix = result['totalPrice'];
+                      });
+                    }
+                  });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Colors.green, // Change background color as needed
+                  backgroundColor: Colors.green,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Ajouter $_value article au panier${_value != 1 ? 's' : ''}',
+                      'Ajouter $_value article${_value != 1 ? 's' : ''}',
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

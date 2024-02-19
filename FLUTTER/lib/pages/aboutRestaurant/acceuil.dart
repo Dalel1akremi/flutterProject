@@ -1,9 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import './commande.dart';
-import '../aboutUser/login.dart';
+import '../aboutUser/login.dart'; // Correction de l'import
 import 'RestaurantDetail.dart';
 
 void main() {
@@ -11,6 +9,7 @@ void main() {
 }
 
 class AcceuilApp extends StatelessWidget {
+  
   const AcceuilApp({Key? key}) : super(key: key);
 
   @override
@@ -23,26 +22,16 @@ class AcceuilApp extends StatelessWidget {
 }
 
 class AcceuilScreen extends StatelessWidget {
-  const AcceuilScreen({super.key});
+  const AcceuilScreen({Key? key}) : super(key: key); // Implémentation du constructeur
 
- 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Text(
-                'Liste des restaurants',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-            ),
-          ],
+        title: const Text(
+          'Liste des restaurants',
+          style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
       body: Column(
@@ -116,17 +105,20 @@ class Restaurant {
   String name;
   String address;
   String status;
+  final String nom;
 
-  Restaurant(this.name, this.address, this.status);
+
+  Restaurant(this.name, this.address, this.status, this.nom);
 }
 
 class RestaurantList extends StatelessWidget {
-  const RestaurantList({super.key});
+  const RestaurantList({Key? key}) : super(key: key); // Ajout de la clé
 
   @override
   Widget build(BuildContext context) {
     final List<Restaurant> restaurants = [
-      Restaurant("MELTING POT", "43 Avenue du Général de Gaulle 93170 Bagnolet", ""),
+      Restaurant(
+          "MELTING POT", "43 Avenue du Général de Gaulle 93170 Bagnolet", "", ""),
     ];
 
     return ListView.builder(
@@ -140,12 +132,14 @@ class RestaurantList extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        RestaurantDetail(restaurant: restaurants[index]),
+                    builder: (context) => RestaurantDetail(
+                      restaurant: restaurants[index],
+                      nom: restaurants[index].nom,
+                    
+                    ),
                   ),
                 );
               },
-            
               child: ListTile(
                 leading: Image.asset(
                   'images/First.png', // Replace with your image asset path

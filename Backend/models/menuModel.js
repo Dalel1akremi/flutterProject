@@ -3,8 +3,8 @@
 const  { Schema, model } =require( 'mongoose');
 
 const menuSchema = new Schema({
-id_menu: { type: Number, unique: true },
-nom: { type: String, unique: true },
+  id_item: { type: Number, unique: true },
+ nom: { type: String, unique: true },
   type: String,
   prix: Number,
   description: String,
@@ -14,23 +14,24 @@ nom: { type: String, unique: true },
   max_quantite: Number,
   is_Menu:  { type: Boolean, validate: [isValidBoolean, 'is_Menu must be true or false'] },
   is_Redirect: { type: Boolean, validate: [isValidBoolean, 'is_Redirect must be true or false'] },
-  id_cat: { type:Number, ref: 'Categories' },
   id: { type: Schema.Types.ObjectId, ref: 'CompositionDeBase' },
+  id_cat: { type:Number, ref: 'Categories' },
 });
 function isValidBoolean(value) {
   return typeof value === 'boolean';
 }
 menuSchema.pre('save', async function (next) {
                     try {
-                      if (!this.id_menu) {
+                      if (!this.id_item) {
                         const lastMenu = await this.constructor.findOne({}, {}, { sort: { id_menu: -1 } });
-                        this.id_menu = lastMenu ? lastMenu.id_menu + 1 : 1;
+                        this.id_item = lastMenu ? lastMenu.id_item + 1 : 1;
                       }
                       next();
                     } catch (error) {
                       next(error);
                     }
                   });
+                
 const Menu = model('Menu', menuSchema);
 
 module.exports = Menu;

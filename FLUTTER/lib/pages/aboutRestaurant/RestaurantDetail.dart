@@ -1,14 +1,21 @@
-
 // ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore
 // ignore: file_names
+import 'package:demo/pages/aboutRestaurant/stepMenuPage.dart';
 import 'package:flutter/material.dart';
 import 'acceuil.dart';
 import 'CategoryPage.dart';
+import './../global.dart';
+
 class RestaurantDetail extends StatefulWidget {
   final Restaurant restaurant;
-
-  const RestaurantDetail({Key? key, required this.restaurant})
-      : super(key: key);
+  final String nom;
+ 
+  const RestaurantDetail({
+    Key? key,
+    required this.restaurant,
+   
+    required this.nom,
+  }) : super(key: key);
 
   @override
   _RestaurantDetailState createState() => _RestaurantDetailState();
@@ -115,7 +122,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   children: [
                     const Text(
                       'Adresse:',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(widget.restaurant.address),
                   ],
@@ -185,9 +193,12 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => NextPage(
+                         
                           selectedRetraitMode: selectedRetraitMode,
                           restaurant: widget.restaurant,
                           selectedTime: selectedTime,
+                          nom: widget.nom,
+                          panier: Panier().articles,
                         ),
                       ),
                     );
@@ -213,7 +224,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 class TimePickerWidget extends StatefulWidget {
   final Function(TimeOfDay) onTimeSelected;
 
-  const TimePickerWidget({Key? key, required this.onTimeSelected}) : super(key: key);
+  const TimePickerWidget({Key? key, required this.onTimeSelected})
+      : super(key: key);
 
   @override
   _TimePickerWidgetState createState() => _TimePickerWidgetState();
@@ -257,4 +269,3 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
     );
   }
 }
-
