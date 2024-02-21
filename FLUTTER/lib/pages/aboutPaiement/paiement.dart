@@ -59,7 +59,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           context,
           MaterialPageRoute(
             builder: (context) =>
-                CommandeScreen(), 
+                CommandeApp(), 
           ),
         );
       } else {

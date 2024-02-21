@@ -1,24 +1,46 @@
 import 'package:flutter/material.dart';
 import './acceuil.dart';
 import '../aboutUser/login.dart';
+
 void main() {
   runApp(const CommandeApp());
 }
 
-class CommandeApp extends StatelessWidget {
-  const CommandeApp({super.key});
+class CommandeApp extends StatefulWidget {
+  const CommandeApp({Key? key}) : super(key: key);
+
+  @override
+  _CommandeAppState createState() => _CommandeAppState();
+}
+
+class _CommandeAppState extends State<CommandeApp> {
+  int _currentIndex = 1;
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CommandeScreen(),
+      home: CommandeScreen(
+        currentIndex: _currentIndex,
+        onTabTapped: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
     );
   }
 }
 
 class CommandeScreen extends StatelessWidget {
-  const CommandeScreen({super.key});
+  final int currentIndex;
+  final Function(int) onTabTapped;
+
+  const CommandeScreen({
+    Key? key,
+    required this.currentIndex,
+    required this.onTabTapped,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +55,12 @@ class CommandeScreen extends StatelessWidget {
           ),
         ),
         body: Column(
-          
           children: [
             const TabBar(
               tabs: [
                 Tab(text: 'En cours'),
                 Tab(text: 'Passés'),
               ],
-              
             ),
             Expanded(
               child: TabBarView(
@@ -67,6 +87,7 @@ class CommandeScreen extends StatelessWidget {
             ],
           ),
           child: BottomNavigationBar(
+            currentIndex: currentIndex,
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
@@ -82,6 +103,7 @@ class CommandeScreen extends StatelessWidget {
               ),
             ],
             onTap: (index) {
+              onTabTapped(index);
               if (index == 0) {
                 Navigator.push(
                   context,
@@ -89,7 +111,7 @@ class CommandeScreen extends StatelessWidget {
                 );
               }
               if (index == 1) {
-                DefaultTabController.of(context)?.animateTo(0);
+                // Additional logic if needed
               }
               if (index == 2) {
                 Navigator.push(
