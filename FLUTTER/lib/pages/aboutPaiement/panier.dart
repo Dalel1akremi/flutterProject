@@ -99,6 +99,7 @@ class _PanierPageState extends State<PanierPage> {
                       restaurant: widget.restaurant,
                       selectedTime: widget.selectedTime,
                       totalPrice: widget.totalPrice,
+                       panier: Panier().articles,
                     ),
                   ),
                 );

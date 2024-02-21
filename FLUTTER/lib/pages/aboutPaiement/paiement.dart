@@ -4,20 +4,22 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import './../aboutRestaurant/acceuil.dart';
-
-
+import './../aboutRestaurant/commande.dart';
+import './../global.dart';
 // ignore: must_be_immutable
 class PaymentScreen extends StatefulWidget {
-   String selectedRetraitMode;
+  String selectedRetraitMode;
   final Restaurant restaurant;
   final TimeOfDay selectedTime;
- final int totalPrice;
+    final List<Article> panier;
+  final int totalPrice;
   PaymentScreen({
     Key? key,
     required this.totalPrice,
     required this.selectedRetraitMode,
     required this.restaurant,
     required this.selectedTime,
+     required this.panier,
   }) : super(key: key);
 
   @override
@@ -25,7 +27,7 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  double montantAPayer = 0.0; 
+  double montantAPayer = 0.0;
   String selectedRetraitMode = '';
 
   TimeOfDay? newSelectedTime;
@@ -52,6 +54,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       if (paymentData['success'] == true) {
         print('Paiement réussi');
+          Panier().printPanier();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                CommandeScreen(), 
+          ),
+        );
       } else {
         print('Erreur lors du paiement: ${paymentData['message']}');
       }
@@ -80,7 +90,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       builder: (BuildContext context) {
         String? selectedRetraitMode = widget.selectedRetraitMode;
         TimeOfDay? selectedTime = newSelectedTime ?? widget.selectedTime;
-     
+
         return AlertDialog(
           title: const Text('Modifier la commande'),
           content: Column(
@@ -198,7 +208,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
           ),
           const Divider(),
-        
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

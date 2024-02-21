@@ -104,7 +104,9 @@ exports.getRedirect= async (req, res) => {
     const { id_item} = req.query;
 
     // Fetch menus based on the provided type
-    const Redirect = await Redirect.find({ id_item });
+    
+    const Redirects = await Redirect.find({ id_item });
+
 
     if (Redirect.length === 0) {
       
@@ -118,7 +120,7 @@ exports.getRedirect= async (req, res) => {
       res.json({
         status: 200,
         message: 'Redirect récupérés avec succès',
-        data:Item
+        data:Redirects
         
       });
     }

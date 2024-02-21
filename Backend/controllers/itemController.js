@@ -86,7 +86,7 @@ exports.createItem = async (req, res) => {
       image: imageUrl,
     });
 
-    const savedItem= await Item.save();
+    const savedItem= await newItem.save();
     res.json({
       status: 200,
       message: 'Item crée avec succée ',
