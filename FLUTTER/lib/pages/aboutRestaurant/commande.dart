@@ -1,5 +1,8 @@
+import 'package:demo/pages/aboutUser/auth_provider.dart';
+import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import './acceuil.dart';
 import '../aboutUser/login.dart';
 
@@ -24,6 +27,16 @@ class CommandeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isLoggedIn = authProvider.isAuthenticated;
+    final token = authProvider.token;
+    final userId = authProvider.userId;
+    final nom = authProvider.nom;
+    final email = authProvider.email;
+
+    if (isLoggedIn) {
+      print('Token récupéré: $token,$email,$nom,$userId');
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -120,11 +133,18 @@ class CommandeScreen extends StatelessWidget {
             );
           }
           if (index == 2) {
-            // Navigate to the CommandePage when Button 2 is pressed
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const loginPage()),
-            );
+           if (isLoggedIn) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage(
+                  email: '', nom: '', userId: '')),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const loginPage()),
+              );
+            }
           }
         },
       ),

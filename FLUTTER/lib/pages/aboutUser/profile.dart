@@ -1,15 +1,16 @@
-// ignore_for_file: avoid_print, library_private_types_in_public_api
-import 'package:flutter/material.dart';
-import 'login.dart';
-import './../aboutPaiement/porfeuille.dart';
-import 'identifiant.dart';
+import 'dart:async';
 import 'dart:convert';
+import 'package:demo/pages/aboutUser/identifiant.dart';
+import 'package:demo/pages/global.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import './../aboutRestaurant/acceuil.dart';
-import './../aboutRestaurant/commande.dart';
-import 'adresse.dart';
 import 'package:provider/provider.dart';
 import 'auth_provider.dart';
+import './../aboutRestaurant/acceuil.dart';
+import './../aboutRestaurant/commande.dart';
+import './../aboutPaiement/porfeuille.dart';
+import 'adresse.dart';
+import 'login.dart';
 
 class MyApp extends StatefulWidget {
   final String email;
@@ -24,6 +25,7 @@ class _MyAppState extends State<MyApp> {
   late String email;
   late String nom;
   late String userId;
+
   @override
   void initState() {
     super.initState();
@@ -66,9 +68,13 @@ class ProfilePage extends StatelessWidget {
   final String email;
   final String nom;
   final String userId;
-  const ProfilePage(
-      {Key? key, required this.email, required this.nom, required this.userId})
-      : super(key: key);
+
+  const ProfilePage({
+    Key? key,
+    required this.email,
+    required this.nom,
+    required this.userId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -198,11 +204,30 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 16),
             InkWell(
               onTap: () {
-                Provider.of<AuthProvider>(context, listen: false)
-                    .logout(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AcceuilApp()),
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Confirmation'),
+                      content: const Text('Voulez-vous vraiment annuler votre commande ?'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Non'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            // Vider le panier et se déconnecter
+                            Provider.of<AuthProvider>(context, listen: false).logout(context);
+                            Panier().viderPanier();
+                          },
+                          child: const Text('Oui'),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
               child: Row(
