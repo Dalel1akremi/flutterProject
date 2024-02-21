@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print, library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'login.dart';
 import './../aboutPaiement/porfeuille.dart';
@@ -9,11 +8,11 @@ import 'package:http/http.dart' as http;
 import './../aboutRestaurant/acceuil.dart';
 import './../aboutRestaurant/commande.dart';
 import 'adresse.dart';
-
-
+import 'package:provider/provider.dart';
+import 'auth_provider.dart';
 
 class MyApp extends StatefulWidget {
-   final String email;
+  final String email;
 
   const MyApp({Key? key, required this.email}) : super(key: key);
 
@@ -37,15 +36,14 @@ class _MyAppState extends State<MyApp> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      
+
       final userNom = data['nom'];
       final userId = data['_id'];
-     
+
       setState(() {
-        email =  widget.email;
+        email = widget.email;
         nom = userNom;
       });
-       
     } else {
       // Gérer les erreurs lors de la récupération de l'email
       print('Failed to load user email');
@@ -54,9 +52,12 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Vérifier si l'email est récupéré avant de construire l'interface utilisateur
-    return MaterialApp(
-      home: ProfilePage(email: email, nom: nom,userId:userId),
+    // Wrap MaterialApp with ChangeNotifierProvider to provide AuthProvider instance
+    return ChangeNotifierProvider(
+      create: (_) => AuthProvider(),
+      child: MaterialApp(
+        home: ProfilePage(email: email, nom: nom, userId: userId),
+      ),
     );
   }
 }
@@ -65,7 +66,8 @@ class ProfilePage extends StatelessWidget {
   final String email;
   final String nom;
   final String userId;
-  const ProfilePage({Key? key, required this.email, required this.nom,required this.userId})
+  const ProfilePage(
+      {Key? key, required this.email, required this.nom, required this.userId})
       : super(key: key);
 
   @override
@@ -74,7 +76,6 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: Text('Bonjour $nom'),
-        
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -124,7 +125,7 @@ class ProfilePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddressSearchScreen(userId:userId),
+                    builder: (context) => AddressSearchScreen(userId: userId),
                   ),
                 );
               },
@@ -197,11 +198,11 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 16),
             InkWell(
               onTap: () {
+                Provider.of<AuthProvider>(context, listen: false)
+                    .logout(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const loginPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const AcceuilApp()),
                 );
               },
               child: Row(
