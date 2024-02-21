@@ -2,20 +2,36 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './commande.dart';
-import '../aboutUser/login.dart'; // Correction de l'import
+import '../aboutUser/login.dart'; 
 import 'RestaurantDetail.dart';
+import '../aboutUser/profile.dart';
 import './../aboutUser/auth_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const AcceuilApp());
-  final authProvider = AuthProvider(); // Créer une instance de AuthProvider
-  final token = authProvider.token; // Récupérer le token depuis AuthProvider
-
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Créer une instance de AuthProvider
+  final authProvider = AuthProvider();
+  
+  // Initialiser le token depuis le stockage
+  await authProvider.initTokenFromStorage();
+  
+  runApp(
+    ChangeNotifierProvider.value(
+      value: authProvider,
+      child: const AcceuilApp(),
+    ),
+  );
+  
+  // Récupérer le token depuis le provider
+  final token = authProvider.token;
+  
+  // Afficher le token ou un message s'il n'existe pas
   if (token != null) {
-    print('Token: $token'); // Afficher le token s'il existe
+    print('Token: $token');
   } else {
-    print(
-        'Il n\'y a pas de token.'); // Afficher un message si le token n'existe pas
+    print('Il n\'y a pas de token.');
   }
 }
 
@@ -37,12 +53,16 @@ class AcceuilScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isLoggedIn = authProvider.isAuthenticated;
     final token = authProvider.token;
- if (isLoggedIn) {
-   print('Token récupéré: $token');
- }
+    final userId = authProvider.userId;
+    final nom = authProvider.nom;
+    final email = authProvider.email;
+
+    if (isLoggedIn) {
+      print('Token récupéré: $token,$email,$nom,$userId');
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -106,11 +126,18 @@ class AcceuilScreen extends StatelessWidget {
             );
           }
           if (index == 2) {
-            // Navigate to the ProfilePage when Button 3 is pressed
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const loginPage()),
-            );
+            if (isLoggedIn) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage(
+                  email: '', nom: '', userId: '')),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const loginPage()),
+              );
+            }
           }
         },
       ),
