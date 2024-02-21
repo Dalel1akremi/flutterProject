@@ -1,15 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import './commande.dart';
 import '../aboutUser/login.dart'; // Correction de l'import
 import 'RestaurantDetail.dart';
+import './../aboutUser/auth_provider.dart';
 
 void main() {
   runApp(const AcceuilApp());
+  final authProvider = AuthProvider(); // Créer une instance de AuthProvider
+  final token = authProvider.token; // Récupérer le token depuis AuthProvider
+
+  if (token != null) {
+    print('Token: $token'); // Afficher le token s'il existe
+  } else {
+    print(
+        'Il n\'y a pas de token.'); // Afficher un message si le token n'existe pas
+  }
 }
 
 class AcceuilApp extends StatelessWidget {
-  
   const AcceuilApp({Key? key}) : super(key: key);
 
   @override
@@ -22,10 +32,17 @@ class AcceuilApp extends StatelessWidget {
 }
 
 class AcceuilScreen extends StatelessWidget {
-  const AcceuilScreen({Key? key}) : super(key: key); // Implémentation du constructeur
+  const AcceuilScreen({Key? key})
+      : super(key: key); // Implémentation du constructeur
 
   @override
   Widget build(BuildContext context) {
+     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isLoggedIn = authProvider.isAuthenticated;
+    final token = authProvider.token;
+ if (isLoggedIn) {
+   print('Token récupéré: $token');
+ }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -107,7 +124,6 @@ class Restaurant {
   String status;
   final String nom;
 
-
   Restaurant(this.name, this.address, this.status, this.nom);
 }
 
@@ -117,8 +133,8 @@ class RestaurantList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Restaurant> restaurants = [
-      Restaurant(
-          "MELTING POT", "43 Avenue du Général de Gaulle 93170 Bagnolet", "", ""),
+      Restaurant("MELTING POT", "43 Avenue du Général de Gaulle 93170 Bagnolet",
+          "", ""),
     ];
 
     return ListView.builder(
@@ -135,7 +151,6 @@ class RestaurantList extends StatelessWidget {
                     builder: (context) => RestaurantDetail(
                       restaurant: restaurants[index],
                       nom: restaurants[index].nom,
-                    
                     ),
                   ),
                 );

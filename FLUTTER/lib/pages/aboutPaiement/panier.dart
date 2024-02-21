@@ -1,7 +1,10 @@
+import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import './../aboutRestaurant/acceuil.dart';
 import './../global.dart';
 import 'paiement.dart';
+import '../aboutUser/auth_provider.dart'; // Importez Provider si vous utilisez ce package
 
 class PanierPage extends StatefulWidget {
   final int numberOfItems;
@@ -91,17 +94,31 @@ class _PanierPageState extends State<PanierPage> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PaymentScreen(
-                      selectedRetraitMode: widget.selectedRetraitMode,
-                      restaurant: widget.restaurant,
-                      selectedTime: widget.selectedTime,
-                      totalPrice: widget.totalPrice,
+            
+                // Vérifiez si l'utilisateur est connecté
+                bool isLoggedIn =
+                    Provider.of<AuthProvider>(context, listen: false)
+                        .isAuthenticated;
+                if (isLoggedIn) {
+                  // Utilisateur connecté, naviguer vers PaymentScreen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PaymentScreen(
+                        selectedRetraitMode: widget.selectedRetraitMode,
+                        restaurant: widget.restaurant,
+                        selectedTime: widget.selectedTime,
+                        totalPrice: widget.totalPrice,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                } else {
+                  // Utilisateur non connecté, rediriger vers la page de connexion
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const loginPage()),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(150, 50),
@@ -138,6 +155,7 @@ class _PanierPageState extends State<PanierPage> {
       ),
     );
   }
+  
 
   Future<void> _showTimePickerDialog() async {
     final selectedTime = await showTimePicker(
