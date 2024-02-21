@@ -9,7 +9,9 @@ class Panier {
 
   List<Article> articles = [];
  
-
+ void viderPanier() {
+    articles.clear();
+  }
   void ajouterAuPanier1(Article article) {
     articles.add(article);
    
