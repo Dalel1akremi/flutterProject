@@ -9,8 +9,8 @@ const userController = require('./controllers/userController');
 const viewController = require('./controllers/viewController');
 const categoriesController = require('./controllers/categoriesController');
 const CompositionDeBController=require('./controllers/CompositionDeBController');
+const RedirectController =require( './controllers/RedirectController');
 const itemController =require( './controllers/itemController');
-const menuController =require( './controllers/menuController');
 const paiement =require( './controllers/paiement');
 const app = express();
 const PORT = 3000;
@@ -61,14 +61,14 @@ app.post('/createCategorie', categoriesController.createCategorie);
 app.get('/getCategories', categoriesController.getCategories);
 app.post('/insererComposition', CompositionDeBController.insererComposition);
 app.get('/getCompositions', CompositionDeBController.getCompositions);
-app.post('/createItem', upload.single('image'),itemController.createItem);
-app.get('/getItem', itemController.getItem);
+app.post('/createItem', upload.single('image'),RedirectController.createRedirect);
+app.get('/getItem', RedirectController.getRedirect);
 
 // Corrected createMenu route
-app.post('/createMenu', upload.single('image'), menuController.createMenu);
-app.get('/getMenu', menuController.getMenu);
+app.post('/createMenu', upload.single('image'), itemController.createItem);
+app.get('/getMenu', itemController.getItem);
 app.post('/porfeuille', paiement.porfeuille);
-app.get('/recupererCarteParId', paiement.recupererCarteParId);
+app.post('/recupererCarteParId', paiement.recupererCarteParId);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

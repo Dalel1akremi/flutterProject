@@ -2,7 +2,7 @@
 
 const  { Schema, model } =require( 'mongoose');
 
-const menuSchema = new Schema({
+const itemSchema = new Schema({
   id_item: { type: Number, unique: true },
  nom: { type: String, unique: true },
   type: String,
@@ -20,7 +20,7 @@ const menuSchema = new Schema({
 function isValidBoolean(value) {
   return typeof value === 'boolean';
 }
-menuSchema.pre('save', async function (next) {
+itemSchema.pre('save', async function (next) {
                     try {
                       if (!this.id_item) {
                         const lastMenu = await this.constructor.findOne({}, {}, { sort: { id_menu: -1 } });
@@ -32,6 +32,6 @@ menuSchema.pre('save', async function (next) {
                     }
                   });
                 
-const Menu = model('Menu', menuSchema);
+const item = model('Item', itemSchema);
 
-module.exports = Menu;
+module.exports = item;

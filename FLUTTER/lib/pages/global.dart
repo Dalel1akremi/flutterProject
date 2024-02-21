@@ -23,6 +23,12 @@ class Panier {
    
     return total;
   }
+  void printPanier() {
+    print('Contenu du panier:');
+    for (var article in articles) {
+      print('Nom: ${article.nom}, Prix: ${article.prix}, Quantité: ${article.quantite}');
+    }
+  }
 }
 
 class Article {
