@@ -70,7 +70,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       { userId: user._id, email: user.email ,nom: user.nom},
       'your-secret-key', // Remplacez par une clé secrète plus sécurisée dans un environnement de production
-      { expiresIn: '1h' } // Durée de validité du jeton (1 heure dans cet exemple)
+      { expiresIn: '7d' } // Durée de validité du jeton (1 heure dans cet exemple)
     );
 
     res.status(200).json({ token, userId: user._id,nom: user.nom, message: 'Login successful' });

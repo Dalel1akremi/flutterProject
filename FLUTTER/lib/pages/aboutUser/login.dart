@@ -1,51 +1,64 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print, library_private_types_in_public_api, camel_case_types
-
+import 'package:demo/pages/aboutUser/profile.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'registre.dart';
+import 'package:provider/provider.dart';
+import 'auth_provider.dart'; // Import auth_provider.dart
 import 'PasswordRecoveryPage.dart';
-import 'profile.dart';
+import 'registre.dart';
 
+// ignore: camel_case_types
 class loginPage extends StatefulWidget {
-  const loginPage({super.key});
+  const loginPage({Key? key}) : super(key: key);
 
   @override
-  _loginPageState createState() => _loginPageState();
+  // ignore: library_private_types_in_public_api
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _loginPageState extends State<loginPage> {
+class _LoginPageState extends State<loginPage> {
   final _formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
-
+  // Declare nom variable
+ 
   void _submit(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
-      if (email.isEmpty || password.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please enter both email and password.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
       try {
-        await loginUser(context, email, password);
+        // Call login function from AuthProvider
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final loginData = await authProvider.login(email, password);
+      final userId = loginData['userId'];
+      final nom = loginData['nom'];
+          // Show success message
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Login successful'),
+          backgroundColor: Colors.green, // Green background color
+        ),
+      );
+       // ignore: use_build_context_synchronously
+       Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>  ProfilePage(
+            email: email, nom:nom, userId: userId,
+            ), // Replace ProfilePage() with your actual profile page
+        ),
+      );
+        // No need to navigate here, it will be handled in AuthProvider
       } catch (error) {
-        print('Error during login: $error');
+        if (kDebugMode) {
+          print('Error during login: $error');
+        }
         String errorMessage = 'Error during login. Please try again.';
 
-        if (error is http.ClientException) {
-          errorMessage =
-              'Network error. Please check your internet connection.';
-        } else if (error is FormatException) {
+        if (error is FormatException) {
           errorMessage = 'Invalid response format from the server.';
         }
 
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
@@ -53,58 +66,6 @@ class _loginPageState extends State<loginPage> {
           ),
         );
       }
-    }
-  }
-
-  Future<void> loginUser(
-      BuildContext context, String email, String password) async {
-    const String apiUrl = "http://localhost:3000/login";
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
-      );
-
-     
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final String token = data['token'];
-        final String userId = data['userId'];
-        final String nom = data['nom'];
-        print('Login successful! Token: $token, UserId: $userId,nom:$nom');
-
-       Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProfilePage(email:email,nom:nom,userId:userId),),
-            );
-      } else {
-        final data = json.decode(response.body);
-        final String message = data['message'];
-
-        print('Login failed! Message: $message');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login failed: $message'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (error) {
-      print('Error during login: $error');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Error during login.'),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
   }
 
@@ -264,7 +225,7 @@ class _loginPageState extends State<loginPage> {
                 onPressed: () => (context),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.red,
+                  backgroundColor: Color.fromARGB(255, 107, 101, 101),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
