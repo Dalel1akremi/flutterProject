@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthProvider with ChangeNotifier {
   String? _token;
   String? _userId;
+  String? _nom;
+  String? _email;
 
   String? get token => _token;
 
@@ -17,18 +19,21 @@ class AuthProvider with ChangeNotifier {
   }
 
   String? get userId => _userId;
+  String? get nom => _nom;
+  String? get email=> _email;
 
-  AuthProvider() {
-    _loadTokenFromStorage(); // Load token when AuthProvider is initialized
-  }
-
-  bool get isAuthenticated => _token != null;
-
-  Future<String?> _loadTokenFromStorage() async {
-    final prefs = await SharedPreferences.getInstance();
+ 
+// Méthode pour initialiser le token depuis le stockage
+  Future<void> initTokenFromStorage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('token');
+    _userId = prefs.getString('userId');
+    _nom = prefs.getString('nom');
+    _email = prefs.getString('email');
     notifyListeners();
   }
+  bool get isAuthenticated => _token != null;
+
 
   Future<void> _saveTokenToStorage(String token) async {
     final prefs = await SharedPreferences.getInstance();
@@ -70,7 +75,7 @@ class AuthProvider with ChangeNotifier {
         throw Exception('Login failed');
       }
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
