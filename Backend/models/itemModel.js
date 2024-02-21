@@ -20,7 +20,7 @@ const itemSchema = new Schema({
 function isValidBoolean(value) {
   return typeof value === 'boolean';
 }
-menuSchema.pre('save', async function (next) {
+itemSchema.pre('save', async function (next) {
                     try {
                       if (!this.id_item) {
                         const lastMenu = await this.constructor.findOne({}, {}, { sort: { id_menu: -1 } });
