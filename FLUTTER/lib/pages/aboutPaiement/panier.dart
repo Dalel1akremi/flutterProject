@@ -4,29 +4,27 @@ import 'package:provider/provider.dart';
 import './../aboutRestaurant/acceuil.dart';
 import './../global.dart';
 import 'paiement.dart';
-import '../aboutUser/auth_provider.dart'; // Importez Provider si vous utilisez ce package
+import '../aboutUser/auth_provider.dart';
 
 class PanierPage extends StatefulWidget {
   final int numberOfItems;
   final int totalPrice;
   final String selectedRetraitMode;
-  final TimeOfDay selectedTime;
   final Restaurant restaurant;
   final String nom;
   final List<Article> panier;
+
   const PanierPage({
     Key? key,
     required this.numberOfItems,
     required this.totalPrice,
     required this.selectedRetraitMode,
-    required this.selectedTime,
     required this.restaurant,
     required this.nom,
     required this.panier,
   }) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _PanierPageState createState() => _PanierPageState();
 }
 
@@ -48,6 +46,8 @@ class _PanierPageState extends State<PanierPage> {
 
   @override
   Widget build(BuildContext context) {
+    Panier panier = Panier(); // Instance de la classe Panier
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -64,7 +64,7 @@ class _PanierPageState extends State<PanierPage> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Heure de retrait : ${_newSelectedTime != null ? _newSelectedTime!.format(context) : widget.selectedTime.format(context)}',
+                    'Heure de retrait : ${_newSelectedTime != null ? _newSelectedTime!.format(context) : panier.getCurrentSelectedTime().format(context)}',
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -94,22 +94,22 @@ class _PanierPageState extends State<PanierPage> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-            
+                // Appel de la fonction pour mettre à jour les détails de la commande dans le panier global
+             panier.updateCommandeDetails(widget.selectedRetraitMode, _newSelectedTime ?? panier.getCurrentSelectedTime());
                 // Vérifiez si l'utilisateur est connecté
                 bool isLoggedIn =
                     Provider.of<AuthProvider>(context, listen: false)
                         .isAuthenticated;
                 if (isLoggedIn) {
-                  // Utilisateur connecté, naviguer vers PaymentScreen
+                  
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => PaymentScreen(
                         selectedRetraitMode: widget.selectedRetraitMode,
                         restaurant: widget.restaurant,
-                        selectedTime: widget.selectedTime,
                         totalPrice: widget.totalPrice,
-                        panier: Panier().articles,
+                        panier: panier.articles,
                       ),
                     ),
                   );
@@ -156,12 +156,12 @@ class _PanierPageState extends State<PanierPage> {
       ),
     );
   }
-  
 
   Future<void> _showTimePickerDialog() async {
+      Panier panier = Panier();
     final selectedTime = await showTimePicker(
       context: context,
-      initialTime: widget.selectedTime,
+      initialTime: panier.getCurrentSelectedTime(),
     );
 
     if (selectedTime != null) {

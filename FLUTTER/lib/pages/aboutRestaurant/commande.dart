@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import './acceuil.dart';
 import '../aboutUser/login.dart';
+import './../global.dart';
 
 void main() {
   runApp(const CommandeApp());
@@ -27,6 +28,7 @@ class _CommandeAppState extends State<CommandeApp> {
             _currentIndex = index;
           });
         },
+        panier: Panier(),
       ),
     );
   }
@@ -35,11 +37,13 @@ class _CommandeAppState extends State<CommandeApp> {
 class CommandeScreen extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTabTapped;
+final Panier panier;  // Add a field to store the shopping cart
 
   const CommandeScreen({
     Key? key,
     required this.currentIndex,
     required this.onTabTapped,
+    required this.panier,  // Pass the shopping cart through the constructor
   }) : super(key: key);
 
   @override
@@ -66,9 +70,21 @@ class CommandeScreen extends StatelessWidget {
               child: TabBarView(
                 children: [
                   Center(
-                    child: Text('Content for "En cours" tab'),
+                    child: ListView.builder(
+                      itemCount: panier.articles.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text('${panier.articles[index].nom}'),
+                          trailing: Text('${panier.articles[index].quantite}'),
+                          subtitle: Text(
+                            'Heure de retrait: ${panier.getCurrentSelectedTime().format(context) ?? "Non défini"}',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                  Center(
+                   Center(
                     child: Text('Content for "Passés" tab'),
                   ),
                 ],
@@ -107,7 +123,8 @@ class CommandeScreen extends StatelessWidget {
               if (index == 0) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AcceuilScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const AcceuilScreen()),
                 );
               }
               if (index == 1) {

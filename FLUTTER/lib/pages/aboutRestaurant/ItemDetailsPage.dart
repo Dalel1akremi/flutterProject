@@ -13,7 +13,7 @@ class ItemDetailsPage extends StatelessWidget {
   final int prix;
   final Restaurant restaurant;
   final String selectedRetraitMode;
-  final TimeOfDay selectedTime;
+
   const ItemDetailsPage({
     Key? key,
     required this.id_item,
@@ -22,7 +22,7 @@ class ItemDetailsPage extends StatelessWidget {
     required this.prix,
     required this.restaurant,
     required this.selectedRetraitMode,
-    required this.selectedTime,
+ 
   }) : super(key: key);
 
   @override

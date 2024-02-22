@@ -11,7 +11,7 @@ import './../global.dart';
 class NextPage extends StatefulWidget {
   final String selectedRetraitMode;
   final Restaurant restaurant;
-  final TimeOfDay selectedTime;
+
   final String nom;
   
   final List<Article> panier;
@@ -20,7 +20,7 @@ class NextPage extends StatefulWidget {
     Key? key,
     required this.selectedRetraitMode,
     required this.restaurant,
-    required this.selectedTime,
+
     
     required this.nom,
     required this.panier,
@@ -168,7 +168,7 @@ class _NextPageState extends State<NextPage> {
                       nom:widget.nom,
                       selectedRetraitMode: widget.selectedRetraitMode,
                       restaurant: widget.restaurant,
-                      selectedTime: widget.selectedTime,
+                    
                       numberOfItems: numberOfItems,
                       totalPrice: totalPrice,
                        panier: Panier().articles,
@@ -234,7 +234,7 @@ class _NextPageState extends State<NextPage> {
                           nom: menuItem['nom'],
                           img: menuItem['image'],
                           prix: menuItem['prix'],
-                          selectedTime: widget.selectedTime,
+                          
                           restaurant: widget.restaurant,
                           selectedRetraitMode: widget.selectedRetraitMode,
             
@@ -250,7 +250,7 @@ class _NextPageState extends State<NextPage> {
                           nom: menuItem['nom'],
                           img: menuItem['image'],
                           prix: menuItem['prix'],
-                          selectedTime: widget.selectedTime,
+                         
                           restaurant: widget.restaurant,
                           selectedRetraitMode: widget.selectedRetraitMode,
 
