@@ -1,25 +1,22 @@
-// ignore_for_file: avoid_print, library_private_types_in_public_api
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import './../aboutRestaurant/acceuil.dart';
 import './../aboutRestaurant/commande.dart';
 import './../global.dart';
-// ignore: must_be_immutable
+
 class PaymentScreen extends StatefulWidget {
   String selectedRetraitMode;
   final Restaurant restaurant;
-  final TimeOfDay selectedTime;
-    final List<Article> panier;
+  final List<Article> panier;
   final int totalPrice;
+
   PaymentScreen({
     Key? key,
     required this.totalPrice,
     required this.selectedRetraitMode,
     required this.restaurant,
-    required this.selectedTime,
-     required this.panier,
+    required this.panier,
   }) : super(key: key);
 
   @override
@@ -29,7 +26,6 @@ class PaymentScreen extends StatefulWidget {
 class _PaymentScreenState extends State<PaymentScreen> {
   double montantAPayer = 0.0;
   String selectedRetraitMode = '';
-
   TimeOfDay? newSelectedTime;
 
   @override
@@ -40,13 +36,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Future<void> processPayment() async {
     final email = 'yakinebenali5@gmail.com';
     try {
-      // Directly use widget.totalPrice instead of fetching from API
       final paymentResponse = await http.post(
         Uri.parse('http://localhost:3000/recupererCarteParId?email=$email'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'montant': widget.totalPrice,
-          // Utilize the details of the retrieved card
         }),
       );
 
@@ -54,12 +48,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       if (paymentData['success'] == true) {
         print('Paiement réussi');
-          Panier().printPanier();
+        Panier().printPanier(); // Affichez les détails du panier
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                CommandeApp(), 
+            builder: (context) => CommandeApp(),
           ),
         );
       } else {
@@ -78,7 +71,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
         return 'Sur place';
       case 'Option 3':
         return 'en livraison';
-      // Add other cases as needed
       default:
         return value;
     }
@@ -89,7 +81,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       context: context,
       builder: (BuildContext context) {
         String? selectedRetraitMode = widget.selectedRetraitMode;
-        TimeOfDay? selectedTime = newSelectedTime ?? widget.selectedTime;
+        TimeOfDay? selectedTime = newSelectedTime ?? Panier().getCurrentSelectedTime();
 
         return AlertDialog(
           title: const Text('Modifier la commande'),
@@ -113,7 +105,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  // Affichez le sélecteur d'heure et mettez à jour la nouvelle heure
                   TimeOfDay? pickedTime = await showTimePicker(
                     context: context,
                     initialTime: selectedTime ?? TimeOfDay.now(),
@@ -190,9 +181,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Heure de retrait : ${newSelectedTime ?? widget.selectedTime.format(context)}',
+                            'Heure de retrait : ${newSelectedTime ?? Panier().getCurrentSelectedTime().format(context)}',
                           ),
-                          const Divider(), // Divider after "Heure de retrait"
+                          const Divider(),
                         ],
                       ),
                     ],
@@ -213,7 +204,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Total', // Replace with your variable
+                'Total',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -229,19 +220,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ],
           ),
-          const Divider(), // Divider after "Total"
-          const Spacer(), // Spacer to push the button to the bottom
+          const Divider(),
+          const Spacer(),
           Container(
             width: double.infinity,
-            color: Colors.green, // Set the background color to green
+            color: Colors.green,
             child: ElevatedButton(
               onPressed: () {
-                // Utilize the processPayment function
                 processPayment();
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
-                backgroundColor: Colors.green, // Set the button color to green
+                backgroundColor: Colors.green,
               ),
               child: const Text(
                 'Valider la commande',

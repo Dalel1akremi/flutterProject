@@ -20,10 +20,9 @@ class RestaurantDetail extends StatefulWidget {
   @override
   _RestaurantDetailState createState() => _RestaurantDetailState();
 }
-
 class _RestaurantDetailState extends State<RestaurantDetail> {
   String selectedRetraitMode = '';
-  late TimeOfDay selectedTime; // Déclarer selectedTime ici
+  late TimeOfDay selectedTime;
 
   @override
   void initState() {
@@ -43,10 +42,22 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               children: [
                 TimePickerWidget(
                   onTimeSelected: (time) {
-                    // Mettre à jour la valeur de selectedTime ici
+                    // Automatically set the selected time to the current time plus 15 minutes
+                    DateTime currentTime = DateTime.now();
+                    DateTime selectedDateTime = DateTime(
+                      currentTime.year,
+                      currentTime.month,
+                      currentTime.day,
+                      time.hour,
+                      time.minute,
+                    );
+                    selectedDateTime = selectedDateTime.add(Duration(minutes: 15));
+                    
+                    // Update the selectedTime with the calculated time
                     setState(() {
-                      selectedTime = time;
+                      selectedTime = TimeOfDay.fromDateTime(selectedDateTime);
                     });
+                    Panier().updateCommandeDetails(selectedRetraitMode, selectedTime);
                   },
                 ),
               ],
@@ -61,7 +72,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
             ),
             TextButton(
               onPressed: () {
-                // Gérer l'heure sélectionnée
+                // Handle the selected time as needed
                 Navigator.of(context).pop();
               },
               child: const Text('Valider'),
@@ -71,7 +82,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       },
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -196,7 +206,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                          
                           selectedRetraitMode: selectedRetraitMode,
                           restaurant: widget.restaurant,
-                          selectedTime: selectedTime,
+                       
                           nom: widget.nom,
                           panier: Panier().articles,
                         ),
@@ -220,24 +230,23 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     );
   }
 }
-
 class TimePickerWidget extends StatefulWidget {
   final Function(TimeOfDay) onTimeSelected;
 
-  const TimePickerWidget({Key? key, required this.onTimeSelected})
-      : super(key: key);
+  const TimePickerWidget({Key? key, required this.onTimeSelected}) : super(key: key);
 
   @override
   _TimePickerWidgetState createState() => _TimePickerWidgetState();
 }
-
 class _TimePickerWidgetState extends State<TimePickerWidget> {
   late TimeOfDay selectedTime;
+  late String selectedRetraitMode; // Déplacez la déclaration ici
 
   @override
   void initState() {
     super.initState();
     selectedTime = TimeOfDay.now();
+    selectedRetraitMode = ''; // Initialisez la variable ici
   }
 
   Future<void> _selectTime(BuildContext context) async {
@@ -245,13 +254,49 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
       context: context,
       initialTime: selectedTime,
     );
+    
     if (pickedTime != null && pickedTime != selectedTime) {
-      setState(() {
-        selectedTime = pickedTime;
-      });
+      DateTime currentTime = DateTime.now();
+      DateTime selectedDateTime = DateTime(
+        currentTime.year,
+        currentTime.month,
+        currentTime.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
 
-      // Appeler la fonction de retour pour informer le parent de la sélection de l'heure
-      widget.onTimeSelected(selectedTime);
+      // Assurez-vous que l'heure sélectionnée est exactement 15 minutes ou plus après l'heure actuelle
+      if (selectedDateTime.isAfter(currentTime.add(Duration(minutes: 14))) ||
+          selectedDateTime.isAtSameMomentAs(currentTime.add(Duration(minutes: 15)))) {
+        setState(() {
+          selectedTime = pickedTime;
+        });
+
+        // Call the callback function to inform the parent of the selected time
+        widget.onTimeSelected(selectedTime);
+
+        // Mise à jour directe du panier avec l'heure sélectionnée
+        Panier().updateCommandeDetails(selectedRetraitMode, selectedTime);
+      } else {
+        // Show an alert or provide feedback to the user that the selected time is not valid
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Heure invalide'),
+              content: const Text('Veuillez choisir une heure au moins 15 minutes plus tard.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 

@@ -147,7 +147,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
       builder: (context) => NextPage(
         selectedRetraitMode: widget.selectedRetraitMode,
         restaurant: widget.restaurant,
-        selectedTime: selectedTime,
+      
         nom: widget.nom,
         panier: Panier().articles,
       ),

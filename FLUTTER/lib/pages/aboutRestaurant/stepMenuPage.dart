@@ -10,7 +10,7 @@ class StepMenuPage extends StatefulWidget {
   final int prix;
   final Restaurant restaurant;
   final String selectedRetraitMode;
-  final TimeOfDay selectedTime;
+
 
   const StepMenuPage({
     Key? key,
@@ -20,7 +20,7 @@ class StepMenuPage extends StatefulWidget {
     required this.prix,
     required this.restaurant,
     required this.selectedRetraitMode,
-    required this.selectedTime,
+
   }) : super(key: key);
 
   @override
@@ -35,7 +35,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
   @override
   void initState() {
     super.initState();
-    selectedTime = widget.selectedTime;
+    
   }
 
   @override
@@ -150,7 +150,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                       builder: (context) => NextPage(
                         selectedRetraitMode: widget.selectedRetraitMode,
                         restaurant: widget.restaurant,
-                        selectedTime: selectedTime,
+                      
                         nom: widget.nom,
                         panier: Panier().articles,
                       ),
