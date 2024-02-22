@@ -3,6 +3,7 @@ import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import './acceuil.dart';
 import '../aboutUser/login.dart';
 import './../global.dart';
