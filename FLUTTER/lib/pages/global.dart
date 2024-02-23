@@ -14,7 +14,9 @@ class Panier {
   void viderPanier() {
     articles.clear();
   }
-
+ void getOrigin(){
+  
+ }
   void ajouterAuPanier1(Article article) {
     articles.add(article);
   }
