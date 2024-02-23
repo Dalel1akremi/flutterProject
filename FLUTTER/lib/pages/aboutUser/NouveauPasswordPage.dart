@@ -1,5 +1,3 @@
-// ignore_for_file: file_names, avoid_print, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../main.dart';
@@ -10,39 +8,44 @@ class NouveauPasswordPage extends StatefulWidget {
 
   const NouveauPasswordPage({Key? key, required this.email}) : super(key: key);
   @override
-  // ignore: library_private_types_in_public_api
   _NouveauPasswordPageState createState() => _NouveauPasswordPageState();
 }
 
 class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmNewPasswordController =
-      TextEditingController();
+  final TextEditingController confirmNewPasswordController = TextEditingController();
+
+  String? _passwordValidationError;
 
   String? validatePassword(String value) {
+    // Check if the password contains at least one uppercase letter
+    if (!value.contains(RegExp(r'[A-Z]'))) {
+      return 'Le mot de passe doit contenir au moins une lettre majuscule.';
+    }
+
+    // Check if the password contains at least one lowercase letter
+    if (!value.contains(RegExp(r'[a-z]'))) {
+      return 'Le mot de passe doit contenir au moins une lettre minuscule.';
+    }
+
+    // Check if the password contains at least one digit
+    if (!value.contains(RegExp(r'[0-9]'))) {
+      return 'Le mot de passe doit contenir au moins un chiffre.';
+    }
+
+    // Check if the password is at least 8 characters long
+    if (value.length < 8) {
+      return 'Le mot de passe doit contenir au moins 8 caractères.';
+    }
+
+    // Return null if the password meets all criteria
     return null;
-  
-    // Password validation logic...
-    // Return null if the password is valid, otherwise return an error message.
   }
 
   Future<void> updatePassword() async {
     final String newPassword = newPasswordController.text;
     final String confirmNewPassword = confirmNewPasswordController.text;
-
-    // Validate passwords
-    String? validationResult = validatePassword(newPassword);
-    if (validationResult != null) {
-      // Show validation error
-      print('Validation Error: $validationResult');
-      return;
-    }
-
-    if (newPassword != confirmNewPassword) {
-      // Passwords do not match
-      print('Passwords do not match');
-      return;
-    }
 
     if (widget.email != null) {
       try {
@@ -88,54 +91,81 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const SizedBox(height: 16.0),
-            const Text(
-              'Nouveau Mot de Passe',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            const SizedBox(height: 16.0),
-            TextFormField(
-              controller: newPasswordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Saisissez votre Nouveau Mot de Passe',
-                prefixIcon: Icon(Icons.lock),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const SizedBox(height: 16.0),
+              const Text(
+                'Nouveau Mot de Passe',
+                style: TextStyle(fontSize: 16.0),
               ),
-              validator: (value) {
-                return validatePassword(value!);
-              },
-            ),
-            const SizedBox(height: 16.0),
-            const Text(
-              'Confirmez le Nouveau Mot de Passe',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            const SizedBox(height: 16.0),
-            TextFormField(
-              controller: confirmNewPasswordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Confirmez le Nouveau Mot de Passe',
-                prefixIcon: Icon(Icons.lock),
+              const SizedBox(height: 16.0),
+              TextFormField(
+                controller: newPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Saisissez votre Nouveau Mot de Passe',
+                  prefixIcon: Icon(Icons.lock),
+                ),
+                validator: (value) {
+                  String? validationResult = validatePassword(value!);
+
+                  // Set the error message to be displayed
+                  setState(() {
+                    _passwordValidationError = validationResult;
+                  });
+
+                  // Return the validation result
+                  return validationResult;
+                },
               ),
-              validator: (value) {
-                if (value != newPasswordController.text) {
-                  return 'Les mots de passe ne correspondent pas.';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                updatePassword();
-              },
-              child: const Text('Continuer'),
-            ),
-          ],
+              if (_passwordValidationError != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    _passwordValidationError!,
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              const SizedBox(height: 16.0),
+              const Text(
+                'Confirmez le Nouveau Mot de Passe',
+                style: TextStyle(fontSize: 16.0),
+              ),
+              const SizedBox(height: 16.0),
+              TextFormField(
+                controller: confirmNewPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Confirmez le Nouveau Mot de Passe',
+                  prefixIcon: Icon(Icons.lock),
+                ),
+                validator: (value) {
+                  if (value != newPasswordController.text) {
+                    return 'Les mots de passe ne correspondent pas.';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  // Reset previous validation error
+                  setState(() {
+                    _passwordValidationError = null;
+                  });
+
+                  if (_formKey.currentState!.validate()) {
+                    // If form is valid, proceed with update
+                    updatePassword();
+                  }
+                },
+                child: const Text('Continuer'),
+              ),
+            ],
+          ),
         ),
       ),
     );

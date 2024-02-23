@@ -1,3 +1,4 @@
+// paiement.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -25,8 +26,8 @@ class PaymentScreen extends StatefulWidget {
 
 class _PaymentScreenState extends State<PaymentScreen> {
   double montantAPayer = 0.0;
-  String selectedRetraitMode = '';
   TimeOfDay? newSelectedTime;
+  Panier panier = Panier();
 
   @override
   void initState() {
@@ -48,7 +49,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       if (paymentData['success'] == true) {
         print('Paiement réussi');
-        Panier().printPanier(); // Affichez les détails du panier
+        panier.printPanier();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -81,7 +82,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       context: context,
       builder: (BuildContext context) {
         String? selectedRetraitMode = widget.selectedRetraitMode;
-        TimeOfDay? selectedTime = newSelectedTime ?? Panier().getCurrentSelectedTime();
+        TimeOfDay? selectedTime = newSelectedTime ?? panier.selectedTime;
 
         return AlertDialog(
           title: const Text('Modifier la commande'),
@@ -148,6 +149,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       setState(() {
         widget.selectedRetraitMode = newSelections['retraitMode'];
         newSelectedTime = newSelections['selectedTime'];
+        panier.updateCommandeDetails(widget.selectedRetraitMode, newSelectedTime ?? panier.getCurrentSelectedTime());
       });
     }
   }
@@ -181,7 +183,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Heure de retrait : ${newSelectedTime ?? Panier().getCurrentSelectedTime().format(context)}',
+                            'Heure de retrait : ${newSelectedTime ?? panier.getCurrentSelectedTime().format(context)}',
                           ),
                           const Divider(),
                         ],
@@ -199,7 +201,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
           ),
           const Divider(),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
