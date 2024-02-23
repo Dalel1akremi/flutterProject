@@ -1,5 +1,6 @@
-import 'aboutRestaurant/acceuil.dart';
 import 'package:flutter/material.dart';
+import 'aboutRestaurant/acceuil.dart';
+
 class Panier {
   static final Panier _instance = Panier._internal();
   factory Panier() => _instance;
@@ -9,9 +10,12 @@ class Panier {
   List<Article> articles = [];
   TimeOfDay? selectedTime;
   String? selectedRetraitMode;
- void viderPanier() {
+  Restaurant? restaurant;
+
+  void viderPanier() {
     articles.clear();
   }
+
   void ajouterAuPanier1(Article article) {
     articles.add(article);
   }
@@ -24,23 +28,39 @@ class Panier {
     return total;
   }
 
-  void updateCommandeDetails(String selectedRetraitMode, TimeOfDay selectedTime) {
+  void updateCommandeDetails(
+      String selectedRetraitMode, TimeOfDay selectedTime) {
     this.selectedRetraitMode = selectedRetraitMode;
     if (selectedTime != null) {
       this.selectedTime = selectedTime;
     }
   }
 
+  Restaurant? getRestaurant() {
+    return restaurant;
+  }
+
+  String? getSelectedRetraitMode() {
+    return selectedRetraitMode;
+  }
+
   void printPanier() {
     print('Contenu du panier:');
     for (var article in articles) {
-      print('Nom: ${article.nom}, Prix: ${article.prix}, Quantité: ${article.quantite}');
+      print(
+          'Nom: ${article.nom}, Prix: ${article.prix}, Quantité: ${article.quantite}');
+      print('selectedRetraitmode:$selectedRetraitMode');
     }
   }
 
   // Nouvelle méthode pour récupérer le temps actuel
   TimeOfDay getCurrentSelectedTime() {
     return selectedTime ?? TimeOfDay.now();
+  }
+
+  // Méthode pour mettre à jour selectedRetraitMode
+  void updateSelectedRetraitMode(String mode) {
+    this.selectedRetraitMode = mode;
   }
 }
 

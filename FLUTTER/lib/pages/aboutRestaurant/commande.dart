@@ -3,7 +3,6 @@ import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/provider.dart';
 import './acceuil.dart';
 import '../aboutUser/login.dart';
 import './../global.dart';
@@ -16,6 +15,7 @@ class CommandeApp extends StatefulWidget {
   const CommandeApp({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _CommandeAppState createState() => _CommandeAppState();
 }
 
@@ -61,7 +61,9 @@ class CommandeScreen extends StatelessWidget {
     final email = authProvider.email;
 
     if (isLoggedIn) {
-      print('Token récupéré: $token,$email,$nom,$userId');
+      if (kDebugMode) {
+        print('Token récupéré: $token,$email,$nom,$userId');
+      }
     }
     return DefaultTabController(
       length: 2,
@@ -81,53 +83,41 @@ class CommandeScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: Column(
+         body: Column(
           children: [
-            Container(
-              color: const Color.fromARGB(181, 123, 106, 106),
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            const TabBar(
+              tabs: [
+                Tab(text: 'En cours'),
+                Tab(text: 'Passés'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      // Handle "En cours" button press
-                      if (kDebugMode) {
-                        print('En cours button pressed');
-                      }
-                    },
-                    child: const Row(
-                      children: [
-                        SizedBox(width: 16.0),
-                        Text(
-                          'En cours',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
+                  Center(
+                    child: ListView.builder(
+                      itemCount: panier.articles.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(panier.articles[index].nom),
+                          trailing: Text('${panier.articles[index].quantite}'),
+                          subtitle: Text(
+                            'Heure de retrait: ${panier.getCurrentSelectedTime().format(context) }',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      // Handle "Passés" button press
-                      if (kDebugMode) {
-                        print('Passés button pressed');
-                      }
-                    },
-                    child: const Row(
-                      children: [
-                        SizedBox(width: 16.0),
-                        Text(
-                          'Passés',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
+                   const Center(
+                    child: Text('Content for "Passés" tab'),
                   ),
                 ],
               ),
             ),
           ],
         ),
+        
         bottomNavigationBar: BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(
