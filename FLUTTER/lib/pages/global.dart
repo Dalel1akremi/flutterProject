@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'aboutRestaurant/acceuil.dart';
-
 class Panier {
   static final Panier _instance = Panier._internal();
   factory Panier() => _instance;
@@ -10,12 +9,13 @@ class Panier {
   List<Article> articles = [];
   TimeOfDay? selectedTime;
   String? selectedRetraitMode;
-  Restaurant? restaurant;
-
+  String? origin;
   void viderPanier() {
     articles.clear();
   }
-
+ void getOrigin(){
+  
+ }
   void ajouterAuPanier1(Article article) {
     articles.add(article);
   }
@@ -35,15 +35,16 @@ class Panier {
       this.selectedTime = selectedTime;
     }
   }
-String? getSelectedRetraitMode() {
+
+  String? getSelectedRetraitMode() {
     return selectedRetraitMode;
   }
+
   void printPanier() {
     print('Contenu du panier:');
     for (var article in articles) {
       print(
           'Nom: ${article.nom}, Prix: ${article.prix}, Quantité: ${article.quantite}');
-      print('selectedRetraitmode:$selectedRetraitMode');
     }
   }
 

@@ -167,7 +167,7 @@ class _NextPageState extends State<NextPage> {
                     builder: (context) => PanierPage(
                       nom:widget.nom,
                       numberOfItems: numberOfItems,
-                      totalPrice: totalPrice,
+                    
                        panier: Panier().articles,
                     ),
                   ),
