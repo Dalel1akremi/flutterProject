@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'aboutRestaurant/acceuil.dart';
 class Panier {
@@ -31,6 +32,7 @@ class Panier {
   void updateCommandeDetails(
       String selectedRetraitMode, TimeOfDay selectedTime) {
     this.selectedRetraitMode = selectedRetraitMode;
+    
     if (selectedTime != null) {
       this.selectedTime = selectedTime;
     }
@@ -41,10 +43,14 @@ class Panier {
   }
 
   void printPanier() {
-    print('Contenu du panier:');
+    if (kDebugMode) {
+      print('Contenu du panier:');
+    }
     for (var article in articles) {
-      print(
+      if (kDebugMode) {
+        print(
           'Nom: ${article.nom}, Prix: ${article.prix}, Quantité: ${article.quantite}');
+      }
     }
   }
 
@@ -58,6 +64,7 @@ class Panier {
 }
 
 class Article {
+  // ignore: non_constant_identifier_names
   int id_item;
   String nom;
   String img;
@@ -66,6 +73,7 @@ class Article {
   int quantite;
 
   Article({
+    // ignore: non_constant_identifier_names
     required this.id_item,
     required this.nom,
     required this.img,

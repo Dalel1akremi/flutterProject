@@ -1,7 +1,6 @@
 import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './../aboutRestaurant/acceuil.dart';
 import './../global.dart';
 import 'paiement.dart';
 import '../aboutUser/auth_provider.dart';
@@ -14,12 +13,12 @@ class PanierPage extends StatefulWidget {
   const PanierPage({
     Key? key,
     required this.numberOfItems,
-
     required this.nom,
     required this.panier,
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _PanierPageState createState() => _PanierPageState();
 }
 
@@ -66,8 +65,6 @@ String mapRetraitMode(String value) {
             child: Row(
               children: [
                Icon(getModeIcon(newSelectedMode ?? panier.getSelectedRetraitMode() ?? '')),
-
-              
                 Expanded(
                   child: Text(
                     'Heure de retrait : ${newSelectedTime != null ? newSelectedTime!.format(context) : panier.getCurrentSelectedTime().format(context)}',
@@ -112,12 +109,13 @@ String mapRetraitMode(String value) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PaymentScreen(
+                      builder: (context) => const PaymentScreen(
                   
                       ),
                     ),
                   );
                 } else {
+                  panier.origin = 'panier';
                   // Utilisateur non connecté, rediriger vers la page de connexion
                   Navigator.push(
                     context,

@@ -1,18 +1,15 @@
-// paiement.dart
+
+// ignore_for_file: avoid_print, library_private_types_in_public_api
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import './../aboutRestaurant/acceuil.dart';
 import './../aboutRestaurant/commande.dart';
 import './../global.dart';
 
 class PaymentScreen extends StatefulWidget {
 
-
-
-  PaymentScreen({
+  const PaymentScreen({
     Key? key,
-
   
   }) : super(key: key);
   
@@ -32,7 +29,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> processPayment() async {
-    final email = 'yakinebenali5@gmail.com';
+    const email = 'dalelakremi2020@gmail.com';
     try {
       final paymentResponse = await http.post(
         Uri.parse('http://localhost:3000/recupererCarteParId?email=$email'),
@@ -173,18 +170,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-  'Commande ${mapRetraitMode(newSelectedMode ?? panier.getSelectedRetraitMode() ?? '')}',
-  style: const TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.bold,
-  ),
-),
+                         'Commande ${mapRetraitMode(newSelectedMode ?? panier.getSelectedRetraitMode() ?? '')}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                       ),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Heure de retrait : ${newSelectedTime ?? panier.getCurrentSelectedTime().format(context)}',
+                      'Heure de retrait : ${newSelectedTime != null ? newSelectedTime!.format(context) : panier.getCurrentSelectedTime().format(context)}',
                           ),
                           const Divider(),
                         ],

@@ -3,6 +3,7 @@ import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import './acceuil.dart';
 import '../aboutUser/login.dart';
 import './../global.dart';
@@ -15,7 +16,6 @@ class CommandeApp extends StatefulWidget {
   const CommandeApp({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _CommandeAppState createState() => _CommandeAppState();
 }
 
@@ -61,9 +61,7 @@ class CommandeScreen extends StatelessWidget {
     final email = authProvider.email;
 
     if (isLoggedIn) {
-      if (kDebugMode) {
-        print('Token récupéré: $token,$email,$nom,$userId');
-      }
+      print('Token récupéré: $token,$email,$nom,$userId');
     }
     return DefaultTabController(
       length: 2,
@@ -97,12 +95,12 @@ class CommandeScreen extends StatelessWidget {
                   Center(
                     child: ListView.builder(
                       itemCount: panier.articles.length,
-                      itemBuilder: (context, index) {
+                      itemBuilder: (conytext, index) {
                         return ListTile(
                           title: Text(panier.articles[index].nom),
                           trailing: Text('${panier.articles[index].quantite}'),
                           subtitle: Text(
-                            'Heure de retrait: ${panier.getCurrentSelectedTime().format(context) }',
+                            'Heure de retrait: ${panier.getCurrentSelectedTime().format(context) ?? "Non défini"}',
                             style: const TextStyle(fontSize: 16),
                           ),
                         );

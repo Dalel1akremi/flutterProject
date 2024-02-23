@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class AuthProvider with ChangeNotifier {
   String? _token;
   String? _userId;
@@ -20,9 +21,8 @@ class AuthProvider with ChangeNotifier {
 
   String? get userId => _userId;
   String? get nom => _nom;
-  String? get email=> _email;
+  String? get email => _email;
 
- 
 // Méthode pour initialiser le token depuis le stockage
   Future<void> initTokenFromStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -32,8 +32,8 @@ class AuthProvider with ChangeNotifier {
     _email = prefs.getString('email');
     notifyListeners();
   }
-  bool get isAuthenticated => _token != null;
 
+  bool get isAuthenticated => _token != null;
 
   Future<void> _saveTokenToStorage(String token) async {
     final prefs = await SharedPreferences.getInstance();
@@ -60,7 +60,7 @@ class AuthProvider with ChangeNotifier {
         final token = data['token'];
         final userId = data['userId'];
         final nom = data['nom'];
-        
+
         if (kDebugMode) {
           print('login successful! Token:$token,UserId:$userId,nom:$nom');
         }
@@ -70,7 +70,11 @@ class AuthProvider with ChangeNotifier {
         _token = token;
         _userId = data['userId'];
         notifyListeners();
-        return {'token': token, 'userId': userId, 'nom': nom}; // Return the necessary data
+        return {
+          'token': token,
+          'userId': userId,
+          'nom': nom
+        }; // Return the necessary data
       } else {
         throw Exception('Login failed');
       }
@@ -86,6 +90,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     // Replace the current route with the login page
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const loginPage()),

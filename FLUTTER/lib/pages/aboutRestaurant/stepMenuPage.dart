@@ -1,9 +1,11 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'acceuil.dart';
 import 'CategoryPage.dart';
 import './../global.dart';
 
 class StepMenuPage extends StatefulWidget {
+  // ignore: non_constant_identifier_names
   final int id_item;
   final String img;
   final String nom;
@@ -13,6 +15,7 @@ class StepMenuPage extends StatefulWidget {
 
   const StepMenuPage({
     Key? key,
+    // ignore: non_constant_identifier_names
     required this.id_item,
     required this.nom,
     required this.img,
@@ -23,6 +26,7 @@ class StepMenuPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _StepMenuPageState createState() => _StepMenuPageState();
 }
 
@@ -46,7 +50,6 @@ class _StepMenuPageState extends State<StepMenuPage> {
   @override
   Widget build(BuildContext context) {
     int totalPrice = _value * widget.prix;
-    int id_item = widget.id_item;
 
     return Scaffold(
       appBar: AppBar(

@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, non_constant_identifier_names
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,6 @@ import 'acceuil.dart';
 class ItemDetailsPage extends StatelessWidget {
   final int id_item;
   final String img;
-  
   final String nom;
   final int prix;
   final Restaurant restaurant;

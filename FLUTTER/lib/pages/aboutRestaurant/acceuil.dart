@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +8,7 @@ import '../aboutUser/login.dart';
 import 'RestaurantDetail.dart';
 import '../aboutUser/profile.dart';
 import './../aboutUser/auth_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

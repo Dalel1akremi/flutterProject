@@ -47,7 +47,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                       time.hour,
                       time.minute,
                     );
-                    selectedDateTime = selectedDateTime.add(Duration(minutes: 15));
+                    selectedDateTime = selectedDateTime.add(const Duration(minutes: 15));
 
                     setState(() {
                       selectedTime = TimeOfDay.fromDateTime(selectedDateTime);

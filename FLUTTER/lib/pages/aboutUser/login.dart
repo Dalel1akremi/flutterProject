@@ -5,10 +5,14 @@ import 'package:provider/provider.dart';
 import 'auth_provider.dart'; // Import auth_provider.dart
 import 'PasswordRecoveryPage.dart';
 import 'registre.dart';
+import './../aboutPaiement/paiement.dart';
+import'./../global.dart';
 
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
-  const loginPage({Key? key}) : super(key: key);
+  const loginPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -19,35 +23,46 @@ class _LoginPageState extends State<loginPage> {
   final _formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
+  Panier panier = Panier();
   // Declare nom variable
- 
+
   void _submit(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
         // Call login function from AuthProvider
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final loginData = await authProvider.login(email, password);
-      final userId = loginData['userId'];
-      final nom = loginData['nom'];
-          // Show success message
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login successful'),
-          backgroundColor: Colors.green, // Green background color
-        ),
-      );
-       // ignore: use_build_context_synchronously
-       Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>  ProfilePage(
-            email: email, nom:nom, userId: userId,
-            ), // Replace ProfilePage() with your actual profile page
-        ),
-      );
-        // No need to navigate here, it will be handled in AuthProvider
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final loginData = await authProvider.login(email, password);
+        final userId = loginData['userId'];
+        final nom = loginData['nom'];
+        // Show success message
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login successful'),
+            backgroundColor: Colors.green, // Green background color
+          ),
+        );
+        if (panier.origin == 'panier') {
+          // Si la page est appelée depuis la page du panier, naviguer vers la page de paiement
+          // ignore: use_build_context_synchronously
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PaymentScreen()),
+          );
+        } else {
+          // ignore: use_build_context_synchronously
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfilePage(
+                email: email,
+                nom: nom,
+                userId: userId,
+              ), // Replace ProfilePage() with your actual profile page
+            ),
+          );
+        } // No need to navigate here, it will be handled in AuthProvider
       } catch (error) {
         if (kDebugMode) {
           print('Error during login: $error');
@@ -225,7 +240,7 @@ class _LoginPageState extends State<loginPage> {
                 onPressed: () => (context),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Color.fromARGB(255, 107, 101, 101),
+                  backgroundColor:const Color.fromARGB(255, 107, 101, 101),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
