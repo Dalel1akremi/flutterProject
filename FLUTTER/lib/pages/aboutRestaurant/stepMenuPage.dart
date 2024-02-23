@@ -9,7 +9,6 @@ class StepMenuPage extends StatefulWidget {
   final String nom;
   final int prix;
   final Restaurant restaurant;
-  final String selectedRetraitMode;
 
 
   const StepMenuPage({
@@ -19,7 +18,7 @@ class StepMenuPage extends StatefulWidget {
     required this.img,
     required this.prix,
     required this.restaurant,
-    required this.selectedRetraitMode,
+   
 
   }) : super(key: key);
 
@@ -148,7 +147,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => NextPage(
-                        selectedRetraitMode: widget.selectedRetraitMode,
+                   
                         restaurant: widget.restaurant,
                       
                         nom: widget.nom,

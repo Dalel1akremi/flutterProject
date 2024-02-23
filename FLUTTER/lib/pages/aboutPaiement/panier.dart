@@ -9,8 +9,6 @@ import '../aboutUser/auth_provider.dart';
 class PanierPage extends StatefulWidget {
   final int numberOfItems;
   final int totalPrice;
-  final String selectedRetraitMode;
-  final Restaurant restaurant;
   final String nom;
   final List<Article> panier;
 
@@ -18,8 +16,6 @@ class PanierPage extends StatefulWidget {
     Key? key,
     required this.numberOfItems,
     required this.totalPrice,
-    required this.selectedRetraitMode,
-    required this.restaurant,
     required this.nom,
     required this.panier,
   }) : super(key: key);
@@ -29,8 +25,9 @@ class PanierPage extends StatefulWidget {
 }
 
 class _PanierPageState extends State<PanierPage> {
-  TimeOfDay? _newSelectedTime;
-
+  TimeOfDay? newSelectedTime;
+  String? newSelectedMode;
+  Panier panier = Panier();
   IconData getModeIcon(String value) {
     switch (value) {
       case 'Option 1':
@@ -43,11 +40,20 @@ class _PanierPageState extends State<PanierPage> {
         return Icons.shopping_bag;
     }
   }
-
+String mapRetraitMode(String value) {
+    switch (value) {
+      case 'Option 1':
+        return 'A Emporter';
+      case 'Option 2':
+        return 'Sur place';
+      case 'Option 3':
+        return 'en livraison';
+      default:
+        return value;
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    Panier panier = Panier(); // Instance de la classe Panier
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -60,18 +66,19 @@ class _PanierPageState extends State<PanierPage> {
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                Icon(getModeIcon(widget.selectedRetraitMode)),
-                const SizedBox(width: 8),
+               Icon(getModeIcon(newSelectedMode ?? panier.getSelectedRetraitMode() ?? '')),
+
+              
                 Expanded(
                   child: Text(
-                    'Heure de retrait : ${_newSelectedTime != null ? _newSelectedTime!.format(context) : panier.getCurrentSelectedTime().format(context)}',
+                    'Heure de retrait : ${newSelectedTime != null ? newSelectedTime!.format(context) : panier.getCurrentSelectedTime().format(context)}',
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.edit),
                   onPressed: () {
-                    _showTimePickerDialog();
+                    showEditDialog();
                   },
                 ),
               ],
@@ -95,19 +102,18 @@ class _PanierPageState extends State<PanierPage> {
             child: ElevatedButton(
               onPressed: () {
                 // Appel de la fonction pour mettre à jour les détails de la commande dans le panier global
-             panier.updateCommandeDetails(widget.selectedRetraitMode, _newSelectedTime ?? panier.getCurrentSelectedTime());
+                panier.updateCommandeDetails(
+                    panier.getSelectedRetraitMode() ?? '',
+                    newSelectedTime ?? panier.getCurrentSelectedTime());
                 // Vérifiez si l'utilisateur est connecté
                 bool isLoggedIn =
                     Provider.of<AuthProvider>(context, listen: false)
                         .isAuthenticated;
                 if (isLoggedIn) {
-                  
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => PaymentScreen(
-                        selectedRetraitMode: widget.selectedRetraitMode,
-                        restaurant: widget.restaurant,
                         totalPrice: widget.totalPrice,
                         panier: panier.articles,
                       ),
@@ -157,16 +163,82 @@ class _PanierPageState extends State<PanierPage> {
     );
   }
 
-  Future<void> _showTimePickerDialog() async {
-      Panier panier = Panier();
-    final selectedTime = await showTimePicker(
+  Future<void> showEditDialog() async {
+    Map<String, dynamic>? newSelections = await showDialog(
       context: context,
-      initialTime: panier.getCurrentSelectedTime(),
+      builder: (BuildContext context) {
+        String? selectedRetraitMode =
+            newSelectedMode ?? panier.getSelectedRetraitMode() ?? "";
+        TimeOfDay? selectedTime = newSelectedTime ?? panier.selectedTime;
+
+        return AlertDialog(
+          title: const Text('Modifier la commande'),
+          content: Column(
+            children: [
+              DropdownButton<String>(
+                value: selectedRetraitMode,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedRetraitMode = newValue!;
+                  });
+                },
+                items: <String>['Option 1', 'Option 2', 'Option 3']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(mapRetraitMode(value)),
+              
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  TimeOfDay? pickedTime = await showTimePicker(
+                    context: context,
+                    initialTime: selectedTime ?? TimeOfDay.now(),
+                  );
+
+                  if (pickedTime != null) {
+                    setState(() {
+                      selectedTime = pickedTime;
+                    });
+                  }
+                },
+                child: const Text('Modifier l\'heure'),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(
+                  context,
+                  {
+                    'retraitMode': selectedRetraitMode,
+                    'selectedTime': selectedTime,
+                  },
+                );
+              },
+              child: const Text('Enregistrer'),
+            ),
+          ],
+        );
+      },
     );
 
-    if (selectedTime != null) {
+    if (newSelections != null) {
       setState(() {
-        _newSelectedTime = selectedTime;
+        newSelectedMode = newSelections['retraitMode'];
+        newSelectedTime = newSelections['selectedTime'];
+        panier.updateCommandeDetails(panier.getSelectedRetraitMode() ?? '',
+            newSelectedTime ?? panier.getCurrentSelectedTime());
       });
     }
   }

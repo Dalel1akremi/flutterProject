@@ -9,7 +9,7 @@ import 'stepMenuPage.dart';
 import './../global.dart';
 
 class NextPage extends StatefulWidget {
-  final String selectedRetraitMode;
+
   final Restaurant restaurant;
 
   final String nom;
@@ -18,7 +18,7 @@ class NextPage extends StatefulWidget {
 
   const NextPage({
     Key? key,
-    required this.selectedRetraitMode,
+  
     required this.restaurant,
 
     
@@ -166,9 +166,6 @@ class _NextPageState extends State<NextPage> {
                   MaterialPageRoute(
                     builder: (context) => PanierPage(
                       nom:widget.nom,
-                      selectedRetraitMode: widget.selectedRetraitMode,
-                      restaurant: widget.restaurant,
-                    
                       numberOfItems: numberOfItems,
                       totalPrice: totalPrice,
                        panier: Panier().articles,
@@ -236,7 +233,7 @@ class _NextPageState extends State<NextPage> {
                           prix: menuItem['prix'],
                           
                           restaurant: widget.restaurant,
-                          selectedRetraitMode: widget.selectedRetraitMode,
+                         
             
                         ),
                       ),
@@ -252,7 +249,7 @@ class _NextPageState extends State<NextPage> {
                           prix: menuItem['prix'],
                          
                           restaurant: widget.restaurant,
-                          selectedRetraitMode: widget.selectedRetraitMode,
+                         
 
                           // Pass any necessary parameters to StepMenuPage
                         ),

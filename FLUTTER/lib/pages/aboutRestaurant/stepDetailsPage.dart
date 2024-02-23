@@ -9,7 +9,7 @@ class StepDetailsPage extends StatefulWidget {
   final int prix;
   final Restaurant restaurant;
   final String nom;
-  final String selectedRetraitMode;
+
 
   const StepDetailsPage({
     Key? key,
@@ -18,7 +18,7 @@ class StepDetailsPage extends StatefulWidget {
     required this.prix,
     required this.restaurant,
     required this.nom,
-    required this.selectedRetraitMode,
+  
   }) : super(key: key);
 
   @override
@@ -145,7 +145,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
     context,
     MaterialPageRoute(
       builder: (context) => NextPage(
-        selectedRetraitMode: widget.selectedRetraitMode,
+  
         restaurant: widget.restaurant,
       
         nom: widget.nom,

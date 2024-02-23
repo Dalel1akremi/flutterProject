@@ -35,15 +35,9 @@ class Panier {
       this.selectedTime = selectedTime;
     }
   }
-
-  Restaurant? getRestaurant() {
-    return restaurant;
-  }
-
-  String? getSelectedRetraitMode() {
+String? getSelectedRetraitMode() {
     return selectedRetraitMode;
   }
-
   void printPanier() {
     print('Contenu du panier:');
     for (var article in articles) {
