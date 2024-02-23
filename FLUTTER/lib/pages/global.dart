@@ -59,9 +59,7 @@ class Panier {
   }
 
   // Méthode pour mettre à jour selectedRetraitMode
-  void updateSelectedRetraitMode(String mode) {
-    this.selectedRetraitMode = mode;
-  }
+ 
 }
 
 class Article {
