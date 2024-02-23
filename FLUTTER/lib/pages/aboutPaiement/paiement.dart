@@ -8,12 +8,12 @@ import './../global.dart';
 
 class PaymentScreen extends StatefulWidget {
 
-  final List<Article> panier;
-  final int totalPrice;
+
+
   PaymentScreen({
     Key? key,
-    required this.totalPrice,
-    required this.panier,
+
+  
   }) : super(key: key);
   
   @override
@@ -38,7 +38,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         Uri.parse('http://localhost:3000/recupererCarteParId?email=$email'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'montant': widget.totalPrice,
+          'montant':panier.getTotalPrix(),
         }),
       );
 
@@ -214,7 +214,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
               const Spacer(),
               Text(
-                '\$${widget.totalPrice}',
+                '\$${panier.getTotalPrix()}',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

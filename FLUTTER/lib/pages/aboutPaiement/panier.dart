@@ -8,14 +8,13 @@ import '../aboutUser/auth_provider.dart';
 
 class PanierPage extends StatefulWidget {
   final int numberOfItems;
-  final int totalPrice;
   final String nom;
   final List<Article> panier;
 
   const PanierPage({
     Key? key,
     required this.numberOfItems,
-    required this.totalPrice,
+
     required this.nom,
     required this.panier,
   }) : super(key: key);
@@ -114,8 +113,7 @@ String mapRetraitMode(String value) {
                     context,
                     MaterialPageRoute(
                       builder: (context) => PaymentScreen(
-                        totalPrice: widget.totalPrice,
-                        panier: panier.articles,
+                  
                       ),
                     ),
                   );
@@ -147,7 +145,7 @@ String mapRetraitMode(String value) {
                     style: TextStyle(color: Colors.white),
                   ),
                   Text(
-                    ' ${widget.totalPrice} £',
+                    ' ${panier.getTotalPrix()} £',
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
