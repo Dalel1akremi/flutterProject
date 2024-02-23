@@ -30,7 +30,9 @@ class Panier {
       this.selectedTime = selectedTime;
     }
   }
-
+String? getSelectedRetraitMode() {
+    return selectedRetraitMode;
+  }
   void printPanier() {
     print('Contenu du panier:');
     for (var article in articles) {

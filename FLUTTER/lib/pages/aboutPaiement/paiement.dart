@@ -7,19 +7,15 @@ import './../aboutRestaurant/commande.dart';
 import './../global.dart';
 
 class PaymentScreen extends StatefulWidget {
-  String selectedRetraitMode;
-  final Restaurant restaurant;
+
   final List<Article> panier;
   final int totalPrice;
-
   PaymentScreen({
     Key? key,
     required this.totalPrice,
-    required this.selectedRetraitMode,
-    required this.restaurant,
     required this.panier,
   }) : super(key: key);
-
+  
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
 }
@@ -27,6 +23,7 @@ class PaymentScreen extends StatefulWidget {
 class _PaymentScreenState extends State<PaymentScreen> {
   double montantAPayer = 0.0;
   TimeOfDay? newSelectedTime;
+  String? newSelectedMode;
   Panier panier = Panier();
 
   @override
@@ -50,10 +47,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
       if (paymentData['success'] == true) {
         print('Paiement réussi');
         panier.printPanier();
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => CommandeApp(),
+            builder: (context) => const CommandeApp(),
           ),
         );
       } else {
@@ -81,8 +79,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
     Map<String, dynamic>? newSelections = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        String? selectedRetraitMode = widget.selectedRetraitMode;
+        String? selectedRetraitMode =newSelectedMode?? panier.getSelectedRetraitMode() ?? "";
         TimeOfDay? selectedTime = newSelectedTime ?? panier.selectedTime;
+     
 
         return AlertDialog(
           title: const Text('Modifier la commande'),
@@ -147,9 +146,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     if (newSelections != null) {
       setState(() {
-        widget.selectedRetraitMode = newSelections['retraitMode'];
+        newSelectedMode = newSelections['retraitMode'];
         newSelectedTime = newSelections['selectedTime'];
-        panier.updateCommandeDetails(widget.selectedRetraitMode, newSelectedTime ?? panier.getCurrentSelectedTime());
+        panier.updateCommandeDetails(panier.getSelectedRetraitMode() ?? '',
+            newSelectedTime ?? panier.getCurrentSelectedTime());
       });
     }
   }
@@ -173,12 +173,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Commande ${mapRetraitMode(widget.selectedRetraitMode)}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+  'Commande ${mapRetraitMode(newSelectedMode ?? panier.getSelectedRetraitMode() ?? '')}',
+  style: const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

@@ -12,7 +12,7 @@ class ItemDetailsPage extends StatelessWidget {
   final String nom;
   final int prix;
   final Restaurant restaurant;
-  final String selectedRetraitMode;
+
 
   const ItemDetailsPage({
     Key? key,
@@ -21,7 +21,7 @@ class ItemDetailsPage extends StatelessWidget {
     required this.img,
     required this.prix,
     required this.restaurant,
-    required this.selectedRetraitMode,
+ 
  
   }) : super(key: key);
 
@@ -99,7 +99,7 @@ class ItemDetailsPage extends StatelessWidget {
               nom: item['nom'] ?? '',
               img: item['image'] ?? '',
               prix: item['prix'] ?? 0,
-              selectedRetraitMode: selectedRetraitMode,
+          
             ),
           ),
         );

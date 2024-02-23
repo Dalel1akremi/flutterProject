@@ -83,45 +83,32 @@ class CommandeScreen extends StatelessWidget {
         ),
         body: Column(
           children: [
-            Container(
-              color: const Color.fromARGB(181, 123, 106, 106),
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            const TabBar(
+              tabs: [
+                Tab(text: 'En cours'),
+                Tab(text: 'Passés'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      // Handle "En cours" button press
-                      if (kDebugMode) {
-                        print('En cours button pressed');
-                      }
-                    },
-                    child: const Row(
-                      children: [
-                        SizedBox(width: 16.0),
-                        Text(
-                          'En cours',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
+                  Center(
+                    child: ListView.builder(
+                      itemCount: panier.articles.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(panier.articles[index].nom),
+                          trailing: Text('${panier.articles[index].quantite}'),
+                          subtitle: Text(
+                            'Heure de retrait: ${panier.getCurrentSelectedTime().format(context) }',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      // Handle "Passés" button press
-                      if (kDebugMode) {
-                        print('Passés button pressed');
-                      }
-                    },
-                    child: const Row(
-                      children: [
-                        SizedBox(width: 16.0),
-                        Text(
-                          'Passés',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
+                   const Center(
+                    child: Text('Content for "Passés" tab'),
                   ),
                 ],
               ),
