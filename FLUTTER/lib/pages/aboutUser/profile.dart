@@ -24,6 +24,7 @@ class _MyAppState extends State<MyApp> {
   late String email;
   late String nom;
   late String userId;
+
   @override
   void initState() {
     super.initState();
@@ -38,11 +39,12 @@ class _MyAppState extends State<MyApp> {
       final data = jsonDecode(response.body);
 
       final userNom = data['nom'];
-      final userId = data['_id'];
+      final fetchedUserId = data['_id'];
 
       setState(() {
         email = widget.email;
         nom = userNom;
+        userId = fetchedUserId;
       });
     } else {
       // Gérer les erreurs lors de la récupération de l'email
@@ -163,7 +165,7 @@ class ProfilePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const Portefeuille(),
+                    builder: (context) =>  Portefeuille(email:email),
                   ),
                 );
               },
