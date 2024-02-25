@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +40,8 @@ class _PanierPageState extends State<PanierPage> {
         return Icons.shopping_bag;
     }
   }
-String mapRetraitMode(String value) {
+
+  String mapRetraitMode(String value) {
     switch (value) {
       case 'Option 1':
         return 'A Emporter';
@@ -50,6 +53,7 @@ String mapRetraitMode(String value) {
         return value;
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +68,8 @@ String mapRetraitMode(String value) {
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-               Icon(getModeIcon(newSelectedMode ?? panier.getSelectedRetraitMode() ?? '')),
+                Icon(getModeIcon(
+                    newSelectedMode ?? panier.getSelectedRetraitMode() ?? '')),
                 Expanded(
                   child: Text(
                     'Heure de retrait : ${newSelectedTime != null ? newSelectedTime!.format(context) : panier.getCurrentSelectedTime().format(context)}',
@@ -97,11 +102,9 @@ String mapRetraitMode(String value) {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // Appel de la fonction pour mettre à jour les détails de la commande dans le panier global
                 panier.updateCommandeDetails(
                     panier.getSelectedRetraitMode() ?? '',
                     newSelectedTime ?? panier.getCurrentSelectedTime());
-                // Vérifiez si l'utilisateur est connecté
                 bool isLoggedIn =
                     Provider.of<AuthProvider>(context, listen: false)
                         .isAuthenticated;
@@ -109,14 +112,11 @@ String mapRetraitMode(String value) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const PaymentScreen(
-                  
-                      ),
+                      builder: (context) => const PaymentScreen(),
                     ),
                   );
                 } else {
                   panier.origin = 'panier';
-                  // Utilisateur non connecté, rediriger vers la page de connexion
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const loginPage()),
@@ -183,7 +183,6 @@ String mapRetraitMode(String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(mapRetraitMode(value)),
-              
                   );
                 }).toList(),
               ),
@@ -196,9 +195,40 @@ String mapRetraitMode(String value) {
                   );
 
                   if (pickedTime != null) {
-                    setState(() {
-                      selectedTime = pickedTime;
-                    });
+                    DateTime currentTime = DateTime.now();
+                    DateTime selectedDateTime = DateTime(
+                      currentTime.year,
+                      currentTime.month,
+                      currentTime.day,
+                      pickedTime.hour,
+                      pickedTime.minute,
+                    );
+
+                    if (selectedDateTime
+                        .isAfter(currentTime.add(const Duration(minutes: 15)))) {
+                      setState(() {
+                        selectedTime = pickedTime;
+                      });
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Heure invalide'),
+                            content: const Text(
+                                'Veuillez choisir une heure au moins 15 minutes plus tard.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
                   }
                 },
                 child: const Text('Modifier l\'heure'),

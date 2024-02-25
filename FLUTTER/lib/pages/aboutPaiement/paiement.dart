@@ -1,5 +1,5 @@
 
-// ignore_for_file: avoid_print, library_private_types_in_public_api
+// ignore_for_file: avoid_print, library_private_types_in_public_api, use_build_context_synchronously
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +29,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> processPayment() async {
-    const email = 'dalelakremi2020@gmail.com';
+    const email = 'yakinebenali5@gmail.com';
     try {
       final paymentResponse = await http.post(
         Uri.parse('http://localhost:3000/recupererCarteParId?email=$email'),
@@ -44,7 +44,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       if (paymentData['success'] == true) {
         print('Paiement réussi');
         panier.printPanier();
-        // ignore: use_build_context_synchronously
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -71,85 +71,116 @@ class _PaymentScreenState extends State<PaymentScreen> {
         return value;
     }
   }
+Future<void> showEditDialog() async {
+  Map<String, dynamic>? newSelections = await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      String? selectedRetraitMode =
+          newSelectedMode ?? panier.getSelectedRetraitMode() ?? "";
+      TimeOfDay? selectedTime = newSelectedTime ?? panier.selectedTime;
 
-  Future<void> showEditDialog() async {
-    Map<String, dynamic>? newSelections = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String? selectedRetraitMode =newSelectedMode?? panier.getSelectedRetraitMode() ?? "";
-        TimeOfDay? selectedTime = newSelectedTime ?? panier.selectedTime;
-     
+      return AlertDialog(
+        title: const Text('Modifier la commande'),
+        content: Column(
+          children: [
+            DropdownButton<String>(
+              value: selectedRetraitMode,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedRetraitMode = newValue!;
+                });
+              },
+              items: <String>['Option 1', 'Option 2', 'Option 3']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(mapRetraitMode(value)),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                TimeOfDay? pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: selectedTime ?? TimeOfDay.now(),
+                );
 
-        return AlertDialog(
-          title: const Text('Modifier la commande'),
-          content: Column(
-            children: [
-              DropdownButton<String>(
-                value: selectedRetraitMode,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedRetraitMode = newValue!;
-                  });
-                },
-                items: <String>['Option 1', 'Option 2', 'Option 3']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(mapRetraitMode(value)),
+                if (pickedTime != null) {
+                  DateTime currentTime = DateTime.now();
+                  DateTime selectedDateTime = DateTime(
+                    currentTime.year,
+                    currentTime.month,
+                    currentTime.day,
+                    pickedTime.hour,
+                    pickedTime.minute,
                   );
-                }).toList(),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  TimeOfDay? pickedTime = await showTimePicker(
-                    context: context,
-                    initialTime: selectedTime ?? TimeOfDay.now(),
-                  );
 
-                  if (pickedTime != null) {
+                  if (selectedDateTime
+                      .isAfter(currentTime.add(const Duration(minutes: 15)))) {
                     setState(() {
                       selectedTime = pickedTime;
                     });
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Heure invalide'),
+                          content: const Text(
+                              'Veuillez choisir une heure au moins 15 minutes plus tard.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   }
-                },
-                child: const Text('Modifier l\'heure'),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
+                }
               },
-              child: const Text('Annuler'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(
-                  context,
-                  {
-                    'retraitMode': selectedRetraitMode,
-                    'selectedTime': selectedTime,
-                  },
-                );
-              },
-              child: const Text('Enregistrer'),
+              child: const Text('Modifier l\'heure'),
             ),
           ],
-        );
-      },
-    );
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(
+                context,
+                {
+                  'retraitMode': selectedRetraitMode,
+                  'selectedTime': selectedTime,
+                },
+              );
+            },
+            child: const Text('Enregistrer'),
+          ),
+        ],
+      );
+    },
+  );
 
-    if (newSelections != null) {
-      setState(() {
-        newSelectedMode = newSelections['retraitMode'];
-        newSelectedTime = newSelections['selectedTime'];
-        panier.updateCommandeDetails(panier.getSelectedRetraitMode() ?? '',
-            newSelectedTime ?? panier.getCurrentSelectedTime());
-      });
-    }
+  if (newSelections != null) {
+    setState(() {
+      newSelectedMode = newSelections['retraitMode'];
+      newSelectedTime = newSelections['selectedTime'];
+      panier.updateCommandeDetails(panier.getSelectedRetraitMode() ?? '',
+          newSelectedTime ?? panier.getCurrentSelectedTime());
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

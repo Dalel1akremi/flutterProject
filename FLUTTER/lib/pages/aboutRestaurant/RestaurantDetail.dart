@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore
+// ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore, unnecessary_null_comparison
 import 'package:flutter/material.dart';
 import 'acceuil.dart';
 import 'CategoryPage.dart';
@@ -47,8 +47,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                       time.hour,
                       time.minute,
                     );
-                    selectedDateTime = selectedDateTime.add(const Duration(minutes: 15));
-
+                   
                     setState(() {
                       selectedTime = TimeOfDay.fromDateTime(selectedDateTime);
                     });
@@ -267,8 +266,7 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
         pickedTime.minute,
       );
 
-      if (selectedDateTime.isAfter(currentTime.add(Duration(minutes: 14))) ||
-          selectedDateTime.isAtSameMomentAs(currentTime.add(Duration(minutes: 15)))) {
+      if (selectedDateTime.isAfter(currentTime.add(Duration(minutes: 15)))) {
         setState(() {
           selectedTime = pickedTime;
         });
