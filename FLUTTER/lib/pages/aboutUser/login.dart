@@ -1,8 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'auth_provider.dart'; // Import auth_provider.dart
+import 'auth_provider.dart';
 import 'PasswordRecoveryPage.dart';
 import 'registre.dart';
 import './../aboutPaiement/paiement.dart';
@@ -24,34 +26,26 @@ class _LoginPageState extends State<loginPage> {
   String email = '';
   String password = '';
   Panier panier = Panier();
-  // Declare nom variable
+
 
   void _submit(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-        // Call login function from AuthProvider
+      
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         final loginData = await authProvider.login(email, password);
         final userId = loginData['userId'];
         final nom = loginData['nom'];
-        // Show success message
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login successful'),
-            backgroundColor: Colors.green, // Green background color
-          ),
-        );
+     
         if (panier.origin == 'panier') {
-          // Si la page est appelée depuis la page du panier, naviguer vers la page de paiement
-          // ignore: use_build_context_synchronously
+         
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const PaymentScreen()),
           );
         } else {
-          // ignore: use_build_context_synchronously
+  
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -59,10 +53,10 @@ class _LoginPageState extends State<loginPage> {
                 email: email,
                 nom: nom,
                 userId: userId,
-              ), // Replace ProfilePage() with your actual profile page
+              ), 
             ),
           );
-        } // No need to navigate here, it will be handled in AuthProvider
+        } 
       } catch (error) {
         if (kDebugMode) {
           print('Error during login: $error');
@@ -73,7 +67,7 @@ class _LoginPageState extends State<loginPage> {
           errorMessage = 'Invalid response format from the server.';
         }
 
-        // ignore: use_build_context_synchronously
+     
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
@@ -187,12 +181,12 @@ class _LoginPageState extends State<loginPage> {
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
-                  // Naviguer vers la page d'inscription
+             
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            RegistrationPage()), // Remplacez RegistrationPage par le nom de votre page d'inscription
+                            RegistrationPage()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -246,7 +240,7 @@ class _LoginPageState extends State<loginPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Image.asset(
-                      'images/google_logo.png', // Ajoutez le logo Google à votre projet
+                      'images/google_logo.png', 
                       height: 20.0,
                     ),
                     const SizedBox(width: 10.0),

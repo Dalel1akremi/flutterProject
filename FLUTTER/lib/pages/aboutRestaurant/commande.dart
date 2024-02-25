@@ -1,8 +1,8 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:demo/pages/aboutUser/auth_provider.dart';
 import 'package:demo/pages/aboutUser/profile.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
 import './acceuil.dart';
 import '../aboutUser/login.dart';
@@ -42,27 +42,22 @@ class _CommandeAppState extends State<CommandeApp> {
 class CommandeScreen extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTabTapped;
-  final Panier panier; // Add a field to store the shopping cart
+  final Panier panier;
 
   const CommandeScreen({
     Key? key,
     required this.currentIndex,
     required this.onTabTapped,
-    required this.panier, // Pass the shopping cart through the constructor
+    required this.panier, 
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isLoggedIn = authProvider.isAuthenticated;
-    final token = authProvider.token;
-    final userId = authProvider.userId;
-    final nom = authProvider.nom;
-    final email = authProvider.email;
 
-    if (isLoggedIn) {
-      print('Token récupéré: $token,$email,$nom,$userId');
-    }
+
+   
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -100,7 +95,7 @@ class CommandeScreen extends StatelessWidget {
                           title: Text(panier.articles[index].nom),
                           trailing: Text('${panier.articles[index].quantite}'),
                           subtitle: Text(
-                            'Heure de retrait: ${panier.getCurrentSelectedTime().format(context) ?? "Non défini"}',
+                            'Heure de retrait: ${panier.getCurrentSelectedTime().format(context)}',
                             style: const TextStyle(fontSize: 16),
                           ),
                         );
@@ -117,6 +112,7 @@ class CommandeScreen extends StatelessWidget {
         ),
         
         bottomNavigationBar: BottomNavigationBar(
+          currentIndex: currentIndex,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
@@ -132,16 +128,15 @@ class CommandeScreen extends StatelessWidget {
             ),
           ],
           onTap: (index) {
-            // Handle bottom navigation bar taps
+          onTabTapped(index);
             if (index == 0) {
-              // Navigate to the CommandePage when Button 2 is pressed
+
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AcceuilScreen()),
               );
             }
             if (index == 1) {
-              // Navigate to the CommandePage when Button 2 is pressed
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const CommandeApp()),

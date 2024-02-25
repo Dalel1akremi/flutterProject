@@ -10,7 +10,7 @@ import './../aboutRestaurant/acceuil.dart';
 import './../aboutRestaurant/commande.dart';
 import './../aboutPaiement/porfeuille.dart';
 import 'adresse.dart';
-import 'login.dart';
+
 
 class MyApp extends StatefulWidget {
   final String email;
@@ -25,11 +25,12 @@ class _MyAppState extends State<MyApp> {
   late String email;
   late String nom;
   late String userId;
+  int currentIndex = 2;
 
   @override
   void initState() {
     super.initState();
-    // Appel de la fonction pour récupérer l'email depuis le backend
+    // Call the function to fetch the email from the backend
     fetchUserEmail();
   }
 
@@ -48,24 +49,31 @@ class _MyAppState extends State<MyApp> {
         userId = fetchedUserId;
       });
     } else {
-      // Gérer les erreurs lors de la récupération de l'email
+      // Handle errors when fetching the email
       print('Failed to load user email');
     }
   }
 
+    void onTabTapped(int index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    // Wrap MaterialApp with ChangeNotifierProvider to provide AuthProvider instance
     return ChangeNotifierProvider(
       create: (_) => AuthProvider(),
       child: MaterialApp(
         home: ProfilePage(email: email, nom: nom, userId: userId),
+       
       ),
     );
   }
 }
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   final String email;
   final String nom;
   final String userId;
@@ -78,11 +86,24 @@ class ProfilePage extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  int currentIndex = 2;
+
+  void onTabTapped(int index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: Text('Bonjour $nom'),
+        title: Text('Bonjour ${widget.nom}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -94,7 +115,7 @@ class ProfilePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileDetailsPage(email: email),
+                    builder: (context) => ProfileDetailsPage(email: widget.email),
                   ),
                 );
               },
@@ -126,13 +147,13 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+           const SizedBox(height: 16),
             InkWell(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddressSearchScreen(userId: userId),
+                    builder: (context) => AddressSearchScreen(userId: widget.userId),
                   ),
                 );
               },
@@ -170,7 +191,7 @@ class ProfilePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  Portefeuille(email:email),
+                    builder: (context) => Portefeuille(email: widget.email),
                   ),
                 );
               },
@@ -210,7 +231,7 @@ class ProfilePage extends StatelessWidget {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Confirmation'),
-                      content: const Text('Voulez-vous vraiment annuler votre commande ?'),
+                      content: const Text('Voulez-vous vraiment déconnecter ?'),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
@@ -220,7 +241,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                         TextButton(
                           onPressed: () {
-                            // Vider le panier et se déconnecter
+                            // Empty the cart and log out
                             Provider.of<AuthProvider>(context, listen: false).logout(context);
                             Panier().viderPanier();
                           },
@@ -263,6 +284,7 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -278,6 +300,7 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
         onTap: (index) {
+          onTabTapped(index);
           if (index == 0) {
             Navigator.push(
               context,
@@ -293,7 +316,7 @@ class ProfilePage extends StatelessWidget {
           if (index == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const loginPage()),
+              MaterialPageRoute(builder: (context) => const ProfilePage(email: '', nom: '', userId: '')),
             );
           }
         },

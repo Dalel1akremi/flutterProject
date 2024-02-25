@@ -13,10 +13,10 @@ import './../aboutUser/auth_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Créer une instance de AuthProvider
+  
   final authProvider = AuthProvider();
   
-  // Initialiser le token depuis le stockage
+
   await authProvider.initTokenFromStorage();
   
   runApp(
@@ -25,11 +25,10 @@ void main() async {
       child: const AcceuilApp(),
     ),
   );
-  
-  // Récupérer le token depuis le provider
+
   final token = authProvider.token;
   
-  // Afficher le token ou un message s'il n'existe pas
+ 
   if (token != null) {
     print('Token: $token');
   } else {
@@ -51,20 +50,14 @@ class AcceuilApp extends StatelessWidget {
 
 class AcceuilScreen extends StatelessWidget {
   const AcceuilScreen({Key? key})
-      : super(key: key); // Implémentation du constructeur
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isLoggedIn = authProvider.isAuthenticated;
-    final token = authProvider.token;
-    final userId = authProvider.userId;
-    final nom = authProvider.nom;
-    final email = authProvider.email;
-
-    if (isLoggedIn) {
-      print('Token récupéré: $token,$email,$nom,$userId');
-    }
+ 
+   
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -112,17 +105,16 @@ class AcceuilScreen extends StatelessWidget {
           ),
         ],
         onTap: (index) {
-          // Handle bottom navigation bar taps
+  
           if (index == 0) {
-            // Navigate to the AcceuilScreen when Button 1 is pressed
+           
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const AcceuilScreen()),
             );
           }
           if (index == 1) {
-            // Navigate to the CommandeApp when Button 2 is pressed
-            Navigator.push(
+             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const CommandeApp()),
             );
@@ -157,7 +149,7 @@ class Restaurant {
 }
 
 class RestaurantList extends StatelessWidget {
-  const RestaurantList({Key? key}) : super(key: key); // Ajout de la clé
+  const RestaurantList({Key? key}) : super(key: key); 
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +165,7 @@ class RestaurantList extends StatelessWidget {
           children: [
             TextButton(
               onPressed: () {
-                // Utilize the Navigator widget to navigate to the new page
+          
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -186,15 +178,15 @@ class RestaurantList extends StatelessWidget {
               },
               child: ListTile(
                 leading: Image.asset(
-                  'images/First.png', // Replace with your image asset path
-                  width: 100, // Adjust the width as needed
-                  height: 200, // Adjust the height as needed
+                  'images/First.png',
+                  width: 100,
+                  height: 200,
                   fit: BoxFit.cover,
                 ),
                 title: Text(
                   restaurants[index].name,
                   style: const TextStyle(
-                    decoration: TextDecoration.underline, // Add underline
+                    decoration: TextDecoration.underline,
                   ),
                 ),
                 subtitle: Text(restaurants[index].address),
@@ -203,7 +195,7 @@ class RestaurantList extends StatelessWidget {
             ),
             const Divider(
               color: Colors.black,
-              thickness: 1, // Adjust the thickness as needed
+              thickness: 1, 
             ),
           ],
         );
