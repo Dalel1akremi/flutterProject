@@ -45,7 +45,6 @@ bool get isAuthenticated => _token != null && _userId != null;
     await prefs.setString('email', email);
 }
 
-
 Future<Map<String, dynamic>> login(String email, String password) async {
   const String apiUrl = "http://localhost:3000/login";
 
@@ -99,7 +98,7 @@ Future<Map<String, dynamic>> login(String email, String password) async {
 
 
   Future<void> logout(BuildContext context) async {
-    // Perform any necessary cleanup or API calls to logout
+    
     _token = null;
     _userId = null;
     notifyListeners();
