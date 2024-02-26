@@ -157,53 +157,55 @@ class _NextPageState extends State<NextPage> {
             ),
           ),
           // Ajout du bouton de paiement
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PanierPage(
-                      nom:widget.nom,
-                      numberOfItems: numberOfItems,
-                    
-                       panier: Panier().articles,
-                    ),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-                backgroundColor: Colors.green,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const Text(
-                    'Paiement',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    ' $totalPrice £',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
+       Padding(
+  padding: const EdgeInsets.all(16.0),
+  child: ElevatedButton(
+    onPressed: () {
+      if (totalPrice > 0) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PanierPage(
+              nom: widget.nom,
+              numberOfItems: numberOfItems,
+              panier: Panier().articles,
             ),
           ),
+        );
+      } 
+    },
+    style: ElevatedButton.styleFrom(
+      minimumSize: const Size(double.infinity, 50),
+      backgroundColor: Colors.green,
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const Text(
+          'Paiement',
+          style: TextStyle(color: Colors.white),
+        ),
+        Text(
+          ' $totalPrice £',
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  ),
+)
+,
         ],
       ),
     );
