@@ -22,52 +22,51 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
   late TextEditingController streetNumberController;
 
   late bool hasAddress;
-  late String country;
-  late String city;
-  late String street;
-  late String streetNumber;
+  String country = '';
+  String city = '';
+  String street = '';
+  String streetNumber = '';
   Panier panier = Panier();
-  @override
-  void initState() {
-    super.initState();
-    // Initialize controllers
-    countryController = TextEditingController();
-    cityController = TextEditingController();
-    streetController = TextEditingController();
-    streetNumberController = TextEditingController();
-    hasAddress = false;
+@override
+void initState() {
+  super.initState();
+  // Initialize controllers
+  countryController = TextEditingController();
+  cityController = TextEditingController();
+  streetController = TextEditingController();
+  streetNumberController = TextEditingController();
+  hasAddress = false;
 
-    fetchAddressDetails();
-    Panier().setUserAddress('$country, $city, $street, $streetNumber');
-  }
+  fetchAddressDetails();
+}
 
-  Future<void> fetchAddressDetails() async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-            'http://localhost:3000/getGeocodedDetails?_id=${widget.userId}'),
-      );
+Future<void> fetchAddressDetails() async {
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:3000/getGeocodedDetails?_id=${widget.userId}'),
+    );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          hasAddress = true;
-          country = data['geocodedDetails']['country'];
-          city = data['geocodedDetails']['city'];
-          street = data['geocodedDetails']['street'];
-          streetNumber = data['geocodedDetails']['streetNumber'];
-        });
-      } else {
-        setState(() {
-          hasAddress = false;
-        });
-      }
-    } catch (error) {
-      if (kDebugMode) {
-        print('Error fetching address details: $error');
-      }
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        hasAddress = true;
+        country = data['geocodedDetails']['country'] ?? '';
+        city = data['geocodedDetails']['city'] ?? '';
+        street = data['geocodedDetails']['street'] ?? '';
+        streetNumber = data['geocodedDetails']['streetNumber'] ?? '';
+      });
+    } else {
+      setState(() {
+        hasAddress = false;
+      });
+    }
+  } catch (error) {
+    if (kDebugMode) {
+      print('Error fetching address details: $error');
     }
   }
+}
+
 
   Future<void> searchAddress() async {
     if (hasAddress) {
@@ -77,7 +76,13 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
       }
       return;
     }
+country ??= '';
+    city ??= '';
+    street ??= '';
+    streetNumber ??= '';
 
+    // Save the address
+    Panier().setUserAddress('$country, $city, $street, $streetNumber');
     String apiUrl = 'http://localhost:3000/searchAddress?_id=${widget.userId}';
 
     try {
