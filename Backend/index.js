@@ -11,6 +11,7 @@ const categoriesController = require('./controllers/categoriesController');
 const CompositionDeBController=require('./controllers/CompositionDeBController');
 const RedirectController =require( './controllers/RedirectController');
 const itemController =require( './controllers/itemController');
+const StepController =require( './controllers/StepController');
 const paiement =require( './controllers/paiement');
 const app = express();
 const PORT = 3000;
@@ -61,12 +62,13 @@ app.post('/createCategorie', categoriesController.createCategorie);
 app.get('/getCategories', categoriesController.getCategories);
 app.post('/insererComposition', CompositionDeBController.insererComposition);
 app.get('/getCompositions', CompositionDeBController.getCompositions);
-app.post('/createItem', upload.single('image'),RedirectController.createRedirect);
-app.get('/getItem', RedirectController.getRedirect);
-
+app.post('/createRedirect', upload.single('image'),RedirectController.createRedirect);
+app.get('/getRedirect', RedirectController.getRedirect);
+app.post('/createStep', StepController.createStep);
+app.get('/getStep', StepController.getStep);
 // Corrected createMenu route
-app.post('/createMenu', upload.single('image'), itemController.createItem);
-app.get('/getMenu', itemController.getItem);
+app.post('/createItem',upload.single('image'), itemController.createItem);
+app.get('/getItem', itemController.getItem);
 app.post('/porfeuille', paiement.porfeuille);
 app.post('/recupererCarteParId', paiement.recupererCarteParId);
 app.listen(PORT, () => {

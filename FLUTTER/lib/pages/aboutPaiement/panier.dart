@@ -21,7 +21,6 @@ class PanierPage extends StatefulWidget {
   
 
   @override
-  // ignore: library_private_types_in_public_api
   _PanierPageState createState() => _PanierPageState();
 }
 
@@ -30,6 +29,14 @@ class _PanierPageState extends State<PanierPage> {
   String? newSelectedMode;
     AuthProvider authProvider = AuthProvider();
   Panier panier = Panier();
+  int getTotalQuantity() {
+    int totalQuantity = 0;
+    for (Article article in widget.panier) {
+      totalQuantity += article.quantite;
+    }
+    return totalQuantity;
+  }
+
   IconData getModeIcon(String value) {
     switch (value) {
       case 'Option 1':
@@ -113,6 +120,9 @@ class _PanierPageState extends State<PanierPage> {
                   title: Text('${article.nom}'),
                   subtitle: Text('Prix: ${article.prix} £'),
                   trailing: Text('Quantité: ${article.quantite}'),
+                  onTap: () {
+                    showUpdateQuantityDialog(article);
+                  },
                 );
               },
             ),
@@ -121,9 +131,11 @@ class _PanierPageState extends State<PanierPage> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
+                // Appel de la fonction pour mettre à jour les détails de la commande dans le panier global
                 panier.updateCommandeDetails(
                     panier.getSelectedRetraitMode() ?? '',
                     newSelectedTime ?? panier.getCurrentSelectedTime());
+                // Vérifiez si l'utilisateur est connecté
                 bool isLoggedIn =
                     Provider.of<AuthProvider>(context, listen: false)
                         .isAuthenticated;
@@ -136,6 +148,7 @@ class _PanierPageState extends State<PanierPage> {
                   );
                 } else {
                   panier.origin = 'panier';
+                  // Utilisateur non connecté, rediriger vers la page de connexion
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const loginPage()),
@@ -150,7 +163,7 @@ class _PanierPageState extends State<PanierPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    ' ${widget.numberOfItems} article${widget.numberOfItems != 1 ? 's' : ''}',
+                    ' ${getTotalQuantity()} articles',
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -286,5 +299,105 @@ class _PanierPageState extends State<PanierPage> {
             newSelectedTime ?? panier.getCurrentSelectedTime());
       });
     }
+  }
+
+  Future<void> showUpdateQuantityDialog(Article article) async {
+    int newQuantity = article.quantite;
+    int newPrice = article.quantite * article.prix;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(' ${article.nom}'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+  'Personnaliser votre plat',
+  style: TextStyle(
+    color: Colors.green, // Changer la couleur en vert
+  ),
+),
+              const SizedBox(height: 8), // Espacement entre les éléments
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 8.0),
+                height: 2.0,
+                color: Colors.black,
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        newQuantity++;
+                        newPrice; // Incrémenter la quantité
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey[300],
+                          border: Border.all(color: Colors.black, width: 1)),
+                      padding: const EdgeInsets.all(10),
+                      child: const Icon(Icons.add),
+                    ),
+                  ),
+                  const SizedBox(width: 16), // Espacement entre les boutons
+                  Text(
+                    '$newQuantity', // Afficher la nouvelle quantité
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                  const SizedBox(width: 16), // Espacement entre les boutons
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (newQuantity > 1) {
+                          newQuantity--;
+                          newPrice; // Décrémenter la quantité si elle est supérieure à 1
+                        }
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey[300],
+                          border: Border.all(color: Colors.black, width: 1)),
+                      padding: const EdgeInsets.all(10),
+                      child: const Icon(Icons.remove),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 20), // Espacement entre les boutons
+              Text(
+                'Nouveau Total:$newPrice £', // Afficher la nouvelle quantité
+                style: const TextStyle(fontSize: 20),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  article.quantite = newQuantity;
+                
+                });
+                Navigator.pop(context);
+              },
+              child: const Text('Mettre à jour'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
