@@ -56,7 +56,7 @@ class _NextPageState extends State<NextPage> {
   Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
     try {
       final response = await http
-          .get(Uri.parse('http://localhost:3000/getMenu?id_cat=$idCat'));
+          .get(Uri.parse('http://localhost:3000/getItem?id_cat=$idCat'));
 
       if (response.statusCode == 200) {
         final List<dynamic>? responseData = json.decode(response.body)['data'];

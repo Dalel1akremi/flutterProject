@@ -64,7 +64,7 @@ class ItemDetailsPage extends StatelessWidget {
   Future<List<Map<String, dynamic>>> fetchItemDetails(int id_item) async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/getItem?id_item=$id_item'),
+        Uri.parse('http://localhost:3000/getRedirect?id_item=$id_item'),
       );
       if (response.statusCode == 200) {
         final dynamic responseData = json.decode(response.body)['data'];
