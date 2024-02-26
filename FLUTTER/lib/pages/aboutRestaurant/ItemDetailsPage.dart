@@ -5,14 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'stepDetailsPage.dart';
-import 'acceuil.dart';
+
 
 class ItemDetailsPage extends StatelessWidget {
   final int id_item;
   final String img;
   final String nom;
   final int prix;
-  final Restaurant restaurant;
 
 
   const ItemDetailsPage({
@@ -21,7 +20,7 @@ class ItemDetailsPage extends StatelessWidget {
     required this.nom,
     required this.img,
     required this.prix,
-    required this.restaurant,
+ 
  
  
   }) : super(key: key);
@@ -95,7 +94,7 @@ class ItemDetailsPage extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => StepDetailsPage(
-              restaurant: restaurant,
+         
               id_item: item['id_item'] ?? 0,
               nom: item['nom'] ?? '',
               img: item['image'] ?? '',

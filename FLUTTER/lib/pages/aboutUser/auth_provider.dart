@@ -24,64 +24,79 @@ class AuthProvider with ChangeNotifier {
   String? get email => _email;
 
 // Méthode pour initialiser le token depuis le stockage
-  Future<void> initTokenFromStorage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString('token');
-    _userId = prefs.getString('userId');
-    _nom = prefs.getString('nom');
-    _email = prefs.getString('email');
-    notifyListeners();
-  }
+ Future<void> initTokenFromStorage() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  _token = prefs.getString('token');
+  _userId = prefs.getString('userId');
+  _nom = prefs.getString('nom');
+  _email = prefs.getString('email');
+  print('User ID from storage: $_userId');
+    print('email from storage: $_email');
+  notifyListeners();
+}
 
-  bool get isAuthenticated => _token != null;
+bool get isAuthenticated => _token != null && _userId != null;
 
-  Future<void> _saveTokenToStorage(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
-  }
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    const String apiUrl = "http://localhost:3000/login";
+  Future<void> _saveTokenToStorage(String token, String userId,String email) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('token', token);
+  await prefs.setString('userId', userId);
+    await prefs.setString('email', email);
+}
 
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
+
+Future<Map<String, dynamic>> login(String email, String password) async {
+  const String apiUrl = "http://localhost:3000/login";
+
+  try {
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final token = data['token'];
+    final userId = data['userId'];
+      final nom = data['nom'];
+
+      final List<String> tokenParts = token!.split('.');
+      final Map<String, dynamic> tokenPayload = json.decode(
+        utf8.decode(base64Url.decode(tokenParts[1])),
       );
+      print('Token Payload: $tokenPayload');
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final token = data['token'];
-        final userId = data['userId'];
-        final nom = data['nom'];
-
-        if (kDebugMode) {
-          print('login successful! Token:$token,UserId:$userId,nom:$nom');
-        }
-        // Save token to storage before setting it
-        await _saveTokenToStorage(token);
-
-        _token = token;
-        _userId = data['userId'];
-        notifyListeners();
-        return {
-          'token': token,
-          'userId': userId,
-          'nom': nom
-        }; // Return the necessary data
-      } else {
-        throw Exception('Login failed');
+      if (kDebugMode) {
+        print('login successful! Token:$token,UserId:$userId,nom:$nom');
       }
-    } catch (error) {
-      rethrow;
+      // Save token to storage before setting it
+      await _saveTokenToStorage(token, userId,email);
+
+      _token = token;
+      _userId = data['userId'];
+      print('User ID from server response: $userId');
+       print('User email from server response: $email');
+      notifyListeners();
+      return {
+        'token': token,
+        'userId': userId,
+        'nom': nom,
+      }; // Return the necessary data
+    } else {
+      throw Exception('Login failed');
     }
+  } catch (error) {
+    rethrow;
   }
+}
+
 
   Future<void> logout(BuildContext context) async {
     // Perform any necessary cleanup or API calls to logout
@@ -89,7 +104,9 @@ class AuthProvider with ChangeNotifier {
     _userId = null;
     notifyListeners();
 
-    // Replace the current route with the login page
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('token');
+  await prefs.remove('userId');
 
     Navigator.pushReplacement(
       context,

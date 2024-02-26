@@ -4,21 +4,21 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './commande.dart';
-import '../aboutUser/login.dart'; 
+import '../aboutUser/login.dart';
 import 'RestaurantDetail.dart';
 import '../aboutUser/profile.dart';
 import './../aboutUser/auth_provider.dart';
 
+import './../global.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  
+
   final authProvider = AuthProvider();
-  
 
   await authProvider.initTokenFromStorage();
-  
+ Panier panier = Panier();
+
   runApp(
     ChangeNotifierProvider.value(
       value: authProvider,
@@ -27,8 +27,7 @@ void main() async {
   );
 
   final token = authProvider.token;
-  
- 
+
   if (token != null) {
     print('Token: $token');
   } else {
@@ -41,6 +40,7 @@ class AcceuilApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: AcceuilScreen(),
@@ -49,14 +49,12 @@ class AcceuilApp extends StatelessWidget {
 }
 
 class AcceuilScreen extends StatelessWidget {
-  const AcceuilScreen({Key? key})
-      : super(key: key);
+  const AcceuilScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isLoggedIn = authProvider.isAuthenticated;
- 
    
     return Scaffold(
       appBar: AppBar(
@@ -105,16 +103,14 @@ class AcceuilScreen extends StatelessWidget {
           ),
         ],
         onTap: (index) {
-  
           if (index == 0) {
-           
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const AcceuilScreen()),
             );
           }
           if (index == 1) {
-             Navigator.push(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const CommandeApp()),
             );
@@ -123,8 +119,9 @@ class AcceuilScreen extends StatelessWidget {
             if (isLoggedIn) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ProfilePage(
-                  email: '', nom: '', userId: '')),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const ProfilePage(email: '', nom: '', userId: '')),
               );
             } else {
               Navigator.push(
@@ -149,7 +146,7 @@ class Restaurant {
 }
 
 class RestaurantList extends StatelessWidget {
-  const RestaurantList({Key? key}) : super(key: key); 
+  const RestaurantList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -165,14 +162,11 @@ class RestaurantList extends StatelessWidget {
           children: [
             TextButton(
               onPressed: () {
-          
+                Panier().setSelectedRestaurant(restaurants[index]);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RestaurantDetail(
-                      restaurant: restaurants[index],
-                      nom: restaurants[index].nom,
-                    ),
+                    builder: (context) => RestaurantDetail(),
                   ),
                 );
               },
@@ -195,7 +189,7 @@ class RestaurantList extends StatelessWidget {
             ),
             const Divider(
               color: Colors.black,
-              thickness: 1, 
+              thickness: 1,
             ),
           ],
         );

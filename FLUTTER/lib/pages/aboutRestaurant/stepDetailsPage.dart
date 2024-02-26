@@ -7,7 +7,6 @@ class StepDetailsPage extends StatefulWidget {
   final int id_item;
   final String img;
   final int prix;
-  final Restaurant restaurant;
   final String nom;
 
 
@@ -16,7 +15,6 @@ class StepDetailsPage extends StatefulWidget {
     required this.id_item,
     required this.img,
     required this.prix,
-    required this.restaurant,
     required this.nom,
   
   }) : super(key: key);
@@ -135,7 +133,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
     nom: widget.nom,
     img: widget.img,
     prix: widget.prix,
-    restaurant: widget.restaurant,
+  
     quantite: _value,
   );
   // Adding the article to the cart
@@ -145,10 +143,6 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
     context,
     MaterialPageRoute(
       builder: (context) => NextPage(
-  
-        restaurant: widget.restaurant,
-      
-        nom: widget.nom,
         panier: Panier().articles,
       ),
     

@@ -8,7 +8,8 @@ import 'auth_provider.dart';
 import 'PasswordRecoveryPage.dart';
 import 'registre.dart';
 import './../aboutPaiement/paiement.dart';
-import'./../global.dart';
+import './../global.dart';
+import './../aboutRestaurant/RestaurantDetail.dart';
 
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
@@ -27,25 +28,26 @@ class _LoginPageState extends State<loginPage> {
   String password = '';
   Panier panier = Panier();
 
-
   void _submit(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-      
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         final loginData = await authProvider.login(email, password);
         final userId = loginData['userId'];
         final nom = loginData['nom'];
-     
+
         if (panier.origin == 'panier') {
-         
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const PaymentScreen()),
           );
+        } else if (panier.origin == 'Restaurant') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RestaurantDetail()),
+          );
         } else {
-  
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -53,10 +55,10 @@ class _LoginPageState extends State<loginPage> {
                 email: email,
                 nom: nom,
                 userId: userId,
-              ), 
+              ),
             ),
           );
-        } 
+        }
       } catch (error) {
         if (kDebugMode) {
           print('Error during login: $error');
@@ -67,7 +69,6 @@ class _LoginPageState extends State<loginPage> {
           errorMessage = 'Invalid response format from the server.';
         }
 
-     
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
@@ -181,12 +182,9 @@ class _LoginPageState extends State<loginPage> {
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
-             
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            RegistrationPage()),
+                    MaterialPageRoute(builder: (context) => RegistrationPage()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -234,13 +232,13 @@ class _LoginPageState extends State<loginPage> {
                 onPressed: () => (context),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
-                  backgroundColor:const Color.fromARGB(255, 107, 101, 101),
+                  backgroundColor: const Color.fromARGB(255, 107, 101, 101),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Image.asset(
-                      'images/google_logo.png', 
+                      'images/google_logo.png',
                       height: 20.0,
                     ),
                     const SizedBox(width: 10.0),

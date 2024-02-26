@@ -10,6 +10,8 @@ class Panier {
   List<Article> articles = [];
   TimeOfDay? selectedTime;
   String? selectedRetraitMode;
+  Restaurant? selectedRestaurant;
+   String? userAddress;
   String? origin;
   void viderPanier() {
     articles.clear();
@@ -41,7 +43,23 @@ class Panier {
   String? getSelectedRetraitMode() {
     return selectedRetraitMode;
   }
+ void setSelectedRestaurant(Restaurant restaurant) {
+    selectedRestaurant = restaurant;
+  }
 
+  String? getSelectedRestaurantName() {
+    return selectedRestaurant?.name;
+  }
+    String? getSelectedRestaurantAdresse() {
+    return selectedRestaurant?.address;
+  }
+    void setUserAddress(String address) {
+    userAddress = address;
+  }
+
+  String? getUserAddress() {
+    return userAddress;
+  }
   void printPanier() {
     if (kDebugMode) {
       print('Contenu du panier:');
@@ -59,8 +77,6 @@ class Panier {
     return selectedTime ?? TimeOfDay.now();
   }
 
-  // Méthode pour mettre à jour selectedRetraitMode
- 
 }
 
 class Article {
@@ -69,7 +85,6 @@ class Article {
   String nom;
   String img;
   int prix;
-  Restaurant restaurant;
   int quantite;
 
   Article({
@@ -78,7 +93,7 @@ class Article {
     required this.nom,
     required this.img,
     required this.prix,
-    required this.restaurant,
+
     required this.quantite,
   });
 }

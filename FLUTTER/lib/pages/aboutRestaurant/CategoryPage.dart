@@ -8,21 +8,12 @@ import 'ItemDetailsPage.dart';
 import 'stepMenuPage.dart';
 import './../global.dart';
 
-class NextPage extends StatefulWidget {
-
-  final Restaurant restaurant;
-
-  final String nom;
-  
+class NextPage extends StatefulWidget {  
   final List<Article> panier;
 
   const NextPage({
     Key? key,
-  
-    required this.restaurant,
 
-    
-    required this.nom,
     required this.panier,
   }) : super(key: key);
 
@@ -98,11 +89,11 @@ class _NextPageState extends State<NextPage> {
       totalPrice += article.prix * article.quantite;
       numberOfItems += article.quantite;
     }
-
+    String? restaurantName = Panier().getSelectedRestaurantName();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: Text(widget.restaurant.name),
+         title: Text(restaurantName ?? 'Restaurant Detail'),
       ),
       body: Column(
         children: [
@@ -166,7 +157,7 @@ class _NextPageState extends State<NextPage> {
           context,
           MaterialPageRoute(
             builder: (context) => PanierPage(
-              nom: widget.nom,
+    
               numberOfItems: numberOfItems,
               panier: Panier().articles,
             ),
@@ -234,8 +225,7 @@ class _NextPageState extends State<NextPage> {
                           img: menuItem['image'],
                           prix: menuItem['prix'],
                           
-                          restaurant: widget.restaurant,
-                         
+                    
             
                         ),
                       ),
@@ -250,7 +240,7 @@ class _NextPageState extends State<NextPage> {
                           img: menuItem['image'],
                           prix: menuItem['prix'],
                          
-                          restaurant: widget.restaurant,
+  
                          
 
                           // Pass any necessary parameters to StepMenuPage

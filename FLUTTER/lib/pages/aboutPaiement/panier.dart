@@ -6,18 +6,19 @@ import 'package:provider/provider.dart';
 import './../global.dart';
 import 'paiement.dart';
 import '../aboutUser/auth_provider.dart';
+import './../aboutUser/auth_provider.dart';
 
 class PanierPage extends StatefulWidget {
   final int numberOfItems;
-  final String nom;
+
   final List<Article> panier;
 
   const PanierPage({
     Key? key,
     required this.numberOfItems,
-    required this.nom,
     required this.panier,
   }) : super(key: key);
+  
 
   @override
   // ignore: library_private_types_in_public_api
@@ -27,6 +28,7 @@ class PanierPage extends StatefulWidget {
 class _PanierPageState extends State<PanierPage> {
   TimeOfDay? newSelectedTime;
   String? newSelectedMode;
+    AuthProvider authProvider = AuthProvider();
   Panier panier = Panier();
   IconData getModeIcon(String value) {
     switch (value) {
@@ -41,6 +43,17 @@ class _PanierPageState extends State<PanierPage> {
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    initAuthProvider();
+  }
+
+  Future<void> initAuthProvider() async {
+    await authProvider.initTokenFromStorage();
+
+    setState(() {});
+  }
   String mapRetraitMode(String value) {
     switch (value) {
       case 'Option 1':
@@ -85,13 +98,19 @@ class _PanierPageState extends State<PanierPage> {
               ],
             ),
           ),
+          Text(
+            newSelectedMode == 'Option 3'
+                ? 'Adresse: ${panier.getUserAddress()}'
+                : '',
+            style: const TextStyle(fontSize: 16),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: widget.panier.length,
               itemBuilder: (context, index) {
                 final article = widget.panier[index];
                 return ListTile(
-                  title: Text(article.nom),
+                  title: Text('${article.nom}'),
                   subtitle: Text('Prix: ${article.prix} £'),
                   trailing: Text('Quantité: ${article.quantite}'),
                 );
@@ -204,8 +223,8 @@ class _PanierPageState extends State<PanierPage> {
                       pickedTime.minute,
                     );
 
-                    if (selectedDateTime
-                        .isAfter(currentTime.add(const Duration(minutes: 15)))) {
+                    if (selectedDateTime.isAfter(
+                        currentTime.add(const Duration(minutes: 15)))) {
                       setState(() {
                         selectedTime = pickedTime;
                       });
