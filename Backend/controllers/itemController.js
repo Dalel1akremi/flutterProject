@@ -15,6 +15,7 @@ exports.createItem = async (req, res) => {
       is_Menu,
       is_Redirect,
       id_cat,
+      is_Step,
       id,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
@@ -25,6 +26,7 @@ exports.createItem = async (req, res) => {
     const validatedQuantite = parseInt(quantite);
     const validatedMaxQuantite = parseInt(max_quantite);
     const validatedIsMenu = is_Menu === 'true';
+    const validatedIsStep = is_Step === 'true';
     const validatedIsRedirect=is_Redirect==='true';
   
 
@@ -69,6 +71,7 @@ exports.createItem = async (req, res) => {
       is_Menu: validatedIsMenu,
       is_Redirect:validatedIsRedirect,
       id_cat,
+      is_Step:validatedIsStep,
       id,  // Log the id field
     });
     const newItem = new Item({
@@ -84,6 +87,7 @@ exports.createItem = async (req, res) => {
       id_cat,
       id,
       image: imageUrl,
+      is_Step:validatedIsStep,
     });
 
     const savedItem= await newItem.save();
