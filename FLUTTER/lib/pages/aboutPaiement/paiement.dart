@@ -221,12 +221,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           const Divider(),
                         ],
                       ),
-                       Text(
-            newSelectedMode == 'Option 3'
-                ? 'Adresse: ${panier.getUserAddress()}'
-                : '',
-            style: const TextStyle(fontSize: 16),
-          ),
+                        Text(
+  (newSelectedMode ?? panier.getSelectedRetraitMode() ?? '') == 'Option 3'
+      ? 'Adresse: ${panier.getUserAddress()}'
+      : '',
+  style: const TextStyle(fontSize: 16),
+),
                     ],
                   ),
                 ),

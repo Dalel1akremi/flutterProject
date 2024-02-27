@@ -1,15 +1,23 @@
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './pages/aboutUser/auth_provider.dart'; // Import your AuthProvider class here
+import './pages/aboutUser/auth_provider.dart'; // Adjust the import path based on your project structure
 import './pages/aboutRestaurant/acceuil.dart';
 import './pages/aboutRestaurant/ReserverTable.dart';
 import './pages/aboutRestaurant/offers.dart';
 
-void main() {
+void main() async {
+  // Clear token on app start
+  await clearTokenAndStartApp();
+}
+
+Future<void> clearTokenAndStartApp() async {
+  // Clear token on app start
+  AuthProvider authProvider = AuthProvider(); // Create an instance
+  await authProvider.clearTokenFromStorage(); // Call the method
   runApp(
     ChangeNotifierProvider(
-      create: (_) => AuthProvider(), // Provide an instance of AuthProvider
+      create: (_) => authProvider, // Provide the instance of AuthProvider
       child: const MyApp(),
     ),
   );
@@ -39,9 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentPage = 0;
   final List<String> pageTitles = ['Discover', 'Reserve Table', 'Offers'];
 
-   @override
+  @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -113,7 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 // Afficher le token dans le terminal
-   
                 const ReserverTableScreen(),
                 const OffersScreen(),
               ],

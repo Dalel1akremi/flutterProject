@@ -17,7 +17,6 @@ void main() async {
   final authProvider = AuthProvider();
 
   await authProvider.initTokenFromStorage();
- Panier panier = Panier();
 
   runApp(
     ChangeNotifierProvider.value(
