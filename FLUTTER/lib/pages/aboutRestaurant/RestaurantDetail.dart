@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore, unnecessary_null_comparison, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore, unnecessary_null_comparison, use_build_context_synchronously, unused_element
 import 'package:flutter/material.dart';
 
 import 'CategoryPage.dart';
@@ -212,40 +212,14 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           selectedRetraitMode, selectedTime);
                     }
 
-                    if (selectedRetraitMode == 'Option 3') {
-                      // Set origin in panier
-                      panier.origin = 'Restaurant';
-
-                      // Check if the user is authenticated
-                      if (!authProvider.isAuthenticated) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const loginPage()),
-                        );
-                      }
-                      else {
-         
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NextPage(
-                            panier: Panier().articles,
-                          ),
-            ),
-          );
-        }
-                    } else {
-                 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NextPage(
-                            panier: Panier().articles,
-                          ),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NextPage(
+                          panier: Panier().articles,
                         ),
-                      );
-                    }
+                      ),
+                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -283,40 +257,49 @@ class TimePickerWidget extends StatefulWidget {
 
 class _TimePickerWidgetState extends State<TimePickerWidget> {
   late TimeOfDay selectedTime;
-
+  Panier panier = Panier();
+  AuthProvider authProvider = AuthProvider();
   @override
   void initState() {
     super.initState();
     selectedTime = TimeOfDay.now();
   }
 
-  Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: selectedTime,
+Future<void> _selectTime(BuildContext context) async {
+  final TimeOfDay? pickedTime = await showTimePicker(
+    context: context,
+    initialTime: selectedTime,
+  );
+
+  if (pickedTime != null && pickedTime != selectedTime) {
+    DateTime currentTime = DateTime.now();
+    DateTime selectedDateTime = DateTime(
+      currentTime.year,
+      currentTime.month,
+      currentTime.day,
+      pickedTime.hour,
+      pickedTime.minute,
     );
 
-    if (pickedTime != null && pickedTime != selectedTime) {
-      DateTime currentTime = DateTime.now();
-      DateTime selectedDateTime = DateTime(
-        currentTime.year,
-        currentTime.month,
-        currentTime.day,
-        pickedTime.hour,
-        pickedTime.minute,
-      );
+    if (selectedDateTime.isAfter(currentTime.add(Duration(minutes: 15)))) {
+      setState(() {
+        selectedTime = pickedTime;
+      });
 
-      if (selectedDateTime.isAfter(currentTime.add(Duration(minutes: 15)))) {
-        setState(() {
-          selectedTime = pickedTime;
-        });
+      widget.onTimeSelected(selectedTime);
 
-        widget.onTimeSelected(selectedTime);
+      
 
-        Panier()
-            .updateCommandeDetails(widget.selectedRetraitMode, selectedTime);
-
-        if (widget.selectedRetraitMode == 'Option 3') {
+      if (widget.selectedRetraitMode == 'Option 3') {
+        panier.origin = 'Restaurant';
+        if (!widget.authProvider.isAuthenticated) {
+     
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const loginPage()),
+          );
+        } else {
+       Panier().updateCommandeDetails(widget.selectedRetraitMode, selectedTime);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -326,28 +309,31 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
             ),
           );
         }
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Heure invalide'),
-              content: const Text(
-                  'Veuillez choisir une heure au moins 15 minutes plus tard.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
       }
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Heure invalide'),
+            content: const Text(
+                'Veuillez choisir une heure au moins 15 minutes plus tard.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Row(

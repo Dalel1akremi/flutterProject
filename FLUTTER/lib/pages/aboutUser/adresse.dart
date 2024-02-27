@@ -76,10 +76,7 @@ Future<void> fetchAddressDetails() async {
       }
       return;
     }
-country ??= '';
-    city ??= '';
-    street ??= '';
-    streetNumber ??= '';
+
 
     // Save the address
     Panier().setUserAddress('$country, $city, $street, $streetNumber');
