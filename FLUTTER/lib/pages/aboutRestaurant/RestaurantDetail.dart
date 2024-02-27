@@ -297,11 +297,12 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
               MaterialPageRoute(builder: (context) => const loginPage()),
             );
           } else {
+             Panier().updateCommandeDetails(
+                  widget.selectedRetraitMode, selectedTime);
             bool isLoggedIn = Provider.of<AuthProvider>(context, listen: false)
                 .isAuthenticated;
             if (isLoggedIn) {
-              Panier().updateCommandeDetails(
-                  widget.selectedRetraitMode, selectedTime);
+             
               Navigator.push(
                 context,
                 MaterialPageRoute(
