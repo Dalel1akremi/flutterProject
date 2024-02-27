@@ -17,6 +17,7 @@ const itemSchema = new Schema({
   is_Redirect: { type: Boolean, validate: [isValidBoolean, 'is_Redirect must be true or false'] },
   id: { type: Schema.Types.ObjectId, ref: 'CompositionDeBase' },
   id_cat: { type:Number, ref: 'Categories' },
+  id_Step: { type:Number, ref: 'Step' },
 });
 function isValidBoolean(value) {
   return typeof value === 'boolean';
@@ -24,7 +25,7 @@ function isValidBoolean(value) {
 itemSchema.pre('save', async function (next) {
                     try {
                       if (!this.id_item) {
-                        const lastMenu = await this.constructor.findOne({}, {}, { sort: { id_menu: -1 } });
+                        const lastMenu = await this.constructor.findOne({}, {}, { sort: { id_item: -1 } });
                         this.id_item = lastMenu ? lastMenu.id_item + 1 : 1;
                       }
                       next();

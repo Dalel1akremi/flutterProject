@@ -16,6 +16,7 @@ exports.createItem = async (req, res) => {
       is_Redirect,
       id_cat,
       is_Step,
+      id_Step,
       id,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
@@ -52,13 +53,12 @@ exports.createItem = async (req, res) => {
 
     const existingItem = await Item.findOne({ nom});
 
-    if (existingItem) {
-      
-      res.json({
+    if (existingItem !== null) {
+      return res.json({
         status: 400,
         message: 'Ce Item existe déjà'
       });
-      return;
+      
     }
     console.log('New Item Data:', {
       nom,
@@ -72,6 +72,7 @@ exports.createItem = async (req, res) => {
       is_Redirect:validatedIsRedirect,
       id_cat,
       is_Step:validatedIsStep,
+      id_Step,
       id,  // Log the id field
     });
     const newItem = new Item({
@@ -88,6 +89,7 @@ exports.createItem = async (req, res) => {
       id,
       image: imageUrl,
       is_Step:validatedIsStep,
+      id_Step,
     });
 
     const savedItem= await newItem.save();
