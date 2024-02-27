@@ -1,42 +1,56 @@
-// ignore: file_names
+import 'package:demo/pages/aboutRestaurant/CategoryPage.dart';
+import 'package:demo/pages/global.dart';
 import 'package:flutter/material.dart';
-import 'acceuil.dart';
-import 'CategoryPage.dart';
-import './../global.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class StepMenuPage extends StatefulWidget {
-  // ignore: non_constant_identifier_names
   final int id_item;
   final String img;
   final String nom;
   final int prix;
 
-
   const StepMenuPage({
     Key? key,
-    // ignore: non_constant_identifier_names
     required this.id_item,
     required this.nom,
     required this.img,
     required this.prix,
-   
-
   }) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _StepMenuPageState createState() => _StepMenuPageState();
 }
 
 class _StepMenuPageState extends State<StepMenuPage> {
   int _value = 1;
-  late TimeOfDay selectedTime;
+  bool afficherListe = false;
+  String? boissonChoisie; // Variable pour stocker la boisson
   final TextEditingController _remarkController = TextEditingController();
+  List<String> stepNames = [];
+  List<String> itemNames = [];
+  late Map<String, dynamic> responseData;
 
   @override
   void initState() {
     super.initState();
-    
+    fetchStepData();
+  }
+
+  Future<void> fetchStepData() async {
+    var url =
+        Uri.parse('http://localhost:3000/getStep?id_item=${widget.id_item}');
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      responseData = jsonDecode(response.body)['data'];
+      setState(() {
+        stepNames = List<String>.from(responseData['stepNames']);
+        itemNames = List<String>.from(responseData['itemNames']);
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
   }
 
   @override
@@ -64,38 +78,74 @@ class _StepMenuPageState extends State<StepMenuPage> {
               height: 250,
             ),
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Remarque: ",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      width: 300,
-                      height: 100,
-                      child: Card(
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: TextField(
-                            controller: _remarkController,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Entrez une remarque',
-                            ),
+            
+            Expanded(
+              child: ListView.builder(
+                itemCount: stepNames.length,
+                itemBuilder: (BuildContext context, index) {
+                  return ElevatedButton(
+                    onPressed: () {
+                      toggleListeVisibility();
+                    },
+                    child: Column(
+                      children: <Widget>[
+                        ListTile(
+                          title: Row(
+                            children: [
+                              Text(stepNames[index]),
+                              Spacer(),
+                              IconButton(
+                                icon: afficherListe
+                                    ? Icon(Icons.arrow_drop_up)
+                                    : Icon(Icons.arrow_drop_down),
+                                onPressed: () {
+                                  setState(() {
+                                    afficherListe = !afficherListe;
+                                    if (afficherListe) {
+                                      // Filter itemNames based on the selected stepName
+                                      itemNames = [];
+                                      for (var item
+                                          in responseData['itemNames']) {
+                                        if (item['stepName'] ==
+                                            stepNames[index]) {
+                                          itemNames.add(
+                                              item['itemName'] as String);
+                                        }
+                                      }
+                                    }
+                                  });
+                                },
+                              ),
+                            ],
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                  );
+                },
+              ),
             ),
+            const SizedBox(height: 20),
+            if (afficherListe)
+              Expanded(
+                child: ListView.builder(
+                  itemCount: itemNames.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Text(itemNames[index]),
+                      leading: Radio(
+                        value: itemNames[index],
+                        groupValue: boissonChoisie,
+                        onChanged: (String? value) {
+                          setState(() {
+                            boissonChoisie = value;
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -130,7 +180,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  // Création de l'objet article
+                  // Create article object
                   Article article = Article(
                     id_item: widget.id_item,
                     nom: widget.nom,
@@ -139,10 +189,10 @@ class _StepMenuPageState extends State<StepMenuPage> {
                     quantite: _value,
                   );
 
-                  // Ajout de l'article au panier
+                  // Add article to cart
                   Panier().ajouterAuPanier1(article);
 
-                  // Navigation vers la page suivante
+                  // Navigate to next page
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -192,5 +242,11 @@ class _StepMenuPageState extends State<StepMenuPage> {
         ),
       ),
     );
+  }
+
+  void toggleListeVisibility() {
+    setState(() {
+      afficherListe = !afficherListe;
+    });
   }
 }
