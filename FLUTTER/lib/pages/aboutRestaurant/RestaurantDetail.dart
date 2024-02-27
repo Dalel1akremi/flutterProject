@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore, unnecessary_null_comparison, use_build_context_synchronously, unused_element
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'CategoryPage.dart';
 import './../global.dart';
@@ -265,74 +266,75 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
     selectedTime = TimeOfDay.now();
   }
 
-Future<void> _selectTime(BuildContext context) async {
-  final TimeOfDay? pickedTime = await showTimePicker(
-    context: context,
-    initialTime: selectedTime,
-  );
-
-  if (pickedTime != null && pickedTime != selectedTime) {
-    DateTime currentTime = DateTime.now();
-    DateTime selectedDateTime = DateTime(
-      currentTime.year,
-      currentTime.month,
-      currentTime.day,
-      pickedTime.hour,
-      pickedTime.minute,
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
     );
 
-    if (selectedDateTime.isAfter(currentTime.add(Duration(minutes: 15)))) {
-      setState(() {
-        selectedTime = pickedTime;
-      });
-
-      widget.onTimeSelected(selectedTime);
-
-      
-
-      if (widget.selectedRetraitMode == 'Option 3') {
-        panier.origin = 'Restaurant';
-        if (!widget.authProvider.isAuthenticated) {
-     
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const loginPage()),
-          );
-        } else {
-       Panier().updateCommandeDetails(widget.selectedRetraitMode, selectedTime);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddressSearchScreen(
-                userId: widget.authProvider.userId ?? '',
-              ),
-            ),
-          );
-        }
-      }
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Heure invalide'),
-            content: const Text(
-                'Veuillez choisir une heure au moins 15 minutes plus tard.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
+    if (pickedTime != null && pickedTime != selectedTime) {
+      DateTime currentTime = DateTime.now();
+      DateTime selectedDateTime = DateTime(
+        currentTime.year,
+        currentTime.month,
+        currentTime.day,
+        pickedTime.hour,
+        pickedTime.minute,
       );
+
+      if (selectedDateTime.isAfter(currentTime.add(Duration(minutes: 15)))) {
+        setState(() {
+          selectedTime = pickedTime;
+        });
+
+        widget.onTimeSelected(selectedTime);
+
+        if (widget.selectedRetraitMode == 'Option 3') {
+          panier.origin = 'Restaurant';
+          if (!widget.authProvider.isAuthenticated) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const loginPage()),
+            );
+          } else {
+            bool isLoggedIn = Provider.of<AuthProvider>(context, listen: false)
+                .isAuthenticated;
+            if (isLoggedIn) {
+              Panier().updateCommandeDetails(
+                  widget.selectedRetraitMode, selectedTime);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddressSearchScreen(
+                    userId: widget.authProvider.userId ?? '',
+                  ),
+                ),
+              );
+            }
+          }
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Heure invalide'),
+              content: const Text(
+                  'Veuillez choisir une heure au moins 15 minutes plus tard.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
