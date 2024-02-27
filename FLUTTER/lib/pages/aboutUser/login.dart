@@ -36,17 +36,20 @@ class _LoginPageState extends State<loginPage> {
         final loginData = await authProvider.login(email, password);
         final userId = loginData['userId'];
         final nom = loginData['nom'];
-
+ bool isLoggedIn = authProvider
+                .isAuthenticated;
         if (panier.origin == 'panier') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const PaymentScreen()),
           );
         } else if (panier.origin == 'Restaurant') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const RestaurantDetail()),
-          );
+          if (isLoggedIn) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RestaurantDetail()),
+            );
+          }
         } else {
           Navigator.push(
             context,
