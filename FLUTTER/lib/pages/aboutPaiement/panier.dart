@@ -106,11 +106,11 @@ class _PanierPageState extends State<PanierPage> {
             ),
           ),
           Text(
-            newSelectedMode == 'Option 3'
-                ? 'Adresse: ${panier.getUserAddress()}'
-                : '',
-            style: const TextStyle(fontSize: 16),
-          ),
+  (newSelectedMode ?? panier.getSelectedRetraitMode() ?? '') == 'Option 3'
+      ? 'Adresse: ${panier.getUserAddress()}'
+      : '',
+  style: const TextStyle(fontSize: 16),
+),
           Expanded(
             child: ListView.builder(
               itemCount: widget.panier.length,
