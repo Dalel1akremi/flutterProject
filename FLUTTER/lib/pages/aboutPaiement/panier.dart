@@ -88,8 +88,17 @@ class _PanierPageState extends State<PanierPage> {
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                Icon(getModeIcon(
-                    newSelectedMode ?? panier.getSelectedRetraitMode() ?? '')),
+              Container(
+  decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    color: Colors.grey[300],
+  ),
+  padding: const EdgeInsets.all(10), // Ajustez le rembourrage selon vos besoins
+  child: Icon(
+    getModeIcon(newSelectedMode ?? panier.getSelectedRetraitMode() ?? ''),
+    color: Colors.black, // Couleur de l'icône
+  ),
+),
                 Expanded(
                   child: Text(
                     'Heure de retrait : ${newSelectedTime != null ? newSelectedTime!.format(context) : panier.getCurrentSelectedTime().format(context)}',
@@ -110,23 +119,54 @@ class _PanierPageState extends State<PanierPage> {
       ? 'Adresse: ${panier.getUserAddress()}'
       : '',
   style: const TextStyle(fontSize: 16),
-),
+),const Divider(
+                        color: Colors.black,
+                        thickness: 2,
+                       ),
           Expanded(
             child: ListView.builder(
               itemCount: widget.panier.length,
               itemBuilder: (context, index) {
                 final article = widget.panier[index];
                 return ListTile(
-                  title: Text('${article.nom}'),
-                  subtitle: Text('Prix: ${article.prix} £'),
-                  trailing: Text('Quantité: ${article.quantite}'),
+                  
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    
+                    children: [
+                      
+                      Text(
+                       '${article.quantite} x ${article.nom}',
+                        style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: article.elementsChoisis
+                            .map((element) => Text('     $element'))
+                            .toList(), // Afficher les éléments choisis
+                      ),
+
+                     
+                    ],
+                  ),
+                  trailing: Text('Prix: ${article.prix} £'),
+                  
                   onTap: () {
                     showUpdateQuantityDialog(article);
                   },
                 );
+                
               },
             ),
+            
+            
           ),
+          const Divider(
+                        color: Colors.black,
+                        thickness: 2,
+                       ),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
