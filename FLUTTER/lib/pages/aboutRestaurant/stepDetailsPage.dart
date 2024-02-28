@@ -134,7 +134,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
     img: widget.img,
     prix: widget.prix,
   
-    quantite: _value,
+    quantite: _value, elementsChoisis: [],
   );
   // Adding the article to the cart
   Panier().ajouterAuPanier1(article);

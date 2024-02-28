@@ -24,11 +24,10 @@ class StepMenuPage extends StatefulWidget {
 
 class _StepMenuPageState extends State<StepMenuPage> {
   int _value = 1;
-  bool afficherListe = false;
-  String? boissonChoisie; // Variable pour stocker la boisson
+  late List<bool> afficherListe;
+  Map<String, List<String>> stepDataMap = {};
+  Map<String, String?> boissonChoisie = {};
   final TextEditingController _remarkController = TextEditingController();
-  List<String> stepNames = [];
-  List<String> itemNames = [];
   late Map<String, dynamic> responseData;
 
   @override
@@ -38,16 +37,63 @@ class _StepMenuPageState extends State<StepMenuPage> {
   }
 
   Future<void> fetchStepData() async {
-    var url =
-        Uri.parse('http://localhost:3000/getStep?id_item=${widget.id_item}');
+    var url = Uri.parse(
+        'http://localhost:3000/getStep?id_item=${widget.id_item}');
     var response = await http.get(url);
+    print(url);
 
     if (response.statusCode == 200) {
-      responseData = jsonDecode(response.body)['data'];
+      Map<String, List<String>> stepDataMap = {};
+
+      Map<String, dynamic> responseData = jsonDecode(response.body);
+      print(responseData);
+      if (responseData.containsKey('data')) {
+        var data = responseData['data'];
+        if (data is List) {
+          for (var stepData in data) {
+            if (stepData is Map<String, dynamic> &&
+                stepData.containsKey('stepName') &&
+                stepData.containsKey('itemNames')) {
+              String stepName = stepData['stepName'];
+              List<dynamic> items = stepData['itemNames'];
+
+              List<String> itemNames = [];
+              for (var itemName in items) {
+                if (itemName is String) {
+                  itemNames.add(itemName);
+                }
+              }
+
+              stepDataMap[stepName] = itemNames;
+              // Initialize boissonChoisie for each step
+              boissonChoisie[stepName] = null;
+            }
+          }
+        } else if (data is Map<String, dynamic>) {
+          if (data.containsKey('stepName') && data.containsKey('itemNames')) {
+            String stepName = data['stepName'];
+            List<dynamic> items = data['itemNames'];
+
+            List<String> itemNames = [];
+            for (var itemName in items) {
+              if (itemName is String) {
+                itemNames.add(itemName);
+              }
+            }
+
+            stepDataMap[stepName] = itemNames;
+            // Initialize boissonChoisie for each step
+            boissonChoisie[stepName] = null;
+          }
+        }
+      }
+
       setState(() {
-        stepNames = List<String>.from(responseData['stepNames']);
-        itemNames = List<String>.from(responseData['itemNames']);
+        this.stepDataMap = stepDataMap;
+        afficherListe = List.generate(stepDataMap.length, (_) => false);
       });
+
+      print('Données des étapes: $stepDataMap');
     } else {
       throw Exception('Failed to load data');
     }
@@ -81,71 +127,62 @@ class _StepMenuPageState extends State<StepMenuPage> {
               const SizedBox(height: 20),
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: stepNames.length,
+                itemCount: stepDataMap.length,
                 itemBuilder: (BuildContext context, index) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      toggleListeVisibility();
-                    },
-                    child: Column(
-                      children: <Widget>[
-                        ListTile(
-                          title: Row(
-                            children: [
-                              Text(stepNames[index]),
-                              Spacer(),
-                              IconButton(
-                                icon: afficherListe
-                                    ? const Icon(Icons.arrow_drop_up)
-                                    : const Icon(Icons.arrow_drop_down),
-                                onPressed: () {
+                  var stepName = stepDataMap.keys.elementAt(index);
+                  var itemNames = stepDataMap[stepName];
+                  return Column(
+                    children: <Widget>[
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                toggleListeVisibility(index);
+                              },
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      stepName,
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  Icon(
+                                    afficherListe[index]
+                                        ? Icons.keyboard_arrow_up
+                                        : Icons.keyboard_arrow_down,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (afficherListe[index])
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: itemNames!.length,
+                          itemBuilder: (BuildContext context, int innerIndex) {
+                            var itemName = itemNames[innerIndex];
+                            return ListTile(
+                              title: Text(itemName),
+                              leading: Radio(
+                                value: itemName,
+                                groupValue: boissonChoisie[stepName],
+                                onChanged: (String? value) {
                                   setState(() {
-                                    afficherListe = !afficherListe;
-                                    if (afficherListe) {
-                                      // Filter itemNames based on the selected stepName
-                                      itemNames = [];
-                                      for (var item
-                                          in responseData['itemNames']) {
-                                        if (item['stepName'] ==
-                                            stepNames[index]) {
-                                          itemNames.add(
-                                              item['itemName'] as String);
-                                        }
-                                      }
-                                    }
+                                    boissonChoisie[stepName] = value;
                                   });
                                 },
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      ],
-                    ),
+                    ],
                   );
                 },
               ),
-              
-              const SizedBox(height: 20),
-              if (afficherListe)
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: itemNames.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(itemNames[index]),
-                      leading: Radio(
-                        value: itemNames[index],
-                        groupValue: boissonChoisie,
-                        onChanged: (String? value) {
-                          setState(() {
-                            boissonChoisie = value;
-                          });
-                        },
-                      ),
-                    );
-                  },
-                ),
-
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -221,6 +258,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                       img: widget.img,
                       prix: widget.prix,
                       quantite: _value,
+                      elementsChoisis: boissonChoisie.values.where((element) => element != null).cast<String>().toList(),
                     );
 
                     // Add article to cart
@@ -279,9 +317,9 @@ class _StepMenuPageState extends State<StepMenuPage> {
     );
   }
 
-  void toggleListeVisibility() {
+  void toggleListeVisibility(int index) {
     setState(() {
-      afficherListe = !afficherListe;
+      afficherListe[index] = !afficherListe[index];
     });
   }
 }
