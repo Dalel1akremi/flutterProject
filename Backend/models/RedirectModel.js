@@ -1,11 +1,11 @@
-// models/itemsModel.js
+
 
 const { boolean } = require('joi');
 const  { Schema, model } =require( 'mongoose');
 
 const RedirectSchema = new Schema({
 
-  id_item: { type:Number, ref: 'menus' },
+  id_item: { type:Number, ref: 'item' },
   nom: { type: String, unique: true },
   type: String,
   prix: Number,
