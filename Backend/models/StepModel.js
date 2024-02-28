@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
 
 const stepSchema = new mongoose.Schema({
-  id_Step: { type: Number, unique: true },
-  nom_Step: String,
-  id_item: { type: Number, ref: 'item', required: true }, // Clé étrangère vers la collection "items"
+  id_Step: { type: Number, unique: true, },
+  nom_Step: { type: String, required: true },
+  id_items: [
+    {
+      id_item: { type: Number, ref: 'item', required: true },
+    },
+  ], 
 });
 
 stepSchema.pre('save', async function (next) {
