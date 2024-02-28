@@ -6,7 +6,7 @@ class Panier {
   factory Panier() => _instance;
 
   Panier._internal();
-
+List<String> elementsChoisis = [];
   List<Article> articles = [];
   TimeOfDay? selectedTime;
   String? selectedRetraitMode;
@@ -19,6 +19,10 @@ class Panier {
  void getOrigin(){
   
  }
+  void ajouterElementChoisi(String element) {
+    elementsChoisis.add(element);
+  }
+  
   void ajouterAuPanier1(Article article) {
     articles.add(article);
   }
@@ -86,14 +90,14 @@ class Article {
   String img;
   int prix;
   int quantite;
-
+List<String> elementsChoisis;
   Article({
     // ignore: non_constant_identifier_names
     required this.id_item,
     required this.nom,
     required this.img,
     required this.prix,
-
     required this.quantite,
+    required this.elementsChoisis, 
   });
 }
