@@ -47,32 +47,25 @@ exports.getStep = async (req, res) => {
     // Recherche des étapes associées à l'id_item fourni
     const steps = await Step.find({ id_item });
 
-    // Récupération des noms des étapes
-    const stepNames = steps.map(step => step.nom_Step);
+    // Création d'un tableau pour stocker les données des étapes avec leurs éléments associés
+    const stepsWithItems = [];
 
-    // Récupération des noms des items associés aux étapes où is_Step est vrai
-    const items = await Item.aggregate([
-      {
-        $match: {
-          id_Step: { $in: steps.map(step => step.id_Step) },
-          is_Step: true
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          nom: 1
-        }
-      }
-    ]);
+    // Boucle sur les étapes
+    for (const step of steps) {
+      // Récupération des noms des éléments associés à cette étape
+      const items = await Item.find({ id_Step: step.id_Step, is_Step: true }, { _id: 0, nom: 1 });
+      
+      // Stockage des données de l'étape et de ses éléments associés dans le tableau
+      stepsWithItems.push({
+        stepName: step.nom_Step,
+        itemNames: items.map(item => item.nom)
+      });
+    }
 
     res.json({
       status: 200,
       message: 'Steps et Items récupérés avec succès',
-      data: {
-        stepNames: stepNames,
-        itemNames: items.map(item => item.nom)
-      }
+      data: stepsWithItems
     });
   } catch (error) {
     console.error(error);
