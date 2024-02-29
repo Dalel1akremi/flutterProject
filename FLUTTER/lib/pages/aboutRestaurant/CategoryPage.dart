@@ -52,34 +52,31 @@ class _NextPageState extends State<NextPage> {
       }
     }
   }
+Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
+  try {
+    final response = await http.get(Uri.parse('http://localhost:3000/getItem?id_cat=$idCat'));
 
-  Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
-    try {
-      final response = await http
-          .get(Uri.parse('http://localhost:3000/getItem?id_cat=$idCat'));
+    if (response.statusCode == 200) {
+      final List<dynamic>? responseData = json.decode(response.body)['formattedItems'];
+      print('Response data: $responseData');
 
-      if (response.statusCode == 200) {
-        final List<dynamic>? responseData = json.decode(response.body)['data'];
-
-        if (responseData != null) {
-          return responseData.cast<Map<String, dynamic>>();
-        } else {
-          if (kDebugMode) {
-            print('Error fetching menu: Response data is null');
-          }
-          return [];
-        }
+      if (responseData != null && responseData.isNotEmpty) {
+        // Convert the list of objects to a list of maps
+        return responseData.map<Map<String, dynamic>>((item) => item as Map<String, dynamic>).toList();
       } else {
-        throw Exception(
-            'Failed to fetch menu. Status code: ${response.statusCode}');
+        print('Error fetching menu: Response data is null or empty');
+        return [];
       }
-    } catch (error) {
-      if (kDebugMode) {
-        print('Error fetching menu: $error');
-      }
-      return [];
+    } else {
+      print('Error fetching menu. Status code: ${response.statusCode}');
+      throw Exception('Failed to fetch menu. Status code: ${response.statusCode}');
     }
+  } catch (error) {
+    print('Error fetching menu: $error');
+    return [];
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -203,16 +200,18 @@ class _NextPageState extends State<NextPage> {
   }
 
   Widget _buildMenuForCategory(Category category) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: fetchMenu(category.idCat), // Fetch menu for selected category
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error loading menu: ${snapshot.error}');
-        } else {
-          return ListView(
-            children: snapshot.data!.map<Widget>((menuItem) {
+   return FutureBuilder<List<Map<String?, dynamic>>>(
+  future: fetchMenu(category.idCat),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text('Error loading menu: ${snapshot.error}');
+    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      return Text('No menu items available.');
+    } else {
+      return ListView(
+        children: snapshot.data!.map<Widget>((menuItem) {
               return GestureDetector(
                 onTap: () {
                   if (menuItem['is_Redirect'] == true) {
@@ -221,7 +220,7 @@ class _NextPageState extends State<NextPage> {
                       MaterialPageRoute(
                         builder: (context) => ItemDetailsPage(
                            id_item: menuItem['id_item'],
-                          nom: menuItem['nom'],
+                          nom: menuItem['nom']?? 'Default Name',
                           img: menuItem['image'],
                           prix: menuItem['prix'],
                           
@@ -231,6 +230,7 @@ class _NextPageState extends State<NextPage> {
                       ),
                     );
                   } else {
+                    print('id_Steps in NextPage: ${menuItem['id_Steps']}');
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -239,6 +239,7 @@ class _NextPageState extends State<NextPage> {
                           nom: menuItem['nom'],
                           img: menuItem['image'],
                           prix: menuItem['prix'],
+                          id_Steps:menuItem['id_Steps'] ?? [],
                          
   
                          
@@ -286,6 +287,7 @@ class _NextPageState extends State<NextPage> {
                                 fontSize: 16,
                               ),
                             ),
+                            
                             const SizedBox(height: 8),
                             // Check if is_Redirect is true, if true, do not display price
                             if (!(menuItem['is_Redirect'] == true))
@@ -310,7 +312,6 @@ class _NextPageState extends State<NextPage> {
     );
   }
 }
-
 class Category {
   final int idCat;
   final String nomCat;
@@ -324,12 +325,10 @@ class Category {
     final int? categoryId = json['id_cat'] as int?;
     final String? categoryNomCat = json['nom_cat'] as String?;
 
-    if (categoryId != null &&
-        categoryNomCat != null &&
-        categoryNomCat.isNotEmpty) {
+    if (categoryId != null && categoryNomCat != null) {
       return Category(idCat: categoryId, nomCat: categoryNomCat);
     } else {
-      print("Warning: 'id_cat' or 'nom_cat' is null or empty in JSON data");
+      print("Warning: 'id_cat' or 'nom_cat' is null in JSON data. Using default values.");
       return Category(idCat: 0, nomCat: 'Default Category');
     }
   }

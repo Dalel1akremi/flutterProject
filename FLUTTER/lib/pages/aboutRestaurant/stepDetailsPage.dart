@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'CategoryPage.dart';
 import 'acceuil.dart';
-import './../global.dart'; 
+import './../global.dart';
 
 class StepDetailsPage extends StatefulWidget {
   final int id_item;
   final String img;
   final int prix;
   final String nom;
-
+  final List<dynamic> id_Steps;
 
   const StepDetailsPage({
     Key? key,
@@ -16,7 +16,7 @@ class StepDetailsPage extends StatefulWidget {
     required this.img,
     required this.prix,
     required this.nom,
-  
+    required this.id_Steps,
   }) : super(key: key);
 
   @override
@@ -126,26 +126,25 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
               width: 1000,
               height: 50,
               child: ElevatedButton(
-               onPressed: () {
-  // Creating the article object
-  Article article = Article(
-    id_item: widget.id_item,
-    nom: widget.nom,
-    img: widget.img,
-    prix: widget.prix,
-  
-    quantite: _value,
-  );
-  // Adding the article to the cart
-  Panier().ajouterAuPanier1(article);
-  // Navigating to the next page
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => NextPage(
-        panier: Panier().articles,
-      ),
-    
+                onPressed: () {
+                  // Creating the article object
+                  Article article = Article(
+                    id_item: widget.id_item,
+                    nom: widget.nom,
+                    img: widget.img,
+                    prix: widget.prix,
+                    id_Steps: widget.id_Steps,
+                    quantite: _value,
+                  );
+                  // Adding the article to the cart
+                  Panier().ajouterAuPanier1(article);
+                  // Navigating to the next page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NextPage(
+                        panier: Panier().articles,
+                      ),
                       settings: RouteSettings(
                         arguments: {article},
                       ),
@@ -155,13 +154,13 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                       setState(() {
                         article.quantite = result['numberOfItems'];
                         article.prix = result['totalPrice'];
-                        
                       });
                     }
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green, // Change background color as needed
+                  backgroundColor:
+                      Colors.green, // Change background color as needed
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
