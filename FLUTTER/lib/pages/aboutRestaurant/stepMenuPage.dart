@@ -239,7 +239,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
           if (step['nom_Step'] == stepName) {
             itemNamesMap[stepName]!.addAll(
               (step['id_items'] as List<dynamic>)
-                  .map<String>((item) => 'nom_item: ${item['nom_item'] as String}'),
+                  .map<String>((item) => ' ${item['nom_item'] as String}'),
             );
           }
         }
