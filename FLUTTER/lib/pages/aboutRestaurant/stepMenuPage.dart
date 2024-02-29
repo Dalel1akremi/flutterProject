@@ -1,14 +1,11 @@
-import 'package:demo/pages/aboutRestaurant/CategoryPage.dart';
-import 'package:demo/pages/global.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class StepMenuPage extends StatefulWidget {
   final int id_item;
   final String img;
   final String nom;
   final int prix;
+  final List<dynamic> id_Steps;
 
   const StepMenuPage({
     Key? key,
@@ -16,6 +13,7 @@ class StepMenuPage extends StatefulWidget {
     required this.nom,
     required this.img,
     required this.prix,
+    required this.id_Steps,
   }) : super(key: key);
 
   @override
@@ -24,33 +22,31 @@ class StepMenuPage extends StatefulWidget {
 
 class _StepMenuPageState extends State<StepMenuPage> {
   int _value = 1;
-  bool afficherListe = false;
-  String? boissonChoisie; // Variable pour stocker la boisson
+  Map<String, bool> afficherListeMap = {};
+  String? boissonChoisie;
   final TextEditingController _remarkController = TextEditingController();
   List<String> stepNames = [];
-  List<String> itemNames = [];
-  late Map<String, dynamic> responseData;
+  Map<String, List<String>> itemNamesMap = {};
+  late Map<String, dynamic> responseData = {};
 
   @override
   void initState() {
     super.initState();
-    fetchStepData();
+    extractStepNames();
+
   }
 
-  Future<void> fetchStepData() async {
-    var url =
-        Uri.parse('http://localhost:3000/getStep?id_item=${widget.id_item}');
-    var response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      responseData = jsonDecode(response.body)['data'];
-      setState(() {
-        stepNames = List<String>.from(responseData['stepNames']);
-        itemNames = List<String>.from(responseData['itemNames']);
-      });
-    } else {
-      throw Exception('Failed to load data');
+  void extractStepNames() {
+    List<String> extractedNames = [];
+    for (var step in widget.id_Steps) {
+      if (step['nom_Step'] != null) {
+        extractedNames.add(step['nom_Step'] as String);
+        afficherListeMap[step['nom_Step'] as String] = false;
+      }
     }
+    setState(() {
+      stepNames = extractedNames;
+    });
   }
 
   @override
@@ -62,6 +58,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
   @override
   Widget build(BuildContext context) {
     int totalPrice = _value * widget.prix;
+   
 
     return Scaffold(
       appBar: AppBar(
@@ -83,69 +80,52 @@ class _StepMenuPageState extends State<StepMenuPage> {
                 shrinkWrap: true,
                 itemCount: stepNames.length,
                 itemBuilder: (BuildContext context, index) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      toggleListeVisibility();
-                    },
-                    child: Column(
-                      children: <Widget>[
-                        ListTile(
+                  return Column(
+                    children: <Widget>[
+                      ElevatedButton(
+                        onPressed: () {
+                          toggleListeVisibility(stepNames[index]);
+                        },
+                        child: ListTile(
                           title: Row(
                             children: [
                               Text(stepNames[index]),
                               Spacer(),
                               IconButton(
-                                icon: afficherListe
+                                icon: afficherListeMap[stepNames[index]] ?? false
                                     ? const Icon(Icons.arrow_drop_up)
                                     : const Icon(Icons.arrow_drop_down),
                                 onPressed: () {
-                                  setState(() {
-                                    afficherListe = !afficherListe;
-                                    if (afficherListe) {
-                                      // Filter itemNames based on the selected stepName
-                                      itemNames = [];
-                                      for (var item
-                                          in responseData['itemNames']) {
-                                        if (item['stepName'] ==
-                                            stepNames[index]) {
-                                          itemNames.add(
-                                              item['itemName'] as String);
-                                        }
-                                      }
-                                    }
-                                  });
+                                  toggleListeVisibility(stepNames[index]);
                                 },
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      if (afficherListeMap[stepNames[index]] ?? false)
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: itemNamesMap[stepNames[index]]?.length ?? 0,
+                          itemBuilder: (BuildContext context, int itemIndex) {
+                            return ListTile(
+                              title: Text(itemNamesMap[stepNames[index]]![itemIndex]),
+                              leading: Radio(
+                                value: itemNamesMap[stepNames[index]]![itemIndex],
+                                groupValue: boissonChoisie,
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    boissonChoisie = value;
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                    ],
                   );
                 },
               ),
-              
-              const SizedBox(height: 20),
-              if (afficherListe)
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: itemNames.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(itemNames[index]),
-                      leading: Radio(
-                        value: itemNames[index],
-                        groupValue: boissonChoisie,
-                        onChanged: (String? value) {
-                          setState(() {
-                            boissonChoisie = value;
-                          });
-                        },
-                      ),
-                    );
-                  },
-                ),
-
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -214,37 +194,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Create article object
-                    Article article = Article(
-                      id_item: widget.id_item,
-                      nom: widget.nom,
-                      img: widget.img,
-                      prix: widget.prix,
-                      quantite: _value,
-                    );
-
-                    // Add article to cart
-                    Panier().ajouterAuPanier1(article);
-
-                    // Navigate to next page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NextPage(
-                          panier: Panier().articles,
-                        ),
-                        settings: RouteSettings(
-                          arguments: {'article': article},
-                        ),
-                      ),
-                    ).then((result) {
-                      if (result != null) {
-                        setState(() {
-                          article.quantite = result['numberOfItems'];
-                          article.prix = result['totalPrice'];
-                        });
-                      }
-                    });
+                    // Your logic here
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
@@ -279,9 +229,21 @@ class _StepMenuPageState extends State<StepMenuPage> {
     );
   }
 
-  void toggleListeVisibility() {
+  void toggleListeVisibility(String stepName) {
     setState(() {
-      afficherListe = !afficherListe;
+      afficherListeMap[stepName] = !afficherListeMap[stepName]!;
+      if (afficherListeMap[stepName]!) {
+        // Add logic to populate itemNamesMap based on the selected step
+        itemNamesMap[stepName] = [];
+        for (var step in widget.id_Steps) {
+          if (step['nom_Step'] == stepName) {
+            itemNamesMap[stepName]!.addAll(
+              (step['id_items'] as List<dynamic>)
+                  .map<String>((item) => 'nom_item: ${item['nom_item'] as String}'),
+            );
+          }
+        }
+      }
     });
   }
 }
