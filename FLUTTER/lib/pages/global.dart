@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'aboutRestaurant/acceuil.dart';
+
 class Panier {
   static final Panier _instance = Panier._internal();
   factory Panier() => _instance;
@@ -11,7 +12,7 @@ List<String> elementsChoisis = [];
   TimeOfDay? selectedTime;
   String? selectedRetraitMode;
   Restaurant? selectedRestaurant;
-   String? userAddress;
+  String? userAddress;
   String? origin;
   void viderPanier() {
     articles.clear();
@@ -38,7 +39,7 @@ List<String> elementsChoisis = [];
   void updateCommandeDetails(
       String selectedRetraitMode, TimeOfDay selectedTime) {
     this.selectedRetraitMode = selectedRetraitMode;
-    
+
     if (selectedTime != null) {
       this.selectedTime = selectedTime;
     }
@@ -47,23 +48,27 @@ List<String> elementsChoisis = [];
   String? getSelectedRetraitMode() {
     return selectedRetraitMode;
   }
- void setSelectedRestaurant(Restaurant restaurant) {
+
+  void setSelectedRestaurant(Restaurant restaurant) {
     selectedRestaurant = restaurant;
   }
 
   String? getSelectedRestaurantName() {
     return selectedRestaurant?.name;
   }
-    String? getSelectedRestaurantAdresse() {
+
+  String? getSelectedRestaurantAdresse() {
     return selectedRestaurant?.address;
   }
-    void setUserAddress(String address) {
+
+  void setUserAddress(String address) {
     userAddress = address;
   }
 
   String? getUserAddress() {
     return userAddress;
   }
+
   void printPanier() {
     if (kDebugMode) {
       print('Contenu du panier:');
@@ -71,7 +76,7 @@ List<String> elementsChoisis = [];
     for (var article in articles) {
       if (kDebugMode) {
         print(
-          'Nom: ${article.nom}, Prix: ${article.prix}, Quantité: ${article.quantite}');
+            'Nom: ${article.nom}, Prix: ${article.prix}, Quantité: ${article.quantite}');
       }
     }
   }
@@ -80,7 +85,6 @@ List<String> elementsChoisis = [];
   TimeOfDay getCurrentSelectedTime() {
     return selectedTime ?? TimeOfDay.now();
   }
-
 }
 
 class Article {
@@ -90,14 +94,25 @@ class Article {
   String img;
   int prix;
   int quantite;
-List<String> elementsChoisis;
+List<String> elementsChoisis;  final List<dynamic> id_Steps;
   Article({
-    // ignore: non_constant_identifier_names
+
     required this.id_item,
+    required this.id_Steps,
+
     required this.nom,
     required this.img,
     required this.prix,
     required this.quantite,
     required this.elementsChoisis, 
+  });
+}
+class Step {
+  final String nom_Step;
+  final List<String> id_items;
+
+  Step({
+    required this.nom_Step,
+    required this.id_items,
   });
 }

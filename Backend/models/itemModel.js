@@ -12,12 +12,15 @@ const itemSchema = new Schema({
   image: String,
   quantite: Number,
   max_quantite: Number,
-  is_Step:{ type: Boolean, validate: [isValidBoolean, 'is_Step must be true or false'] },
   is_Menu:  { type: Boolean, validate: [isValidBoolean, 'is_Menu must be true or false'] },
   is_Redirect: { type: Boolean, validate: [isValidBoolean, 'is_Redirect must be true or false'] },
   id: { type: Schema.Types.ObjectId, ref: 'CompositionDeBase' },
   id_cat: { type:Number, ref: 'Categories' },
-  id_Step: { type:Number, ref: 'Step' },
+  id_Steps: [
+    {
+      id_Step: {type: Number, required: true },
+    },
+  ],
 });
 function isValidBoolean(value) {
   return typeof value === 'boolean';

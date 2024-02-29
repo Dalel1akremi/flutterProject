@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer');
-const path = require('path');
+
 
 const userController = require('./controllers/userController');
 const viewController = require('./controllers/viewController');
@@ -16,13 +16,10 @@ const paiement =require( './controllers/paiement');
 const app = express();
 const PORT = 3000;
 
-// Enable CORS
 app.use(cors());
 
-// Serve static files from the 'public' folder
 app.use(express.static('public'));
 
-// Configure Multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, './public/images');
@@ -34,7 +31,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Connect to MongoDB
 mongoose
   .connect('mongodb://127.0.0.1:27017/registration', {
     useNewUrlParser: true,
@@ -46,7 +42,6 @@ mongoose
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Routes
 app.post('/register', userController.registerUser);
 app.post('/login', userController.loginUser);
 app.get('/', viewController.renderIndex);
@@ -65,12 +60,11 @@ app.get('/getCompositions', CompositionDeBController.getCompositions);
 app.post('/createRedirect', upload.single('image'),RedirectController.createRedirect);
 app.get('/getRedirect', RedirectController.getRedirect);
 app.post('/createStep', StepController.createStep);
-app.get('/getStep', StepController.getStep);
-// Corrected createMenu route
 app.post('/createItem',upload.single('image'), itemController.createItem);
 app.get('/getItem', itemController.getItem);
 app.post('/porfeuille', paiement.porfeuille);
 app.post('/recupererCarteParId', paiement.recupererCarteParId);
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

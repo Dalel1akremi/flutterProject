@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
 
 const stepSchema = new mongoose.Schema({
-  id_Step: { type: Number, unique: true },
-  nom_Step: String,
-  id_item: { type: Number, ref: 'item', required: true }, // Clé étrangère vers la collection "items"
-  is_Obligatoire:{ type: Boolean, validate: [isValidBoolean, 'is_Obligatoire: must be true or false'] },
+  id_Step: { type: Number, unique: true, },
+  nom_Step: { type: String, required: true },
+  id_items: [
+    {
+      id_item: { type: Number, ref: 'Item', required: true },
+    },
+  ],
+  is_Obligatoire:{ type: Boolean, validate: [isValidBoolean, 'is_Obligatoire: must be true or false'] }, 
 });
 function isValidBoolean(value) {
   return typeof value === 'boolean';

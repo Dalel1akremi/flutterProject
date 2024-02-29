@@ -17,7 +17,7 @@ class ItemDetailsPage extends StatelessWidget {
   const ItemDetailsPage({
     Key? key,
     required this.id_item,
-    required this.nom,
+   required this.nom,
     required this.img,
     required this.prix,
  
@@ -94,7 +94,7 @@ class ItemDetailsPage extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => StepDetailsPage(
-         
+                id_Steps:item['id_Steps']?? 0,
               id_item: item['id_item'] ?? 0,
               nom: item['nom'] ?? '',
               img: item['image'] ?? '',
