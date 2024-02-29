@@ -230,7 +230,7 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
                       ),
                     );
                   } else {
-                    print('id_Steps in NextPage: ${menuItem['id_Steps']}');
+               
                     Navigator.push(
                       context,
                       MaterialPageRoute(
