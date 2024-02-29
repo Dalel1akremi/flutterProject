@@ -127,6 +127,7 @@ const formattedItems = await Promise.all(items.map(async (item) => {
         return {
           id_item: idItem.id_item,
           nom_item: itemData ? itemData.nom : null,
+         
           // Add more properties as needed
         };
       }));
@@ -135,6 +136,7 @@ const formattedItems = await Promise.all(items.map(async (item) => {
         id_Step: step.id_Step,
         nom_Step: stepData ? stepData.nom_Step : null,
         id_items: idItemsData,
+        is_Obligatoire: stepData ? stepData.is_Obligatoire : null, // Add is_Obligatoire field
       };
     } else {
       return null; // Handle the case where id_Step is missing or null
@@ -155,6 +157,7 @@ const formattedItems = await Promise.all(items.map(async (item) => {
     image: item.image,
     id_cat: item.id_cat,
     id_Steps: idStepData.filter((step) => step !== null), // Remove null entries
+  
   };
 }));
 
