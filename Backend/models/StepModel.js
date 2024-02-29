@@ -4,8 +4,11 @@ const stepSchema = new mongoose.Schema({
   id_Step: { type: Number, unique: true },
   nom_Step: String,
   id_item: { type: Number, ref: 'item', required: true }, // Clé étrangère vers la collection "items"
+  is_Obligatoire:{ type: Boolean, validate: [isValidBoolean, 'is_Obligatoire: must be true or false'] },
 });
-
+function isValidBoolean(value) {
+  return typeof value === 'boolean';
+}
 stepSchema.pre('save', async function (next) {
   const currentStep = this;
   if (!currentStep.isNew) {

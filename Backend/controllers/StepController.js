@@ -3,7 +3,7 @@ const Item = require('../models/itemModel');
 exports.createStep = async (req, res) => {
   try {
     const { body } = req;
-    const { nom_Step, id_item } = body;
+    const { nom_Step, id_item ,is_Obligatoire} = body;
 
     // Check if the Step already exists
     const existingStep = await Step.findOne({ nom_Step });
@@ -20,6 +20,7 @@ exports.createStep = async (req, res) => {
     const newStep = new Step({
       nom_Step,
       id_item,
+      is_Obligatoire,
     });
 
     // Save the new Step to the database
@@ -58,7 +59,8 @@ exports.getStep = async (req, res) => {
       // Stockage des données de l'étape et de ses éléments associés dans le tableau
       stepsWithItems.push({
         stepName: step.nom_Step,
-        itemNames: items.map(item => item.nom)
+        itemNames: items.map(item => item.nom),
+        stepObligation:step.is_Obligatoire,
       });
     }
 
