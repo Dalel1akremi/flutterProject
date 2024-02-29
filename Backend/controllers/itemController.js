@@ -1,9 +1,8 @@
 const Item = require('../models/itemModel');
-
+const Step=require('./../models/StepModel');
 exports.createItem = async (req, res) => {
   try {
     const { body, file } = req;
-
     const {
       nom,
       type,
@@ -15,51 +14,39 @@ exports.createItem = async (req, res) => {
       is_Menu,
       is_Redirect,
       id_cat,
-      is_Step,
-      id_Step,
+      id_Steps,
       id,
     } = body;
+
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
 
     // Validate data types
     const validatedPrix = parseFloat(prix);
-    const validatedIsArchived = isArchived==='true';
+    const validatedIsArchived = isArchived === 'true';
     const validatedQuantite = parseInt(quantite);
     const validatedMaxQuantite = parseInt(max_quantite);
     const validatedIsMenu = is_Menu === 'true';
-    const validatedIsStep = is_Step === 'true';
-    const validatedIsRedirect=is_Redirect==='true';
-  
+    const validatedIsRedirect = is_Redirect === 'true';
 
     // Check if validation fails
-    if (isNaN(validatedPrix)) {
-      console.error('Invalid prix:', prix);
-    }
-    if (isNaN(validatedQuantite)) {
-      console.error('Invalid quantite:', quantite);
-    }
-    if (isNaN(validatedMaxQuantite)) {
-      console.error('Invalid max_quantite:', max_quantite);
-    }
-
     if (isNaN(validatedPrix) || isNaN(validatedQuantite) || isNaN(validatedMaxQuantite)) {
-      
-      res.json({
+      res.status(400).json({
         status: 400,
-        message: 'Invalid data types in request body'
+        message: 'Invalid data types in request body',
       });
       return;
     }
 
-    const existingItem = await Item.findOne({ nom});
+    const existingItem = await Item.findOne({ nom });
 
     if (existingItem !== null) {
-      return res.json({
+      res.status(400).json({
         status: 400,
-        message: 'Ce Item existe déjà'
+        message: 'Ce Item existe déjà',
       });
-      
+      return;
     }
+
     console.log('New Item Data:', {
       nom,
       type,
@@ -69,13 +56,12 @@ exports.createItem = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-      is_Redirect:validatedIsRedirect,
+      is_Redirect: validatedIsRedirect,
       id_cat,
-      is_Step:validatedIsStep,
-      id_Step,
-      id,  // Log the id field
+      id,
     });
-    const newItem = new Item({
+
+    let newItemData = {
       nom,
       type,
       prix: validatedPrix,
@@ -84,50 +70,106 @@ exports.createItem = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-      is_Redirect:validatedIsRedirect,
+      is_Redirect: validatedIsRedirect,
       id_cat,
       id,
       image: imageUrl,
-      is_Step:validatedIsStep,
-      id_Step,
+    };
+
+    if (validatedIsMenu) {
+      const idStepsArray = id_Steps.split(',').map(idStep => ({ id_Step: parseInt(idStep) }));
+      newItemData.id_Steps = idStepsArray;
+    } else {
+      newItemData.id_Steps = null;
+    }
+
+    const newItem = new Item(newItemData);
+
+    const savedItem = await newItem.save();
+    res.status(200).json({
+      status: 200,
+      message: 'Item créé avec succès',
+      savedItem,
     });
 
-    const savedItem= await newItem.save();
-    res.json({
-      status: 200,
-      message: 'Item crée avec succée ',
-      data: savedItem,
-    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: 'Erreur lors de la création de Item ',
-      error: error.message,
+      message: 'Erreur lors de la création de Item',
     });
   }
 };
-
-
-
-const sendResponse = (res, statusCode, message, data = null, errorMessage = null) => {
-  res.status(statusCode).json({ status: statusCode, message, data, error: errorMessage });
-};
-
 exports.getItem = async (req, res) => {
   try {
     const { id_cat } = req.query;
 
-    // Fetch menus based on the provided type
-    const Items = await Item.find({ id_cat });
+    // Fetch items based on the provided category and populate the id_Steps field
+    const items = await Item.find({ 'id_cat': id_cat }).populate('id_Steps.id_Step');
 
-    if (Item.length === 0) {
-      sendResponse(res, 404, 'Aucun Item trouvé pour ce type');
+    // Check if items array is empty
+    if (items.length === 0) {
+      res.status(200).json({
+        status: 200,
+        message: 'Aucun Item trouvé pour cette catégorie',
+        formattedItems: [],  // Send an empty array instead of null
+      });
     } else {
-      sendResponse(res, 200, 'Item récupérés avec succès', Items);
+      // Existing code for formatting items
+// Existing code for formatting items
+const formattedItems = await Promise.all(items.map(async (item) => {
+  const idStepData = await Promise.all((item.id_Steps || []).map(async (step) => {
+    // Check if step.id_Step exists before trying to fetch data
+    if (step.id_Step) {
+      const stepData = await Step.findOne({ 'id_Step': step.id_Step }).lean();
+      const idItemsData = await Promise.all((stepData ? stepData.id_items : []).map(async (idItem) => {
+        const itemData = await Item.findOne({ 'id_item': idItem.id_item }).lean();
+        return {
+          id_item: idItem.id_item,
+          nom_item: itemData ? itemData.nom : null,
+          // Add more properties as needed
+        };
+      }));
+
+      return {
+        id_Step: step.id_Step,
+        nom_Step: stepData ? stepData.nom_Step : null,
+        id_items: idItemsData,
+      };
+    } else {
+      return null; // Handle the case where id_Step is missing or null
+    }
+  }));
+
+  return {
+    id_item: item.id_item,
+    nom: item.nom,
+    type: item.type,
+    prix: item.prix,
+    description: item.description,
+    isArchived: item.isArchived,
+    quantite: item.quantite,
+    max_quantite: item.max_quantite,
+    is_Menu: item.is_Menu,
+    is_Redirect: item.is_Redirect,
+    image: item.image,
+    id_cat: item.id_cat,
+    id_Steps: idStepData.filter((step) => step !== null), // Remove null entries
+  };
+}));
+
+      res.status(200).json({
+        status: 200,
+        message: 'Item récupérés avec succès',
+        formattedItems,
+      });
     }
   } catch (error) {
     console.error(error);
-    sendResponse(res, 500, 'Erreur lors de la récupération des Item', null, error.message);
+    res.status(500).json({
+      status: 500,
+      message: 'Erreur lors de la récupération des Item',
+    });
   }
+
 };

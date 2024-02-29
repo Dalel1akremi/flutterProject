@@ -60,7 +60,6 @@ app.get('/getCompositions', CompositionDeBController.getCompositions);
 app.post('/createRedirect', upload.single('image'),RedirectController.createRedirect);
 app.get('/getRedirect', RedirectController.getRedirect);
 app.post('/createStep', StepController.createStep);
-app.get('/getStep', StepController.getStep);
 app.post('/createItem',upload.single('image'), itemController.createItem);
 app.get('/getItem', itemController.getItem);
 app.post('/porfeuille', paiement.porfeuille);
