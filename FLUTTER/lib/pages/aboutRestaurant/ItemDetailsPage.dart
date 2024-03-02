@@ -12,7 +12,7 @@ class ItemDetailsPage extends StatelessWidget {
   final String img;
   final String nom;
   final int prix;
-
+  final List<dynamic> id_Steps;
 
   const ItemDetailsPage({
     Key? key,
@@ -20,7 +20,7 @@ class ItemDetailsPage extends StatelessWidget {
    required this.nom,
     required this.img,
     required this.prix,
- 
+    required this.id_Steps,
  
  
   }) : super(key: key);
@@ -94,11 +94,11 @@ class ItemDetailsPage extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => StepDetailsPage(
-                id_Steps:item['id_Steps']?? 0,
+              id_Steps: [item['id_Steps'] ?? 0], 
               id_item: item['id_item'] ?? 0,
               nom: item['nom'] ?? '',
               img: item['image'] ?? '',
-              prix: item['prix'] ?? 0,
+            prix: (item['prix'] ?? 0).toInt(),
           
             ),
           ),

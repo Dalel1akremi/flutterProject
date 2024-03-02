@@ -223,7 +223,7 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
                           nom: menuItem['nom']?? 'Default Name',
                           img: menuItem['image'],
                           prix: menuItem['prix'],
-                          
+                           id_Steps:menuItem['id_Steps'] ?? [],
                     
             
                         ),

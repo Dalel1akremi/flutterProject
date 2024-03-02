@@ -128,16 +128,15 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
               child: ElevatedButton(
                 onPressed: () {
                   // Creating the article object
-                  Article article = Article(
-                    id_item: widget.id_item,
-                    nom: widget.nom,
-                    img: widget.img,
-                    prix: widget.prix,
-                    id_Steps: widget.id_Steps,
-                    quantite: _value,
-                    elementsChoisis: [],
-                    
-                  );
+                 Article article = Article(
+  id_item: widget.id_item,
+  nom: widget.nom,
+  img: widget.img,
+  prix: widget.prix,
+  id_Steps: [widget.id_Steps], // Wrap the value in a list if it's an int
+  quantite: _value,
+  elementsChoisis: [],
+);
                   // Adding the article to the cart
                   Panier().ajouterAuPanier1(article);
                   // Navigating to the next page
