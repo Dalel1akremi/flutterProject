@@ -25,32 +25,51 @@ class StepMenuPage extends StatefulWidget {
 class _StepMenuPageState extends State<StepMenuPage> {
   int _value = 1;
   Map<String, bool> afficherListeMap = {};
-  String? boissonChoisie;
+  Map<String, String?> boissonChoisieMap = {};
   final TextEditingController _remarkController = TextEditingController();
   List<String> stepNames = [];
   Map<String, List<String>> itemNamesMap = {};
   late Map<String, dynamic> responseData = {};
 
+  // Ajouter une liste pour stocker les éléments choisis
+  List<String> elementsChoisis = [];
+
   @override
   void initState() {
     super.initState();
-    extractStepNames();
-
+    extractStepData();
   }
+void extractStepData() {
+  // Initialisation de la Map d'état de visibilité et de la Map des noms d'éléments pour chaque étape
+  Map<String, bool> visibilityMap = {};
+  Map<String, List<String>> itemNamesMap = {};
+  for (var step in widget.id_Steps) {
+    if (step['nom_Step'] != null) {
+      String stepName = step['nom_Step'] as String;
+      bool isObligatoire = step['is_Obligatoire'] ?? false; // Récupérer la valeur de is_Obligatoire, par défaut false si non défini
+      visibilityMap[stepName] = false; // Initialise l'état de visibilité à faux
+      boissonChoisieMap[stepName] = null; // Initialise la boisson choisie à null
+      itemNamesMap[stepName] = (step['id_items'] as List<dynamic>).map<String>((item) => item['nom_item'] as String).toList();
+      
+      // Vous pouvez utiliser isObligatoire ici selon vos besoins
+      print("L'étape $stepName est obligatoire ? $isObligatoire");
+    }
+  }
+  setState(() {
+    afficherListeMap = visibilityMap;
+    this.itemNamesMap = itemNamesMap;
+  });
+}
 
-  void extractStepNames() {
-    List<String> extractedNames = [];
+ // Méthode pour vérifier si tous les éléments obligatoires sont sélectionnés
+  bool areAllRequiredElementsSelected() {
     for (var step in widget.id_Steps) {
-      if (step['nom_Step'] != null) {
-        extractedNames.add(step['nom_Step'] as String);
-        afficherListeMap[step['nom_Step'] as String] = false;
+      if (step['is_Obligatoire'] == true && boissonChoisieMap[step['nom_Step']] == null) {
+        return false;
       }
     }
-    setState(() {
-      stepNames = extractedNames;
-    });
+    return true;
   }
-
   @override
   void dispose() {
     _remarkController.dispose();
@@ -60,7 +79,6 @@ class _StepMenuPageState extends State<StepMenuPage> {
   @override
   Widget build(BuildContext context) {
     int totalPrice = _value * widget.prix;
-   
 
     return Scaffold(
       appBar: AppBar(
@@ -80,44 +98,56 @@ class _StepMenuPageState extends State<StepMenuPage> {
               const SizedBox(height: 20),
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: stepNames.length,
+                itemCount: afficherListeMap.length,
                 itemBuilder: (BuildContext context, index) {
+                  String stepName = afficherListeMap.keys.toList()[index];
                   return Column(
                     children: <Widget>[
-                      ElevatedButton(
-                        onPressed: () {
-                          toggleListeVisibility(stepNames[index]);
-                        },
-                        child: ListTile(
-                          title: Row(
-                            children: [
-                              Text(stepNames[index]),
-                              const Spacer(),
-                              IconButton(
-                                icon: afficherListeMap[stepNames[index]] ?? false
-                                    ? const Icon(Icons.arrow_drop_up)
-                                    : const Icon(Icons.arrow_drop_down),
-                                onPressed: () {
-                                  toggleListeVisibility(stepNames[index]);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (afficherListeMap[stepNames[index]] ?? false)
+                     ElevatedButton(
+  onPressed: () {
+    toggleListeVisibility(stepName);
+  },
+  
+  child: ListTile(
+    title: Row(
+      children: [
+        Text(stepName),
+        const Spacer(),
+         if (widget.id_Steps.any((step) => step['nom_Step'] == stepName && step['is_Obligatoire'] == true))
+          const Text(
+            "Obligatoire",
+            style: TextStyle(color: Colors.red),
+          ),
+        IconButton(
+          icon: afficherListeMap[stepName] ?? false
+              ? const Icon(Icons.arrow_drop_up)
+              : const Icon(Icons.arrow_drop_down),
+          onPressed: () {
+            toggleListeVisibility(stepName);
+          },
+        ),
+        // Afficher "Obligatoire" à côté de l'icône si l'étape est obligatoire
+       
+      ],
+    ),
+  ),
+),
+
+                      if (afficherListeMap[stepName] ?? false)
                         ListView.builder(
                           shrinkWrap: true,
-                          itemCount: itemNamesMap[stepNames[index]]?.length ?? 0,
+                          itemCount: itemNamesMap[stepName]?.length ?? 0,
                           itemBuilder: (BuildContext context, int itemIndex) {
                             return ListTile(
-                              title: Text(itemNamesMap[stepNames[index]]![itemIndex]),
+                              title: Text(itemNamesMap[stepName]![itemIndex]),
                               leading: Radio(
-                                value: itemNamesMap[stepNames[index]]![itemIndex],
-                                groupValue: boissonChoisie,
+                                value: itemNamesMap[stepName]![itemIndex],
+                                groupValue: boissonChoisieMap[stepName],
                                 onChanged: (String? value) {
                                   setState(() {
-                                    boissonChoisie = value;
+                                    boissonChoisieMap[stepName] = value;
+                                    // Ajouter l'élément choisi à la liste
+                                    elementsChoisis.add(value!);
                                   });
                                 },
                               ),
@@ -194,7 +224,8 @@ class _StepMenuPageState extends State<StepMenuPage> {
               width: 1000,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: areAllRequiredElementsSelected() ? () {
+
                   // Creating the article object
                   Article article = Article(
                     id_item: widget.id_item,
@@ -203,7 +234,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                     prix: widget.prix,
                     id_Steps: widget.id_Steps,
                     quantite: _value,
-                    elementsChoisis: [],
+                    elementsChoisis: boissonChoisieMap.values.where((element) => element != null).cast<String>().toList(),
                     
                   );
                   // Adding the article to the cart
@@ -227,7 +258,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                       });
                     }
                   });
-                },
+                }: null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
                       Colors.green, // Change background color as needed
@@ -264,7 +295,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
 
   void toggleListeVisibility(String stepName) {
     setState(() {
-      afficherListeMap[stepName] = !afficherListeMap[stepName]!;
+      afficherListeMap[stepName] = !(afficherListeMap[stepName] ?? false);
       if (afficherListeMap[stepName]!) {
         // Add logic to populate itemNamesMap based on the selected step
         itemNamesMap[stepName] = [];
