@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   telephone:String,
   email: {type:String,unique:true},
   password: String,
-  validationCode: String, // Add this line to include the validationCode field
+  validationCode: String, 
   validationCodeTimestamp: Date,
 });
 userSchema.pre('save', async function (next) {

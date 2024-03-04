@@ -270,20 +270,32 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
-
 const searchAddress = async (req, res) => {
   const { country, city, street, streetNumber } = req.body;
-  const { _id } = req.query; // Assurez-vous que votre ID utilisateur est dans les en-têtes
+  const { _id } = req.query;
 
   if (!_id) {
     return res.status(400).json({ message: 'L\'ID utilisateur est manquant dans les en-têtes.' });
   }
 
+  // Validate that all four fields are provided
+  if (!country || !city || !street || !streetNumber) {
+    return res.status(400).json({ message: 'Veuillez fournir des valeurs valides pour tous les champs.' });
+  }
+
   const searchQuery = `${streetNumber} ${street}, ${city}, ${country}`;
 
   try {
-    // Effectuez une requête à Nominatim
+    // Check if the geocoded address already exists in the database for the given user (_id)
+    const existingGeocodedAddress = await GeocodedAd.findOne({
+      _id,
+    });
+
+    if (existingGeocodedAddress) {
+      return res.status(400).json({ message: 'L\'adresse géocodée pour ce utilisateur existe déjà dans la base de données.' });
+    }
+
+    // If not, proceed with the geocoding process
     const response = await axios.get('https://nominatim.openstreetmap.org/search', {
       params: {
         q: searchQuery,
@@ -292,10 +304,16 @@ const searchAddress = async (req, res) => {
     });
 
     if (response.data.length > 0) {
-      // Enregistrez les résultats de géocodage dans la base de données
       const firstGeocodedResult = response.data[0];
+
+      // Check if the geocoding result has a street number
+      if (!firstGeocodedResult.address || !firstGeocodedResult.address.house_number) {
+        // Allow the geocoding without a house_number for certain places
+        console.log("Street Number not available. Proceeding without validation.");
+      }
+
       const geocodedAddress = new GeocodedAd({
-        _id: _id,  // Utilisez l'ID automatique de MongoDB tel quel
+        _id,
         country,
         city,
         street,
@@ -305,15 +323,18 @@ const searchAddress = async (req, res) => {
 
       await geocodedAddress.save();
 
-      res.json({ message: 'Résultats de géocodage enregistrés ', results:firstGeocodedResult});
+      return res.json({ message: 'Résultats de géocodage enregistrés ', results: firstGeocodedResult });
     } else {
-      res.json({ message: 'Aucun résultat de géocodage trouvé.' });
+      return res.json({ message: 'Aucun résultat de géocodage trouvé.' });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send('Erreur lors du géocodage de l\'adresse.');
+    return res.status(500).send('Erreur lors du géocodage de l\'adresse.');
   }
 };
+
+
+
 const getGeocodedDetails = async (req, res) => {
   const { _id } = req.query; // User ID
 
@@ -349,6 +370,14 @@ const updateGeocodedDetails = async (req, res) => {
       return res.status(404).json({ message: 'Aucun résultat de géocodage trouvé pour cet utilisateur.' });
     }
 
+    // Validate that all four fields are provided for the update
+    if (!country || !city || !street || !streetNumber) {
+      return res.status(400).json({ message: 'Veuillez fournir des valeurs valides pour tous les champs lors de la mise à jour.' });
+    }
+
+    // Save the current geocoded results
+    const currentGeocodedResults = geocodedAddress.geocodedResults;
+
     // Update the geocoded details
     geocodedAddress.country = country;
     geocodedAddress.city = city;
@@ -357,6 +386,24 @@ const updateGeocodedDetails = async (req, res) => {
 
     // Save the updated geocoded details
     await geocodedAddress.save();
+
+    // Re-geocode the updated address
+    const updatedResponse = await axios.get('https://nominatim.openstreetmap.org/search', {
+      params: {
+        q: `${streetNumber} ${street}, ${city}, ${country}`,
+        format: 'json',
+      },
+    });
+
+    // Check if there are results and update geocodedResults
+    if (updatedResponse.data.length > 0) {
+      geocodedAddress.geocodedResults = updatedResponse.data[0];
+      await geocodedAddress.save();
+    } else {
+      // If no results, revert to the previous geocoded results
+      geocodedAddress.geocodedResults = currentGeocodedResults;
+      await geocodedAddress.save();
+    }
 
     res.json({
       status: 200,

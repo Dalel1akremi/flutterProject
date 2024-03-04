@@ -54,6 +54,7 @@ Future<void> fetchAddressDetails() async {
         city = data['geocodedDetails']['city'] ?? '';
         street = data['geocodedDetails']['street'] ?? '';
         streetNumber = data['geocodedDetails']['streetNumber'] ?? '';
+         Panier().setUserAddress('$country, $city, $street, $streetNumber');
       });
     } else {
       setState(() {
@@ -110,51 +111,55 @@ Future<void> fetchAddressDetails() async {
   }
 
   Future<void> _showEditDialog() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Modifier l\'adresse'),
-          content: Column(
-            children: [
-              TextField(
-                controller: countryController,
-                decoration: const InputDecoration(labelText: 'Country'),
-              ),
-              TextField(
-                controller: cityController,
-                decoration: const InputDecoration(labelText: 'City'),
-              ),
-              TextField(
-                controller: streetController,
-                decoration: const InputDecoration(labelText: 'Street'),
-              ),
-              TextField(
-                controller: streetNumberController,
-                decoration: const InputDecoration(labelText: 'Street Number'),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Annuler'),
+    countryController.text = country;
+  cityController.text = city;
+  streetController.text = street;
+  streetNumberController.text = streetNumber;
+
+  return showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Modifier l\'adresse'),
+        content: Column(
+          children: [
+            TextField(
+              controller: countryController,
+              decoration: const InputDecoration(labelText: 'Country'),
             ),
-            TextButton(
-              onPressed: () async {
-                await updateGeocodedDetails();
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
+            TextField(
+              controller: cityController,
+              decoration: const InputDecoration(labelText: 'City'),
+            ),
+            TextField(
+              controller: streetController,
+              decoration: const InputDecoration(labelText: 'Street'),
+            ),
+            TextField(
+              controller: streetNumberController,
+              decoration: const InputDecoration(labelText: 'Street Number'),
             ),
           ],
-        );
-      },
-    );
-  }
-
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () async {
+              await updateGeocodedDetails();
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
   Future<void> updateGeocodedDetails() async {
     try {
       final response = await http.put(
