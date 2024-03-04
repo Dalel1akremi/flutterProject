@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'acceuil.dart';
+
 import './../aboutPaiement/panier.dart';
 import 'ItemDetailsPage.dart';
 import 'stepMenuPage.dart';
@@ -18,6 +18,7 @@ class NextPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _NextPageState createState() => _NextPageState();
 }
 
@@ -58,21 +59,29 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
 
     if (response.statusCode == 200) {
       final List<dynamic>? responseData = json.decode(response.body)['formattedItems'];
-      print('Response data: $responseData');
+      if (kDebugMode) {
+        print('Response data: $responseData');
+      }
 
       if (responseData != null && responseData.isNotEmpty) {
         // Convert the list of objects to a list of maps
         return responseData.map<Map<String, dynamic>>((item) => item as Map<String, dynamic>).toList();
       } else {
-        print('Error fetching menu: Response data is null or empty');
+        if (kDebugMode) {
+          print('Error fetching menu: Response data is null or empty');
+        }
         return [];
       }
     } else {
-      print('Error fetching menu. Status code: ${response.statusCode}');
+      if (kDebugMode) {
+        print('Error fetching menu. Status code: ${response.statusCode}');
+      }
       throw Exception('Failed to fetch menu. Status code: ${response.statusCode}');
     }
   } catch (error) {
-    print('Error fetching menu: $error');
+    if (kDebugMode) {
+      print('Error fetching menu: $error');
+    }
     return [];
   }
 }
@@ -208,7 +217,7 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
     } else if (snapshot.hasError) {
       return Text('Error loading menu: ${snapshot.error}');
     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-      return Text('No menu items available.');
+      return const Text('No menu items available.');
     } else {
       return ListView(
         children: snapshot.data!.map<Widget>((menuItem) {
