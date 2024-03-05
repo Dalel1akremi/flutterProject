@@ -68,12 +68,12 @@ const loginUser = async (req, res) => {
 
     // Création d'un jeton JWT
     const token = jwt.sign(
-      { userId: user._id, email: user.email ,nom: user.nom},
+      { userId: user._id, email: user.email ,nom: user.nom,telephone:user.telephone},
       'your-secret-key', // Remplacez par une clé secrète plus sécurisée dans un environnement de production
       { expiresIn: '7d' } // Durée de validité du jeton (1 heure dans cet exemple)
     );
 
-    res.status(200).json({ token, userId: user._id,nom: user.nom, message: 'Login successful' });
+    res.status(200).json({ token, userId: user._id,nom: user.nom,telephone:user.telephone, message: 'Login successful' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });

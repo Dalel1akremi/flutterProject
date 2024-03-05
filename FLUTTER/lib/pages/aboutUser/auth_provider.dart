@@ -11,7 +11,7 @@ class AuthProvider with ChangeNotifier {
   String? _userId;
   String? _nom;
   String? _email;
-
+  String? _telephone;
   String? get token => _token;
 
   set token(String? value) {
@@ -22,7 +22,7 @@ class AuthProvider with ChangeNotifier {
   String? get userId => _userId;
   String? get nom => _nom;
   String? get email => _email;
-
+String? get telephone =>_telephone;
   // Méthode pour initialiser le token depuis le stockage
   Future<void> initTokenFromStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -30,18 +30,21 @@ class AuthProvider with ChangeNotifier {
     _userId = prefs.getString('userId');
     _nom = prefs.getString('nom');
     _email = prefs.getString('email');
+    _telephone = prefs.getString('telephone'); 
     print('User ID from storage: $_userId');
-    print('email from storage: $_email');
+    print('Email from storage: $_email');
+    print('Telephone from storage: $_telephone'); 
     notifyListeners();
   }
 
   bool get isAuthenticated => _token != null && _userId != null;
 
-  Future<void> _saveTokenToStorage(String token, String userId, String email) async {
+  Future<void> _saveTokenToStorage(String token, String userId, String email,String telephone) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
     await prefs.setString('userId', userId);
     await prefs.setString('email', email);
+     await prefs.setString('telephone', telephone);
   }
 
   Future<void> clearTokenFromStorage() async {
@@ -49,6 +52,7 @@ class AuthProvider with ChangeNotifier {
     await prefs.remove('token');
     await prefs.remove('userId');
     await prefs.remove('email');
+    await prefs.remove('telephone');
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
@@ -71,18 +75,19 @@ class AuthProvider with ChangeNotifier {
         final token = data['token'];
         final userId = data['userId'];
         final nom = data['nom'];
-
+        final telephone=data['telephone'];
+        
         final List<String> tokenParts = token!.split('.');
-        final Map<String, dynamic> tokenPayload = json.decode(
-          utf8.decode(base64Url.decode(tokenParts[1])),
-        );
-        print('Token Payload: $tokenPayload');
+        // final Map<String, dynamic> tokenPayload = json.decode(
+        //   utf8.decode(base64Url.decode(tokenParts[1])),
+        // );
+        // print('Token Payload: $tokenPayload');
 
         if (kDebugMode) {
-          print('login successful! Token:$token,UserId:$userId,nom:$nom');
+          print('login successful!UserId:$userId,nom:$nom,telephone:$telephone');
         }
         // Save token to storage before setting it
-        await _saveTokenToStorage(token, userId, email);
+        await _saveTokenToStorage(token, userId, email,telephone);
 
         _token = token;
         _userId = data['userId'];

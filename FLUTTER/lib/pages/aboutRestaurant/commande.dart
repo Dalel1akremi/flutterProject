@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import './acceuil.dart';
 import '../aboutUser/login.dart';
 import './../global.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const CommandeApp());
@@ -21,6 +22,13 @@ class CommandeApp extends StatefulWidget {
 
 class _CommandeAppState extends State<CommandeApp> {
   int _currentIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize AuthProvider directly in initState
+    Provider.of<AuthProvider>(context, listen: false).initTokenFromStorage();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +56,7 @@ class CommandeScreen extends StatelessWidget {
     Key? key,
     required this.currentIndex,
     required this.onTabTapped,
-    required this.panier, 
+    required this.panier,
   }) : super(key: key);
 
   @override
@@ -56,8 +64,20 @@ class CommandeScreen extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isLoggedIn = authProvider.isAuthenticated;
 
+    Future<void> _makePhoneCall() async {
+      if (authProvider.telephone != null) {
+        final phoneNumber = authProvider.telephone!;
+        print('Attempting to launch call to $phoneNumber');
+        if (await canLaunch('tel:$phoneNumber')) {
+          await launch('tel:$phoneNumber');
+        } else {
+          print('Impossible de lancer l\'appel vers $phoneNumber');
+        }
+      } else {
+        print('Le numéro de téléphone n\'est pas disponible. authProvider.telephone: ${authProvider.telephone}');
+      }
+    }
 
-   
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -76,7 +96,7 @@ class CommandeScreen extends StatelessWidget {
             ],
           ),
         ),
-         body: Column(
+        body: Column(
           children: [
             const TabBar(
               tabs: [
@@ -84,6 +104,44 @@ class CommandeScreen extends StatelessWidget {
                 Tab(text: 'Passés'),
               ],
             ),
+        Row(
+  children: [
+   
+
+ Icon(Icons.hourglass_bottom, size: 25),
+          SizedBox(width: 8),
+          Text(
+            'à ${panier.getCurrentSelectedTime().format(context)}',
+            style: const TextStyle(fontSize: 16),
+          ),
+  
+    Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+             GestureDetector(
+      onTap: () {
+        _makePhoneCall();
+      },
+      child: Icon(Icons.phone, size: 30),
+    ),
+        ],
+      ),
+    ),
+
+    // Montant à droite
+    Text(
+      'Montant: ${panier.getTotalPrix()}€',
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  ],
+),
+
+
+              const Divider(),
             Expanded(
               child: TabBarView(
                 children: [
@@ -95,22 +153,21 @@ class CommandeScreen extends StatelessWidget {
                           title: Text(panier.articles[index].nom),
                           trailing: Text('${panier.articles[index].quantite}'),
                           subtitle: Text(
-                            'Heure de retrait: ${panier.getCurrentSelectedTime().format(context)}',
-                            style: const TextStyle(fontSize: 16),
+                            ""
                           ),
                         );
                       },
                     ),
                   ),
-                   const Center(
+                  const Center(
                     child: Text('Content for "Passés" tab'),
                   ),
                 ],
               ),
             ),
+         
           ],
         ),
-        
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           items: const [
@@ -128,9 +185,8 @@ class CommandeScreen extends StatelessWidget {
             ),
           ],
           onTap: (index) {
-          onTabTapped(index);
+            onTabTapped(index);
             if (index == 0) {
-
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AcceuilScreen()),
