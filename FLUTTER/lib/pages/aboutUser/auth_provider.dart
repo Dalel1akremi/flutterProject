@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'login.dart';
 import 'package:http/http.dart' as http;
@@ -31,9 +30,15 @@ String? get telephone =>_telephone;
     _nom = prefs.getString('nom');
     _email = prefs.getString('email');
     _telephone = prefs.getString('telephone'); 
-    print('User ID from storage: $_userId');
-    print('Email from storage: $_email');
-    print('Telephone from storage: $_telephone'); 
+    if (kDebugMode) {
+      print('User ID from storage: $_userId');
+    }
+    if (kDebugMode) {
+      print('Email from storage: $_email');
+    }
+    if (kDebugMode) {
+      print('Telephone from storage: $_telephone');
+    } 
     notifyListeners();
   }
 
@@ -76,13 +81,7 @@ String? get telephone =>_telephone;
         final userId = data['userId'];
         final nom = data['nom'];
         final telephone=data['telephone'];
-        
-        final List<String> tokenParts = token!.split('.');
-        // final Map<String, dynamic> tokenPayload = json.decode(
-        //   utf8.decode(base64Url.decode(tokenParts[1])),
-        // );
-        // print('Token Payload: $tokenPayload');
-
+      
         if (kDebugMode) {
           print('login successful!UserId:$userId,nom:$nom,telephone:$telephone');
         }
@@ -91,8 +90,12 @@ String? get telephone =>_telephone;
 
         _token = token;
         _userId = data['userId'];
-        print('User ID from server response: $userId');
-        print('User email from server response: $email');
+        if (kDebugMode) {
+          print('User ID from server response: $userId');
+        }
+        if (kDebugMode) {
+          print('User email from server response: $email');
+        }
         notifyListeners();
         return {
           'token': token,
@@ -117,6 +120,7 @@ String? get telephone =>_telephone;
     await prefs.remove('userId');
 
   
+    // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const loginPage()),

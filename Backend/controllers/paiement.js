@@ -36,13 +36,14 @@ const porfeuille = async (req, res) => {
 };
 const recupererCarteParId = async (req, res) => {
   const email = req.query.email;
+  const cardId = req.query.cardId; // Ajoutez cette ligne pour récupérer l'identifiant de la carte
 
   try {
-    // Vérifier si la carte existe
-    const existingCard = await Payment.findOne({ email: email });
+    // Vérifier si la carte existe pour cet utilisateur
+    const existingCard = await Payment.findOne({ email: email, _id: cardId });
 
     if (!existingCard) {
-      // La carte n'existe pas
+      // La carte n'existe pas pour cet utilisateur
       return res.status(404).json({ success: false, message: 'Card not found' });
     }
 
@@ -56,14 +57,44 @@ const recupererCarteParId = async (req, res) => {
     // Création d'une transaction avec la carte récupérée et le montant du panier
     const transactionResult = await effectuerPaiement(existingCard, montantAPayer);
 
-    // Vous pouvez également utiliser le token Braintree associé à la carte ici
+    // Créer un objet de réponse minimisé
+    const minimalResponse = {
+      success: true,
+      message: 'Paiement effectué avec succès',
+      transactionId: transactionResult.transaction.id,
+      amount: transactionResult.transaction.amount,
+      currency: transactionResult.transaction.currencyIsoCode,
+      status: transactionResult.transaction.status,
+      createdAt: transactionResult.transaction.createdAt
+    };
 
-    res.json({ success: true, message: 'Paiement effectué avec succès', transaction: transactionResult });
+    res.json(minimalResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Erreur lors du paiement' });
   }
 };
+
+const recupererCartesUtilisateur = async (req, res) => {
+  const email = req.query.email;
+
+  try {
+    // Récupérer toutes les cartes associées à l'utilisateur avec l'e-mail donné
+    const userCards = await Payment.find({ email: email });
+
+    if (!userCards || userCards.length === 0) {
+      // Aucune carte trouvée pour cet utilisateur
+      return res.status(404).json({ success: false, message: 'Aucune carte trouvée pour cet utilisateur' });
+    }
+
+    // Si des cartes sont trouvées, les renvoyer dans la réponse
+    res.json({ success: true, cards: userCards });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Erreur lors de la récupération des cartes utilisateur' });
+  }
+};
+
 
 // Fonction pour effectuer le paiement avec une carte et un montant
 const effectuerPaiement = async (carte, montant) => {
@@ -87,5 +118,5 @@ const effectuerPaiement = async (carte, montant) => {
 module.exports = {
   porfeuille,
   recupererCarteParId,
-  
+  recupererCartesUtilisateur,
 };
