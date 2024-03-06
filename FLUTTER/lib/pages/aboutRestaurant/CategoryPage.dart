@@ -1,3 +1,6 @@
+// ignore: file_names
+// ignore_for_file: file_names, duplicate_ignore
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -337,7 +340,9 @@ class Category {
     if (categoryId != null && categoryNomCat != null) {
       return Category(idCat: categoryId, nomCat: categoryNomCat);
     } else {
-      print("Warning: 'id_cat' or 'nom_cat' is null in JSON data. Using default values.");
+      if (kDebugMode) {
+        print("Warning: 'id_cat' or 'nom_cat' is null in JSON data. Using default values.");
+      }
       return Category(idCat: 0, nomCat: 'Default Category');
     }
   }

@@ -40,9 +40,9 @@ List<String> elementsChoisis = [];
       String selectedRetraitMode, TimeOfDay selectedTime) {
     this.selectedRetraitMode = selectedRetraitMode;
 
-    if (selectedTime != null) {
+    
       this.selectedTime = selectedTime;
-    }
+  
   }
 
   String? getSelectedRetraitMode() {
@@ -94,10 +94,13 @@ class Article {
   String img;
   int prix;
   int quantite;
+// ignore: non_constant_identifier_names
 List<String> elementsChoisis;  final List<dynamic> id_Steps;
   Article({
 
+    // ignore: non_constant_identifier_names
     required this.id_item,
+    // ignore: non_constant_identifier_names
     required this.id_Steps,
 
     required this.nom,
@@ -108,11 +111,15 @@ List<String> elementsChoisis;  final List<dynamic> id_Steps;
   });
 }
 class Step {
+  // ignore: non_constant_identifier_names
   final String nom_Step;
+  // ignore: non_constant_identifier_names
   final List<String> id_items;
 
   Step({
+    // ignore: non_constant_identifier_names
     required this.nom_Step,
+    // ignore: non_constant_identifier_names
     required this.id_items,
   });
 }

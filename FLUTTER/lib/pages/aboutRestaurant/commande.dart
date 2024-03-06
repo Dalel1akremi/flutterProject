@@ -2,6 +2,7 @@
 
 import 'package:demo/pages/aboutUser/auth_provider.dart';
 import 'package:demo/pages/aboutUser/profile.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './acceuil.dart';
@@ -64,17 +65,25 @@ class CommandeScreen extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isLoggedIn = authProvider.isAuthenticated;
 
-    Future<void> _makePhoneCall() async {
+    Future<void> makePhoneCall() async {
       if (authProvider.telephone != null) {
         final phoneNumber = authProvider.telephone!;
-        print('Attempting to launch call to $phoneNumber');
+        if (kDebugMode) {
+          print('Attempting to launch call to $phoneNumber');
+        }
+        
         if (await canLaunch('tel:$phoneNumber')) {
+         
           await launch('tel:$phoneNumber');
         } else {
-          print('Impossible de lancer l\'appel vers $phoneNumber');
+          if (kDebugMode) {
+            print('Impossible de lancer l\'appel vers $phoneNumber');
+          }
         }
       } else {
-        print('Le numéro de téléphone n\'est pas disponible. authProvider.telephone: ${authProvider.telephone}');
+        if (kDebugMode) {
+          print('Le numéro de téléphone n\'est pas disponible. authProvider.telephone: ${authProvider.telephone}');
+        }
       }
     }
 
@@ -108,8 +117,8 @@ class CommandeScreen extends StatelessWidget {
   children: [
    
 
- Icon(Icons.hourglass_bottom, size: 25),
-          SizedBox(width: 8),
+ const Icon(Icons.hourglass_bottom, size: 25),
+          const SizedBox(width: 8),
           Text(
             'à ${panier.getCurrentSelectedTime().format(context)}',
             style: const TextStyle(fontSize: 16),
@@ -121,9 +130,9 @@ class CommandeScreen extends StatelessWidget {
         children: [
              GestureDetector(
       onTap: () {
-        _makePhoneCall();
+        makePhoneCall();
       },
-      child: Icon(Icons.phone, size: 30),
+      child:const  Icon(Icons.phone, size: 30),
     ),
         ],
       ),
@@ -152,7 +161,7 @@ class CommandeScreen extends StatelessWidget {
                         return ListTile(
                           title: Text(panier.articles[index].nom),
                           trailing: Text('${panier.articles[index].quantite}'),
-                          subtitle: Text(
+                          subtitle: const Text(
                             ""
                           ),
                         );

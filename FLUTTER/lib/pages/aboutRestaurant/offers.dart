@@ -20,9 +20,9 @@ class OffersScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Image.asset(
-                    'images/Third.jpg', // Replace with the actual image path
-                    width: 500, // Adjust the width as needed
-                    height: 428, // Adjust the height as needed
+                    'images/Third.jpg', 
+                    width: 500, 
+                    height: 428, 
                   ),
                   const SizedBox(height: 20),
                   const Text(
@@ -36,7 +36,7 @@ class OffersScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
-                      // Add your button click logic here
+                      
                     },
                     style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey,

@@ -282,7 +282,7 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
         pickedTime.minute,
       );
 
-      if (selectedDateTime.isAfter(currentTime.add(Duration(minutes: 15)))) {
+      if (selectedDateTime.isAfter(currentTime.add(const Duration(minutes: 15)))) {
         setState(() {
           selectedTime = pickedTime;
         });

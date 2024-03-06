@@ -165,7 +165,7 @@ class RestaurantList extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RestaurantDetail(),
+                    builder: (context) => const RestaurantDetail(),
                   ),
                 );
               },
