@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import './../global.dart';
 import 'paiement.dart';
 import '../aboutUser/auth_provider.dart';
-import './../aboutUser/auth_provider.dart';
+
 
 class PanierPage extends StatefulWidget {
   final int numberOfItems;
