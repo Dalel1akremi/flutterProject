@@ -72,11 +72,8 @@ class AuthProvider with ChangeNotifier {
         final userId = data['userId'];
         final nom = data['nom'];
 
-        final List<String> tokenParts = token!.split('.');
-        final Map<String, dynamic> tokenPayload = json.decode(
-          utf8.decode(base64Url.decode(tokenParts[1])),
-        );
-        print('Token Payload: $tokenPayload');
+       
+       
 
         if (kDebugMode) {
           print('login successful! Token:$token,UserId:$userId,nom:$nom');
