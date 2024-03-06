@@ -1,24 +1,32 @@
+// ignore_for_file: file_names
+
 import 'package:demo/pages/aboutRestaurant/CategoryPage.dart';
 import 'package:demo/pages/global.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class StepMenuPage extends StatefulWidget {
+  // ignore: non_constant_identifier_names
   final int id_item;
   final String img;
   final String nom;
   final int prix;
+   // ignore: non_constant_identifier_names
   final List<dynamic> id_Steps;
 
   const StepMenuPage({
     Key? key,
+     // ignore: non_constant_identifier_names
     required this.id_item,
     required this.nom,
     required this.img,
     required this.prix,
+     // ignore: non_constant_identifier_names
     required this.id_Steps,
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _StepMenuPageState createState() => _StepMenuPageState();
 }
 
@@ -52,7 +60,9 @@ void extractStepData() {
       itemNamesMap[stepName] = (step['id_items'] as List<dynamic>).map<String>((item) => item['nom_item'] as String).toList();
       
       // Vous pouvez utiliser isObligatoire ici selon vos besoins
-      print("L'étape $stepName est obligatoire ? $isObligatoire");
+      if (kDebugMode) {
+        print("L'étape $stepName est obligatoire ? $isObligatoire");
+      }
     }
   }
   setState(() {

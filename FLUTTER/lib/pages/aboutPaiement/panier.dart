@@ -21,6 +21,7 @@ class PanierPage extends StatefulWidget {
   
 
   @override
+  // ignore: library_private_types_in_public_api
   _PanierPageState createState() => _PanierPageState();
 }
 

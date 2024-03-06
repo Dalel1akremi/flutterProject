@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:demo/pages/aboutUser/identifiant.dart';
 import 'package:demo/pages/global.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatefulWidget {
   const MyApp({Key? key, required this.email}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _MyAppState createState() => _MyAppState();
 }
 
@@ -50,7 +52,9 @@ class _MyAppState extends State<MyApp> {
       });
     } else {
       // Handle errors when fetching the email
-      print('Failed to load user email');
+      if (kDebugMode) {
+        print('Failed to load user email');
+      }
     }
   }
 
@@ -86,6 +90,7 @@ class ProfilePage extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 

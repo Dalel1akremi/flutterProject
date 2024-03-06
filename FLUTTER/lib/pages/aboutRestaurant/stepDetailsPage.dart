@@ -1,21 +1,27 @@
+// ignore: file_names
+// ignore_for_file: file_names, duplicate_ignore
+
 import 'package:flutter/material.dart';
 import 'CategoryPage.dart';
-import 'acceuil.dart';
 import './../global.dart';
 
 class StepDetailsPage extends StatefulWidget {
+  // ignore: non_constant_identifier_names
   final int id_item;
   final String img;
   final int prix;
   final String nom;
+   // ignore: non_constant_identifier_names
   final List<dynamic> id_Steps;
 
   const StepDetailsPage({
     Key? key,
+     // ignore: non_constant_identifier_names
     required this.id_item,
     required this.img,
     required this.prix,
     required this.nom,
+     // ignore: non_constant_identifier_names
     required this.id_Steps,
   }) : super(key: key);
 

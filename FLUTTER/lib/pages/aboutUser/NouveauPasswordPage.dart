@@ -1,3 +1,6 @@
+// ignore_for_file: file_names
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../main.dart';
@@ -8,6 +11,7 @@ class NouveauPasswordPage extends StatefulWidget {
 
   const NouveauPasswordPage({Key? key, required this.email}) : super(key: key);
   @override
+  // ignore: library_private_types_in_public_api
   _NouveauPasswordPageState createState() => _NouveauPasswordPageState();
 }
 
@@ -62,23 +66,32 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
 
         if (response.statusCode == 200 && responseData['success']) {
           // Password updated successfully
-          print('Password updated successfully');
+          if (kDebugMode) {
+            print('Password updated successfully');
+          }
 
           // Navigate to the main page
+          // ignore: use_build_context_synchronously
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const MyApp()),
-          ); // Replace with your actual route
+          ); 
         } else {
           // Handle other API response statuses
-          print('Error updating password: ${responseData['message']}');
+          if (kDebugMode) {
+            print('Error updating password: ${responseData['message']}');
+          }
         }
       } catch (error) {
         // Handle network or other errors
-        print('Error: $error');
+        if (kDebugMode) {
+          print('Error: $error');
+        }
       }
     } else {
-      print('Email is null. Cannot update password.');
+      if (kDebugMode) {
+        print('Email is null. Cannot update password.');
+      }
     }
   }
 
@@ -126,7 +139,7 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
                     _passwordValidationError!,
-                    style: TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red),
                   ),
                 ),
               const SizedBox(height: 16.0),
