@@ -5,6 +5,15 @@ import 'package:http/http.dart' as http;
 import './../aboutRestaurant/commande.dart';
 import './../global.dart';
 import './../aboutUser/auth_provider.dart';
+class CreditCard {
+  final String fullCardNumber;
+  String get maskedCardNumber {
+    // Replace all characters except the last four with asterisks
+    return '*' * (fullCardNumber.length - 4) + fullCardNumber.substring(fullCardNumber.length - 4);
+  }
+
+  CreditCard(this.fullCardNumber);
+}
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({
@@ -24,8 +33,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
   bool useCreditCard = false;
   bool payInStore = false;
   String? selectedPaymentMethod;
-  bool enableInStoreCheckbox = false; // Variable pour activer/désactiver la case à cocher "En magasin"
-
+  bool enableInStoreCheckbox = false;
+   List<CreditCard> userCreditCards = [];  // Variable pour activer/désactiver la case à cocher "En magasin"
+ String? selectedCreditCard;
 // Définir une fonction pour vérifier si l'une des options de la liste de sélection radio est sélectionnée
 bool isPaymentMethodSelected() {
   return selectedPaymentMethod != null;
@@ -34,189 +44,41 @@ bool isPaymentMethodSelected() {
   void initState() {
     super.initState();
     initAuthProvider();
+    fetchUserCreditCards();
   }
+Future<void> fetchUserCreditCards() async {
+  // Retrieve user's email from AuthProvider
+  String? userEmail = authProvider.email;
+  if (userEmail != null) {
+    try {
+      var response = await http.get(Uri.parse('http://localhost:3000/recupererCartesUtilisateur?email=$userEmail'));
+      if (response.statusCode == 200) {
+        // Parse JSON response and update userCreditCards list
+        var responseData = json.decode(response.body);
+        if (responseData is Map && responseData.containsKey('cards')) {
+          setState(() {
+            userCreditCards = (responseData['cards'] as List)
+                .map((data) => CreditCard(data['cardNumber']))
+                .toList();
+          });
+        } else {
+          throw Exception('Invalid response format: $responseData');
+        }
+      } else {
+        throw Exception('Failed to load user credit cards: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching user credit cards: $e');
+    }
+  }
+}
 
-  Future<void> initAuthProvider() async {
+ Future<void> initAuthProvider() async {
     await authProvider.initTokenFromStorage();
     setState(() {});
   }
 
-  Future<List<dynamic>> recupererCartesUtilisateur() async {
-    try {
-      await authProvider.initTokenFromStorage();
-      final response = await http.get(
-        Uri.parse(
-            'http://localhost:3000/recupererCartesUtilisateur?email=${authProvider.email}'),
-        headers: {'Content-Type': 'application/json'},
-      );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['cards'];
-      } else {
-        throw Exception('Failed to load user cards');
-      }
-    } catch (error) {
-      throw Exception('Failed to load user cards: $error');
-    }
-  }
-
-  Future<String?> showCVVInputDialog() async {
-    TextEditingController cvvController = TextEditingController();
-
-    return showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Entrez votre code confidentiel'),
-          content: TextField(
-            controller: cvvController,
-            decoration: const InputDecoration(labelText: 'Code confidentiel'),
-            keyboardType: TextInputType.number,
-            obscureText:
-                true, // Pour cacher les caractères du code confidentiel
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Annuler'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, cvvController.text);
-              },
-              child: const Text('Valider'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> processPayment() async {
-    try {
-      final userCards = await recupererCartesUtilisateur();
-      if (userCards.isEmpty) {
-        print('Aucune carte trouvée pour cet utilisateur');
-        return;
-      }
-
-      final selectedCard = await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Sélectionnez une carte'),
-            content: DropdownButton<dynamic>(
-              value:
-                  userCards.first, // Sélectionnez par défaut la première carte
-              onChanged: (value) {
-                Navigator.of(context).pop(value);
-              },
-              items: userCards.map<DropdownMenuItem<dynamic>>((card) {
-                return DropdownMenuItem<dynamic>(
-                  value: card,
-                  child: Text('${card['cardNumber']}'),
-                );
-              }).toList(),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Annuler'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(userCards.first);
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-
-      // Demander le code confidentiel
-      if (selectedCard != null) {
-        final enteredCVV = await showCVVInputDialog();
-        if (enteredCVV == selectedCard['cvv']) {
-          // Si la carte sélectionnée et le code confidentiel sont valides, effectuez le paiement
-          print(
-              selectedCard['_id']); // Vérifiez la valeur de selectedCard['_id']
-          final paymentResponse = await http.post(
-            Uri.parse(
-                'http://localhost:3000/recupererCarteParId?email=${authProvider.email}&cardId=${selectedCard["_id"]}'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'montant': panier.getTotalPrix(),
-              // Assurez-vous que selectedCard contient un _id valide
-              // Ajoutez d'autres détails comme le code confidentiel ici si nécessaire
-            }),
-          );
-
-          final paymentData = jsonDecode(paymentResponse.body);
-          print('Résultat de l\'appel API : $paymentData');
-
-          if (paymentData['success'] == true) {
-            print('Paiement réussi');
-            panier.printPanier();
-
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CommandeApp(),
-              ),
-            );
-          } else {
-            // Afficher un message d'erreur
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Erreur de paiement'),
-                  content:
-                      const Text('Une erreur est survenue lors du paiement.'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('OK'),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        } else {
-          // Afficher un message d'erreur
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Erreur de paiement'),
-                content: const Text(
-                    'Le code confidentiel est incorrect. Veuillez réessayer.'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              );
-            },
-          );
-        }
-      }
-    } catch (error) {
-      print('Erreur inattendue: $error');
-    }
-  }
 
   String mapRetraitMode(String value) {
     switch (value) {
@@ -433,11 +295,34 @@ bool isPaymentMethodSelected() {
                 useCreditCard = value ?? false;
                 if (useCreditCard) {
                   payInStore = false;
-                  processPayment();
+                fetchUserCreditCards();
                 }
               });
             },
           ),
+           if (useCreditCard && userCreditCards.isNotEmpty)
+            // Inside the build method where you display the credit card list
+Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const Text(
+      'Sélectionnez une carte bancaire :',
+      style: TextStyle(fontSize: 16, color: Colors.blue),
+    ),
+    // Display the masked card numbers
+    ...userCreditCards.map((card) => RadioListTile(
+      title: Text(card.maskedCardNumber), // Use maskedCardNumber here
+      value: card.fullCardNumber, // Use fullCardNumber as the value
+      groupValue: selectedCreditCard,
+      onChanged: (value) {
+        setState(() {
+          selectedCreditCard = value.toString();
+        });
+      },
+    )),
+  ],
+),
+
           CheckboxListTile(
             title: const Text('En magasin'),
             value: payInStore,
