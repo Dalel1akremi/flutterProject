@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 
+import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -163,8 +164,8 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
                 },
               ),
               const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
+               ElevatedButton(
+                onPressed: () async {
                   // Reset previous validation error
                   setState(() {
                     _passwordValidationError = null;
@@ -174,9 +175,21 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
                     // If form is valid, proceed with update
                     updatePassword();
                   }
+                  Navigator.push( 
+                    context,
+                     MaterialPageRoute(builder: (context) => const loginPage()),
+                                );
                 },
-                child: const Text('Continuer'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: Colors.black,
+                ),
+                child: const Text(
+                  'Continuer',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
+             
             ],
           ),
         ),
