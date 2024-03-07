@@ -71,7 +71,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Heure invalide'),
-              content: Text(
+              content: const Text(
                 'Veuillez choisir une heure après l\'heure actuelle.',
               ),
               actions: [
