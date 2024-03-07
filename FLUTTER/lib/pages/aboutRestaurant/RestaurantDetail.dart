@@ -19,10 +19,9 @@ class RestaurantDetail extends StatefulWidget {
 
 class _RestaurantDetailState extends State<RestaurantDetail> {
   String selectedRetraitMode = '';
-  late TimeOfDay selectedTime;
+  late TimeOfDay selectedTime = TimeOfDay.now(); // Initialize here
   AuthProvider authProvider = AuthProvider();
   Panier panier = Panier();
-
   @override
   void initState() {
     super.initState();
@@ -35,58 +34,83 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     setState(() {});
   }
 
-  void _showDeliveryTimeDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Choisissez l\'heure de livraison'),
-          content: SizedBox(
-            height: 300,
-            child: Column(
-              children: [
-                TimePickerWidget(
-                  onTimeSelected: (time) {
-                    DateTime currentTime = DateTime.now();
-                    DateTime selectedDateTime = DateTime(
-                      currentTime.year,
-                      currentTime.month,
-                      currentTime.day,
-                      time.hour,
-                      time.minute,
-                    );
+  Future<void> _selectTime(BuildContext context) async {
+    // Calculate the initial time based on the selected mode
+    int initialMinutesToAdd = selectedRetraitMode == 'Option 3' ? 30 : 15;
+    TimeOfDay initialTime = TimeOfDay.fromDateTime(
+        DateTime.now().add(Duration(minutes: initialMinutesToAdd)));
 
-                    setState(() {
-                      selectedTime = TimeOfDay.fromDateTime(selectedDateTime);
-                    });
-                    Panier().updateCommandeDetails(
-                        selectedRetraitMode, selectedTime);
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+
+    if (pickedTime != null && pickedTime != selectedTime) {
+      DateTime currentTime = DateTime.now();
+      DateTime selectedDateTime = DateTime(
+        currentTime.year,
+        currentTime.month,
+        currentTime.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+
+      if (selectedDateTime
+          .isAfter(currentTime.add(Duration(minutes: initialMinutesToAdd)))) {
+        setState(() {
+          selectedTime = pickedTime;
+        });
+
+        Panier().updateCommandeDetails(selectedRetraitMode, selectedTime);
+
+        if (selectedRetraitMode == 'Option 3') {
+          panier.origin = 'Restaurant';
+          if (!authProvider.isAuthenticated) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const loginPage()),
+            );
+          } else {
+            Panier().updateCommandeDetails(
+              selectedRetraitMode,
+              selectedTime,
+            );
+            bool isLoggedIn = Provider.of<AuthProvider>(context, listen: false)
+                .isAuthenticated;
+            if (isLoggedIn) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddressSearchScreen(
+                    userId: authProvider.userId ?? '',
+                  ),
+                ),
+              );
+            }
+          }
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Heure invalide'),
+              content: Text(
+                'Veuillez choisir une heure au moins $initialMinutesToAdd minutes plus tard.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
-                  selectedRetraitMode: selectedRetraitMode,
-                  authProvider: authProvider,
+                  child: const Text('OK'),
                 ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Annuler'),
-            ),
-            TextButton(
-              onPressed: () {
-                Panier()
-                    .updateCommandeDetails(selectedRetraitMode, selectedTime);
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Valider'),
-            ),
-          ],
+            );
+          },
         );
-      },
-    );
+      }
+    }
   }
 
   @override
@@ -173,7 +197,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           onChanged: (value) {
                             setState(() {
                               selectedRetraitMode = value.toString();
-                              _showDeliveryTimeDialog();
+                              _selectTime(context);
                             });
                           },
                         ),
@@ -184,7 +208,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           onChanged: (value) {
                             setState(() {
                               selectedRetraitMode = value.toString();
-                              _showDeliveryTimeDialog();
+                              _selectTime(context);
                             });
                           },
                         ),
@@ -195,7 +219,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           onChanged: (value) {
                             setState(() {
                               selectedRetraitMode = value.toString();
-                              _showDeliveryTimeDialog();
+                              _selectTime(context);
                             });
                           },
                         ),
@@ -260,6 +284,7 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
   late TimeOfDay selectedTime;
   Panier panier = Panier();
   AuthProvider authProvider = AuthProvider();
+
   @override
   void initState() {
     super.initState();
@@ -282,7 +307,8 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
         pickedTime.minute,
       );
 
-      if (selectedDateTime.isAfter(currentTime.add(const Duration(minutes: 15)))) {
+      if (selectedDateTime
+          .isAfter(currentTime.add(const Duration(minutes: 15)))) {
         setState(() {
           selectedTime = pickedTime;
         });
@@ -297,12 +323,11 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
               MaterialPageRoute(builder: (context) => const loginPage()),
             );
           } else {
-             Panier().updateCommandeDetails(
-                  widget.selectedRetraitMode, selectedTime);
+            Panier().updateCommandeDetails(
+                widget.selectedRetraitMode, selectedTime);
             bool isLoggedIn = Provider.of<AuthProvider>(context, listen: false)
                 .isAuthenticated;
             if (isLoggedIn) {
-             
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -339,17 +364,6 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            _selectTime(context);
-          },
-          child: const Text('Choisir l\'heure'),
-        ),
-        const SizedBox(width: 16),
-        Text('Heure sélectionnée: ${selectedTime.format(context)}'),
-      ],
-    );
+    return SizedBox.shrink(); // An empty placeholder widget
   }
 }
