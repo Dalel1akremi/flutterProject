@@ -1,42 +1,48 @@
-
+import 'package:demo/pages/aboutRestaurant/ReserverTable.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './pages/aboutUser/auth_provider.dart'; // Adjust the import path based on your project structure
+import './pages/aboutUser/auth_provider.dart'; 
 import './pages/aboutRestaurant/acceuil.dart';
-import './pages/aboutRestaurant/ReserverTable.dart';
+
 import './pages/aboutRestaurant/offers.dart';
 
-void main() async {
-  // Clear token on app start
-  await clearTokenAndStartApp();
-}
 
-Future<void> clearTokenAndStartApp() async {
-  // Clear token on app start
-  AuthProvider authProvider = AuthProvider(); // Create an instance
-  await authProvider.clearTokenFromStorage(); // Call the method
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => authProvider, // Provide the instance of AuthProvider
-      child: const MyApp(),
-    ),
-  );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: AppStart(),
+      ),
     );
   }
 }
 
+class AppStart extends StatelessWidget {
+  const AppStart({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+   
+    
+      return const HomeScreen();
+    
+  }
+}
+
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -120,7 +126,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                // Afficher le token dans le terminal
                 const ReserverTableScreen(),
                 const OffersScreen(),
               ],
