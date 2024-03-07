@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_local_variable
 
 import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/foundation.dart';
@@ -51,16 +51,10 @@ class _LoginPageState extends State<loginPage> {
             );
           }
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProfilePage(
-                email: email,
-                nom: nom,
-                userId: userId,
-              ),
-            ),
-          );
+         Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(builder: (context) =>const ProfilPage()),
+);
         }
       } catch (error) {
         if (kDebugMode) {

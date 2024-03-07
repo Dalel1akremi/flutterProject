@@ -1,13 +1,15 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, library_private_types_in_public_api
 
 import 'dart:convert';
+import 'package:demo/pages/aboutUser/auth_provider.dart';
+import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/services.dart'; // Import this
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart'; // Import this
 
 class Portefeuille extends StatefulWidget {
-  final String email;
-  const Portefeuille({Key? key, required this.email}) : super(key: key);
+  const Portefeuille({Key? key}) : super(key: key);
 
   @override
   _PortefeuilleState createState() => _PortefeuilleState();
@@ -15,7 +17,8 @@ class Portefeuille extends StatefulWidget {
 
 class _PortefeuilleState extends State<Portefeuille> {
   final TextEditingController cardNumberController = TextEditingController();
-  final TextEditingController expirationDateController = TextEditingController();
+  final TextEditingController expirationDateController =
+      TextEditingController();
   final TextEditingController cvvController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -32,36 +35,35 @@ class _PortefeuilleState extends State<Portefeuille> {
     return null;
   }
 
-String? validateExpirationDate(String? value) {
-  if (value == null || value.isEmpty) {
-    return 'Veuillez saisir la date d\'expiration';
+  String? validateExpirationDate(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Veuillez saisir la date d\'expiration';
+    }
+
+    final RegExp regex = RegExp(r'^(0[1-9]|1[0-2])\/\d{2}$');
+
+    if (!regex.hasMatch(value)) {
+      return 'Format de date invalide. Utilisez MM/YY';
+    }
+
+    final List<String> parts = value.split('/');
+    final int month = int.tryParse(parts[0]) ?? 0;
+    final int year = int.tryParse(parts[1]) ?? 0;
+
+    final DateTime now = DateTime.now();
+    final int currentYear = now.year % 100;
+    final int currentMonth = now.month;
+
+    if (year < currentYear || (year == currentYear && month < currentMonth)) {
+      return 'La date d\'expiration est déjà passée';
+    }
+
+    if (month < 1 || month > 12) {
+      return 'Mois invalide. Utilisez un mois entre 01 et 12';
+    }
+
+    return null;
   }
-
-  final RegExp regex = RegExp(r'^(0[1-9]|1[0-2])\/\d{2}$');
-
-  if (!regex.hasMatch(value)) {
-    return 'Format de date invalide. Utilisez MM/YY';
-  }
-
-  final List<String> parts = value.split('/');
-  final int month = int.tryParse(parts[0]) ?? 0;
-  final int year = int.tryParse(parts[1]) ?? 0;
-
-  final DateTime now = DateTime.now();
-  final int currentYear = now.year % 100;
-  final int currentMonth = now.month;
-
-  if (year < currentYear || (year == currentYear && month < currentMonth)) {
-    return 'La date d\'expiration est déjà passée';
-  }
-
-  if (month < 1 || month > 12) {
-    return 'Mois invalide. Utilisez un mois entre 01 et 12';
-  }
-
-  return null;
-}
-
 
   String? validateCVV(String? value) {
     if (value == null || value.isEmpty) {
@@ -79,6 +81,8 @@ String? validateExpirationDate(String? value) {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    Text('Email: ${authProvider.email}');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -99,7 +103,10 @@ String? validateExpirationDate(String? value) {
                 ),
                 validator: validateCardNumber,
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(16)],
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(16)
+                ],
               ),
               TextFormField(
                 controller: expirationDateController,
@@ -109,7 +116,7 @@ String? validateExpirationDate(String? value) {
                 ),
                 validator: validateExpirationDate,
                 keyboardType: TextInputType.number,
-                inputFormatters: [ LengthLimitingTextInputFormatter(5)],
+                inputFormatters: [LengthLimitingTextInputFormatter(5)],
               ),
               TextFormField(
                 controller: cvvController,
@@ -120,18 +127,34 @@ String? validateExpirationDate(String? value) {
                 validator: validateCVV,
                 obscureText: true,
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(4)
+                ],
               ),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                  
+                    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfilPage()),
+      );
                     await sendPaymentRequest();
                   }
                 },
-                child: const Text('Enregistrer la carte'),
+             
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: Colors.black,
+                ),
+                child: const Text(
+                  'Enregistrer la carte',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
+              const SizedBox(height: 16.0),
+             
             ],
           ),
         ),
@@ -140,7 +163,9 @@ String? validateExpirationDate(String? value) {
   }
 
   Future<void> sendPaymentRequest() async {
-    String apiUrl = 'http://localhost:3000/porfeuille?email=${Uri.encodeQueryComponent(widget.email)}';
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+     String apiUrl =
+        'http://localhost:3000/porfeuille?email=${authProvider.email}}';
 
     Map<String, dynamic> paymentData = {
       "cardNumber": cardNumberController.text,
@@ -175,7 +200,8 @@ String? validateExpirationDate(String? value) {
           },
         );
       } else {
-        throw Exception("Erreur lors de la requête HTTP : ${response.statusCode}");
+        throw Exception(
+            "Erreur lors de la requête HTTP : ${response.statusCode}");
       }
     } catch (error) {
       print("Erreur lors de la requête HTTP : $error");

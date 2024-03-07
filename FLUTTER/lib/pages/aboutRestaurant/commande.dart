@@ -213,7 +213,7 @@ class CommandeScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          const ProfilePage(email: '', nom: '', userId: '')),
+                           const ProfilPage()),
                 );
               } else {
                 Navigator.push(

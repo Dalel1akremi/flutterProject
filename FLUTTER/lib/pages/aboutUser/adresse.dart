@@ -1,15 +1,15 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api
 
 import 'dart:convert';
+import 'package:demo/pages/aboutUser/auth_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import './../global.dart';
 
 class AddressSearchScreen extends StatefulWidget {
-  final String userId;
-
-  const AddressSearchScreen({Key? key, required this.userId}) : super(key: key);
+  const AddressSearchScreen({Key? key}) : super(key: key);
 
   @override
   _AddressSearchScreenState createState() => _AddressSearchScreenState();
@@ -26,48 +26,51 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
   String city = '';
   String street = '';
   String streetNumber = '';
-  Panier panier = Panier();
-@override
-void initState() {
-  super.initState();
-  // Initialize controllers
-  countryController = TextEditingController();
-  cityController = TextEditingController();
-  streetController = TextEditingController();
-  streetNumberController = TextEditingController();
-  hasAddress = false;
+  late String _userId;
 
-  fetchAddressDetails();
-}
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controllers
+    countryController = TextEditingController();
+    cityController = TextEditingController();
+    streetController = TextEditingController();
+    streetNumberController = TextEditingController();
+    hasAddress = false;
 
-Future<void> fetchAddressDetails() async {
-  try {
-    final response = await http.get(
-      Uri.parse('http://localhost:3000/getGeocodedDetails?_id=${widget.userId}'),
-    );
+    // Fetch the user id from AuthProvider
+    _userId = Provider.of<AuthProvider>(context, listen: false).userId!;
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      setState(() {
-        hasAddress = true;
-        country = data['geocodedDetails']['country'] ?? '';
-        city = data['geocodedDetails']['city'] ?? '';
-        street = data['geocodedDetails']['street'] ?? '';
-        streetNumber = data['geocodedDetails']['streetNumber'] ?? '';
-         Panier().setUserAddress('$country, $city, $street, $streetNumber');
-      });
-    } else {
-      setState(() {
-        hasAddress = false;
-      });
-    }
-  } catch (error) {
-    if (kDebugMode) {
-      print('Error fetching address details: $error');
+    fetchAddressDetails();
+  }
+
+  Future<void> fetchAddressDetails() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:3000/getGeocodedDetails?_id=$_userId'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          hasAddress = true;
+          country = data['geocodedDetails']['country'] ?? '';
+          city = data['geocodedDetails']['city'] ?? '';
+          street = data['geocodedDetails']['street'] ?? '';
+          streetNumber = data['geocodedDetails']['streetNumber'] ?? '';
+          Panier().setUserAddress('$country, $city, $street, $streetNumber');
+        });
+      } else {
+        setState(() {
+          hasAddress = false;
+        });
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print('Error fetching address details: $error');
+      }
     }
   }
-}
-
 
   Future<void> searchAddress() async {
     if (hasAddress) {
@@ -78,10 +81,9 @@ Future<void> fetchAddressDetails() async {
       return;
     }
 
-
     // Save the address
     Panier().setUserAddress('$country, $city, $street, $streetNumber');
-    String apiUrl = 'http://localhost:3000/searchAddress?_id=${widget.userId}';
+    String apiUrl = 'http://localhost:3000/searchAddress?_id=$_userId';
 
     try {
       final response = await http.post(
@@ -112,59 +114,62 @@ Future<void> fetchAddressDetails() async {
 
   Future<void> _showEditDialog() async {
     countryController.text = country;
-  cityController.text = city;
-  streetController.text = street;
-  streetNumberController.text = streetNumber;
+    cityController.text = city;
+    streetController.text = street;
+    streetNumberController.text = streetNumber;
 
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Modifier l\'adresse'),
-        content: Column(
-          children: [
-            TextField(
-              controller: countryController,
-              decoration: const InputDecoration(labelText: 'Country'),
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Modifier l\'adresse'),
+          content: Column(
+            children: [
+              TextField(
+                controller: countryController,
+                decoration: const InputDecoration(labelText: 'Country'),
+              ),
+              TextField(
+                controller: cityController,
+                decoration: const InputDecoration(labelText: 'City'),
+              ),
+              TextField(
+                controller: streetController,
+                decoration: const InputDecoration(labelText: 'Street'),
+              ),
+              TextField(
+                controller: streetNumberController,
+                decoration:
+                    const InputDecoration(labelText: 'Street Number'),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Annuler'),
             ),
-            TextField(
-              controller: cityController,
-              decoration: const InputDecoration(labelText: 'City'),
-            ),
-            TextField(
-              controller: streetController,
-              decoration: const InputDecoration(labelText: 'Street'),
-            ),
-            TextField(
-              controller: streetNumberController,
-              decoration: const InputDecoration(labelText: 'Street Number'),
+            TextButton(
+              onPressed: () async {
+                await updateGeocodedDetails();
+                // ignore: use_build_context_synchronously
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
             ),
           ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () async {
-              await updateGeocodedDetails();
-              Navigator.of(context).pop();
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
+
   Future<void> updateGeocodedDetails() async {
     try {
       final response = await http.put(
         Uri.parse(
-            'http://localhost:3000/updateGeocodedDetails?_id=${widget.userId}'),
+            'http://localhost:3000/updateGeocodedDetails?_id=$_userId'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'country': countryController.text,

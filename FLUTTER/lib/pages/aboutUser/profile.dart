@@ -1,103 +1,45 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:demo/pages/aboutUser/identifiant.dart';
 import 'package:demo/pages/global.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_provider.dart';
 import './../aboutRestaurant/acceuil.dart';
 import './../aboutRestaurant/commande.dart';
 import './../aboutPaiement/porfeuille.dart';
 import 'adresse.dart';
 
-
-class MyApp extends StatefulWidget {
-  final String email;
-
-  const MyApp({Key? key, required this.email}) : super(key: key);
+class ProfilPage extends StatefulWidget {
+  const ProfilPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _MyAppState createState() => _MyAppState();
+  _ProfilPageState createState() => _ProfilPageState();
 }
 
-class _MyAppState extends State<MyApp> {
-  late String email;
-  late String nom;
-  late String userId;
+class _ProfilPageState extends State<ProfilPage> {
+  String _nom = '';
+  
   int currentIndex = 2;
 
   @override
   void initState() {
     super.initState();
-    // Call the function to fetch the email from the backend
-    fetchUserEmail();
+    initProfilData();
   }
-
-  Future<void> fetchUserEmail() async {
-    final response = await http.get(Uri.parse('http://localhost:3000/getUser'));
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      final userNom = data['nom'];
-      final fetchedUserId = data['_id'];
-
+Future<void> initProfilData() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.isAuthenticated) {
+      final prefs = await SharedPreferences.getInstance();
       setState(() {
-        email = widget.email;
-        nom = userNom;
-        userId = fetchedUserId;
+        _nom = prefs.getString('nom') ?? '';
+       
       });
-    } else {
-      // Handle errors when fetching the email
-      if (kDebugMode) {
-        print('Failed to load user email');
-      }
     }
   }
-
+ 
     void onTabTapped(int index) {
-    setState(() {
-      currentIndex = index;
-    });
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AuthProvider(),
-      child: MaterialApp(
-        home: ProfilePage(email: email, nom: nom, userId: userId),
-       
-      ),
-    );
-  }
-}
-
-class ProfilePage extends StatefulWidget {
-  final String email;
-  final String nom;
-  final String userId;
-
-  const ProfilePage({
-    Key? key,
-    required this.email,
-    required this.nom,
-    required this.userId,
-  }) : super(key: key);
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _ProfilePageState createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  int currentIndex = 2;
-
-  void onTabTapped(int index) {
     setState(() {
       currentIndex = index;
     });
@@ -108,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: Text('Bonjour ${widget.nom}'),
+        title: Text('Bonjour $_nom'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -120,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileDetailsPage(email: widget.email),
+                    builder: (context) => const ProfileDetailsPage(),
                   ),
                 );
               },
@@ -158,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddressSearchScreen(userId: widget.userId),
+                    builder: (context) => const AddressSearchScreen(),
                   ),
                 );
               },
@@ -196,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Portefeuille(email: widget.email),
+                    builder: (context) => const Portefeuille(),
                   ),
                 );
               },
@@ -321,7 +263,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (index == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ProfilePage(email: '', nom: '', userId: '')),
+              MaterialPageRoute(builder: (context) =>  const ProfilPage()),
             );
           }
         },

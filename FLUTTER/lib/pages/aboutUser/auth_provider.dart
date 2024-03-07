@@ -39,16 +39,20 @@ String? get telephone =>_telephone;
     if (kDebugMode) {
       print('Telephone from storage: $_telephone');
     } 
+    if (kDebugMode) {
+      print('Nom from storage: $_nom');
+    } 
     notifyListeners();
   }
 
   bool get isAuthenticated => _token != null && _userId != null;
 
-  Future<void> _saveTokenToStorage(String token, String userId, String email,String telephone) async {
+  Future<void> _saveTokenToStorage(String token, String userId, String email,String nom,String telephone) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
     await prefs.setString('userId', userId);
     await prefs.setString('email', email);
+    await prefs.setString('nom',nom);
      await prefs.setString('telephone', telephone);
   }
 
@@ -57,7 +61,9 @@ String? get telephone =>_telephone;
     await prefs.remove('token');
     await prefs.remove('userId');
     await prefs.remove('email');
+    await prefs.remove('nom');
     await prefs.remove('telephone');
+
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
@@ -81,12 +87,17 @@ String? get telephone =>_telephone;
         final userId = data['userId'];
         final nom = data['nom'];
         final telephone=data['telephone'];
-      
+        // Mettez à jour l'état de l'authentification
+      _token = token;
+      _userId = userId;
+      _nom = nom;
+      _email = email;
+      _telephone = telephone;
         if (kDebugMode) {
           print('login successful!UserId:$userId,nom:$nom,telephone:$telephone');
         }
         // Save token to storage before setting it
-        await _saveTokenToStorage(token, userId, email,telephone);
+        await _saveTokenToStorage(token, userId, email,nom,telephone);
 
         _token = token;
         _userId = data['userId'];

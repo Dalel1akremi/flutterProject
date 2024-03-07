@@ -2,17 +2,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import './../aboutRestaurant/commande.dart';
 import './../global.dart';
 import './../aboutUser/auth_provider.dart';
 class CreditCard {
   final String fullCardNumber;
+  final String cvv; // Ajouter le champ CVV
   String get maskedCardNumber {
-    // Replace all characters except the last four with asterisks
     return '*' * (fullCardNumber.length - 4) + fullCardNumber.substring(fullCardNumber.length - 4);
   }
 
-  CreditCard(this.fullCardNumber);
+  CreditCard(this.fullCardNumber, this.cvv); // Mettre à jour le constructeur
 }
 
 class PaymentScreen extends StatefulWidget {
@@ -46,6 +45,84 @@ bool isPaymentMethodSelected() {
     initAuthProvider();
     fetchUserCreditCards();
   }
+Future<void> showCVVDialog(String cvv) async {
+  String enteredCVV = ''; // Variable pour stocker le code confidentiel entré
+  final TextEditingController controller = TextEditingController();
+
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Entrez votre code confidentiel'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          obscureText: true, // Masquer le texte saisi
+          onChanged: (value) {
+            enteredCVV = value;
+          },
+          decoration: const InputDecoration(
+            hintText: 'Code confidentiel',
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop(enteredCVV); // Renvoyer le code confidentiel entré
+            },
+            child: const Text('Valider'),
+          ),
+        ],
+      );
+    },
+  ).then((value) {
+    // Vérifiez le code confidentiel saisi après la fermeture de la boîte de dialogue
+    if (value != null && value == cvv) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Code correcte'),
+            content: const Text('Merci pour votre confiance.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Code confidentiel incorrect'),
+            content: const Text('Veuillez réessayer !'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  });
+}
+
 Future<void> fetchUserCreditCards() async {
   // Retrieve user's email from AuthProvider
   String? userEmail = authProvider.email;
@@ -58,7 +135,7 @@ Future<void> fetchUserCreditCards() async {
         if (responseData is Map && responseData.containsKey('cards')) {
           setState(() {
             userCreditCards = (responseData['cards'] as List)
-                .map((data) => CreditCard(data['cardNumber']))
+                .map((data) => CreditCard(data['cardNumber'], data['cvv']))
                 .toList();
           });
         } else {
@@ -296,6 +373,7 @@ Future<void> fetchUserCreditCards() async {
                 if (useCreditCard) {
                   payInStore = false;
                 fetchUserCreditCards();
+                 
                 }
               });
             },
@@ -317,6 +395,7 @@ Column(
       onChanged: (value) {
         setState(() {
           selectedCreditCard = value.toString();
+          showCVVDialog(card.cvv);
         });
       },
     )),

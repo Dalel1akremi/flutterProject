@@ -1,14 +1,16 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'dart:convert';
+import 'package:demo/pages/aboutUser/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'profile.dart';
 
 class ProfileDetailsPage extends StatefulWidget {
-  final String email;
+  
 
-  const ProfileDetailsPage({Key? key, required this.email}) : super(key: key);
+  const ProfileDetailsPage({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -20,7 +22,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   late String prenom;
   late String numero;
   late String userId;
-  late String email;
+   late String _email;
 
   final TextEditingController nomController = TextEditingController();
   final TextEditingController prenomController = TextEditingController();
@@ -39,13 +41,13 @@ Future<void> getUserData() async {
           prenom = userData['prenom'];
           numero = userData['telephone'];
           userId = userData['_id'] ?? ''; // Assign an empty string if userId is null
-          email = widget.email;
+          _email=_email;
         });
 
         nomController.text = nom;
         prenomController.text = prenom;
         numeroController.text = numero;
-        print('UserId: $userId');
+      
       } else {
         print('Failed to load user data. Response: ${response.body}');
       }
@@ -59,6 +61,7 @@ Future<void> getUserData() async {
 
 
   Future<void> updateUserData(String userEmail) async {
+    final authProvider = Provider.of<AuthProvider>(context);
     final Map<String, dynamic> updatedData = {
       'nom': nomController.text,
       'prenom': prenomController.text,
@@ -68,7 +71,7 @@ Future<void> getUserData() async {
     try {
       final response = await http.put(
         Uri.parse(
-            'http://localhost:3000/updateUser?email=${Uri.encodeQueryComponent(userEmail)}'),
+            'http://localhost:3000/updateUser?email=${authProvider.email}'),
         body: jsonEncode(updatedData),
         headers: {'Content-Type': 'application/json'},
       );
@@ -80,7 +83,7 @@ Future<void> getUserData() async {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProfilePage(email: userEmail, nom: nom,userId:userId),
+            builder: (context) => const ProfilPage(),
           ),
         );
       } else {
@@ -92,12 +95,18 @@ Future<void> getUserData() async {
     }
   }
 
-  @override
+  
+    @override
   void initState() {
     super.initState();
-    email = widget.email;
-    getUserData();
+    // Récupérer l'e-mail depuis AuthProvider
+    _email = Provider.of<AuthProvider>(context, listen: false).email!;
+   
+     getUserData();
+      
   }
+   
+  
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +184,7 @@ Future<void> getUserData() async {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    email,
+                    _email,
                     style: const TextStyle(
                       fontSize: 18,
                       decoration: TextDecoration.underline,
@@ -189,7 +198,7 @@ Future<void> getUserData() async {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                updateUserData(widget.email);
+                updateUserData(_email);
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
