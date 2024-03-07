@@ -22,12 +22,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String password = '';
   String confirmPassword = '';
 
-  AutovalidateMode autovalidateMode =
-      AutovalidateMode.always; // Added this line
-
+  // Added this line
+ AutovalidateMode autovalidateMode =
+      AutovalidateMode.disabled;
   void _submit(BuildContext context) async {
     setState(() {
-      autovalidateMode = AutovalidateMode.always; // Enable validation on submit
+      // Enable validation on submit
     });
 
     if (_formKey.currentState!.validate()) {
@@ -148,7 +148,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          autovalidateMode: autovalidateMode, 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
