@@ -16,9 +16,9 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
   final TextEditingController validationCodeController =
       TextEditingController();
 
-  bool isEmailValid = true; // Add this variable to track email validity
+  bool isEmailValid = true; 
 
-  String emailMessage = ''; // Add this variable to store the email validation message
+  String emailMessage = ''; 
 
   Future<void> sendResetPasswordRequest() async {
     final String email = emailController.text;
@@ -26,13 +26,12 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://localhost:3000/reset_password'), // Replace with your actual API URL
+            'http://localhost:3000/reset_password'), 
         body: {'email': email},
       );
 
       if (response.statusCode == 200) {
-        // Password reset email sent successfully
-        // You can display a success message or navigate to the next screen
+        
         print('Password reset email sent successfully');
         // Enable the button since email is valid
         setState(() {
@@ -70,7 +69,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://localhost:3000/validate_code'), // Replace with your actual API URL
+            'http://localhost:3000/validate_code'), 
         body: {'email': email, 'validationCode': validationCode},
       );
 
@@ -80,11 +79,11 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
           MaterialPageRoute(builder: (context) => NouveauPasswordPage(email:email)),
         );
       } else {
-        // Handle error - display an error message to the user
+        
         print('Error validating code: ${response.statusCode}');
       }
     } catch (error) {
-      // Handle network or other errors
+      
       print('Error: $error');
     }
   }
