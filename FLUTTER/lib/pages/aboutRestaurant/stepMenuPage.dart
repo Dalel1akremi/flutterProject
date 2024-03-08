@@ -103,7 +103,7 @@ void extractStepData() {
               Image.network(
                 widget.img,
                 width: 300,
-                height: 150,
+                height: 250,
               ),
               const SizedBox(height: 20),
               ListView.builder(
