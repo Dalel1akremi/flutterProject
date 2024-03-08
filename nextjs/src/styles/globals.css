@@ -1,0 +1,45 @@
+
+h1 {
+                    font-size: 24px;
+                    margin-bottom: 20px;
+                  }
+                  
+                 
+                  table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 20px;
+                  }
+                  
+                
+                  th, td {
+                    padding: 8px;
+                    border: 1px solid #ddd;
+                    text-align: left;
+                  }
+                  
+                  
+                  th {
+                    background-color: #f2f2f2;
+                  }
+                  
+                  
+                  tbody tr:nth-child(odd) {
+                    background-color: #f9f9f9;
+                  }
+                  
+                  
+                  ul {
+                    padding: 0;
+                    margin: 0;
+                    list-style-type: none;
+                  }
+                  
+                  ul li {
+                    margin-bottom: 10px;
+                  }
+                  
+                  ul li p {
+                    margin: 0;
+                  }
+                  
