@@ -1,6 +1,7 @@
 // ignore: file_names
 // ignore_for_file: file_names, duplicate_ignore
 
+import 'package:demo/pages/aboutRestaurant/RestaurantDetail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -103,6 +104,43 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
          title: Text(restaurantName ?? 'Restaurant Detail'),
+        leading: IconButton(
+  icon: const Icon(Icons.arrow_back),
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Vous avez des articles dans votre panier. Voulez-vous le vider ?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Ne rien faire et fermer la boîte de dialogue
+                Navigator.of(context).pop();
+              },
+              child:const Text('Non'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Vider le panier et retourner à la page précédente
+                Panier().viderPanier();
+                 Navigator.of(context).pop(); // Fermer la boîte de dialogue
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const RestaurantDetail(),
+                  ),
+                );// Retourner à la page précédente
+              },
+              child: const Text('Oui'),
+            ),
+          ],
+        );
+      },
+    );
+  },
+),
+
       ),
       body: Column(
         children: [
@@ -175,9 +213,9 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
       } 
     },
     style: ElevatedButton.styleFrom(
-      minimumSize: const Size(double.infinity, 50),
-      backgroundColor: Colors.green,
-    ),
+                minimumSize: const Size(150, 50),
+                backgroundColor: Colors.green, // Change as needed
+              ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

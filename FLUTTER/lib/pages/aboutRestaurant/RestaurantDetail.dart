@@ -71,7 +71,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Heure invalide'),
-              content: Text(
+              content: const Text(
                 'Veuillez choisir une heure après l\'heure actuelle.',
               ),
               actions: [
@@ -128,6 +128,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: Text(restaurantName ?? 'Restaurant Detail'),
+       
       ),
       body: SingleChildScrollView(
         child: Padding(

@@ -91,12 +91,14 @@ class CommandeScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
+          
           backgroundColor: const Color.fromARGB(222, 212, 133, 14),
           title: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: EdgeInsets.only(top: 8.0),
+                
                 child: Text(
                   'Mes commandes',
                   style: TextStyle(fontSize: 20, color: Colors.white),
@@ -148,9 +150,7 @@ class CommandeScreen extends StatelessWidget {
     ),
   ],
 ),
-
-
-              const Divider(),
+            const Divider(),
             Expanded(
               child: TabBarView(
                 children: [
@@ -164,12 +164,14 @@ class CommandeScreen extends StatelessWidget {
                           subtitle: const Text(
                             ""
                           ),
+                       
                         );
                       },
                     ),
                   ),
                   const Center(
                     child: Text('Content for "Passés" tab'),
+                    
                   ),
                 ],
               ),
@@ -216,6 +218,7 @@ class CommandeScreen extends StatelessWidget {
                            const ProfilPage()),
                 );
               } else {
+                
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const loginPage()),
