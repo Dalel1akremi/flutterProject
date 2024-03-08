@@ -1,14 +1,14 @@
-// ignore_for_file: library_private_types_in_public_api, deprecated_member_use
-
-import 'package:demo/pages/aboutUser/auth_provider.dart';
-import 'package:demo/pages/aboutUser/profile.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:url_launcher/url_launcher.dart';
 import './acceuil.dart';
 import '../aboutUser/login.dart';
 import './../global.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:demo/pages/aboutUser/auth_provider.dart';
+import 'package:demo/pages/aboutUser/profile.dart';
 
 void main() {
   runApp(const CommandeApp());
@@ -66,20 +66,17 @@ class CommandeScreen extends StatelessWidget {
     final isLoggedIn = authProvider.isAuthenticated;
 
     Future<void> makePhoneCall() async {
-    
-        final phoneNumber = 03325368596;
+      const phoneNumber = '03325368596';
+      if (kDebugMode) {
+        print('Attempting to launch call to $phoneNumber');
+      }
+
+      if (await canLaunch('tel:$phoneNumber')) {
+        await launch('tel:$phoneNumber');
+      } else {
         if (kDebugMode) {
-          print('Attempting to launch call to $phoneNumber');
+          print('Impossible de lancer l\'appel vers $phoneNumber');
         }
-        
-        if (await canLaunch('tel:$phoneNumber')) {
-         
-          await launch('tel:$phoneNumber');
-        } else {
-          if (kDebugMode) {
-            print('Impossible de lancer l\'appel vers $phoneNumber');
-          }
-        
       }
     }
 
@@ -87,14 +84,12 @@ class CommandeScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          
           backgroundColor: const Color.fromARGB(222, 212, 133, 14),
           title: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: EdgeInsets.only(top: 8.0),
-                
                 child: Text(
                   'Mes commandes',
                   style: TextStyle(fontSize: 20, color: Colors.white),
@@ -108,71 +103,74 @@ class CommandeScreen extends StatelessWidget {
             const TabBar(
               tabs: [
                 Tab(text: 'En cours'),
-                Tab(text: 'Passés'),
+                Tab(text: 'Passées'),
               ],
             ),
-        Row(
-  children: [
-   
-
- const Icon(Icons.hourglass_bottom, size: 25),
-          const SizedBox(width: 8),
-          Text(
-            'à ${panier.getCurrentSelectedTime().format(context)}',
-            style: const TextStyle(fontSize: 16),
-          ),
-  
-    Expanded(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-             GestureDetector(
-      onTap: () {
-        makePhoneCall();
-      },
-      child:const  Icon(Icons.phone, size: 30),
-    ),
-        ],
-      ),
-    ),
-
-    // Montant à droite
-    Text(
-      'Montant: ${panier.getTotalPrix()}€',
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  ],
-),
+            Row(
+              children: [
+                const Icon(Icons.hourglass_bottom, size: 25),
+                const SizedBox(width: 8),
+                Text(
+                  'à ${panier.getCurrentSelectedTime().format(context)}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          makePhoneCall();
+                        },
+                        child: const Icon(Icons.phone, size: 30),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  'Montant: ${panier.getTotalPrix()}€',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             const Divider(),
             Expanded(
               child: TabBarView(
                 children: [
-                  Center(
-                    child: ListView.builder(
-                      itemCount: panier.articles.length,
-                      itemBuilder: (conytext, index) {
-                        return ListTile(
-                          title: Text(panier.articles[index].nom),
-                          trailing: Text('${panier.articles[index].quantite}'),
-                          subtitle: const Text(
-                            ""
-                          ),
-                       
-                        );
-                      },
-                    ),
+                  FutureBuilder(
+                    future: fetchCommandesEncours(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else {
+                        final commandes =
+                            snapshot.data as List<Map<String, dynamic>>;
+                        return buildCommandesListView(commandes);
+                      }
+                    },
                   ),
-                  const Center(
-                    child: Text('Content for "Passés" tab'),
-                    
+                  FutureBuilder(
+                    future: fetchCommandesPass(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else {
+                        final commandes =
+                            snapshot.data as List<Map<String, dynamic>>;
+                        return buildCommandesListView(commandes);
+                      }
+                    },
                   ),
                 ],
               ),
             ),
-         
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -209,12 +207,9 @@ class CommandeScreen extends StatelessWidget {
               if (isLoggedIn) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                           const ProfilPage()),
+                  MaterialPageRoute(builder: (context) => const ProfilPage()),
                 );
               } else {
-                
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const loginPage()),
@@ -225,5 +220,129 @@ class CommandeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
+    return ListView.builder(
+      itemCount: commandes.length,
+      itemBuilder: (context, index) {
+        final commande = commandes[index];
+        final articles = commande['articles'] as List<Map<String, dynamic>>;
+
+        return ListTile(
+          title: Text(commande['commande'] ?? 'N/A'),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: articles.map((article) {
+              return Text(
+                '${article['nom'] ?? 'N/A'},Prix: ${article['prix'] ?? 'N/A'}€, Quantité: ${article['quantite'] ?? 'N/A'}',
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+}
+
+Future<List<Map<String, dynamic>>> fetchCommandesEncours() async {
+  final idUser = 1;
+
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:3000/getCommandesEncours?id_user=$idUser'),
+    );
+
+    debugPrint('Response Status Code: ${response.statusCode}');
+    debugPrint('Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final dynamic responseBody = jsonDecode(response.body);
+
+      if (responseBody is List) {
+        final List<Map<String, dynamic>> commandes = responseBody
+            .where((commande) =>
+                commande != null &&
+                commande['id_items'] != null &&
+                (commande['id_items'] as List).isNotEmpty)
+            .map<Map<String, dynamic>>((commande) {
+          final items = commande['id_items'] as List;
+          final List<Map<String, dynamic>> articles = items.map((item) {
+            return {
+              'nom': item['nom'],
+              'prix': item['prix'] ?? 0,
+              'quantite': item['quantite'] ?? 0,
+            };
+          }).toList();
+
+          return {
+            'commande':commande['numero_commande'],
+            'articles': articles,
+          };
+        }).toList();
+
+        debugPrint('Commandes en cours: $commandes');
+        return commandes;
+      } else {
+        debugPrint('Response body is not a List');
+        return [];
+      }
+    } else {
+      throw Exception('Failed to load commandes en cours');
+    }
+  } catch (error) {
+    debugPrint('Error: $error');
+    return [];
+  }
+}
+
+Future<List<Map<String, dynamic>>> fetchCommandesPass() async {
+  final idUser = 1;
+
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:3000/getCommandesPasse?id_user=$idUser'),
+    );
+
+    debugPrint('Response Status Code: ${response.statusCode}');
+    debugPrint('Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final dynamic responseBody = jsonDecode(response.body);
+
+      if (responseBody is List) {
+        final List<Map<String, dynamic>> commandes = responseBody
+            .where((commande) =>
+                commande != null &&
+                commande['id_items'] != null &&
+                (commande['id_items'] as List).isNotEmpty)
+            .map<Map<String, dynamic>>((commande) {
+          final items = commande['id_items'] as List;
+          final List<Map<String, dynamic>> articles = items.map((item) {
+            return {
+              'nom': item['nom'],
+              'prix': item['prix'] ?? 0,
+              'quantite': item['quantite'] ?? 0,
+            };
+          }).toList();
+
+          return {
+            'commande': commande['numero_commande'],
+            'articles': articles,
+          };
+        }).toList();
+
+        debugPrint('Commandes: $commandes');
+        return commandes;
+      } else {
+        debugPrint('Response body is not a List');
+        return [];
+      }
+    } else {
+      throw Exception('Failed to load commandes');
+    }
+  } catch (error) {
+    debugPrint('Error: $error');
+    return [];
   }
 }
