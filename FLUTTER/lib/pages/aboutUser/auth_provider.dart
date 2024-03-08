@@ -129,7 +129,9 @@ String? get telephone =>_telephone;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
     await prefs.remove('userId');
-
+    await prefs.remove('email');
+    await prefs.remove('telephone');
+    await prefs.remove('nom');
   
     // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
