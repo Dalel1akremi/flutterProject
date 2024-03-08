@@ -165,7 +165,7 @@ class _PortefeuilleState extends State<Portefeuille> {
   Future<void> sendPaymentRequest() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
      String apiUrl =
-        'http://localhost:3000/porfeuille?email=${authProvider.email}}';
+        'http://localhost:3000/porfeuille?email=${authProvider.email}';
 
     Map<String, dynamic> paymentData = {
       "cardNumber": cardNumberController.text,
