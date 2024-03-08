@@ -230,10 +230,9 @@ void extractStepData() {
                 ),
               ],
             ),
-            SizedBox(
-              width: 1000,
-              height: 50,
-              child: ElevatedButton(
+            Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
                 onPressed: areAllRequiredElementsSelected() ? () {
 
                   // Creating the article object
@@ -270,9 +269,9 @@ void extractStepData() {
                   });
                 }: null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Colors.green, // Change background color as needed
-                ),
+                minimumSize: const Size(150, 50),
+                backgroundColor: Colors.green, // Change as needed
+              ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

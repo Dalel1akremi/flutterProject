@@ -128,21 +128,20 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                 ),
               ],
             ),
-            SizedBox(
-              width: 1000,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () {
+            Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+            onPressed: () {
                   // Creating the article object
                  Article article = Article(
-  id_item: widget.id_item,
-  nom: widget.nom,
-  img: widget.img,
-  prix: widget.prix,
-  id_Steps: [widget.id_Steps], // Wrap the value in a list if it's an int
-  quantite: _value,
-  elementsChoisis: [],
-);
+                  id_item: widget.id_item,
+                  nom: widget.nom,
+                  img: widget.img,
+                  prix: widget.prix,
+                  id_Steps: [widget.id_Steps], // Wrap the value in a list if it's an int
+                  quantite: _value,
+                  elementsChoisis: [],
+                );
                   // Adding the article to the cart
                   Panier().ajouterAuPanier1(article);
                   // Navigating to the next page
@@ -165,10 +164,10 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                     }
                   });
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Colors.green, // Change background color as needed
-                ),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(150, 50),
+                backgroundColor: Colors.green, // Change as needed
+              ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -192,6 +191,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                 ),
               ),
             ),
+         
           ],
         ),
       ),
