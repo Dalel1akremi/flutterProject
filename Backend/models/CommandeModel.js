@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const commandeSchema = new mongoose.Schema({
   numero_commande: {
-    type: String, // Change type to String to include prefix
+    type: String,
     unique: true,
   },
   etat: {
@@ -19,7 +19,10 @@ const commandeSchema = new mongoose.Schema({
       
     },
   ],
-  id_user: {type : Number ,ref:'User'},
+  id_user: {type : String ,ref:'User'},
+  temps: { type: String  }, 
+  mode_retrait: { type: String },
+  montant_Total:{ type: Number  }, 
 });
 
 commandeSchema.pre('save', async function (next) {
