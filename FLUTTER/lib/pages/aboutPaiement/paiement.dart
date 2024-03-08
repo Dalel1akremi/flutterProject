@@ -56,50 +56,49 @@ class _PaymentScreenState extends State<PaymentScreen> {
     panier.printPanier();
   }
 
-Future<void> createCommande() async {
-  try {
-    String? userId = authProvider.userId;
+  Future<void> createCommande() async {
+    try {
+      String? userId = authProvider.userId;
 
-    if (userId == null) {
-      print('User ID not available.');
-      return;
+      if (userId == null) {
+        print('User ID not available.');
+        return;
+      }
+
+      List<Map<String, dynamic>> idItems = panier.articles.map((article) {
+        return {
+          'id_item': article.id_item,
+          'quantite': article.quantite,
+          'temps': panier.getCurrentSelectedTime().format(context),
+          'mode_retrait': mapRetraitMode(panier.getSelectedRetraitMode() ?? ''),
+          'montant_Total': panier.getTotalPrix(),
+        };
+      }).toList();
+
+      var response = await http.post(
+        Uri.parse('http://localhost:3000/createCommande?id_user=$userId'),
+        body: jsonEncode({'id_items': idItems}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 201) {
+        print('Commande created successfully.');
+      } else {
+        print('Failed to create Commande: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error creating Commande: $error');
     }
-
-    List<Map<String, dynamic>> idItems = panier.articles.map((article) {
-      return {
-        'id_item': article.id_item,
-        'quantite': article.quantite,
-        'temps': panier.getCurrentSelectedTime().format(context),
-         'mode_retrait': mapRetraitMode(panier.getSelectedRetraitMode()?? ''),
-         'montant_Total':panier.getTotalPrix(),
-      };
-    }).toList();
-
-    var response = await http.post(
-      Uri.parse('http://localhost:3000/createCommande?id_user=$userId'),
-      body: jsonEncode({'id_items': idItems}),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode == 201) {
-      print('Commande created successfully.');
-    } else {
-      print('Failed to create Commande: ${response.statusCode}');
-    }
-  } catch (error) {
-    print('Error creating Commande: $error');
   }
-}
 
   Future<void> handlePayment() async {
- 
-   if (useCreditCard && selectedCreditCard != null) {
+    if (useCreditCard && selectedCreditCard != null) {
       makePaymentWithCreditCard();
-        panier.printPanier();
-      await createCommande(); 
+      panier.printPanier();
+      await createCommande();
     } else if (payInStore && selectedPaymentMethod != null) {
-         panier.printPanier();
-      await createCommande(); 
+      panier.printPanier();
+      await createCommande();
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const CommandeApp()),
@@ -563,7 +562,10 @@ Future<void> createCommande() async {
             width: double.infinity,
             color: Colors.green,
             child: ElevatedButton(
-              onPressed: handlePayment,
+              onPressed: () {
+                handlePayment();
+                Panier().viderPanier();
+              },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
                 backgroundColor: Colors.green,
