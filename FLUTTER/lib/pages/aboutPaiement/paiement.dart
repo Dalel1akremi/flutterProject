@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, library_private_types_in_public_api, use_build_context_synchronously
 import 'dart:convert';
 import 'package:demo/pages/aboutRestaurant/commande.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import './../global.dart';
@@ -9,13 +10,17 @@ import './../aboutUser/auth_provider.dart';
 class CreditCard {
   final String fullCardNumber;
   final String cvv;
-  final String _id; // Ajouter le champ CVV
+  final String _id;
   String get maskedCardNumber {
     return '*' * (fullCardNumber.length - 4) +
         fullCardNumber.substring(fullCardNumber.length - 4);
   }
 
-  CreditCard(this.fullCardNumber, this.cvv, this._id,); // Mettre à jour le constructeur
+  CreditCard(
+    this.fullCardNumber,
+    this.cvv,
+    this._id,
+  );
 }
 
 class PaymentScreen extends StatefulWidget {
@@ -37,10 +42,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   bool payInStore = false;
   String? selectedPaymentMethod;
   bool enableInStoreCheckbox = false;
-  List<CreditCard> userCreditCards =
-      []; // Variable pour activer/désactiver la case à cocher "En magasin"
+  List<CreditCard> userCreditCards = [];
   String? selectedCreditCard;
-// Définir une fonction pour vérifier si l'une des options de la liste de sélection radio est sélectionnée
   bool isPaymentMethodSelected() {
     return selectedPaymentMethod != null;
   }
@@ -50,77 +53,112 @@ class _PaymentScreenState extends State<PaymentScreen> {
     super.initState();
     initAuthProvider();
     fetchUserCreditCards();
+    panier.printPanier();
   }
-Future<void> handlePayment() async {
-  if (useCreditCard && selectedCreditCard != null) {
-    // Make payment with credit card
-    makePaymentWithCreditCard();
-  } else if (payInStore && selectedPaymentMethod != null) {
-    
-    // Navigate to CommandePage if pay in store option is selected
+
+Future<void> createCommande() async {
+  try {
+    String? userId = authProvider.userId;
+
+    if (userId == null) {
+      print('User ID not available.');
+      return;
+    }
+
+    List<Map<String, dynamic>> idItems = panier.articles.map((article) {
+      return {
+        'id_item': article.id_item,
+        'quantite': article.quantite,
+        'temps': panier.getCurrentSelectedTime().format(context),
+         'mode_retrait': mapRetraitMode(panier.getSelectedRetraitMode()?? ''),
+         'montant_Total':panier.getTotalPrix(),
+      };
+    }).toList();
+
+    var response = await http.post(
+      Uri.parse('http://localhost:3000/createCommande?id_user=$userId'),
+      body: jsonEncode({'id_items': idItems}),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 201) {
+      print('Commande created successfully.');
+    } else {
+      print('Failed to create Commande: ${response.statusCode}');
+    }
+  } catch (error) {
+    print('Error creating Commande: $error');
+  }
+}
+
+  Future<void> handlePayment() async {
+ 
+   if (useCreditCard && selectedCreditCard != null) {
+      makePaymentWithCreditCard();
+        panier.printPanier();
+      await createCommande(); 
+    } else if (payInStore && selectedPaymentMethod != null) {
+         panier.printPanier();
+      await createCommande(); 
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CommandeApp()),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Erreur'),
+            content: const Text(
+                'Merci de vérifier votre mode de paiement avant de passer votre commande.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  void makePaymentWithCreditCard() async {
+    if (selectedCreditCard != null) {
+      try {
+        CreditCard selectedCard = userCreditCards
+            .firstWhere((card) => card.fullCardNumber == selectedCreditCard);
+        String cardId = selectedCard._id;
+
+        var response = await http.post(
+          Uri.parse(
+              'http://localhost:3000/recupererCarteParId?email=${authProvider.email}&cardId=$cardId'),
+          body: jsonEncode({'montant': panier.getTotalPrix()}),
+          headers: {'Content-Type': 'application/json'},
+        );
+        if (response.statusCode == 200) {
+          print('Payment successful!');
+        } else {
+          throw Exception('Failed to process payment: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error processing payment: $e');
+      }
+    } else {
+      print('Please select a credit card for payment.');
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const CommandeApp()),
     );
-  } else {
-    // Show error message if payment method is not selected
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Erreur'),
-          content: const Text('Merci de vérifier votre mode de paiement avant de passer votre commande.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
-}
- void makePaymentWithCreditCard() async {
-  if (selectedCreditCard != null) {
-    try {
-      CreditCard selectedCard = userCreditCards.firstWhere((card) => card.fullCardNumber == selectedCreditCard);
-      // Utilisez la propriété _id de la carte sélectionnée
-      String cardId = selectedCard._id;
-      
-      // Assuming your API endpoint for payment is like this
-      var response = await http.post(
-        Uri.parse('http://localhost:3000/recupererCarteParId?email=${authProvider.email}&cardId=$cardId'),
-        body: jsonEncode({
-          'montant': panier.getTotalPrix()
-        }), // Include the total amount in the request body
-        headers: {
-          'Content-Type': 'application/json'
-        }, // Specify the content type as JSON
-      );
-      if (response.statusCode == 200) {
-        // Handle successful payment response
-        print('Payment successful!');
-      } else {
-        throw Exception('Failed to process payment: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error processing payment: $e');
-    }
-  } else {
-    print('Please select a credit card for payment.');
-  }
-   
-   Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) =>const  CommandeApp()),
-  );
-}
 
   Future<void> showCVVDialog(String cvv) async {
-    String enteredCVV = ''; // Variable pour stocker le code confidentiel entré
+    String enteredCVV = '';
     final TextEditingController controller = TextEditingController();
 
     await showDialog(
@@ -131,7 +169,7 @@ Future<void> handlePayment() async {
           content: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
-            obscureText: true, // Masquer le texte saisi
+            obscureText: true,
             onChanged: (value) {
               enteredCVV = value;
             },
@@ -148,8 +186,7 @@ Future<void> handlePayment() async {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context)
-                    .pop(enteredCVV); // Renvoyer le code confidentiel entré
+                Navigator.of(context).pop(enteredCVV);
               },
               child: const Text('Valider'),
             ),
@@ -157,7 +194,6 @@ Future<void> handlePayment() async {
         );
       },
     ).then((value) {
-      // Vérifiez le code confidentiel saisi après la fermeture de la boîte de dialogue
       if (value != null && value == cvv) {
         showDialog(
           context: context,
@@ -199,14 +235,12 @@ Future<void> handlePayment() async {
   }
 
   Future<void> fetchUserCreditCards() async {
-    // Retrieve user's email from AuthProvider
     String? userEmail = authProvider.email;
     if (userEmail != null) {
       try {
         var response = await http.get(Uri.parse(
             'http://localhost:3000/recupererCartesUtilisateur?email=$userEmail'));
         if (response.statusCode == 200) {
-          // Parse JSON response and update userCreditCards list
           var responseData = json.decode(response.body);
           if (responseData is Map && responseData.containsKey('cards')) {
             setState(() {
@@ -449,15 +483,13 @@ Future<void> handlePayment() async {
                 if (useCreditCard) {
                   payInStore = false;
                   fetchUserCreditCards();
-                }else {
-        // Réinitialiser la carte sélectionnée lorsque l'option est décochée
-        selectedCreditCard = null;
-      }
+                } else {
+                  selectedCreditCard = null;
+                }
               });
             },
           ),
           if (useCreditCard && userCreditCards.isNotEmpty)
-            // Inside the build method where you display the credit card list
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -465,12 +497,9 @@ Future<void> handlePayment() async {
                   'Sélectionnez une carte bancaire :',
                   style: TextStyle(fontSize: 16, color: Colors.blue),
                 ),
-                // Display the masked card numbers
                 ...userCreditCards.map((card) => RadioListTile(
-                      title: Text(
-                          card.maskedCardNumber), // Use maskedCardNumber here
-                      value: card
-                          .fullCardNumber, // Use fullCardNumber as the value
+                      title: Text(card.maskedCardNumber),
+                      value: card.fullCardNumber,
                       groupValue: selectedCreditCard,
                       onChanged: (value) {
                         setState(() {
