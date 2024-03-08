@@ -70,6 +70,9 @@ app.post('/createCommande', Commande.createCommande);
 app.get('/getCommandesEncours', Commande.getCommandesEncours);
 app.put('/commandes', Commande.updateCommandeState);
 app.get('/getCommandesPasse', Commande.getCommandesPassé);
+app.get('/getCommandes', Commande.getCommandes);
+app.post('/sendNotification', Commande.sendNotification);
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
