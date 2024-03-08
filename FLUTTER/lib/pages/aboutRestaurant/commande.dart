@@ -66,8 +66,8 @@ class CommandeScreen extends StatelessWidget {
     final isLoggedIn = authProvider.isAuthenticated;
 
     Future<void> makePhoneCall() async {
-      if (authProvider.telephone != null) {
-        final phoneNumber = authProvider.telephone!;
+    
+        final phoneNumber = 03325368596;
         if (kDebugMode) {
           print('Attempting to launch call to $phoneNumber');
         }
@@ -79,11 +79,7 @@ class CommandeScreen extends StatelessWidget {
           if (kDebugMode) {
             print('Impossible de lancer l\'appel vers $phoneNumber');
           }
-        }
-      } else {
-        if (kDebugMode) {
-          print('Le numéro de téléphone n\'est pas disponible. authProvider.telephone: ${authProvider.telephone}');
-        }
+        
       }
     }
 
