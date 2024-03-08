@@ -13,6 +13,7 @@ const RedirectController =require( './controllers/RedirectController');
 const itemController =require( './controllers/itemController');
 const StepController =require( './controllers/StepController');
 const paiement =require( './controllers/paiement');
+const Commande=require("./controllers/CommandeController");
 const app = express();
 const PORT = 3000;
 
@@ -65,7 +66,10 @@ app.get('/getItem', itemController.getItem);
 app.post('/porfeuille', paiement.porfeuille);
 app.post('/recupererCarteParId', paiement.recupererCarteParId);
 app.get('/recupererCartesUtilisateur', paiement.recupererCartesUtilisateur);
-
+app.post('/createCommande', Commande.createCommande);
+app.get('/getCommandesEncours', Commande.getCommandesEncours);
+app.put('/commandes', Commande.updateCommandeState);
+app.get('/getCommandesPasse', Commande.getCommandesPassé);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
