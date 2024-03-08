@@ -110,10 +110,7 @@ class CommandeScreen extends StatelessWidget {
               children: [
                 const Icon(Icons.hourglass_bottom, size: 25),
                 const SizedBox(width: 8),
-                Text(
-                  'à ${panier.getCurrentSelectedTime().format(context)}',
-                  style: const TextStyle(fontSize: 16),
-                ),
+               
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -127,13 +124,7 @@ class CommandeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text(
-                  'Montant: ${panier.getTotalPrix()}€',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+             
               ],
             ),
             const Divider(),
@@ -141,7 +132,7 @@ class CommandeScreen extends StatelessWidget {
               child: TabBarView(
                 children: [
                   FutureBuilder(
-                    future: fetchCommandesEncours(),
+                    future: fetchCommandesEncours(context),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -155,7 +146,7 @@ class CommandeScreen extends StatelessWidget {
                     },
                   ),
                   FutureBuilder(
-                    future: fetchCommandesPass(),
+                    future: fetchCommandesPass(context),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -221,32 +212,53 @@ class CommandeScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
-    return ListView.builder(
-      itemCount: commandes.length,
-      itemBuilder: (context, index) {
-        final commande = commandes[index];
+Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
+  return ListView.builder(
+    itemCount: commandes.length * 2 - 1, // Adjust item count to include dividers
+    itemBuilder: (context, index) {
+      if (index.isOdd) {
+        // Odd index means it's a divider
+        return Divider();
+      } else {
+        // Even index means it's a ListTile
+        final commandeIndex = index ~/ 2;
+        final commande = commandes[commandeIndex];
         final articles = commande['articles'] as List<Map<String, dynamic>>;
-
-        return ListTile(
-          title: Text(commande['commande'] ?? 'N/A'),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: articles.map((article) {
-              return Text(
-                '${article['nom'] ?? 'N/A'},Prix: ${article['prix'] ?? 'N/A'}€, Quantité: ${article['quantite'] ?? 'N/A'}',
-              );
-            }).toList(),
-          ),
+        return Column(
+          children: [
+            ListTile(
+              title: Text(
+  'Commande: ${commande['commande'] ?? 'N/A'}, Temps: ${commande['temps'] ?? 'N/A'}, Mode: ${commande['mode_retrait'] ?? 'N/A'}, Total: ${commande['Total'] ?? 'N/A'}€',
+  style: const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: articles.map((article) {
+                  return Text(
+                    '${article['nom'] ?? 'N/A'}, Prix: ${article['prix'] ?? 'N/A'}€, Quantité: ${article['quantite'] ?? 'N/A'}',
+                  );
+                }).toList(),
+              ),
+            ),
+            if (commandeIndex < commandes.length - 1) Divider(),
+          ],
         );
-      },
-    );
-  }
+      }
+    },
+  );
 }
 
-Future<List<Map<String, dynamic>>> fetchCommandesEncours() async {
-  final idUser = 1;
+Future<List<Map<String, dynamic>>> fetchCommandesEncours(BuildContext context) async {
+  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+  if (!authProvider.isAuthenticated) {
+    debugPrint('User not authenticated. Returning empty list.');
+    return [];
+  }
+
+  final idUser = authProvider.userId;
 
   try {
     final response = await http.get(
@@ -272,11 +284,15 @@ Future<List<Map<String, dynamic>>> fetchCommandesEncours() async {
               'nom': item['nom'],
               'prix': item['prix'] ?? 0,
               'quantite': item['quantite'] ?? 0,
+               
             };
           }).toList();
 
           return {
-            'commande':commande['numero_commande'],
+            'commande': commande['numero_commande'],
+            'temps': commande['temps'],
+            'mode_retrait': commande['mode_retrait'],
+            'Total': commande['montant_Total'] ,
             'articles': articles,
           };
         }).toList();
@@ -296,53 +312,59 @@ Future<List<Map<String, dynamic>>> fetchCommandesEncours() async {
   }
 }
 
-Future<List<Map<String, dynamic>>> fetchCommandesPass() async {
-  final idUser = 1;
+Future<List<Map<String, dynamic>>> fetchCommandesPass(BuildContext context) async {
+  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final idUser = authProvider.userId;
 
-  try {
-    final response = await http.get(
-      Uri.parse('http://localhost:3000/getCommandesPasse?id_user=$idUser'),
-    );
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:3000/getCommandesPasse?id_user=$idUser'),
+      );
 
-    debugPrint('Response Status Code: ${response.statusCode}');
-    debugPrint('Response Body: ${response.body}');
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      final dynamic responseBody = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final dynamic responseBody = jsonDecode(response.body);
 
-      if (responseBody is List) {
-        final List<Map<String, dynamic>> commandes = responseBody
-            .where((commande) =>
-                commande != null &&
-                commande['id_items'] != null &&
-                (commande['id_items'] as List).isNotEmpty)
-            .map<Map<String, dynamic>>((commande) {
-          final items = commande['id_items'] as List;
-          final List<Map<String, dynamic>> articles = items.map((item) {
+        if (responseBody is List) {
+          final List<Map<String, dynamic>> commandes = responseBody
+              .where((commande) =>
+                  commande != null &&
+                  commande['id_items'] != null &&
+                  (commande['id_items'] as List).isNotEmpty)
+              .map<Map<String, dynamic>>((commande) {
+            final items = commande['id_items'] as List;
+            final List<Map<String, dynamic>> articles = items.map((item) {
+              return {
+                'nom': item['nom'],
+                'prix': item['prix'] ?? 0,
+                'quantite': item['quantite'] ?? 0,
+                
+              };
+            }).toList();
+
             return {
-              'nom': item['nom'],
-              'prix': item['prix'] ?? 0,
-              'quantite': item['quantite'] ?? 0,
+              'commande': commande['numero_commande'],
+            'temps': commande['temps'],
+            'mode_retrait': commande['mode_retrait'],
+            'Total': commande['montant_Total'] ,
+              'articles': articles,
             };
           }).toList();
 
-          return {
-            'commande': commande['numero_commande'],
-            'articles': articles,
-          };
-        }).toList();
-
-        debugPrint('Commandes: $commandes');
-        return commandes;
+          debugPrint('Commandes: $commandes');
+          return commandes;
+        } else {
+          debugPrint('Response body is not a List');
+          return [];
+        }
       } else {
-        debugPrint('Response body is not a List');
-        return [];
+        throw Exception('Failed to load commandes');
       }
-    } else {
-      throw Exception('Failed to load commandes');
+    } catch (error) {
+      debugPrint('Error: $error');
+      return [];
     }
-  } catch (error) {
-    debugPrint('Error: $error');
-    return [];
   }
 }
