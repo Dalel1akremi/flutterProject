@@ -198,7 +198,7 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Address '),
+        title: const Text('Addresse '),
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
       ),
       body: Padding(
@@ -239,25 +239,34 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
       children: [
         TextField(
           controller: countryController,
-          decoration: const InputDecoration(labelText: 'Country'),
+          decoration: const InputDecoration(labelText: 'Pays'),
         ),
         TextField(
           controller: cityController,
-          decoration: const InputDecoration(labelText: 'City'),
+          decoration: const InputDecoration(labelText: 'Ville'),
         ),
         TextField(
           controller: streetController,
-          decoration: const InputDecoration(labelText: 'Street'),
+          decoration: const InputDecoration(labelText: 'Rue'),
         ),
         TextField(
           controller: streetNumberController,
-          decoration: const InputDecoration(labelText: 'Street Number'),
+          decoration: const InputDecoration(labelText: 'Numéro de Rue'),
         ),
         const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: searchAddress,
-          child: const Text('Enregistrer l\'adresse'),
-        ),
+         ElevatedButton(
+             
+                 onPressed: searchAddress,
+              
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: Colors.black,
+              ),
+              child: const Text(
+             'Enregistrer l\'adresse',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
       ],
     );
   }

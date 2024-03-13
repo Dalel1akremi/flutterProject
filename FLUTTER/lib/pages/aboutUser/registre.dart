@@ -142,6 +142,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: const Text('Inscription'),
       ),
       body: Padding(
@@ -155,13 +156,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
               TextFormField(
                 validator: (value) {
                   if (value?.isEmpty ?? true) {
-                    return 'Enter your full name';
+                    return 'Entrez votre nom';
                   }
                   return null;
                 },
                 onSaved: (value) => nom = value ?? '',
                 decoration: const InputDecoration(
-                  labelText: 'Full Name',
+                  labelText: 'Votre nom',
                   prefixIcon: Icon(Icons.person),
                 ),
               ),
@@ -169,13 +170,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
               TextFormField(
                 validator: (value) {
                   if (value?.isEmpty ?? true) {
-                    return 'Enter your last name';
+                    return 'Entrez votre prenom';
                   }
                   return null;
                 },
                 onSaved: (value) => prenom = value ?? '',
                 decoration: const InputDecoration(
-                  labelText: 'Last Name',
+                  labelText: 'Votre prenom',
                   prefixIcon: Icon(Icons.person),
                 ),
               ),
@@ -183,13 +184,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
               TextFormField(
                 validator: (value) {
                   if (value?.isEmpty ?? true) {
-                    return 'Enter your phone number';
+                    return 'Entrez votre numero';
                   }
                   if (value!.length != 13) {
-                    return 'Phone number must have 13 digits';
+                    return 'Le numéro de téléphone doit comporter 13 chiffres';
                   }
-                  if (!RegExp(r'^0033[0-9]+$').hasMatch(value)) {
-                    return 'Phone number must start with "0033" and contain only numeric digits';
+                  if (!RegExp(r'^033[0-9]+$').hasMatch(value)) {
+                    return 'Le numéro de téléphone doit commencer par « 033 » et contenir uniquement des chiffres.';
                   }
                   return null;
                 },
@@ -199,25 +200,25 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   FilteringTextInputFormatter.allow(RegExp(r'^[0-9]+$')),
                 ],
                 decoration: const InputDecoration(
-                  labelText: 'Phone Number',
+                  labelText: 'Votre numéro de téléphone',
                   prefixIcon: Icon(Icons.phone),
                 ),
               ),
               TextFormField(
                 validator: (value) {
                   if (value?.isEmpty ?? true) {
-                    return 'Enter a valid email address';
+                    return 'Entrez une adresse mail valide';
                   }
                   if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
                       .hasMatch(value!)) {
-                    return 'Enter a valid email address';
+                    return 'Entrez une adresse mail valide';
                   }
                   return null;
                 },
                 onSaved: (value) => email = value ?? '',
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                  labelText: 'Email',
+                  labelText: 'Votre Email',
                   prefixIcon: Icon(Icons.email),
                 ),
               ),
@@ -225,50 +226,50 @@ class _RegistrationPageState extends State<RegistrationPage> {
               TextFormField(
                 validator: (value) {
                   if (value?.isEmpty ?? true) {
-                    return 'Enter your password';
+                    return 'Tapez votre mot de passe';
                   }
 
                   // Password must have at least 6 characters
                   if (value!.length < 6) {
-                    return 'Password must have at least 6 characters';
+                    return 'Le mot de passe doit comporter au moins 6 caractères';
                   }
 
                   // Check for at least 1 capital letter
                   if (!RegExp(r'[A-Z]').hasMatch(value)) {
-                    return 'Password must contain at least 1 capital letter';
+                    return 'Le mot de passe doit contenir au moins 1 lettre majuscule';
                   }
 
                   // Check for at least 1 number
                   if (!RegExp(r'[0-9]').hasMatch(value)) {
-                    return 'Password must contain at least 1 number';
+                    return 'Le mot de passe doit contenir au moins 1 chiffre';
                   }
 
                   // Check for at least 1 symbol
                   if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-                    return 'Password must contain at least 1 symbol';
+                    return 'Le mot de passe doit contenir au moins 1 symbole';
                   }
 
                   return null;
                 },
                 onSaved: (value) => password = value ?? '',
                 decoration: const InputDecoration(
-                  labelText: 'Password',
+                  labelText: 'Mot de passe',
                   prefixIcon: Icon(Icons.lock),
                   helperText:
-                      'Minimum 6 characters, 1 capital letter, 1 number, 1 symbol',
+                      'Minimum 6 caractères, 1 lettre majuscule, 1 chiffre, 1 symbole',
                 ),
                 obscureText: true,
               ),
               TextFormField(
                 validator: (value) {
                   if (value?.isEmpty ?? true || value != password) {
-                    return 'Passwords do not match';
+                    return 'Les mots de passe ne correspondent pas';
                   }
                   return null;
                 },
                 onSaved: (value) => confirmPassword = value ?? '',
                 decoration: const InputDecoration(
-                  labelText: 'Confirm Password',
+                  labelText: 'Confirmez le mot de passe',
                   prefixIcon: Icon(Icons.lock),
                 ),
                 obscureText: true,
@@ -277,7 +278,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ElevatedButton(
                 onPressed: () => _submit(context),
                 child: const Text(
-                  'Register',
+                  'Registre',
                   style: TextStyle(color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
