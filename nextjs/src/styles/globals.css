@@ -28,7 +28,7 @@ h1 {
                     background-color: #f9f9f9;
                   }
                   
-                  /* produits.tsx */
+                  /* creerProduits.tsx */
                   ul {
                     padding: 0;
                     margin: 0;
@@ -92,4 +92,26 @@ h1 {
                   .submit-button:hover {
                     background-color: #0056b3;
                   }
+                   /* produits  */
+                   .header {
+                    display: flex;
+                    justify-content: space-between; /* Pour aligner les éléments à gauche et à droite */
+                    align-items: center;
+                    margin-bottom: 30px; /* Pour centrer verticalement les éléments */
+                  }
                   
+                  h1 {
+                    margin: 0; /* Supprimer les marges par défaut du titre */
+                  }
+                  
+                  .green-button {
+                    background-color: green;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                  }
+                  .redCheckbox {
+                    background-color: red; /* Définir la couleur de fond de la case à cocher en rouge */
+                  }
