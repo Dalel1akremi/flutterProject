@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import Navbar from '../styles/navbar';
 
 interface Item {
   _id: string;
@@ -50,6 +51,7 @@ const Produits = () => {
 
   return (
     <div>
+      <Navbar /> {/* Adding the Navbar component here */}
       <div className="header">
         <h1>Liste des produits disponibles</h1>
         <Link href="/CreerProduits" passHref>
@@ -96,7 +98,6 @@ const Produits = () => {
               <td>{item.id_cat}</td>
               <td>{item.id_Steps ? item.id_Steps.map(step => step.id_Step).join(', ') : ''}</td>
               <td>{item.id_item}</td>
-              {/* Ajoutez d'autres colonnes au besoin */}
             </tr>
           ))}
         </tbody>
