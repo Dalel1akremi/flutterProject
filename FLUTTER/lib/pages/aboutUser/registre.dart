@@ -1,6 +1,5 @@
 // ignore_for_file: sort_child_properties_last, use_build_context_synchronously, library_private_types_in_public_api, use_key_in_widget_constructors, unused_import, dead_code
 
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -23,8 +22,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String confirmPassword = '';
 
   // Added this line
- AutovalidateMode autovalidateMode =
-      AutovalidateMode.disabled;
+  AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
   void _submit(BuildContext context) async {
     setState(() {
       // Enable validation on submit
@@ -96,7 +94,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         final String userId = data['userId'];
 
         log('Signup successful! Token: $token, UserId: $userId');
-   
+
         // Navigate to the main page and replace the current route
       } else {
         final data = json.decode(response.body);
@@ -117,14 +115,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
               content: Text('Signup done : $message'),
               backgroundColor: Colors.green,
             ),
-            
           );
           Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const loginPage(),
-        ),
-      );
+            context,
+            MaterialPageRoute(
+              builder: (context) => const loginPage(),
+            ),
+          );
         }
       }
     } catch (error) {
@@ -149,7 +146,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          autovalidateMode: autovalidateMode, 
+          autovalidateMode: autovalidateMode,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
