@@ -1,19 +1,13 @@
 // pages/index.tsx
+import Navbar from '../styles/navbar';
 
-import Link from 'next/link';
 
 const IndexPage = () => {
   return (
     <div>
-      <h1>Accueil</h1>
-      <div>
-        <Link href="/commandes">
-          <button>Commandes</button>
-        </Link>
-        <Link href="/Produits">
-          <button>Produits</button>
-        </Link>
-      </div>
+      <Navbar /> 
+      <h1>Page d'accueil</h1>
+     
     </div>
   );
 };
