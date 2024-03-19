@@ -12,7 +12,7 @@ export default function Navbar() {
         <a href="/" className={styles.link}>Acceuil</a>
         <a href="/Categorie" className={styles.link}>Catégorie</a>
         <a href="/produits" className={styles.link}>Produit</a>
-        <a href="/commande" className={styles.link}>Commande</a>
+        <a href="/commandes" className={styles.link}>Commande</a>
       </div>
       <div className={styles.right}>
       <a href="/seconnecter" className={styles.link}> Se connecter</a>
