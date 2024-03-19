@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import Navbar from '../styles/navbar';
 
 interface Commande {
   _id: string;
@@ -57,6 +57,7 @@ const CommandesPage = () => {
 
   return (
     <div>
+      <Navbar />
       <h1>Liste des commandes en cours :</h1>
       <table>
         <thead>
