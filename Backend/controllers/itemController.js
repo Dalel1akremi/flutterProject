@@ -5,10 +5,8 @@ exports.createItem = async (req, res) => {
     const { body, file } = req;
     const {
       nom,
-      type,
       prix,
       description,
-      isArchived,
       quantite,
       max_quantite,
       is_Menu,
@@ -22,7 +20,6 @@ exports.createItem = async (req, res) => {
 
     // Validate data types
     const validatedPrix = parseFloat(prix);
-    const validatedIsArchived = isArchived === 'true';
     const validatedQuantite = parseInt(quantite);
     const validatedMaxQuantite = parseInt(max_quantite);
     const validatedIsMenu = is_Menu === 'true';
@@ -49,10 +46,9 @@ exports.createItem = async (req, res) => {
 
     console.log('New Item Data:', {
       nom,
-      type,
       prix: validatedPrix,
       description,
-      isArchived: validatedIsArchived,
+      isArchived: false,
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
@@ -63,10 +59,9 @@ exports.createItem = async (req, res) => {
 
     let newItemData = {
       nom,
-      type,
       prix: validatedPrix,
       description,
-      isArchived: validatedIsArchived,
+      isArchived: false,
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
@@ -146,7 +141,6 @@ const formattedItems = await Promise.all(items.map(async (item) => {
   return {
     id_item: item.id_item,
     nom: item.nom,
-    type: item.type,
     prix: item.prix,
     description: item.description,
     isArchived: item.isArchived,
@@ -175,4 +169,49 @@ const formattedItems = await Promise.all(items.map(async (item) => {
     });
   }
 
+};
+exports.getItems = async (req, res) => {
+  try {
+    const items = await Item.find();
+    res.status(200).json({
+      status: 200,
+      message: 'Items récupérés avec succès',
+      items,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Erreur lors de la récupération des items',
+    });
+  }
+};
+exports.updateItem = async (req, res) => {
+  try {
+    const { itemId } = req.params; // Récupérer l'ID de l'élément à mettre à jour depuis les paramètres de l'URL
+    const { isArchived } = req.body; // Récupérer la nouvelle valeur de isArchived depuis le corps de la requête
+
+    // Vérifier si l'ID de l'élément est fourni
+    if (!itemId) {
+      return res.status(400).json({
+        status: 400,
+        message: "L'ID de l'élément à mettre à jour est manquant.",
+      });
+    }
+
+    // Mettre à jour l'élément dans la base de données
+    await Item.findByIdAndUpdate(itemId, { isArchived });
+
+    // Répondre avec un message de succès
+    res.status(200).json({
+      status: 200,
+      message: "L'élément a été mis à jour avec succès.",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Erreur lors de la mise à jour de l\'élément.',
+    });
+  }
 };

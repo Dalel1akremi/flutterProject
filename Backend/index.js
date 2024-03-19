@@ -63,6 +63,8 @@ app.get('/getRedirect', RedirectController.getRedirect);
 app.post('/createStep', StepController.createStep);
 app.post('/createItem',upload.single('image'), itemController.createItem);
 app.get('/getItem', itemController.getItem);
+app.get('/getItems', itemController.getItems);
+app.put('/updateItem/:itemId', itemController.updateItem);
 app.post('/porfeuille', paiement.porfeuille);
 app.post('/recupererCarteParId', paiement.recupererCarteParId);
 app.get('/recupererCartesUtilisateur', paiement.recupererCartesUtilisateur);
