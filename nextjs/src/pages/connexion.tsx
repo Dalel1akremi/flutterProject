@@ -22,12 +22,12 @@ const Connexion = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/login', formData);
-      alert(response.data.message); // Afficher le message de succès
-      // Rediriger vers une page différente après la connexion réussie
-      router.push('/dashboard');
+      const response = await axios.post('http://localhost:3000/login', formData);
+      alert(response.data.message); 
+     
+      router.push('/');
     } catch (error: any) {
-      alert(error.response.data.message); // Afficher le message d'erreur
+      alert(error.response.data.message); 
     }
   };
 
@@ -37,15 +37,15 @@ const Connexion = () => {
       <div className={"container"}>
         <h1>Connexion</h1>
         <form onSubmit={handleSubmit}>
-          <div>
+          <div className={"formGroup"}>
             <label>Email:</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+            <input type="email" name="email" value={formData.email} onChange={handleChange} required className={"input"} />
           </div>
-          <div>
+          <div className={"formGroup"}>
             <label>Mot de passe:</label>
-            <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+            <input type="password" name="password" value={formData.password} onChange={handleChange} required className={"input"} />
           </div>
-          <button type="submit">Se connecter</button>
+          <button type="submit" className={"button"}>Se connecter</button>
         </form>
       </div>
     </div>
