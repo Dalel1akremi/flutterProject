@@ -15,8 +15,7 @@ export default function Navbar() {
         <a href="/commandes" className={styles.link}>Commande</a>
       </div>
       <div className={styles.right}>
-      <a href="/connexion" className={styles.link}> Se connecter</a>
-        <a href="/register" className={styles.link}>S'inscrire</a>
+      <a href="/deconnexion" className={styles.link}> Se deconnecter</a>
       </div>
     </nav>
   );
