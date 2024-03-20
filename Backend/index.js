@@ -14,6 +14,7 @@ const itemController =require( './controllers/itemController');
 const StepController =require( './controllers/StepController');
 const paiement =require( './controllers/paiement');
 const Commande=require("./controllers/CommandeController");
+const Restaurant=require('./controllers/RestaurantController');
 const app = express();
 const PORT = 3000;
 
@@ -74,7 +75,8 @@ app.put('/commandes', Commande.updateCommandeState);
 app.get('/getCommandesPasse', Commande.getCommandesPassé);
 app.get('/getCommandes', Commande.getCommandes);
 app.post('/sendNotification', Commande.sendNotification);
-
+app.post('/createRestaurant',upload.single('logo'),Restaurant.createRestaurant);
+app.get('/getRestaurant',Restaurant.getRestaurant);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
