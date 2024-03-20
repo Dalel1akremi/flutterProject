@@ -1,137 +1,106 @@
 /* commandes.tsx */
 h1 {
-                    font-size: 24px;
-                    margin-bottom: 30px;
-                  }
-                  
-                 
-                  table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-bottom: 20px;
-                  }
-                  
-                
-                  th, td {
-                    padding: 8px;
-                    border: 1px solid #ddd;
-                    text-align: left;
-                  }
-                  
-                  
-                  th {
-                    background-color: #f2f2f2;
-                  }
-                  
-                  
-                  tbody tr:nth-child(odd) {
-                    background-color: #f9f9f9;
-                  }
-                  
-                  /* creerProduits.tsx */
-                  ul {
-                    padding: 0;
-                    margin: 0;
-                    list-style-type: none;
-                  }
-                  
-                  ul li {
-                    margin-bottom: 10px;
-                  }
-                  
-                  ul li p {
-                    margin: 0;
-                  }
-                  .container {
-                    max-width: 600px;
-                    margin: 0 auto;
-                    padding: 20px;
-                  }
-                  
-                  .form {
-                    display: grid;
-                    gap: 10px;
-                  }
-                  
-                  .form-group {
-                    display: grid;
-                    grid-template-columns: auto 1fr; /* Ajustez la largeur du titre ici */
-                    gap: 10px;
-                    align-items: center;
-                  }
-                  
-                  .input-label {
-                    text-align: right;
-                    padding-right: 10px; /* Ajoutez de l'espace après le titre */
-                  }
-                  
-                  .input,
-                  .textarea,
-                  .file-input {
-                    width: 100%; /* Prend la largeur restante */
-                    padding: 8px;
-                    font-size: 16px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                  }
-                  
-                  .checkbox-label {
-                    margin-left: 5px;
-                  }
-                  
-                  .submit-button {
-                    padding: 10px 20px;
-                    font-size: 16px;
-                    background-color: #007bff;
-                    color: #fff;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                  }
-                  
-                  .submit-button:hover {
-                    background-color: #0056b3;
-                  }
-                  /* produits */
-                  .container {
-                    width: 100%; /* Définir la largeur de la zone de contenu sur 100% de la largeur de l'écran */
-                    padding: 20px; /* Ajouter un peu d'espacement autour du contenu */
-                    box-sizing: border-box; /* Inclure le padding dans la largeur totale */
-                  }
-                  
-                  .header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 30px;
-                    width: 100%; /* Ajouter une largeur de 100% pour remplir l'espace disponible */
-                  }
-                  
-                  h1 {
-                    margin: 0;
-                    margin-bottom: 30px;
-                  }
-                  
-                  .green-button {
-                    background-color: green;
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                  }
-                  
-                  .redCheckbox {
-                    background-color: red;
-                  }
+    font-size: 24px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    text-align: center;
+  }
+  
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+
+  th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  
+  tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  /* creerProduits.tsx */
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+  }
+  
+  ul li {
+    margin-bottom: 10px;
+  }
+  
+  ul li p {
+    margin: 0;
+  }
+  
+  
+  .form {
+    display: grid;
+    gap: 10px;
+  } 
+  .input-label {
+    text-align: right;
+    padding-right: 10px; /* Ajoutez de l'espace après le titre */
+  }
+  
+  .input,
+  .textarea,
+  .file-input {
+    width: 100%; /* Prend la largeur restante */
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .checkbox-label {
+    margin-left: 5px;
+  }
+  
+  .submit-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* produits */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    width: 100%; 
+  }
+  .green-button {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .redCheckbox {
+    background-color: red;
+  }
                   /* styles/Register.module.css */
-.container {
-  max-width: 500px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+
 
 .form {
   display: flex;
@@ -153,7 +122,6 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
 .button {
   padding: 10px 20px;
   font-size: 16px;
@@ -164,9 +132,6 @@ h1 {
   cursor: pointer;
 }
 
-.button:hover {
-  background-color: #0056b3;
-}
 /* styles/connexion.module.css */
 .container {
   max-width: 400px;
@@ -176,12 +141,8 @@ h1 {
   border-radius: 5px;
   background-color: #f9f9f9;
   margin-bottom: 50px;
+  margin-top: 30px;
 }
-
-h1 {
-  text-align: center;
-}
-
 form {
   display: flex;
   flex-direction: column;
@@ -199,7 +160,7 @@ input[type="password"] {
   border-radius: 5px;
 }
 
-button[type="submit"] {
+button[type="submit"] :hover{
   padding: 10px;
   background-color: #007bff;
   color: white;
@@ -208,6 +169,3 @@ button[type="submit"] {
   cursor: pointer;
 }
 
-button[type="submit"]:hover {
-  background-color: #0056b3;
-}

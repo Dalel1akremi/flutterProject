@@ -90,60 +90,62 @@ export default function AddItem() {
   };
 
   return (
-    <div className="container">
+    <div >
       <Navbar />
+      <div className="container">
       <h1>Ajouter un nouvel item</h1>
       <form onSubmit={handleSubmit} className="form">
-        <div className="form-group">
+        <div className="formGroup">
           <label className="input-label">Nom:</label>
           <input type="text" className="input" name="nom" placeholder="Nom" value={formData.nom} onChange={handleChange} required />
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <label className="input-label">Type:</label>
           <input type="text" className="input" name="type" placeholder="Type" value={formData.type} onChange={handleChange} required />
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <label className="input-label">Prix:</label>
           <input type="number" className="input" name="prix" placeholder="Prix" value={formData.prix} onChange={handleChange} required />
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <label className="input-label">Description:</label>
           <textarea className="textarea" name="description" placeholder="Description" value={formData.description} onChange={handleChange}></textarea>
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <label className="input-label">Quantité:</label>
           <input type="number" className="input" name="quantite" placeholder="Quantité" value={formData.quantite} onChange={handleChange} />
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <label className="input-label">Quantité maximale:</label>
           <input type="number" className="input" name="max_quantite" placeholder="Quantité maximale" value={formData.max_quantite} onChange={handleChange} />
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <input type="checkbox" className="checkbox" name="is_Menu" checked={formData.is_Menu} onChange={() => setFormData(prevState => ({ ...prevState, is_Menu: !prevState.is_Menu }))} />
           <label htmlFor="is_Menu" className="checkbox-label">Menu</label>
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <input type="checkbox" className="checkbox" name="is_Redirect" checked={formData.is_Redirect} onChange={() => setFormData(prevState => ({ ...prevState, is_Redirect: !prevState.is_Redirect }))} />
           <label htmlFor="is_Redirect" className="checkbox-label">Redirection</label>
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <label className="input-label">ID de la catégorie:</label>
           <input type="text" className="input" name="id_cat" placeholder="ID de la catégorie" value={formData.id_cat} onChange={handleChange} />
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <label className="input-label">ID des étapes (séparés par des virgules):</label>
           <input type="text" className="input" name="id_Steps" placeholder="ID des étapes" value={formData.id_Steps} onChange={handleChange} />
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <label className="input-label">ID:</label>
           <input type="text" className="input" name="id" placeholder="ID" value={formData.id} onChange={handleChange} />
         </div>
-        <div className="form-group">
+        <div className="formGroup">
           <label className="input-label">Image:</label>
           <input type="file" className="file-input" accept="image/*" onChange={handleImageChange} />
         </div>
         <button type="submit" className="submit-button">Ajouter</button>
       </form>
+    </div>
     </div>
   );
 }
