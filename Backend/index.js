@@ -6,6 +6,7 @@ const multer = require('multer');
 
 
 const userController = require('./controllers/userController');
+const AdminController = require('./controllers/AdminController');
 const viewController = require('./controllers/viewController');
 const categoriesController = require('./controllers/categoriesController');
 const CompositionDeBController=require('./controllers/CompositionDeBController');
@@ -14,6 +15,7 @@ const itemController =require( './controllers/itemController');
 const StepController =require( './controllers/StepController');
 const paiement =require( './controllers/paiement');
 const Commande=require("./controllers/CommandeController");
+
 const app = express();
 const PORT = 3000;
 
@@ -44,7 +46,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/register', userController.registerUser);
+app.post('/registerAdmin', AdminController.registerAdmin);
 app.post('/login', userController.loginUser);
+app.post('/loginAdmin', AdminController.loginAdmin);
 app.get('/', viewController.renderIndex);
 app.get('/getUser', userController.getUser);
 app.put('/updateUser', userController.updateUser);
