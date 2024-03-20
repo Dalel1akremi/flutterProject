@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
-import Navbar from '../styles/navbar';
+import router from 'next/router';
+
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -43,9 +44,9 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/register', formData);
+      const response = await axios.post('http://localhost:3000/registerAdmin', formData);
       alert(response.data.message); // Afficher le message de succès
-      // Réinitialiser le formulaire après l'inscription réussie
+      router.push('/connexion');
       setFormData({
         nom: '',
         prenom: '',
@@ -61,7 +62,6 @@ const Register = () => {
 
   return (
     <div>
-      <Navbar />
       <div className={"container"}>
         <h1 style={{ textAlign: 'center' }}>Créer un compte</h1>
         <form onSubmit={handleSubmit} className={"form"}>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from '../styles/navbar';
+import { useRouter } from 'next/router';
 
 interface Commande {
   _id: string;
@@ -18,20 +19,30 @@ interface Item {
 }
 
 const CommandesPage = () => {
+  const router = useRouter();
   const [commandes, setCommandes] = useState<Commande[]>([]);
 
   useEffect(() => {
-    const fetchCommandes = async () => {
-      try {
-        const response = await axios.get<Commande[]>('http://localhost:3000/getCommandes');
-        setCommandes(response.data);
-      } catch (error: any) {
-        console.error('Error fetching commandes:', error.message);
+    const checkAuthentication = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/connexion'); // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+      } else {
+        fetchCommandes(); // Récupérer les commandes si l'utilisateur est connecté
       }
     };
 
-    fetchCommandes();
+    checkAuthentication();
   }, []);
+
+  const fetchCommandes = async () => {
+    try {
+      const response = await axios.get<Commande[]>('http://localhost:3000/getCommandes');
+      setCommandes(response.data);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des commandes :', error);
+    }
+  };
 
   const handleClick = async (id: string) => {
     try {

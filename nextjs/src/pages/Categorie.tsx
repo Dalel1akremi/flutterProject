@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Navbar from '../styles/navbar';
 
 const CreateCategoriePage = () => {
+  const router = useRouter();
   const [nomCat, setNomCat] = useState('');
   const [typeCat, setTypeCat] = useState('');
   const [message, setMessage] = useState('');
-
+  useEffect(() => {
+    // Vérifier si l'utilisateur est connecté lors du chargement de la page
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+      router.push('/connexion');
+    }
+  }, []);
   const handleCreateCategorie = async () => {
     try {
       const nomCatNormalized = nomCat.charAt(0).toUpperCase() + nomCat.slice(1).toLowerCase();

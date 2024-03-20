@@ -1,8 +1,8 @@
-import Link from 'next/link';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 import Navbar from '../styles/navbar';
-
+import Link from 'next/link';
 interface Item {
   _id: string;
   nom: string;
@@ -21,19 +21,28 @@ interface Item {
 }
 
 const Produits = () => {
+  const router = useRouter();
   const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/getItems');
-        setItems(response.data.items);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des items :', error);
-      }
-    };
+    // Vérifier si l'utilisateur est connecté
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+      router.push('/connexion');
+    } else {
+      // Si l'utilisateur est connecté, récupérer les produits
+      const fetchItems = async () => {
+        try {
+          const response = await axios.get('http://localhost:3000/getItems');
+          setItems(response.data.items);
+        } catch (error) {
+          console.error('Erreur lors de la récupération des items :', error);
+        }
+      };
 
-    fetchItems();
+      fetchItems();
+    }
   }, []);
 
   const handleArchivedToggle = async (itemId: string, currentValue: boolean) => {
@@ -51,7 +60,7 @@ const Produits = () => {
 
   return (
     <div>
-      <Navbar /> {/* Adding the Navbar component here */}
+      <Navbar />
       <div className="header">
         <h1>Liste des produits disponibles</h1>
         <Link href="/CreerProduits" passHref>
