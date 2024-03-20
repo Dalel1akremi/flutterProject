@@ -10,6 +10,7 @@ const CompositionSchema = new mongoose.Schema({
   },
  
   image: String,
+  _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' } 
 });
 CompositionSchema.pre('save', async function (next) {
   try {
