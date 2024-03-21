@@ -54,12 +54,18 @@ List<String> elementsChoisis = [];
   }
 
   String? getSelectedRestaurantName() {
-    return selectedRestaurant?.name;
+    return selectedRestaurant?.nom;
   }
 
   String? getSelectedRestaurantAdresse() {
-    return selectedRestaurant?.address;
+    return selectedRestaurant?.adresse;
   }
+ String? getSelectedRestaurantMode() {
+  return selectedRestaurant?.modeDeRetrait?.join(', ') ?? ''; 
+}
+List<String>? getSelectedRestaurantRMode() {
+  return selectedRestaurant?.modeDeRetrait;
+}
 
   void setUserAddress(String address) {
     userAddress = address;

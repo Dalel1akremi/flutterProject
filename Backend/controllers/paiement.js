@@ -1,5 +1,5 @@
 // Importez le modèle de paiement
-const Payment = require('./../models/paiement');
+const Payment = require('./../models/PaiementModel');
 const braintree = require('braintree');
 const gateway = new braintree.BraintreeGateway({
   environment: braintree.Environment.Sandbox,

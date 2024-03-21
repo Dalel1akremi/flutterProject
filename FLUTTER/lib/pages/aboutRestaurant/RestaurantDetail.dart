@@ -37,7 +37,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   }
 
   Future<void> _selectTime(BuildContext context) async {
-    // Calculate the initial time based on the selected mode
     int initialMinutesToAdd = selectedRetraitMode == 'Option 3' ? 30 : 15;
     TimeOfDay initialTime = TimeOfDay.fromDateTime(
         DateTime.now().add(Duration(minutes: initialMinutesToAdd)));
@@ -124,11 +123,12 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   Widget build(BuildContext context) {
     String? restaurantName = Panier().getSelectedRestaurantName();
     String? restaurantAdress = Panier().getSelectedRestaurantAdresse();
+    String? restaurant = Panier().getSelectedRestaurantMode();
+       
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: Text(restaurantName ?? 'Restaurant Detail'),
-       
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -177,6 +177,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(restaurantAdress ?? 'Restaurant Detail'),
+                   
                   ],
                 ),
               ),
@@ -195,9 +196,10 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                     const Text(
                       'Mode de retrait*:',
                       style: TextStyle(fontSize: 18),
-                    ),
+                    ), Text(restaurant ?? 'Restaurant Detail'),
                     Column(
-                      children: [
+                      children:
+                       [
                         RadioListTile(
                           title: const Text('A Emporter'),
                           value: 'Option 1',

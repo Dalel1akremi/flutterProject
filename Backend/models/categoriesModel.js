@@ -8,6 +8,7 @@ const categoriesSchema = new mongoose.Schema({
   id_cat: { type: Number, unique: true },
   nom_cat: { type: String, unique: true },
   type_cat:String,
+  _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' } 
 });
 categoriesSchema.pre('save', async function (next) {
   try {
