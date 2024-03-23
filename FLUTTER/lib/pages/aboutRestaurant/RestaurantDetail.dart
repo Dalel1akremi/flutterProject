@@ -37,7 +37,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   }
 
   Future<void> _selectTime(BuildContext context) async {
-    int initialMinutesToAdd = selectedRetraitMode == 'Option 3' ? 30 : 15;
+    int initialMinutesToAdd = selectedRetraitMode == 'En Livraison' ? 30 : 15;
     TimeOfDay initialTime = TimeOfDay.fromDateTime(
         DateTime.now().add(Duration(minutes: initialMinutesToAdd)));
 
@@ -91,7 +91,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
         Panier().updateCommandeDetails(selectedRetraitMode, selectedTime);
 
-        if (selectedRetraitMode == 'Option 3') {
+        if (selectedRetraitMode == 'En Livraison') {
           panier.origin = 'Restaurant';
           if (!authProvider.isAuthenticated) {
             Navigator.pushReplacement(
@@ -124,7 +124,8 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     String? restaurantName = Panier().getSelectedRestaurantName();
     String? restaurantAdress = Panier().getSelectedRestaurantAdresse();
     String? restaurant = Panier().getSelectedRestaurantMode();
-       
+    String? restaurantLogo = Panier().getSelectedRestaurantLogo();
+    String? id = Panier().getIdRestaurant();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -136,16 +137,22 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              
               Center(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height / 3.5,
                   width: 1000,
                   child: Container(
+                    height: restaurantLogo != null
+                        ? MediaQuery.of(context).size.height / 3.5
+                        : 0,
+                    width: double.infinity,
                     decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        image: AssetImage('images/First.png'),
-                        fit: BoxFit.fitHeight,
-                      ),
+                      image: restaurantLogo != null
+                          ? DecorationImage(
+                              image: NetworkImage(restaurantLogo!),
+                              fit: BoxFit.contain)
+                          : null,
                       borderRadius: BorderRadius.circular(15.0),
                       boxShadow: [
                         BoxShadow(
@@ -177,7 +184,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(restaurantAdress ?? 'Restaurant Detail'),
-                   
                   ],
                 ),
               ),
@@ -196,44 +202,23 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                     const Text(
                       'Mode de retrait*:',
                       style: TextStyle(fontSize: 18),
-                    ), Text(restaurant ?? 'Restaurant Detail'),
+                    ),
                     Column(
-                      children:
-                       [
-                        RadioListTile(
-                          title: const Text('A Emporter'),
-                          value: 'Option 1',
-                          groupValue: selectedRetraitMode,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedRetraitMode = value.toString();
-                              _selectTime(context);
-                            });
-                          },
-                        ),
-                        RadioListTile(
-                          title: const Text('Sur place'),
-                          value: 'Option 2',
-                          groupValue: selectedRetraitMode,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedRetraitMode = value.toString();
-                              _selectTime(context);
-                            });
-                          },
-                        ),
-                        RadioListTile(
-                          title: const Text('En Livraison'),
-                          value: 'Option 3',
-                          groupValue: selectedRetraitMode,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedRetraitMode = value.toString();
-                              _selectTime(context);
-                            });
-                          },
-                        ),
-                      ],
+                      children: restaurant != null
+                          ? restaurant!.split(',').map((mode) {
+                              return RadioListTile(
+                                title: Text(mode.trim()),
+                                value: mode.trim(),
+                                groupValue: selectedRetraitMode,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedRetraitMode = value.toString();
+                                    _selectTime(context);
+                                  });
+                                },
+                              );
+                            }).toList()
+                          : [],
                     ),
                   ],
                 ),
@@ -260,7 +245,9 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
                     if (selectedDateTime.isAfter(initialDateTime)) {
                       Panier().updateCommandeDetails(
-                          selectedRetraitMode, selectedTime);
+                        selectedRetraitMode,
+                        selectedTime,
+                      );
                     }
 
                     Navigator.push(

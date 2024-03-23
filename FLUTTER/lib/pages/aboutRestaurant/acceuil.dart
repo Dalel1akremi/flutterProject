@@ -182,13 +182,13 @@ class _RestaurantListState extends State<AcceuilScreen> {
                             .map((mode) {
                           IconData iconData;
                           switch (mode) {
-                            case ' Livraison':
+                            case 'En Livraison':
                               iconData = Icons.delivery_dining;
                               break;
-                            case 'emporte':
+                            case 'Emporter':
                               iconData = Icons.takeout_dining;
                               break;
-                            case ' sur place':
+                            case 'Sur place':
                               iconData = Icons.restaurant;
                               break;
                             default:
