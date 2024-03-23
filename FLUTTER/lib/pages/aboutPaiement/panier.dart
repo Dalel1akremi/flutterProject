@@ -7,7 +7,6 @@ import './../global.dart';
 import 'paiement.dart';
 import '../aboutUser/auth_provider.dart';
 
-
 class PanierPage extends StatefulWidget {
   final int numberOfItems;
 
@@ -18,7 +17,6 @@ class PanierPage extends StatefulWidget {
     required this.numberOfItems,
     required this.panier,
   }) : super(key: key);
-  
 
   @override
   // ignore: library_private_types_in_public_api
@@ -28,7 +26,7 @@ class PanierPage extends StatefulWidget {
 class _PanierPageState extends State<PanierPage> {
   TimeOfDay? newSelectedTime;
   String? newSelectedMode;
-    AuthProvider authProvider = AuthProvider();
+  AuthProvider authProvider = AuthProvider();
   Panier panier = Panier();
   int getTotalQuantity() {
     int totalQuantity = 0;
@@ -37,19 +35,24 @@ class _PanierPageState extends State<PanierPage> {
     }
     return totalQuantity;
   }
-
-  IconData getModeIcon(String value) {
-    switch (value) {
-      case 'Option 1':
-        return Icons.takeout_dining;
-      case 'Option 2':
-        return Icons.table_chart;
-      case 'Option 3':
-        return Icons.delivery_dining;
-      default:
-        return Icons.shopping_bag;
-    }
+IconData getModeIcon(String value) {
+  IconData iconData;
+  switch (value.trim().toLowerCase()) {
+    case 'en livraison':
+      iconData = Icons.delivery_dining; 
+      break;
+    case 'emporter':
+      iconData = Icons.takeout_dining; 
+      break;
+    case 'sur place':
+      iconData = Icons.restaurant; 
+      break;
+    default:
+      iconData = Icons.error; 
   }
+  return iconData;
+}
+
 
   @override
   void initState() {
@@ -62,14 +65,15 @@ class _PanierPageState extends State<PanierPage> {
 
     setState(() {});
   }
+
   String mapRetraitMode(String value) {
     switch (value) {
-      case 'Option 1':
-        return 'A Emporter';
-      case 'Option 2':
+      case 'Emporter':
+        return 'Emporter';
+      case 'Sur place':
         return 'Sur place';
-      case 'Option 3':
-        return 'en livraison';
+      case 'En Livraison':
+        return 'En Livraison';
       default:
         return value;
     }
@@ -89,17 +93,20 @@ class _PanierPageState extends State<PanierPage> {
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-              Container(
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    color: Colors.grey[300],
-  ),
-  padding: const EdgeInsets.all(10), // Ajustez le rembourrage selon vos besoins
-  child: Icon(
-    getModeIcon(newSelectedMode ?? panier.getSelectedRetraitMode() ?? ''),
-    color: Colors.black, // Couleur de l'icône
-  ),
-),
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey[300],
+                  ),
+                  padding: const EdgeInsets.all(
+                      10),
+                  child: Icon(
+                    getModeIcon(newSelectedMode ??
+                        panier.getSelectedRetraitMode() ??
+                        ''),
+                    color: Colors.black, 
+                  ),
+                ),
                 Expanded(
                   child: Text(
                     'Heure de retrait : ${newSelectedTime != null ? newSelectedTime!.format(context) : panier.getCurrentSelectedTime().format(context)}',
@@ -116,67 +123,60 @@ class _PanierPageState extends State<PanierPage> {
             ),
           ),
           Text(
-  (newSelectedMode ?? panier.getSelectedRetraitMode() ?? '') == 'Option 3'
-      ? 'Adresse: ${panier.getUserAddress()}'
-      : '',
-  style: const TextStyle(fontSize: 16),
-),const Divider(
-                        color: Colors.black,
-                        thickness: 2,
-                       ),
+            (newSelectedMode ?? panier.getSelectedRetraitMode() ?? '') ==
+                    'En Livraison'
+                ? 'Adresse: ${panier.getUserAddress()}'
+                : '',
+            style: const TextStyle(fontSize: 16),
+          ),
+          const Divider(
+            color: Colors.black,
+            thickness: 2,
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: widget.panier.length,
               itemBuilder: (context, index) {
                 final article = widget.panier[index];
                 return ListTile(
-                  
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    
                     children: [
-                      
                       Text(
-                       '${article.quantite} x ${article.nom}',
+                        '${article.quantite} x ${article.nom}',
                         style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: article.elementsChoisis
                             .map((element) => Text('     $element'))
-                            .toList(), // Afficher les éléments choisis
+                            .toList(), 
                       ),
-
-                     
                     ],
                   ),
                   trailing: Text('Prix: ${article.prix} £'),
-                  
                   onTap: () {
                     showUpdateQuantityDialog(article);
                   },
                 );
-                
               },
             ),
-            
-            
           ),
           const Divider(
-                        color: Colors.black,
-                        thickness: 2,
-                       ),
+            color: Colors.black,
+            thickness: 2,
+          ),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // Appel de la fonction pour mettre à jour les détails de la commande dans le panier global
+                Text(panier.getSelectedRetraitMode() ?? '');
                 panier.updateCommandeDetails(
-                    panier.getSelectedRetraitMode() ?? '',
+                    newSelectedMode ?? panier.getSelectedRetraitMode() ?? '',
                     newSelectedTime ?? panier.getCurrentSelectedTime());
-                // Vérifiez si l'utilisateur est connecté
+      
                 bool isLoggedIn =
                     Provider.of<AuthProvider>(context, listen: false)
                         .isAuthenticated;
@@ -189,7 +189,7 @@ class _PanierPageState extends State<PanierPage> {
                   );
                 } else {
                   panier.origin = 'panier';
-                  // Utilisateur non connecté, rediriger vers la page de connexion
+                 
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const loginPage()),
@@ -198,8 +198,7 @@ class _PanierPageState extends State<PanierPage> {
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(150, 50),
-                backgroundColor: Colors.green, // Change as needed
-              ),
+                backgroundColor: Colors.green, ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -251,7 +250,7 @@ class _PanierPageState extends State<PanierPage> {
                     selectedRetraitMode = newValue!;
                   });
                 },
-                items: <String>['Option 1', 'Option 2', 'Option 3']
+                items: <String>['Emporter', 'Sur place', 'En Livraison']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -355,11 +354,11 @@ class _PanierPageState extends State<PanierPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-  'Personnaliser votre plat',
-  style: TextStyle(
-    color: Colors.green, // Changer la couleur en vert
-  ),
-),
+                'Personnaliser votre plat',
+                style: TextStyle(
+                  color: Colors.green, // Changer la couleur en vert
+                ),
+              ),
               const SizedBox(height: 8), // Espacement entre les éléments
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -430,7 +429,6 @@ class _PanierPageState extends State<PanierPage> {
               onPressed: () {
                 setState(() {
                   article.quantite = newQuantity;
-                
                 });
                 Navigator.pop(context);
               },
