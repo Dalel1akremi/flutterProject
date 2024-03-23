@@ -61,7 +61,7 @@ List<String> elementsChoisis = [];
     return selectedRestaurant?.adresse;
   }
  String? getSelectedRestaurantMode() {
-  return selectedRestaurant?.modeDeRetrait?.join(', ') ?? ''; 
+  return selectedRestaurant?.modeDeRetrait.join(', ') ?? ''; 
 }
 List<String>? getSelectedRestaurantRMode() {
   return selectedRestaurant?.modeDeRetrait;
