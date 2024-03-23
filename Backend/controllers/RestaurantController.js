@@ -1,8 +1,9 @@
 const Restaurant = require('./../models/RestaurantModel');
+const mongoose = require('mongoose');
 const createRestaurant = async (req, res) => {
     try {
         const { body, file } = req;
-        const { nom, adresse, ModeDeRetrait } = body;
+        const { nom, adresse, ModeDeRetrait , ModeDePaiement} = body;
 
         // Vérifier si le nom du restaurant existe déjà
         const existingRestaurant = await Restaurant.findOne({ nom });
@@ -20,11 +21,13 @@ const createRestaurant = async (req, res) => {
         const filteredModesDeRetraitArray = modesDeRetraitArray.filter(mode => mode.trim() !== '');
         
         // Utilisez filteredModesDeRetraitArray dans la création du nouveau restaurant
+        const modesDePaiementArray = ModeDePaiement.split(',');
         const newRestaurant = new Restaurant({
             logo: imageUrl,
             nom,
             adresse,
-            ModeDeRetrait: filteredModesDeRetraitArray
+            ModeDeRetrait: filteredModesDeRetraitArray,
+            ModeDePaiement:modesDePaiementArray
         });
 
         // Sauvegarder le nouveau restaurant dans la base de données
@@ -56,11 +59,9 @@ const getRestaurant = async (req, res) => {
     }
   };
   
-  
-  
-  module.exports = 
-  {
+ 
+module.exports = {
     createRestaurant,
     getRestaurant,
-  };
-  
+   
+};
