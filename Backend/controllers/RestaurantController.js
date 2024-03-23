@@ -14,14 +14,17 @@ const createRestaurant = async (req, res) => {
         const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
 
         // Diviser la chaîne de modes de retrait par virgules et stocker chaque mode dans un tableau
-        const modesDeRetraitArray = ModeDeRetrait.split(',');
+        const modesDeRetraitArray = ModeDeRetrait.trim().split(',');
 
-        // Créer un nouveau restaurant avec les modes de retrait individuels
+        // Supprimez les valeurs vides du tableau
+        const filteredModesDeRetraitArray = modesDeRetraitArray.filter(mode => mode.trim() !== '');
+        
+        // Utilisez filteredModesDeRetraitArray dans la création du nouveau restaurant
         const newRestaurant = new Restaurant({
             logo: imageUrl,
             nom,
             adresse,
-            ModeDeRetrait: modesDeRetraitArray
+            ModeDeRetrait: filteredModesDeRetraitArray
         });
 
         // Sauvegarder le nouveau restaurant dans la base de données
