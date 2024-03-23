@@ -53,6 +53,14 @@ List<String> elementsChoisis = [];
     selectedRestaurant = restaurant;
   }
 
+String?getIdRestaurant(){
+  return selectedRestaurant?.id;
+
+}
+String? getSelectedRestaurantLogo() {
+  return selectedRestaurant?.logo;
+}
+
   String? getSelectedRestaurantName() {
     return selectedRestaurant?.nom;
   }
