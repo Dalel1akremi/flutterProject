@@ -5,7 +5,7 @@ const  nodemailer = require("nodemailer");
 const createCommande = async (req, res) => {
   try {
     const { id_items } = req.body;
-    const id_user = req.query.id_user;
+    const {id_user , _id} = req.query;
 
     if (!id_items || !Array.isArray(id_items) || id_items.length === 0) {
       console.error('id_items are missing or not provided as an array in the request body.');
@@ -41,16 +41,18 @@ const createCommande = async (req, res) => {
       };
     });
 
-    
     const temps = id_items[0].temps; 
     const mode_retrait = id_items[0].mode_retrait; 
     const montant_Total = id_items[0].montant_Total; 
+
+
     const newCommande = new Commande({
+      _id: _id,
       id_items: formattedItems,
       id_user: id_user,
       temps: temps,
       mode_retrait: mode_retrait,
-      montant_Total:montant_Total,
+      montant_Total: montant_Total,
     });
 
     const savedCommande = await newCommande.save();
