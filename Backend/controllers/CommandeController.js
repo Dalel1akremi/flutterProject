@@ -5,26 +5,31 @@ const  nodemailer = require("nodemailer");
 const createCommande = async (req, res) => {
   try {
     const { id_items } = req.body;
-    const {id_user , _id} = req.query;
+    const { id_user, id_rest } = req.query;
 
+    // Vérifier si id_items est présent et est un tableau
     if (!id_items || !Array.isArray(id_items) || id_items.length === 0) {
       console.error('id_items are missing or not provided as an array in the request body.');
       return res.status(400).json({ error: 'id_items are required and should be provided as an array in the request body.' });
     }
 
+    // Vérifier si id_user est présent dans les paramètres de la requête
     if (!id_user) {
       console.error('id_user is missing in the request query parameters.');
       return res.status(400).json({ error: 'id_user is required in the request query parameters.' });
     }
 
+    // Recherche des items correspondant aux id_items dans la base de données
     const itemIds = id_items.map(item => item.id_item);
     const items = await Item.find({ id_item: { $in: itemIds } });
 
+    // Vérifier si tous les items ont été trouvés
     if (items.length !== id_items.length) {
       console.error('One or more items not found.');
       return res.status(404).json({ error: 'One or more items not found.' });
     }
 
+    // Formater les items pour les inclure dans la commande
     const formattedItems = id_items.map((itemInput) => {
       const matchingItem = items.find(item => item.id_item === itemInput.id_item);
 
@@ -41,13 +46,14 @@ const createCommande = async (req, res) => {
       };
     });
 
-    const temps = id_items[0].temps; 
-    const mode_retrait = id_items[0].mode_retrait; 
-    const montant_Total = id_items[0].montant_Total; 
+    // Extraire les valeurs communes de id_items pour la commande
+    const temps = id_items[0].temps;
+    const mode_retrait = id_items[0].mode_retrait;
+    const montant_Total = id_items[0].montant_Total;
 
-
+    // Créer une nouvelle commande avec les données extraites
     const newCommande = new Commande({
-      _id: _id,
+      id_rest: id_rest,
       id_items: formattedItems,
       id_user: id_user,
       temps: temps,
@@ -55,6 +61,7 @@ const createCommande = async (req, res) => {
       montant_Total: montant_Total,
     });
 
+    // Enregistrer la nouvelle commande dans la base de données
     const savedCommande = await newCommande.save();
     console.log('Commande created successfully:', savedCommande);
     return res.status(201).json(savedCommande);
@@ -64,7 +71,6 @@ const createCommande = async (req, res) => {
   }
 }
 
-  
 const getCommandesEncours = async (req, res) => {
   try {
     const id_user = req.query.id_user;
