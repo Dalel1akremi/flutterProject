@@ -44,6 +44,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   bool enableInStoreCheckbox = false;
   List<CreditCard> userCreditCards = [];
   String? selectedCreditCard;
+  String? id;
   bool isPaymentMethodSelected() {
     return selectedPaymentMethod != null;
   }
@@ -72,12 +73,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
           'temps': panier.getCurrentSelectedTime().format(context),
           'mode_retrait': mapRetraitMode(panier.getSelectedRetraitMode() ?? ''),
           'montant_Total': panier.getTotalPrix(),
+          'id': Panier().getIdRestaurant(),
         };
+       
       }).toList();
 
       var response = await http.post(
-        Uri.parse('http://localhost:3000/createCommande?id_user=$userId'),
-        body: jsonEncode({'id_items': idItems}),
+        Uri.parse(
+            'http://localhost:3000/createCommande?id_user=$userId&_id=$id'),
+        body: jsonEncode({
+          'id_items': idItems,
+        }),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -268,12 +274,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   String mapRetraitMode(String value) {
     switch (value) {
-      case 'Option 1':
-        return 'A Emporter';
-      case 'Option 2':
+      case 'Emporter':
+        return 'Emporter';
+      case 'Sur place':
         return 'Sur place';
-      case 'Option 3':
-        return 'en livraison';
+      case 'En Livraison':
+        return 'En Livraison';
       default:
         return value;
     }
@@ -298,7 +304,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     selectedRetraitMode = newValue!;
                   });
                 },
-                items: <String>['Option 1', 'Option 2', 'Option 3']
+                items: <String>['Emporter', 'Sur place', 'En Livraison']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -383,7 +389,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       setState(() {
         newSelectedMode = newSelections['retraitMode'];
         newSelectedTime = newSelections['selectedTime'];
-        panier.updateCommandeDetails(panier.getSelectedRetraitMode() ?? '',
+        panier.updateCommandeDetails(
+            newSelectedMode ?? panier.getSelectedRetraitMode() ?? '',
             newSelectedTime ?? panier.getCurrentSelectedTime());
       });
     }
@@ -402,6 +409,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: Row(
               children: [
+                Text(id?? 'Restaurant Detail'),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -427,7 +435,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         (newSelectedMode ??
                                     panier.getSelectedRetraitMode() ??
                                     '') ==
-                                'Option 3'
+                                'En Livraison'
                             ? 'Adresse: ${panier.getUserAddress()}'
                             : '',
                         style: const TextStyle(fontSize: 16),
