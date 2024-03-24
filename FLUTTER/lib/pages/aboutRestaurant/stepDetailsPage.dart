@@ -11,18 +11,20 @@ class StepDetailsPage extends StatefulWidget {
   final String img;
   final int prix;
   final String nom;
-   // ignore: non_constant_identifier_names
+  final String id_rest;
+  // ignore: non_constant_identifier_names
   final List<dynamic> id_Steps;
 
   const StepDetailsPage({
     Key? key,
-     // ignore: non_constant_identifier_names
+    // ignore: non_constant_identifier_names
     required this.id_item,
     required this.img,
     required this.prix,
     required this.nom,
-     // ignore: non_constant_identifier_names
+    // ignore: non_constant_identifier_names
     required this.id_Steps,
+    required this.id_rest,
   }) : super(key: key);
 
   @override
@@ -129,19 +131,22 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
               ],
             ),
             Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-            onPressed: () {
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: () {
                   // Creating the article object
-                 Article article = Article(
-                  id_item: widget.id_item,
-                  nom: widget.nom,
-                  img: widget.img,
-                  prix: widget.prix,
-                  id_Steps: [widget.id_Steps], // Wrap the value in a list if it's an int
-                  quantite: _value,
-                  elementsChoisis: [],
-                );
+                  Article article = Article(
+                    id_item: widget.id_item,
+                    nom: widget.nom,
+                    img: widget.img,
+                    prix: widget.prix,
+                    id_Steps: [
+                      widget.id_Steps
+                    ], // Wrap the value in a list if it's an int
+                    quantite: _value,
+                    elementsChoisis: [],
+                    id_rest: widget.id_rest,
+                  );
                   // Adding the article to the cart
                   Panier().ajouterAuPanier1(article);
                   // Navigating to the next page
@@ -164,10 +169,10 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                     }
                   });
                 },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(150, 50),
-                backgroundColor: Colors.green, // Change as needed
-              ),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(150, 50),
+                  backgroundColor: Colors.green, // Change as needed
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -191,7 +196,6 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                 ),
               ),
             ),
-         
           ],
         ),
       ),
