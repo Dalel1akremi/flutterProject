@@ -25,11 +25,9 @@ const hashedCVV = await bcrypt.hash(cvv, saltRounds);
     });
 
     await nouvelleCarte.save();
-
-    // Création d'un token Braintree pour la carte
     const carteBraintree = await gateway.paymentMethod.create({
-      customerId: '87802661003', // Remplacez par l'ID de votre client dans Braintree
-      paymentMethodNonce: 'fake-valid-nonce', // Utilisez un nonce valide pour l'environnement de test
+      customerId: '87802661003', 
+      paymentMethodNonce: 'fake-valid-nonce', 
     });
 
     res.json({ success: true, message: 'Carte ajoutée avec succès', token: carteBraintree.token });
@@ -40,28 +38,24 @@ const hashedCVV = await bcrypt.hash(cvv, saltRounds);
 };
 const recupererCarteParId = async (req, res) => {
   const email = req.query.email;
-  const cardId = req.query.cardId; // Ajoutez cette ligne pour récupérer l'identifiant de la carte
+  const cardId = req.query.cardId; 
 
   try {
-    // Vérifier si la carte existe pour cet utilisateur
+   
     const existingCard = await Payment.findOne({ email: email, _id: cardId });
 
     if (!existingCard) {
-      // La carte n'existe pas pour cet utilisateur
       return res.status(404).json({ success: false, message: 'Card not found' });
     }
-
-    // Récupérer le montant à partir du corps de la requête
     const montantAPayer = req.body.montant;
 
     if (!montantAPayer) {
       return res.status(400).json({ success: false, message: 'Montant à payer manquant dans la requête' });
     }
 
-    // Création d'une transaction avec la carte récupérée et le montant du panier
+    
     const transactionResult = await effectuerPaiement(existingCard, montantAPayer);
 
-    // Créer un objet de réponse minimisé
     const minimalResponse = {
       success: true,
       message: 'Paiement effectué avec succès',
@@ -83,15 +77,13 @@ const recupererCartesUtilisateur = async (req, res) => {
   const email = req.query.email;
 
   try {
-    // Récupérer toutes les cartes associées à l'utilisateur avec l'e-mail donné
-    const userCards = await Payment.find({ email: email });
+   const userCards = await Payment.find({ email: email });
 
     if (!userCards || userCards.length === 0) {
-      // Aucune carte trouvée pour cet utilisateur
+   
       return res.status(404).json({ success: false, message: 'Aucune carte trouvée pour cet utilisateur' });
     }
 
-    // Si des cartes sont trouvées, les renvoyer dans la réponse
     res.json({ success: true, cards: userCards });
   } catch (error) {
     console.error(error);
@@ -99,14 +91,12 @@ const recupererCartesUtilisateur = async (req, res) => {
   }
 };
 
-
-// Fonction pour effectuer le paiement avec une carte et un montant
 const effectuerPaiement = async (carte, montant) => {
   try {
     
     const result = await gateway.transaction.sale({
-      amount: montant, // Montant du paiement provenant du panier
-      paymentMethodNonce: 'fake-valid-nonce', // Utilisez un nonce valide pour l'environnement de test
+      amount: montant,
+      paymentMethodNonce: 'fake-valid-nonce', 
       options: {
         submitForSettlement: true,
       },
