@@ -1,5 +1,6 @@
 // Importez le modèle de paiement
-const Payment = require('../models/paiementModel');
+const Payment = require('../models/PaiementModel');
+const bcrypt = require('bcrypt');
 const braintree = require('braintree');
 const gateway = new braintree.BraintreeGateway({
   environment: braintree.Environment.Sandbox,
@@ -12,11 +13,14 @@ const porfeuille = async (req, res) => {
   const { cardNumber, expirationDate, cvv } = req.body;
   const email = req.query.email;
   try {
-    // Ajout de la carte à MongoDB
+    const saltRounds = 6; 
+
+const hashedCVV = await bcrypt.hash(cvv, saltRounds);
+
     const nouvelleCarte = new Payment({
       cardNumber,
       expirationDate,
-      cvv,
+      cvv: hashedCVV,
       email
     });
 

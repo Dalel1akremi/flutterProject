@@ -7,7 +7,7 @@ class Panier {
   factory Panier() => _instance;
 
   Panier._internal();
-List<String> elementsChoisis = [];
+  List<String> elementsChoisis = [];
   List<Article> articles = [];
   TimeOfDay? selectedTime;
   String? selectedRetraitMode;
@@ -17,13 +17,12 @@ List<String> elementsChoisis = [];
   void viderPanier() {
     articles.clear();
   }
- void getOrigin(){
-  
- }
+
+  void getOrigin() {}
   void ajouterElementChoisi(String element) {
     elementsChoisis.add(element);
   }
-  
+
   void ajouterAuPanier1(Article article) {
     articles.add(article);
   }
@@ -40,9 +39,7 @@ List<String> elementsChoisis = [];
       String selectedRetraitMode, TimeOfDay selectedTime) {
     this.selectedRetraitMode = selectedRetraitMode;
 
-    
-      this.selectedTime = selectedTime;
-  
+    this.selectedTime = selectedTime;
   }
 
   String? getSelectedRetraitMode() {
@@ -53,13 +50,13 @@ List<String> elementsChoisis = [];
     selectedRestaurant = restaurant;
   }
 
-String?getIdRestaurant(){
-  return selectedRestaurant?.id;
+  String? getIdRestaurant() {
+    return selectedRestaurant?.id;
+  }
 
-}
-String? getSelectedRestaurantLogo() {
-  return selectedRestaurant?.logo;
-}
+  String? getSelectedRestaurantLogo() {
+    return selectedRestaurant?.logo;
+  }
 
   String? getSelectedRestaurantName() {
     return selectedRestaurant?.nom;
@@ -68,12 +65,14 @@ String? getSelectedRestaurantLogo() {
   String? getSelectedRestaurantAdresse() {
     return selectedRestaurant?.adresse;
   }
- String? getSelectedRestaurantMode() {
-  return selectedRestaurant?.modeDeRetrait.join(', ') ?? ''; 
-}
-List<String>? getSelectedRestaurantRMode() {
-  return selectedRestaurant?.modeDeRetrait;
-}
+
+  String? getSelectedRestaurantMode() {
+    return selectedRestaurant?.modeDeRetrait?.join(', ') ?? '';
+  }
+
+  List<String>? getSelectedRestaurantRMode() {
+    return selectedRestaurant?.modeDeRetrait;
+  }
 
   void setUserAddress(String address) {
     userAddress = address;
@@ -95,7 +94,6 @@ List<String>? getSelectedRestaurantRMode() {
     }
   }
 
-  // Nouvelle méthode pour récupérer le temps actuel
   TimeOfDay getCurrentSelectedTime() {
     return selectedTime ?? TimeOfDay.now();
   }
@@ -108,22 +106,24 @@ class Article {
   String img;
   int prix;
   int quantite;
+  String id_rest;
 // ignore: non_constant_identifier_names
-List<String> elementsChoisis;  final List<dynamic> id_Steps;
+  List<String> elementsChoisis;
+  final List<dynamic> id_Steps;
   Article({
-
     // ignore: non_constant_identifier_names
     required this.id_item,
     // ignore: non_constant_identifier_names
     required this.id_Steps,
-
     required this.nom,
     required this.img,
     required this.prix,
     required this.quantite,
-    required this.elementsChoisis, 
+    required this.elementsChoisis,
+    required this.id_rest,
   });
 }
+
 class Step {
   // ignore: non_constant_identifier_names
   final String nom_Step;

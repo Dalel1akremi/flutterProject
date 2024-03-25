@@ -61,7 +61,8 @@ Future<void> getUserData() async {
 
 
   Future<void> updateUserData(String userEmail) async {
-    final authProvider = Provider.of<AuthProvider>(context);
+   final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     final Map<String, dynamic> updatedData = {
       'nom': nomController.text,
       'prenom': prenomController.text,

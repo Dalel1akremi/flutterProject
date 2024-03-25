@@ -21,6 +21,7 @@ const itemSchema = new Schema({
       id_Step: {type: Number, required: true },
     },
   ],
+  id_rest: { type:String , ref: 'Restaurant' } ,
 });
 function isValidBoolean(value) {
   return typeof value === 'boolean';

@@ -45,6 +45,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   List<CreditCard> userCreditCards = [];
   String? selectedCreditCard;
   String? id;
+  String? id;
   bool isPaymentMethodSelected() {
     return selectedPaymentMethod != null;
   }
@@ -65,7 +66,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
         print('User ID not available.');
         return;
       }
-
+ final String? idRest = Panier().getIdRestaurant();
+    if (idRest == null) {
+      throw Exception('Restaurant ID is null');
+    }
       List<Map<String, dynamic>> idItems = panier.articles.map((article) {
         return {
           'id_item': article.id_item,
@@ -73,14 +77,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
           'temps': panier.getCurrentSelectedTime().format(context),
           'mode_retrait': mapRetraitMode(panier.getSelectedRetraitMode() ?? ''),
           'montant_Total': panier.getTotalPrix(),
-          'id': Panier().getIdRestaurant(),
         };
        
       }).toList();
 
       var response = await http.post(
         Uri.parse(
-            'http://localhost:3000/createCommande?id_user=$userId&_id=$id'),
+            'http://localhost:3000/createCommande?id_user=$userId&id_rest=$idRest'),
         body: jsonEncode({
           'id_items': idItems,
         }),
@@ -274,7 +277,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   String mapRetraitMode(String value) {
     switch (value) {
-      case 'Emporter':
+      case 'A emporter':
         return 'Emporter';
       case 'Sur place':
         return 'Sur place';
@@ -304,7 +307,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     selectedRetraitMode = newValue!;
                   });
                 },
-                items: <String>['Emporter', 'Sur place', 'En Livraison']
+                items: <String>['A emporter', 'Sur place', 'En Livraison']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,

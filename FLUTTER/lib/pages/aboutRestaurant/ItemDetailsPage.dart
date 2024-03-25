@@ -6,23 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'stepDetailsPage.dart';
 
-
 class ItemDetailsPage extends StatelessWidget {
   final int id_item;
   final String img;
   final String nom;
   final int prix;
   final List<dynamic> id_Steps;
-
+  final id_rest;
   const ItemDetailsPage({
     Key? key,
     required this.id_item,
-   required this.nom,
+    required this.nom,
     required this.img,
     required this.prix,
     required this.id_Steps,
- 
- 
+    required  this.id_rest,
   }) : super(key: key);
 
   @override
@@ -94,12 +92,12 @@ class ItemDetailsPage extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => StepDetailsPage(
-              id_Steps: [item['id_Steps'] ?? 0], 
+              id_Steps: [item['id_Steps'] ?? 0],
               id_item: item['id_item'] ?? 0,
               nom: item['nom'] ?? '',
               img: item['image'] ?? '',
-            prix: (item['prix'] ?? 0).toInt(),
-          
+              prix: (item['prix'] ?? 0).toInt(),
+              id_rest:item['id_rest']?? 0,
             ),
           ),
         );
