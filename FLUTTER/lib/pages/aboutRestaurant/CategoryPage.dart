@@ -38,8 +38,11 @@ class _NextPageState extends State<NextPage> {
 
   Future<void> fetchCategories() async {
     try {
-      final response =
-          await http.get(Uri.parse('http://localhost:3000/getCategories'));
+         final int? idRest = Panier().getIdRestaurant();
+    if (idRest == null) {
+      throw Exception('Restaurant ID is null');
+    }
+      final response =  await http.get(Uri.parse('http://localhost:3000/getCategories?id_rest=$idRest'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body)['data'];
@@ -59,7 +62,7 @@ class _NextPageState extends State<NextPage> {
   }
 Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
   try {
-    final String? idRest = Panier().getIdRestaurant();
+    final int? idRest = Panier().getIdRestaurant();
     if (idRest == null) {
       throw Exception('Restaurant ID is null');
     }
