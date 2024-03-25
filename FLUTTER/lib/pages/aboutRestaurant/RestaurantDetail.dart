@@ -166,6 +166,38 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ),
                 ),
               ),
+     Row(
+  children: [
+    SizedBox(
+      height: MediaQuery.of(context).size.height / 7, 
+      width: MediaQuery.of(context).size.height / 7, 
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height / 14),
+          child: restaurantLogo != null
+              ? Image.network(
+                  restaurantLogo,
+                  fit: BoxFit.cover,
+                )
+              : Container(),
+        ),
+      ),
+    ),
+    const SizedBox(width: 10), 
+  ],
+),
+
               const SizedBox(height: 10),
               Container(
                 width: 1500,
