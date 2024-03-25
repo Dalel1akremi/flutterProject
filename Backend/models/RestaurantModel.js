@@ -1,22 +1,24 @@
 const mongoose = require('mongoose');
 
 const restaurantSchema = new mongoose.Schema({
-  id: { type: Number, unique: true },
+  id_rest: { type: Number, unique: true },
   logo: String,
   nom: { type: String, unique: true },
   adresse: { type: String, required: true },
   ModeDeRetrait: [{
     type: String,
-    enum: ['Emporter', 'Sur place', 'En Livraison'] 
+    enum: ['En Emporter', 'Sur place', 'En Livraison'] 
   }] 
 , 
-  ModeDePaiement: [{ type: String }],
+  ModeDePaiement: [{ type: String,
+    enum: ['carte bancaire','espece','carnet des cheques'] 
+   }],
 });
 restaurantSchema.pre('save', async function (next) {
   try {
-    if (!this.id) {
-      const lastRestau = await this.constructor.findOne({}, {}, { sort: { id: -1 } });
-      this.id = lastRestau ? lastRestau.id + 1 : 1;
+    if (!this.id_rest) {
+      const lastRestau = await this.constructor.findOne({}, {}, { sort: { id_rest: -1 } });
+      this.id_rest = lastRestau ? lastRestau.id_rest + 1 : 1;
     }
     next();
   } catch (error) {
