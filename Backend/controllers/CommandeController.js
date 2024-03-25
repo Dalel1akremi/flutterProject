@@ -7,29 +7,24 @@ const createCommande = async (req, res) => {
     const { id_items } = req.body;
     const { id_user, id_rest } = req.query;
 
-    // Vérifier si id_items est présent et est un tableau
     if (!id_items || !Array.isArray(id_items) || id_items.length === 0) {
       console.error('id_items are missing or not provided as an array in the request body.');
       return res.status(400).json({ error: 'id_items are required and should be provided as an array in the request body.' });
     }
 
-    // Vérifier si id_user est présent dans les paramètres de la requête
     if (!id_user) {
       console.error('id_user is missing in the request query parameters.');
       return res.status(400).json({ error: 'id_user is required in the request query parameters.' });
     }
 
-    // Recherche des items correspondant aux id_items dans la base de données
     const itemIds = id_items.map(item => item.id_item);
     const items = await Item.find({ id_item: { $in: itemIds } });
 
-    // Vérifier si tous les items ont été trouvés
     if (items.length !== id_items.length) {
       console.error('One or more items not found.');
       return res.status(404).json({ error: 'One or more items not found.' });
     }
 
-    // Formater les items pour les inclure dans la commande
     const formattedItems = id_items.map((itemInput) => {
       const matchingItem = items.find(item => item.id_item === itemInput.id_item);
 
@@ -46,12 +41,10 @@ const createCommande = async (req, res) => {
       };
     });
 
-    // Extraire les valeurs communes de id_items pour la commande
     const temps = id_items[0].temps;
     const mode_retrait = id_items[0].mode_retrait;
     const montant_Total = id_items[0].montant_Total;
 
-    // Créer une nouvelle commande avec les données extraites
     const newCommande = new Commande({
       id_rest: id_rest,
       id_items: formattedItems,
@@ -61,7 +54,6 @@ const createCommande = async (req, res) => {
       montant_Total: montant_Total,
     });
 
-    // Enregistrer la nouvelle commande dans la base de données
     const savedCommande = await newCommande.save();
     console.log('Commande created successfully:', savedCommande);
     return res.status(201).json(savedCommande);
@@ -92,29 +84,22 @@ const getCommandesEncours = async (req, res) => {
   };
   const getCommandes = async (req, res) => {
     try {
-        // Récupérer les commandes en cours
         const commandes = await Commande.find({ etat: 'encours' });
         if (!commandes || commandes.length === 0) {
             console.error('No commandes with etat "encours" found.');
             return res.status(404).json({ error: 'No commandes with etat "encours" found.' });
         }
-        
-        // Récupérer les IDs des utilisateurs associés aux commandes
         const userIds = commandes.map(commande => commande.id_user);
-        
-        // Récupérer les utilisateurs correspondants à ces IDs
         const users = await User.find({ _id: { $in: userIds } });
-        
-        // Créer un objet pour faire correspondre les IDs d'utilisateur avec leurs emails
+
         const userIdToEmailMap = {};
         users.forEach(user => {
             userIdToEmailMap[user._id] = user.email;
         });
-        
-        // Ajouter l'email de chaque utilisateur à sa commande correspondante
+
         const commandesWithEmails = commandes.map(commande => {
             return {
-                ...commande.toObject(), // Convertir la commande en un objet JavaScript pour éviter toute modification accidentelle
+                ...commande.toObject(),
                 userEmail: userIdToEmailMap[commande.id_user]
             };
         });
@@ -183,7 +168,6 @@ const transporter = nodemailer.createTransport({
 const sendNotification  = async (req, res) => {
   const { userEmail } = req.body;
 
-  // Configuration de l'e-mail
   const mailOptions = {
     from: 'meltingpot449@gmail.com',
     to: userEmail,
@@ -192,7 +176,6 @@ const sendNotification  = async (req, res) => {
   };
 
   try {
-    // Envoi de l'e-mail
     await transporter.sendMail(mailOptions);
     console.log('E-mail sent successfully');
     res.status(200).json({ message: 'E-mail sent successfully' });

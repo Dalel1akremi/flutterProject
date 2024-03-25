@@ -23,7 +23,7 @@ const commandeSchema = new mongoose.Schema({
   temps: { type: String  }, 
   mode_retrait: { type: String },
   montant_Total:{ type: Number  }, 
-  id_rest: { type: String, ref: 'Restaurant' } 
+  id_rest: { type: Number, ref: 'Restaurant' } 
 });
 
 commandeSchema.pre('save', async function (next) {
