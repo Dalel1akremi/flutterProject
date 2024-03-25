@@ -45,7 +45,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
   List<CreditCard> userCreditCards = [];
   String? selectedCreditCard;
   String? id;
-  String? id;
   bool isPaymentMethodSelected() {
     return selectedPaymentMethod != null;
   }
