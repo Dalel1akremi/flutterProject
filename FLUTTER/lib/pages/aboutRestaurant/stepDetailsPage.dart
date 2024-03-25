@@ -11,7 +11,7 @@ class StepDetailsPage extends StatefulWidget {
   final String img;
   final int prix;
   final String nom;
-  final int id_rest;
+  
   // ignore: non_constant_identifier_names
   final List<dynamic> id_Steps;
 
@@ -24,7 +24,7 @@ class StepDetailsPage extends StatefulWidget {
     required this.nom,
     // ignore: non_constant_identifier_names
     required this.id_Steps,
-    required this.id_rest,
+   
   }) : super(key: key);
 
   @override
@@ -145,7 +145,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                     ], // Wrap the value in a list if it's an int
                     quantite: _value,
                     elementsChoisis: [],
-                    id_rest: widget.id_rest,
+                
                   );
                   // Adding the article to the cart
                   Panier().ajouterAuPanier1(article);

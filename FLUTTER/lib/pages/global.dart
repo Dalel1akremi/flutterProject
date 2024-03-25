@@ -67,7 +67,7 @@ class Panier {
   }
 
   String? getSelectedRestaurantMode() {
-    return selectedRestaurant?.modeDeRetrait?.join(', ') ?? '';
+    return selectedRestaurant?.modeDeRetrait.join(', ') ?? '';
   }
 
   List<String>? getSelectedRestaurantRMode() {
@@ -106,7 +106,7 @@ class Article {
   String img;
   int prix;
   int quantite;
-  int id_rest;
+ 
 // ignore: non_constant_identifier_names
   List<String> elementsChoisis;
   final List<dynamic> id_Steps;
@@ -120,7 +120,7 @@ class Article {
     required this.prix,
     required this.quantite,
     required this.elementsChoisis,
-    required this.id_rest,
+    
   });
 }
 

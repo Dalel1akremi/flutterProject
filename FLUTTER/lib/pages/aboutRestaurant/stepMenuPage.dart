@@ -11,7 +11,7 @@ class StepMenuPage extends StatefulWidget {
   final String img;
   final String nom;
   final int prix;
-  final int id_rest;
+  
   // ignore: non_constant_identifier_names
   final List<dynamic> id_Steps;
 
@@ -24,7 +24,7 @@ class StepMenuPage extends StatefulWidget {
     required this.prix,
     // ignore: non_constant_identifier_names
     required this.id_Steps,
-    required this.id_rest,
+    
   }) : super(key: key);
 
   @override
@@ -257,7 +257,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                                   .where((element) => element != null)
                                   .cast<String>()
                                   .toList(),
-                              id_rest: widget.id_rest,
+                             
                             );
                             // Adding the article to the cart
                             Panier().ajouterAuPanier1(article);

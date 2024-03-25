@@ -150,7 +150,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                     decoration: BoxDecoration(
                       image: restaurantLogo != null
                           ? DecorationImage(
-                              image: NetworkImage(restaurantLogo!),
+                              image: NetworkImage(restaurantLogo),
                               fit: BoxFit.contain)
                           : null,
                       borderRadius: BorderRadius.circular(15.0),
@@ -205,7 +205,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                     ),
                     Column(
                       children: restaurant != null
-                          ? restaurant!.split(',').map((mode) {
+                          ? restaurant.split(',').map((mode) {
                               return RadioListTile(
                                 title: Text(mode.trim()),
                                 value: mode.trim(),

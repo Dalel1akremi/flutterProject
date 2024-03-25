@@ -12,7 +12,7 @@ class ItemDetailsPage extends StatelessWidget {
   final String nom;
   final int prix;
   final List<dynamic> id_Steps;
-  final id_rest;
+  final int id_rest;
   const ItemDetailsPage({
     Key? key,
     required this.id_item,
@@ -97,7 +97,7 @@ class ItemDetailsPage extends StatelessWidget {
               nom: item['nom'] ?? '',
               img: item['image'] ?? '',
               prix: (item['prix'] ?? 0).toInt(),
-              id_rest:item['id_rest']?? 0,
+              
             ),
           ),
         );
