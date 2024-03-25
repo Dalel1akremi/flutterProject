@@ -1,8 +1,8 @@
 const Categories = require('../models/CategoriesModel');
-exports.createCategorie = async (req, res) => {
+const createCategorie = async (req, res) => {
   try {
     let { nom_cat, type_cat } = req.body;
-
+    const {  id_rest } = req.query;
     nom_cat = nom_cat.charAt(0).toUpperCase() + nom_cat.slice(1).toLowerCase();
     const existingCategorie = await Categories.findOne({ nom_cat });
 
@@ -13,6 +13,7 @@ exports.createCategorie = async (req, res) => {
       });
     }
     const newCategorie = new Categories({
+      id_rest: id_rest,
       nom_cat,
       type_cat
     });
@@ -38,13 +39,18 @@ const sendResponse = (res, statusCode, message, data = null) => {
   res.status(statusCode).json({ message, data, status: statusCode });
 };
 
-exports.getCategories = async (req, res) => {
+const getCategories = async (req, res) => {
   try {
-    const categories = await Categories.find({}, 'nom_cat type_cat id_cat');
+    const { id_rest } = req.query;
+        const categories = await Categories.find({ id_rest: id_rest }, 'nom_cat type_cat id_cat');
     sendResponse(res, 200, "Succès de récupération des catégories", categories);
   } catch (error) {
     console.error(error);
     sendResponse(res, 500, "Erreur lors de la récupération des catégories");
   }
 };
+module.exports = {
+  createCategorie,
+  getCategories,
+}
 
