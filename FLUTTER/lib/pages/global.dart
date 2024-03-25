@@ -50,7 +50,7 @@ class Panier {
     selectedRestaurant = restaurant;
   }
 
-  String? getIdRestaurant() {
+  int? getIdRestaurant() {
     return selectedRestaurant?.id;
   }
 
@@ -106,7 +106,7 @@ class Article {
   String img;
   int prix;
   int quantite;
-  String id_rest;
+  int id_rest;
 // ignore: non_constant_identifier_names
   List<String> elementsChoisis;
   final List<dynamic> id_Steps;

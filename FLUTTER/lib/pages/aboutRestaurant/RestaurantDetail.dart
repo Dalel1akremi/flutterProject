@@ -125,7 +125,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     String? restaurantAdress = Panier().getSelectedRestaurantAdresse();
     String? restaurant = Panier().getSelectedRestaurantMode();
     String? restaurantLogo = Panier().getSelectedRestaurantLogo();
-    String? id = Panier().getIdRestaurant();
+ 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),

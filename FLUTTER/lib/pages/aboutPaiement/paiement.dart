@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print, library_private_types_in_public_api, use_build_context_synchronously
 import 'dart:convert';
 import 'package:demo/pages/aboutRestaurant/commande.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import './../global.dart';
@@ -65,7 +64,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         print('User ID not available.');
         return;
       }
- final String? idRest = Panier().getIdRestaurant();
+ final int? idRest = Panier().getIdRestaurant();
     if (idRest == null) {
       throw Exception('Restaurant ID is null');
     }
@@ -277,7 +276,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   String mapRetraitMode(String value) {
     switch (value) {
       case 'A emporter':
-        return 'Emporter';
+        return 'A emporter';
       case 'Sur place':
         return 'Sur place';
       case 'En Livraison':
@@ -411,7 +410,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: Row(
               children: [
-                Text(id?? 'Restaurant Detail'),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

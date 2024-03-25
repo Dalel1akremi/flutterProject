@@ -41,7 +41,7 @@ IconData getModeIcon(String value) {
     case 'en livraison':
       iconData = Icons.delivery_dining; 
       break;
-    case 'emporter':
+    case 'a emporter':
       iconData = Icons.takeout_dining; 
       break;
     case 'sur place':
@@ -52,7 +52,6 @@ IconData getModeIcon(String value) {
   }
   return iconData;
 }
-
 
   @override
   void initState() {
@@ -66,18 +65,19 @@ IconData getModeIcon(String value) {
     setState(() {});
   }
 
-  String mapRetraitMode(String value) {
-    switch (value) {
-      case 'Emporter':
-        return 'Emporter';
-      case 'Sur place':
-        return 'Sur place';
-      case 'En Livraison':
-        return 'En Livraison';
-      default:
-        return value;
-    }
+
+String mapRetraitMode(String value) {
+  switch (value) {
+    case 'a emporter':
+      return 'A Emporter';
+    case 'sur place':
+      return 'Sur place';
+    case 'en livraison':
+      return 'En Livraison';
+    default:
+      return value;
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -250,7 +250,7 @@ IconData getModeIcon(String value) {
                     selectedRetraitMode = newValue!;
                   });
                 },
-                items: <String>['Emporter', 'Sur place', 'En Livraison']
+                items: <String>['A Emporter', 'Sur place', 'En Livraison']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,

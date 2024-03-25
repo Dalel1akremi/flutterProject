@@ -27,14 +27,18 @@ Future<void> main() async {
   final token = authProvider.token;
 
   if (token != null) {
-    print('Token: $token');
+    if (kDebugMode) {
+      print('Token: $token');
+    }
   } else {
-    print('Il n\'y a pas de token.');
+    if (kDebugMode) {
+      print('Il n\'y a pas de token.');
+    }
   }
 }
 
 class Restaurant {
-  final String id;
+  final int id;
   final String logo;
   final String nom;
   final String adresse;
@@ -52,7 +56,7 @@ class Restaurant {
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
     return Restaurant(
-      id: json['_id'],
+      id: json['id_rest'],
       logo: json['logo'],
       nom: json['nom'],
       adresse: json['adresse'],
@@ -63,7 +67,9 @@ class Restaurant {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  const MyApp({super.key});
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -78,14 +84,17 @@ class MyApp extends StatelessWidget {
 }
 
 class AcceuilScreen extends StatefulWidget {
-  const AcceuilScreen({Key? key});
+  const AcceuilScreen({super.key});
+
+
 
   @override
+  // ignore: library_private_types_in_public_api
   _RestaurantListState createState() => _RestaurantListState();
 }
 
 class _RestaurantListState extends State<AcceuilScreen> {
-  late List<Restaurant> restaurants = []; // Initialisation de la liste
+  late List<Restaurant> restaurants = []; 
 
   @override
   void initState() {
@@ -183,13 +192,13 @@ class _RestaurantListState extends State<AcceuilScreen> {
               ...restaurants[index].modeDeRetrait.map((mode) {
                 IconData iconData;
                 switch (mode) {
-                  case 'en livraison':
+                  case 'En Livraison':
                     iconData = Icons.delivery_dining;
                     break;
-                  case 'a emporte':
+                  case 'A Emporter':
                     iconData = Icons.takeout_dining;
                     break;
-                  case 'sur place':
+                  case 'Sur place':
                     iconData = Icons.restaurant;
                     break;
                   default:

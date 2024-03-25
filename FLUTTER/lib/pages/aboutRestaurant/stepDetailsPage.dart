@@ -11,7 +11,7 @@ class StepDetailsPage extends StatefulWidget {
   final String img;
   final int prix;
   final String nom;
-  final String id_rest;
+  final int id_rest;
   // ignore: non_constant_identifier_names
   final List<dynamic> id_Steps;
 
