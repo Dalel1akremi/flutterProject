@@ -12,27 +12,21 @@ const createCategorie = async (req, res) => {
       });
     }
 
-    // Vérifier le type de id_rest et le convertir en tableau si nécessaire
     let idRestArray = [];
     if (typeof id_rest === 'string') {
-      // Si id_rest est une chaîne de caractères, la diviser en un tableau d'entiers
       idRestArray = id_rest.split(',').map(id => parseInt(id.trim()));
     } else if (Array.isArray(id_rest)) {
-      // Si id_rest est déjà un tableau, l'utiliser directement
       idRestArray = id_rest.map(id => parseInt(id));
     } else {
-      // Si id_rest n'est ni une chaîne ni un tableau, laisser idRestArray vide
+
       idRestArray = [];
     }
-
-    // Créer une nouvelle catégorie avec les références id_rest
     const newCategorie = new Categories({
       id_rest: idRestArray,
       nom_cat,
       type_cat
     });
 
-    // Enregistrer la nouvelle catégorie
     const savedCategorie = await newCategorie.save();
 
     return res.status(200).json({
