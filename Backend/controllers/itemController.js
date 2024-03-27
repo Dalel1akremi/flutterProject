@@ -28,7 +28,7 @@ exports.createItem = async (req, res) => {
     if (isNaN(validatedPrix) || isNaN(validatedQuantite) || isNaN(validatedMaxQuantite)) {
       res.status(400).json({
         status: 400,
-        message: 'Invalid data types in request body',
+        message: 'Types de données invalides dans le corps de la requête',
       });
       return;
     }
@@ -38,12 +38,21 @@ exports.createItem = async (req, res) => {
     if (existingItem !== null) {
       res.status(400).json({
         status: 400,
-        message: 'Ce Item existe déjà',
+        message: 'Cet Item existe déjà',
       });
       return;
     }
 
-    console.log('New Item Data:', {
+    let idRestArray;
+    if (typeof id_rest === 'string') {
+      idRestArray = id_rest.split(',').map(id => parseInt(id.trim()));
+    } else if (Array.isArray(id_rest)) {
+      idRestArray = id_rest.map(id => parseInt(id));
+    } else {
+      idRestArray = [];
+    }
+
+    console.log('Nouvelles données d\'Item :', {
       nom,
       prix: validatedPrix,
       description,
@@ -54,10 +63,10 @@ exports.createItem = async (req, res) => {
       is_Redirect: validatedIsRedirect,
       id_cat,
       id,
-      id_rest,
+      id_rest: idRestArray,
     });
 
-    let newItemData = {
+    const newItemData = {
       nom,
       prix: validatedPrix,
       description,
@@ -69,20 +78,13 @@ exports.createItem = async (req, res) => {
       id_cat,
       id,
       image: imageUrl,
-      id_rest,
+      id_rest: idRestArray,
     };
 
-    if (validatedIsMenu) {
-      const idStepsArray = id_Steps.split(',').map(idStep => ({ id_Step: parseInt(idStep) }));
-      newItemData.id_Steps = idStepsArray;
-    } else {
-      newItemData.id_Steps = null;
-    }
-
     const newItem = new Item(newItemData);
+    const savedItem = await newItem.save(); 
 
-    const savedItem = await newItem.save();
-    res.status(200).json({
+    res.status(200).json({ 
       status: 200,
       message: 'Item créé avec succès',
       savedItem,
@@ -92,10 +94,11 @@ exports.createItem = async (req, res) => {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: 'Erreur lors de la création de Item',
+      message: 'Erreur lors de la création de l\'Item',
     });
   }
 };
+
 exports.getItem = async (req, res) => {
   try {
     const { id_cat, id_rest } = req.query;
@@ -150,7 +153,7 @@ exports.getItem = async (req, res) => {
 
       res.status(200).json({
         status: 200,
-        message: 'Item récupérés avec succès',
+        message: 'Items récupérés avec succès',
         formattedItems,
       });
     }
@@ -158,10 +161,11 @@ exports.getItem = async (req, res) => {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: 'Erreur lors de la récupération des Item',
+      message: 'Erreur lors de la récupération des Items',
     });
   }
 };
+
 
 exports.getItems = async (req, res) => {
   try {

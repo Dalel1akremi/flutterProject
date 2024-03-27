@@ -1,8 +1,7 @@
-const Categories = require('../models/CategoriesModel');
+const Categories = require('../models/categoriesModel');
 const createCategorie = async (req, res) => {
   try {
-    let { nom_cat, type_cat } = req.body;
-    const {  id_rest } = req.query;
+    let { nom_cat, type_cat, id_rest } = req.body; 
     nom_cat = nom_cat.charAt(0).toUpperCase() + nom_cat.slice(1).toLowerCase();
     const existingCategorie = await Categories.findOne({ nom_cat });
 
@@ -12,31 +11,39 @@ const createCategorie = async (req, res) => {
         message: 'Cette catégorie existe déjà'
       });
     }
-    const newCategorie = new Categories({
-      id_rest: id_rest,
-      nom_cat,
-      type_cat
-    });
-    const savedCategorie = await newCategorie.save();
+
+    let idRestArray;
+    if (typeof id_rest === 'string') {
+      idRestArray = id_rest.split(',').map(id => parseInt(id.trim()));
+    } else if (Array.isArray(id_rest)) {
+      idRestArray = id_rest.map(id => parseInt(id));
+    } else {
+      idRestArray = [];
+    }
+
+    // Créez une nouvelle catégorie pour chaque id_rest
+    const savedCategories = await Promise.all(idRestArray.map(async (restId) => {
+      const newCategorie = new Categories({
+        id_rest: restId, // Utilisez l'ID de chaque restaurant
+        nom_cat,
+        type_cat
+      });
+      return newCategorie.save();
+    }));
 
     return res.status(200).json({
       status: 200,
-      message: 'La catégorie a été créée avec succès',
-      data: savedCategorie,
+      message: 'Les catégories ont été créées avec succès',
+      data: savedCategories,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       status: 500,
-      message: 'Erreur lors de la création de la catégorie',
+      message: 'Erreur lors de la création des catégories',
       error: error.message,
     });
   }
-};
-
-                  
-const sendResponse = (res, statusCode, message, data = null) => {
-  res.status(statusCode).json({ message, data, status: statusCode });
 };
 
 const getCategories = async (req, res) => {
