@@ -230,7 +230,6 @@ String mapRetraitMode(String value) {
       ),
     );
   }
-
   Future<void> showEditDialog() async {
     Map<String, dynamic>? newSelections = await showDialog(
       context: context,
