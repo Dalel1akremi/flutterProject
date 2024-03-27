@@ -8,7 +8,7 @@ const categoriesSchema = new mongoose.Schema({
   id_cat: { type: Number, unique: true },
   nom_cat: { type: String, unique: true },
   type_cat:String,
-  id_rest: { type: Number, ref: 'Restaurant' } 
+  id_rest: [{ type: Number, ref: 'Restaurant' }], 
 });
 categoriesSchema.pre('save', async function (next) {
   try {
