@@ -12,50 +12,63 @@ const createCategorie = async (req, res) => {
       });
     }
 
-    let idRestArray;
+    // Vérifier le type de id_rest et le convertir en tableau si nécessaire
+    let idRestArray = [];
     if (typeof id_rest === 'string') {
+      // Si id_rest est une chaîne de caractères, la diviser en un tableau d'entiers
       idRestArray = id_rest.split(',').map(id => parseInt(id.trim()));
     } else if (Array.isArray(id_rest)) {
+      // Si id_rest est déjà un tableau, l'utiliser directement
       idRestArray = id_rest.map(id => parseInt(id));
     } else {
+      // Si id_rest n'est ni une chaîne ni un tableau, laisser idRestArray vide
       idRestArray = [];
     }
 
-    // Créez une nouvelle catégorie pour chaque id_rest
-    const savedCategories = await Promise.all(idRestArray.map(async (restId) => {
-      const newCategorie = new Categories({
-        id_rest: restId, // Utilisez l'ID de chaque restaurant
-        nom_cat,
-        type_cat
-      });
-      return newCategorie.save();
-    }));
+    // Créer une nouvelle catégorie avec les références id_rest
+    const newCategorie = new Categories({
+      id_rest: idRestArray,
+      nom_cat,
+      type_cat
+    });
+
+    // Enregistrer la nouvelle catégorie
+    const savedCategorie = await newCategorie.save();
 
     return res.status(200).json({
       status: 200,
-      message: 'Les catégories ont été créées avec succès',
-      data: savedCategories,
+      message: 'La catégorie a été créée avec succès',
+      data: savedCategorie,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       status: 500,
-      message: 'Erreur lors de la création des catégories',
+      message: 'Erreur lors de la création de la catégorie',
       error: error.message,
     });
   }
 };
 
+
 const getCategories = async (req, res) => {
   try {
     const { id_rest } = req.query;
-        const categories = await Categories.find({ id_rest: id_rest }, 'nom_cat type_cat id_cat');
-    sendResponse(res, 200, "Succès de récupération des catégories", categories);
+    const categories = await Categories.find({ id_rest: id_rest }, 'nom_cat type_cat id_cat');
+    res.status(200).json({
+      status: 200,
+      message: "Succès de récupération des catégories",
+      data: categories
+    });
   } catch (error) {
     console.error(error);
-    sendResponse(res, 500, "Erreur lors de la récupération des catégories");
+    res.status(500).json({
+      status: 500,
+      message: "Erreur lors de la récupération des catégories"
+    });
   }
 };
+
 module.exports = {
   createCategorie,
   getCategories,
