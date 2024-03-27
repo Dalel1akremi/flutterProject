@@ -1,5 +1,7 @@
-// ignore_for_file: file_names
+// ignore: file_names
+// ignore_for_file: file_names, duplicate_ignore
 
+import 'package:demo/pages/aboutRestaurant/RestaurantDetail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -9,13 +11,13 @@ import './../aboutPaiement/panier.dart';
 import 'ItemDetailsPage.dart';
 import 'stepMenuPage.dart';
 import './../global.dart';
-import './RestaurantDetail.dart';
 
-class NextPage extends StatefulWidget {
+class NextPage extends StatefulWidget {  
   final List<Article> panier;
 
   const NextPage({
     Key? key,
+
     required this.panier,
   }) : super(key: key);
 
@@ -36,12 +38,11 @@ class _NextPageState extends State<NextPage> {
 
   Future<void> fetchCategories() async {
     try {
-      final int? idRest = Panier().getIdRestaurant();
-      if (idRest == null) {
-        throw Exception('Restaurant ID is null');
-      }
-      final response = await http.get(
-          Uri.parse('http://localhost:3000/getCategories?id_rest=$idRest'));
+         final int? idRest = Panier().getIdRestaurant();
+    if (idRest == null) {
+      throw Exception('Restaurant ID is null');
+    }
+      final response =  await http.get(Uri.parse('http://localhost:3000/getCategories?id_rest=$idRest'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body)['data'];
@@ -59,54 +60,43 @@ class _NextPageState extends State<NextPage> {
       }
     }
   }
+Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
+  try {
+    final int? idRest = Panier().getIdRestaurant();
+    if (idRest == null) {
+      throw Exception('Restaurant ID is null');
+    }
+  final response = await http.get(Uri.parse('http://localhost:3000/getItem?id_cat=$idCat&id_rest=$idRest'));
 
-  Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
-    try {
-      final int? idRest = Panier().getIdRestaurant();
-      if (idRest == null) {
-        throw Exception('Restaurant ID is null');
-      }
+
+    if (response.statusCode == 200) {
+      final List<dynamic>? responseData = json.decode(response.body)['formattedItems'];
       if (kDebugMode) {
-        print(idRest);
+        print('Response data: $responseData');
       }
-      final response = await http.get(Uri.parse(
-          'http://localhost:3000/getItem?id_cat=$idCat&id_rest=$idRest'));
 
-      if (response.statusCode == 200) {
-        final List<dynamic>? responseData =
-            json.decode(response.body)['formattedItems'];
-
-        if (kDebugMode) {
-          print('Response data: $responseData');
-        }
-
-        if (responseData != null && responseData.isNotEmpty) {
-          return responseData
-              .map<Map<String, dynamic>>((item) => item as Map<String, dynamic>)
-              .toList();
-        } else {
-          if (kDebugMode) {
-            print('Error fetching menu: Response data is null or empty');
-          }
-
-          return [];
-        }
+      if (responseData != null && responseData.isNotEmpty) {
+        return responseData.map<Map<String, dynamic>>((item) => item as Map<String, dynamic>).toList();
       } else {
         if (kDebugMode) {
-          print('Error fetching menu. Status code: ${response.statusCode}');
+          print('Error fetching menu: Response data is null or empty');
         }
-
-        throw Exception(
-            'Failed to fetch menu. Status code: ${response.statusCode}');
+        return [];
       }
-    } catch (error) {
+    } else {
       if (kDebugMode) {
-        print('Error fetching menu: $error');
+        print('Error fetching menu. Status code: ${response.statusCode}');
       }
-
-      return [];
+      throw Exception('Failed to fetch menu. Status code: ${response.statusCode}');
     }
+  } catch (error) {
+    if (kDebugMode) {
+      print('Error fetching menu: $error');
+    }
+    return [];
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -120,42 +110,42 @@ class _NextPageState extends State<NextPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: Text(restaurantName ?? 'Restaurant Detail'),
+         title: Text(restaurantName ?? 'Restaurant Detail'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Confirmation'),
-                  content: const Text(
-                      'Vous avez des articles dans votre panier. Voulez-vous le vider ?'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Non'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Panier().viderPanier();
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const RestaurantDetail(),
-                          ),
-                        );
-                      },
-                      child: const Text('Oui'),
-                    ),
-                  ],
+  icon: const Icon(Icons.arrow_back),
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Vous avez des articles dans votre panier. Voulez-vous le vider ?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child:const Text('Non'),
+            ),
+            TextButton(
+              onPressed: () {
+                Panier().viderPanier();
+                 Navigator.of(context).pop(); 
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const RestaurantDetail(),
+                  ),
                 );
               },
-            );
-          },
-        ),
+              child: const Text('Oui'),
+            ),
+          ],
+        );
+      },
+    );
+  },
+),
+
       ),
       body: Column(
         children: [
@@ -209,74 +199,73 @@ class _NextPageState extends State<NextPage> {
                   : Category(idCat: 1, nomCat: '')),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                if (totalPrice > 0) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PanierPage(
-                        numberOfItems: numberOfItems,
-                        panier: Panier().articles,
-                      ),
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
+       Padding(
+  padding: const EdgeInsets.all(16.0),
+  child: ElevatedButton(
+    onPressed: () {
+      if (totalPrice > 0) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PanierPage(
+    
+              numberOfItems: numberOfItems,
+              panier: Panier().articles,
+            ),
+          ),
+        );
+      } 
+    },
+    style: ElevatedButton.styleFrom(
                 minimumSize: const Size(150, 50),
                 backgroundColor: Colors.green,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const Text(
-                    'Paiement',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    ' $totalPrice £',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
+        ),
+        const Text(
+          'Paiement',
+          style: TextStyle(color: Colors.white),
+        ),
+        Text(
+          ' $totalPrice £',
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  ),
+)
+,
         ],
       ),
     );
   }
 
   Widget _buildMenuForCategory(Category category) {
-    return FutureBuilder<List<Map<String?, dynamic>>>(
-      future: fetchMenu(category.idCat),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error loading menu: ${snapshot.error}');
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text(
-                'Aucun élément disponible pour cette catégorie et ce restaurant.'),
-          );
-        } else {
-          return ListView(
-            children: snapshot.data!.map<Widget>((menuItem) {
+   return FutureBuilder<List<Map<String?, dynamic>>>(
+  future: fetchMenu(category.idCat),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text('Error loading menu: ${snapshot.error}');
+    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      return const Text('No menu items available.');
+    } else {
+      return ListView(
+        children: snapshot.data!.map<Widget>((menuItem) {
               return GestureDetector(
                 onTap: () {
                   if (menuItem['is_Redirect'] == true) {
@@ -284,27 +273,27 @@ class _NextPageState extends State<NextPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ItemDetailsPage(
-                          id_item: menuItem['id_item'],
-                          nom: menuItem['nom'] ?? 'Default Name',
+                           id_item: menuItem['id_item'],
+                          nom: menuItem['nom']?? 'Default Name',
                           img: menuItem['image'],
                           prix: menuItem['prix'],
-                          id_Steps: menuItem['id_Steps'] ?? [],
-                          id_rest: menuItem['id_rest'],
+                           id_Steps:menuItem['id_Steps'] ?? [],
+                          id_rest:menuItem['id_rest'],
+            
                         ),
                       ),
                     );
                   } else {
+               
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => StepMenuPage(
-                          id_item: menuItem['id_item'],
+                         id_item: menuItem['id_item'],
                           nom: menuItem['nom'],
                           img: menuItem['image'],
                           prix: menuItem['prix'],
-                          id_Steps: menuItem['id_Steps'] ?? [],
-
-                          // Pass any necessary parameters to StepMenuPage
+                          id_Steps:menuItem['id_Steps'] ?? [],
                         ),
                       ),
                     );
@@ -320,14 +309,12 @@ class _NextPageState extends State<NextPage> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Left side: Image
                       Image.network(
                         menuItem['image'],
                         width: 150,
                         height: 100,
                       ),
                       const SizedBox(width: 16),
-                      // Right side: Name, Description, and Price
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,9 +334,8 @@ class _NextPageState extends State<NextPage> {
                                 fontSize: 16,
                               ),
                             ),
-
+                            
                             const SizedBox(height: 8),
-                            // Check if is_Redirect is true, if true, do not display price
                             if (!(menuItem['is_Redirect'] == true))
                               Text(
                                 'Prix: ${menuItem['prix']}£',
@@ -372,7 +358,6 @@ class _NextPageState extends State<NextPage> {
     );
   }
 }
-
 class Category {
   final int idCat;
   final String nomCat;
@@ -390,10 +375,8 @@ class Category {
       return Category(idCat: categoryId, nomCat: categoryNomCat);
     } else {
       if (kDebugMode) {
-        print(
-          "Warning: 'id_cat' or 'nom_cat' is null in JSON data. Using default values.");
+        print("Warning: 'id_cat' or 'nom_cat' is null in JSON data. Using default values.");
       }
-
       return Category(idCat: 0, nomCat: 'Default Category');
     }
   }
