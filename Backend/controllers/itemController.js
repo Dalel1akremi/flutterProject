@@ -81,8 +81,17 @@ exports.createItem = async (req, res) => {
       id_rest: idRestArray,
     };
 
+  
+    if (validatedIsMenu) {
+      const idStepsArray = id_Steps.split(',').map(idStep => ({ id_Step: parseInt(idStep) }));
+      newItemData.id_Steps = idStepsArray;
+    } else {
+      newItemData.id_Steps = null;
+    }
+
     const newItem = new Item(newItemData);
-    const savedItem = await newItem.save(); 
+
+    const savedItem = await newItem.save();
 
     res.status(200).json({ 
       status: 200,
