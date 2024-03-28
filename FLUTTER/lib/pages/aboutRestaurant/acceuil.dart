@@ -94,7 +94,9 @@ class AcceuilScreen extends StatefulWidget {
 }
 
 class _RestaurantListState extends State<AcceuilScreen> {
-  late List<Restaurant> restaurants = []; 
+  late List<Restaurant> restaurants = [];
+  late List<Restaurant> filteredRestaurants = [];
+  late String searchQuery = '';
 
   @override
   void initState() {
@@ -103,18 +105,23 @@ class _RestaurantListState extends State<AcceuilScreen> {
   }
 
   Future<void> fetchRestaurants() async {
-    final response =
-        await http.get(Uri.parse('http://localhost:3000/getRestaurant'));
+    final response = await http.get(Uri.parse('http://localhost:3000/getRestaurant'));
     if (response.statusCode == 200) {
-      final List<dynamic> responseData =
-          json.decode(response.body)['restaurants'];
+      final List<dynamic> responseData = json.decode(response.body)['restaurants'];
       setState(() {
-        restaurants =
-            responseData.map((json) => Restaurant.fromJson(json)).toList();
+        restaurants = responseData.map((json) => Restaurant.fromJson(json)).toList();
+        filterRestaurants(); // Call filter method after fetching restaurants
       });
     } else {
       throw Exception('Failed to load restaurants');
     }
+  }
+
+  void filterRestaurants() {
+    setState(() {
+      filteredRestaurants = restaurants.where((restaurant) =>
+          restaurant.adresse.toLowerCase().contains(searchQuery.toLowerCase())).toList();
+    });
   }
 
   @override
@@ -135,112 +142,122 @@ class _RestaurantListState extends State<AcceuilScreen> {
           Container(
             color: const Color.fromARGB(181, 123, 106, 106),
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.location_on),
-                hintText: 'Saisissez votre adresse',
-                border: InputBorder.none,
-              ),
-              onChanged: (value) {
-                if (kDebugMode) {
-                  print('Search query: $value');
-                }
-              },
+           child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: const InputDecoration(
+                       prefixIcon: Icon(Icons.location_on),
+                      hintText: 'Saisissez votre adresse',
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value;
+                      });
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    filterRestaurants(); // Call filter method on search button press
+                  },
+                ),
+              ],
             ),
           ),
-          Expanded(
-            child: restaurants.isNotEmpty
-                ? ListView.builder(
-  itemCount: restaurants.length,
-  itemBuilder: (context, index) {
-    return GestureDetector(
-      onTap: () {
-        Panier().setSelectedRestaurant(restaurants[index]);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const RestaurantDetail(),
+       Expanded(
+  child: filteredRestaurants.isNotEmpty
+    ? ListView.builder(
+      itemCount: filteredRestaurants.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            Panier().setSelectedRestaurant(filteredRestaurants[index]);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const RestaurantDetail(),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+              leading: SizedBox(
+                width: 70,
+                height: 60,
+                child: Image.network(
+                  filteredRestaurants[index].logo,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    filteredRestaurants[index].nom,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(filteredRestaurants[index].adresse),
+                ],
+              ),
+              subtitle: Row(
+                children: [
+                  ...filteredRestaurants[index].modeDeRetrait.map((mode) {
+                    IconData iconData;
+                    switch (mode) {
+                      case 'En Livraison':
+                        iconData = Icons.delivery_dining;
+                        break;
+                      case 'A Emporter':
+                        iconData = Icons.takeout_dining;
+                        break;
+                      case 'Sur place':
+                        iconData = Icons.restaurant;
+                        break;
+                      default:
+                        iconData = Icons.error;
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Icon(iconData),
+                    );
+                  }).toList(),
+                  ...filteredRestaurants[index].modeDePaiement.map((mode) {
+                    IconData? iconData;
+                    switch (mode) {
+                      case 'espece':
+                        iconData = Icons.monetization_on;
+                        break;
+                      case 'carte bancaire':
+                        iconData = Icons.credit_card;
+                        break;
+                      case 'carnet des cheques':
+                        iconData = Icons.book;
+                        break;
+                      default:
+                        iconData = null;
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Icon(iconData),
+                    );
+                  }).toList(),
+                ],
+              ),
+            ),
           ),
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-          leading: SizedBox(
-            width: 70,
-            height: 60,
-            child: Image.network(
-              restaurants[index].logo,
-              fit: BoxFit.cover,
-            ),
-          ),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                restaurants[index].nom,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(restaurants[index].adresse),
-            ],
-          ),
-          subtitle: Row(
-            children: [
-              ...restaurants[index].modeDeRetrait.map((mode) {
-                IconData iconData;
-                switch (mode) {
-                  case 'En Livraison':
-                    iconData = Icons.delivery_dining;
-                    break;
-                  case 'A Emporter':
-                    iconData = Icons.takeout_dining;
-                    break;
-                  case 'Sur place':
-                    iconData = Icons.restaurant;
-                    break;
-                  default:
-                    iconData = Icons.error;
-                }
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Icon(iconData),
-                );
-              }).toList(),
-              ...restaurants[index].modeDePaiement.map((mode) {
-                IconData? iconData;
-                switch (mode) {
-                  case 'espece':
-                    iconData = Icons.monetization_on;
-                    break;
-                  case 'carte bancaire':
-                    iconData = Icons.credit_card;
-                    break;
-                  case 'carnet des cheques':
-                    iconData = Icons.book;
-                    break;
-                  default:
-                    iconData = null;
-                }
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Icon(iconData),
-                );
-              }).toList(),
-            ],
-          ),
-        ),
+    )
+    : const Center(
+        child: CircularProgressIndicator(),
       ),
-    );
-  },
-)
-
-                : const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-          ),
+),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
