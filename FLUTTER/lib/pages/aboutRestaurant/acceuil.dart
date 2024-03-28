@@ -44,10 +44,11 @@ class Restaurant {
   final String adresse;
   final List<String> modeDeRetrait;
   final List<String> modeDePaiement;
-
+  final String image;
   Restaurant({
     required this.id,
     required this.logo,
+    required this.image,
     required this.nom,
     required this.adresse,
     required this.modeDeRetrait,
@@ -58,6 +59,7 @@ class Restaurant {
     return Restaurant(
       id: json['id_rest'],
       logo: json['logo'],
+      image:json['image'],
       nom: json['nom'],
       adresse: json['adresse'],
       modeDeRetrait: List<String>.from(json['ModeDeRetrait']),
@@ -110,7 +112,7 @@ class _RestaurantListState extends State<AcceuilScreen> {
       final List<dynamic> responseData = json.decode(response.body)['restaurants'];
       setState(() {
         restaurants = responseData.map((json) => Restaurant.fromJson(json)).toList();
-        filterRestaurants(); // Call filter method after fetching restaurants
+        filterRestaurants(); 
       });
     } else {
       throw Exception('Failed to load restaurants');

@@ -125,7 +125,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     String? restaurantAdress = Panier().getSelectedRestaurantAdresse();
     String? restaurant = Panier().getSelectedRestaurantMode();
     String? restaurantLogo = Panier().getSelectedRestaurantLogo();
- 
+    String? restaurantImage = Panier().getSelectedRestaurantImage();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -137,7 +137,6 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
               Center(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height / 3.5,
@@ -148,9 +147,9 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                         : 0,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      image: restaurantLogo != null
+                      image: restaurantImage != null
                           ? DecorationImage(
-                              image: NetworkImage(restaurantLogo),
+                              image: NetworkImage(restaurantImage),
                               fit: BoxFit.contain)
                           : null,
                       borderRadius: BorderRadius.circular(15.0),
@@ -166,38 +165,38 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ),
                 ),
               ),
-     Row(
-  children: [
-    SizedBox(
-      height: MediaQuery.of(context).size.height / 7, 
-      width: MediaQuery.of(context).size.height / 7, 
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height / 14),
-          child: restaurantLogo != null
-              ? Image.network(
-                  restaurantLogo,
-                  fit: BoxFit.cover,
-                )
-              : Container(),
-        ),
-      ),
-    ),
-    const SizedBox(width: 10), 
-  ],
-),
-
+              Row(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 7,
+                    width: MediaQuery.of(context).size.height / 7,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            MediaQuery.of(context).size.height / 14),
+                        child: restaurantLogo != null
+                            ? Image.network(
+                                restaurantLogo,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                ],
+              ),
               const SizedBox(height: 10),
               Container(
                 width: 1500,
@@ -280,16 +279,36 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                         selectedRetraitMode,
                         selectedTime,
                       );
-                    }
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NextPage(
-                          panier: Panier().articles,
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NextPage(
+                            panier: Panier().articles,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Heure invalide'),
+                            content: const Text(
+                              'Veuillez choisir une heure après l\'heure actuelle.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
                   }
                 },
                 style: ElevatedButton.styleFrom(

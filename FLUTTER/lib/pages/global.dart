@@ -57,7 +57,9 @@ class Panier {
   String? getSelectedRestaurantLogo() {
     return selectedRestaurant?.logo;
   }
-
+String? getSelectedRestaurantImage() {
+    return selectedRestaurant?.image;
+  }
   String? getSelectedRestaurantName() {
     return selectedRestaurant?.nom;
   }
