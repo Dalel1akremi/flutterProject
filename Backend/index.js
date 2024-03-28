@@ -78,7 +78,8 @@ app.put('/commandes', Commande.updateCommandeState);
 app.get('/getCommandesPasse', Commande.getCommandesPassé);
 app.get('/getCommandes', Commande.getCommandes);
 app.post('/sendNotification', Commande.sendNotification);
-app.post('/createRestaurant',upload.single('logo'),Restaurant.createRestaurant);
+app.post('/createRestaurant',upload.fields([{ name: 'logo', maxCount: 1 }, { name: 'image', maxCount: 1 }]), Restaurant.createRestaurant);
+
 app.get('/getRestaurant',Restaurant.getRestaurant);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

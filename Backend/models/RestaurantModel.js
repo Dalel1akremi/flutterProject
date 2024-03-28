@@ -5,6 +5,7 @@ const restaurantSchema = new mongoose.Schema({
   logo: String,
   nom: { type: String, unique: true },
   adresse: { type: String, required: true },
+  image: String,
   ModeDeRetrait: [{
     type: String,
     enum: ['En Emporter', 'Sur place', 'En Livraison'] 
