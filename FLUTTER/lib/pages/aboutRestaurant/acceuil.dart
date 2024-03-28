@@ -158,9 +158,9 @@ class _RestaurantListState extends State<AcceuilScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.search),
+                  icon: const Icon(Icons.search),
                   onPressed: () {
-                    filterRestaurants(); // Call filter method on search button press
+                    filterRestaurants();
                   },
                 ),
               ],
@@ -254,8 +254,8 @@ class _RestaurantListState extends State<AcceuilScreen> {
         );
       },
     )
-    : const Center(
-        child: CircularProgressIndicator(),
+   : const Center(
+        child: Text('Aucun restaurant trouvé pour cette adresse.'),
       ),
 ),
         ],
