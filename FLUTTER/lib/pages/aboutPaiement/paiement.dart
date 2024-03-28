@@ -273,18 +273,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
     setState(() {});
   }
 
-  String mapRetraitMode(String value) {
-    switch (value) {
-      case 'A emporter':
-        return 'A emporter';
-      case 'Sur place':
-        return 'Sur place';
-      case 'En Livraison':
-        return 'En Livraison';
-      default:
-        return value;
-    }
+ String mapRetraitMode(String value) {
+  switch (value) {
+    case 'a emporter':
+      return 'A Emporter';
+    case 'sur place':
+      return 'Sur place';
+    case 'en livraison':
+      return 'En Livraison';
+    default:
+      return value;
   }
+}
 
   Future<void> showEditDialog() async {
     Map<String, dynamic>? newSelections = await showDialog(
@@ -305,7 +305,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     selectedRetraitMode = newValue!;
                   });
                 },
-                items: <String>['A emporter', 'Sur place', 'En Livraison']
+                  items: <String>['A Emporter', 'Sur place', 'En Livraison']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,

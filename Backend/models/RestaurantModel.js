@@ -8,7 +8,7 @@ const restaurantSchema = new mongoose.Schema({
   image: String,
   ModeDeRetrait: [{
     type: String,
-    enum: ['En Emporter', 'Sur place', 'En Livraison'] 
+    enum: ['A Emporter', 'Sur place', 'En Livraison'] 
   }] 
 , 
   ModeDePaiement: [{ type: String,
