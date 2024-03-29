@@ -232,46 +232,109 @@ class CommandeScreen extends StatelessWidget {
       ),
     );
   }
+Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
+  return ListView.builder(
+    itemCount: commandes.length * 2 - 1,
+    itemBuilder: (context, index) {
+      if (index.isOdd) {
+        return const Divider();
+      } else {
+        final commandeIndex = index ~/ 2;
+        final commande = commandes[commandeIndex];
+        final articles = commande['articles'] as List<Map<String, dynamic>>;
 
-  Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
-    return ListView.builder(
-      itemCount: commandes.length * 2 -
-          1, // Ajuster le nombre d'éléments pour inclure les séparateurs
-      itemBuilder: (context, index) {
-        if (index.isOdd) {
-          // L'index impair signifie qu'il s'agit d'un séparateur
-          return const Divider();
-        } else {
-          // L'index pair signifie qu'il s'agit d'un ListTile
-          final commandeIndex = index ~/ 2;
-          final commande = commandes[commandeIndex];
-          final articles = commande['articles'] as List<Map<String, dynamic>>;
-          return Column(
-            children: [
-              ListTile(
-                title: Text(
-                  'Commande: ${commande['commande'] ?? 'N/A'}, Temps: ${commande['temps'] ?? 'N/A'}, Mode: ${commande['mode_retrait'] ?? 'N/A'}, Total: ${commande['Total'] ?? 'N/A'}€',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: articles.map((article) {
-                    return Text(
-                      '${article['nom'] ?? 'N/A'}, Prix: ${article['prix'] ?? 'N/A'}€, Quantité: ${article['quantite'] ?? 'N/A'}',
-                    );
-                  }).toList(),
+       Color circle1Color = Colors.grey; 
+        Color circle2Color = Colors.grey;
+        Color circle3Color = Colors.grey; 
+        final etatCommande = commande['etat'];
+        if (etatCommande == 'Validé') {
+          circle1Color = Colors.green;
+        } else if (etatCommande == 'Préparation') {
+          circle1Color = Colors.green;
+          circle2Color = Colors.orange;
+        } else if (etatCommande == 'Prête') {
+          circle1Color = Colors.green;
+          circle2Color = Colors.orange;
+          circle3Color = Colors.blue;
+        }
+
+        return Column(
+          children: [
+            ListTile(
+              title: Text(
+                'Commande: ${commande['commande'] ?? 'N/A'}, Temps: ${commande['temps'] ?? 'N/A'}, Mode: ${commande['mode_retrait'] ?? 'N/A'}, Total: ${commande['Total'] ?? 'N/A'}€',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              if (commandeIndex < commandes.length - 1) const Divider(),
-            ],
-          );
-        }
-      },
-    );
-  }
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var i = 0; i < articles.length; i++)
+                    Text(
+                      '${articles[i]['nom'] ?? 'N/A'}, Prix: ${articles[i]['prix'] ?? 'N/A'}€, Quantité: ${articles[i]['etat'] ?? 'N/A'}',
+                    ),
+                  const SizedBox(height: 10),
+                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // Circle 1 - Validé
+                      Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 15,
+                            backgroundColor: circle1Color,
+                            child: const Text('1', style: TextStyle(color: Colors.white)),
+                          ),
+                          const Text('Validé'),
+                        ],
+                      ),
+                  
+                      Expanded(
+                        child: Container(
+                          height: 2,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 15,
+                            backgroundColor: circle2Color,
+                            child: const Text('2', style: TextStyle(color: Colors.white)),
+                          ),
+                          const Text('Préparation'),
+                        ],
+                      ),
+                      Expanded(
+                        child: Container(
+                          height: 2,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 15,
+                            backgroundColor: circle3Color,
+                            child: const Text('3', style: TextStyle(color: Colors.white)),
+                          ),
+                          const Text('Prête'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            if (commandeIndex < commandes.length - 1) const Divider(),
+          ],
+        );
+      }
+    },
+  );
+}
 
   Future<List<Map<String, dynamic>>> fetchCommandesEncours(
      
@@ -316,6 +379,7 @@ class CommandeScreen extends StatelessWidget {
               'temps': commande['temps'],
               'mode_retrait': commande['mode_retrait'],
               'Total': commande['montant_Total'],
+              'etat': commande['etat'],
               'articles': articles,
             };
           }).toList();
