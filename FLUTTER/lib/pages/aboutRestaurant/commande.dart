@@ -61,26 +61,24 @@ class CommandeScreen extends StatelessWidget {
     required this.panier,
   }) : super(key: key);
 
+  Future<void> makePhoneCall(String phoneNumber) async {
+    if (kDebugMode) {
+      print('Attempting to launch call to $phoneNumber');
+    }
+
+    if (await canLaunch('tel:$phoneNumber')) {
+      await launch('tel:$phoneNumber');
+    } else {
+      if (kDebugMode) {
+        print('Impossible de lancer l\'appel vers $phoneNumber');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isLoggedIn = authProvider.isAuthenticated;
-   
-
-    Future<void> makePhoneCall() async {
-      const phoneNumber = '03325368596';
-      if (kDebugMode) {
-        print('Attempting to launch call to $phoneNumber');
-      }
-
-      if (await canLaunch('tel:$phoneNumber')) {
-        await launch('tel:$phoneNumber');
-      } else {
-        if (kDebugMode) {
-          print('Impossible de lancer l\'appel vers $phoneNumber');
-        }
-      }
-    }
 
     return DefaultTabController(
       length: 2,
@@ -102,32 +100,27 @@ class CommandeScreen extends StatelessWidget {
         ),
         body: Column(
           children: [
-            const TabBar(
-              tabs: [
-                Tab(text: 'En cours'),
-                Tab(text: 'Passées'),
-              ],
-            ),
-            Row(
-              children: [
-                const Icon(Icons.hourglass_bottom, size: 25),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          makePhoneCall();
-                        },
-                        child: const Icon(Icons.phone, size: 30),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const Divider(),
+  TabBar(
+    tabs: const [
+      Tab(text: 'En cours'),
+      Tab(text: 'Passées'),
+    ],
+    onTap: (index) {
+      onTabTapped(index);
+    },
+  ),
+  const Divider(),
+  Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      currentIndex == 1
+          ? const Icon(Icons.history, size: 30)
+          : const Icon(Icons.hourglass_bottom),
+    ],
+  ),
+  const Divider(),
+
+
             Expanded(
               child: TabBarView(
                 children: [
@@ -242,11 +235,11 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
         final commandeIndex = index ~/ 2;
         final commande = commandes[commandeIndex];
         final articles = commande['articles'] as List<Map<String, dynamic>>;
-
-       Color circle1Color = Colors.grey; 
+        final etatCommande = commande['etat'];
+        final phoneNumber = commande['numero_telephone'];
+        Color circle1Color = Colors.grey; 
         Color circle2Color = Colors.grey;
         Color circle3Color = Colors.grey; 
-        final etatCommande = commande['etat'];
         if (etatCommande == 'Validé') {
           circle1Color = Colors.green;
         } else if (etatCommande == 'Préparation') {
@@ -258,83 +251,138 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
           circle3Color = Colors.blue;
         }
 
-        return Column(
-          children: [
-            ListTile(
-              title: Text(
-                'Commande: ${commande['commande'] ?? 'N/A'}, Temps: ${commande['temps'] ?? 'N/A'}, Mode: ${commande['mode_retrait'] ?? 'N/A'}, Total: ${commande['Total'] ?? 'N/A'}€',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (var i = 0; i < articles.length; i++)
+        return Card(
+          margin: const EdgeInsets.all(8.0),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     Text(
-                      '${articles[i]['nom'] ?? 'N/A'}, Prix: ${articles[i]['prix'] ?? 'N/A'}€, Quantité: ${articles[i]['etat'] ?? 'N/A'}',
+                      'Commande: ${commande['commande'] ?? 'N/A'}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  const SizedBox(height: 10),
-                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      // Circle 1 - Validé
-                      Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 15,
-                            backgroundColor: circle1Color,
-                            child: const Text('1', style: TextStyle(color: Colors.white)),
-                          ),
-                          const Text('Validé'),
-                        ],
+                    Text(
+                      'Total: ${commande['Total'] ?? 'N/A'}€',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
-                  
-                      Expanded(
-                        child: Container(
-                          height: 2,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 15,
-                            backgroundColor: circle2Color,
-                            child: const Text('2', style: TextStyle(color: Colors.white)),
-                          ),
-                          const Text('Préparation'),
-                        ],
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 2,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 15,
-                            backgroundColor: circle3Color,
-                            child: const Text('3', style: TextStyle(color: Colors.white)),
-                          ),
-                          const Text('Prête'),
-                        ],
-                      ),
-                    ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Temps: ${commande['temps'] ?? 'N/A'}',
+                ),
+                Text(
+                  'Mode: ${commande['mode_retrait'] ?? 'N/A'}',
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Articles:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: articles.map((article) {
+                    return Text(
+                      '${article['nom'] ?? 'N/A'}, Prix: ${article['prix'] ?? 'N/A'}€, Quantité: ${article['quantite'] ?? 'N/A'}',
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'État: $etatCommande',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        makePhoneCall(phoneNumber);
+                      },
+                      icon: const Icon(Icons.phone),
+                      label: const Text('Appeler'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+               Row(
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    Visibility(
+      visible: etatCommande != 'Passé' && etatCommande != 'Annuler',
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 15,
+            backgroundColor: circle1Color,
+            child: const Text('1', style: TextStyle(color: Colors.white)),
+          ),
+          const Text('Validé'),
+        ],
+      ),
+    ),
+    Expanded(
+      child: Container(
+        height: 2,
+        color: Colors.black,
+      ),
+    ),
+    Visibility(
+      visible: etatCommande != 'Passé' && etatCommande != 'Annuler',
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 15,
+            backgroundColor: circle2Color,
+            child: const Text('2', style: TextStyle(color: Colors.white)),
+          ),
+          const Text('Préparation'),
+        ],
+      ),
+    ),
+    Expanded(
+      child: Container(
+        height: 2,
+        color: Colors.black,
+      ),
+    ),
+    Visibility(
+      visible: etatCommande != 'Passé' && etatCommande != 'Annuler',
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 15,
+            backgroundColor: circle3Color,
+            child: const Text('3', style: TextStyle(color: Colors.white)),
+          ),
+          const Text('Prête'),
+        ],
+      ),
+    ),
+  ],
+),
+
+              ],
             ),
-            if (commandeIndex < commandes.length - 1) const Divider(),
-          ],
+          ),
         );
       }
     },
   );
 }
+
 
   Future<List<Map<String, dynamic>>> fetchCommandesEncours(
      
@@ -380,6 +428,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
               'mode_retrait': commande['mode_retrait'],
               'Total': commande['montant_Total'],
               'etat': commande['etat'],
+              'numero_telephone':commande[ 'numero_telephone'],
               'articles': articles,
             };
           }).toList();
@@ -436,6 +485,8 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
               'temps': commande['temps'],
               'mode_retrait': commande['mode_retrait'],
               'Total': commande['montant_Total'],
+              'etat': commande['etat'],
+               'numero_telephone':commande[ 'numero_telephone'],
               'articles': articles,
             };
           }).toList();
