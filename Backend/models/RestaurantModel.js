@@ -14,6 +14,16 @@ const restaurantSchema = new mongoose.Schema({
   ModeDePaiement: [{ type: String,
     enum: ['carte bancaire','espece','carnet des cheques'] 
    }],
+   numero_telephone: {
+    type: String,
+    validate: {
+      validator: function(value) {
+        return /^(\+|00)33[1-9]([-. ]?[0-9]{2}){4}$/g.test(value);
+      },
+      
+      message: 'Le numéro de téléphone doit être un numéro français valide.'
+    }
+  }
 });
 restaurantSchema.pre('save', async function (next) {
   try {
