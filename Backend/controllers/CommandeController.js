@@ -62,7 +62,6 @@ const createCommande = async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
-
 const getCommandesEncours = async (req, res) => {
   try {
     const id_user = req.query.id_user;
@@ -70,18 +69,25 @@ const getCommandesEncours = async (req, res) => {
       console.error('id_user is missing in the request query parameters.');
       return res.status(400).json({ error: 'id_user is required in the request query parameters.' });
     }
-      const commandes = await Commande.find({ etat: 'encours' });
-      if (!commandes || commandes.length === 0) {
-        console.error('No commandes with etat "encours" found.');
-        return res.status(404).json({ error: 'No commandes with etat "encours" found.' });
-      }
+
   
-      return res.status(200).json(commandes);
-    } catch (error) {
-      console.error('Error getting commandes with etat "encours":', error.message);
-      return res.status(500).json({ error: 'Internal Server Error' });
+    const etats = ['encours', 'Validé', 'Préparation', 'Prête'];
+
+    const commandes = await Commande.find({ id_user, etat: { $in: etats } });
+    
+    if (!commandes || commandes.length === 0) {
+      console.error('No commandes found with the specified etats.');
+      return res.status(404).json({ error: 'No commandes found with the specified etats.' });
     }
-  };
+
+    return res.status(200).json(commandes);
+  } catch (error) {
+    console.error('Error getting commandes with specified etats:', error.message);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
   const getCommandes = async (req, res) => {
     try {
         const commandes = await Commande.find({ etat: 'encours' });
