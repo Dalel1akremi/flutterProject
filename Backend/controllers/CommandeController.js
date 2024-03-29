@@ -87,7 +87,7 @@ const getCommandesEncours = async (req, res) => {
     }
 
   
-    const etats = ['encours', 'Validé', 'Préparation', 'Prête'];
+    const etats = ['Encours', 'Validé', 'Préparation', 'Prête'];
 
     const commandes = await Commande.find({ id_user, etat: { $in: etats } });
     
@@ -106,7 +106,7 @@ const getCommandesEncours = async (req, res) => {
 
   const getCommandes = async (req, res) => {
     try {
-        const commandes = await Commande.find({ etat: 'encours' });
+        const commandes = await Commande.find({ etat: 'Encours' });
         if (!commandes || commandes.length === 0) {
             console.error('No commandes with etat "encours" found.');
             return res.status(404).json({ error: 'No commandes with etat "encours" found.' });
@@ -145,11 +145,11 @@ const getCommandesEncours = async (req, res) => {
         console.error(`Commande with ID ${commandeId} not found.`);
         return res.status(404).json({ error: `Commande with ID ${commandeId} not found.` });
       }
-      if (commande.etat === 'passé') {
+      if (commande.etat === 'Passé') {
         console.log(`Commande with ID ${commandeId} is already in the "passe" state.`);
         return res.status(200).json({ message: `Commande with ID ${commandeId} is already in the "passe" state.` });
       }
-      commande.etat = 'passé';
+      commande.etat = 'Passé';
       await commande.save();
       console.log(`Commande with ID ${commandeId} updated successfully to "passe".`);
       return res.status(200).json({ message: `Commande with ID ${commandeId} updated successfully to "passe".` });
@@ -166,8 +166,9 @@ const getCommandesEncours = async (req, res) => {
         console.error('id_user is missing in the request query parameters.');
         return res.status(400).json({ error: 'id_user is required in the request query parameters.' });
       }
+      const etats = ['Passé', 'Annuler'];
 
-      const commandes = await Commande.find({ id_user, etat: 'passé' });
+      const commandes = await Commande.find({ id_user, etat: { $in: etats } });
 
       if (!commandes || commandes.length === 0) {
         console.error(`No past commandes found for id_user ${id_user}.`);
