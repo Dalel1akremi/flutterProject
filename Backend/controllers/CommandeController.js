@@ -1,6 +1,7 @@
 const Commande = require ('./../models/CommandeModel');
 const Item = require ('./../models/itemModel');
 const  User = require('./../models/userModel');
+const Restaurant = require('./../models/RestaurantModel');
 const  nodemailer = require("nodemailer");
 const createCommande = async (req, res) => {
   try {
@@ -12,10 +13,22 @@ const createCommande = async (req, res) => {
       return res.status(400).json({ error: 'id_items are required and should be provided as an array in the request body.' });
     }
 
+  
     if (!id_user) {
       console.error('id_user is missing in the request query parameters.');
       return res.status(400).json({ error: 'id_user is required in the request query parameters.' });
     }
+
+   
+    const restaurant = await Restaurant.findOne({ id_rest });
+
+    
+    if (!restaurant) {
+      console.error(`Restaurant with id_rest ${id_rest} not found.`);
+      return res.status(404).json({ error: `Restaurant with id_rest ${id_rest} not found.` });
+    }
+
+    const numero_telephone = restaurant.numero_telephone;
 
     const itemIds = id_items.map(item => item.id_item);
     const items = await Item.find({ id_item: { $in: itemIds } });
@@ -24,6 +37,7 @@ const createCommande = async (req, res) => {
       console.error('One or more items not found.');
       return res.status(404).json({ error: 'One or more items not found.' });
     }
+
 
     const formattedItems = id_items.map((itemInput) => {
       const matchingItem = items.find(item => item.id_item === itemInput.id_item);
@@ -52,6 +66,7 @@ const createCommande = async (req, res) => {
       temps: temps,
       mode_retrait: mode_retrait,
       montant_Total: montant_Total,
+      numero_telephone: numero_telephone, 
     });
 
     const savedCommande = await newCommande.save();
@@ -62,6 +77,7 @@ const createCommande = async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
 const getCommandesEncours = async (req, res) => {
   try {
     const id_user = req.query.id_user;
