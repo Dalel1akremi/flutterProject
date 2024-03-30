@@ -7,7 +7,6 @@ const RedirectSchema = new Schema({
 
   id_item: { type:Number, ref: 'item' },
   nom: { type: String, unique: true },
-  type: String,
   prix: Number,
   description: String,
   isArchived:{ type: Boolean, validate: [isValidBoolean, 'isArchived must be true or false'] },
@@ -16,7 +15,6 @@ const RedirectSchema = new Schema({
   max_quantite: Number,
   is_Menu:  { type: Boolean, default: false},
   is_Redirect: { type: Boolean, default: false},
-  id: { type: Schema.Types.ObjectId, ref: 'CompositionDeBase' },
   id_cat: { type:Number, ref: 'Categories' },
 });
 function isValidBoolean(value) {

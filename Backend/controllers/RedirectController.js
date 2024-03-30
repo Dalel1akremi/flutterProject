@@ -15,7 +15,6 @@ exports.createRedirect = async (req, res) => {
       max_quantite,
       is_Menu,
       id_cat,
-      id,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
     // Validate data types
@@ -66,7 +65,6 @@ exports.createRedirect = async (req, res) => {
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
       id_cat,
-      id,
        // Log the id field
     });
     const newRedirect = new Redirect({
@@ -79,7 +77,6 @@ exports.createRedirect = async (req, res) => {
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
       id_cat,
-      id,
       image: imageUrl,
     });
 

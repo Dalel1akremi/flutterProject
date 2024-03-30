@@ -1,7 +1,7 @@
 const Categories = require('../models/categoriesModel');
 const createCategorie = async (req, res) => {
   try {
-    let { nom_cat, type_cat, id_rest } = req.body; 
+    let { nom_cat, id_rest } = req.body; 
     nom_cat = nom_cat.charAt(0).toUpperCase() + nom_cat.slice(1).toLowerCase();
     const existingCategorie = await Categories.findOne({ nom_cat });
 
@@ -23,8 +23,7 @@ const createCategorie = async (req, res) => {
     }
     const newCategorie = new Categories({
       id_rest: idRestArray,
-      nom_cat,
-      type_cat
+      nom_cat
     });
 
     const savedCategorie = await newCategorie.save();

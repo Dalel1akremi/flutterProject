@@ -3,7 +3,6 @@ const { Schema, model } = require('mongoose');
 const itemSchema = new Schema({
   id_item: { type: Number, unique: true },
   nom: { type: String, unique: true },
-  type: String,
   prix: Number,
   description: String,
   isArchived: { type: Boolean, validate: [isValidBoolean, 'isArchived must be true or false'] },
@@ -12,7 +11,6 @@ const itemSchema = new Schema({
   max_quantite: Number,
   is_Menu: { type: Boolean, validate: [isValidBoolean, 'is_Menu must be true or false'] },
   is_Redirect: { type: Boolean, validate: [isValidBoolean, 'is_Redirect must be true or false'] },
-  id: { type: Schema.Types.ObjectId, ref: 'CompositionDeBase' },
   id_cat: { type: Number, ref: 'Categories' },
   id_Steps: [
     {

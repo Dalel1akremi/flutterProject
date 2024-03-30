@@ -13,7 +13,6 @@ exports.createItem = async (req, res) => {
       is_Redirect,
       id_cat,
       id_Steps,
-      id,
       id_rest,
     } = body;
 
@@ -62,7 +61,6 @@ exports.createItem = async (req, res) => {
       is_Menu: validatedIsMenu,
       is_Redirect: validatedIsRedirect,
       id_cat,
-      id,
       id_rest: idRestArray,
     });
 
@@ -76,7 +74,6 @@ exports.createItem = async (req, res) => {
       is_Menu: validatedIsMenu,
       is_Redirect: validatedIsRedirect,
       id_cat,
-      id,
       image: imageUrl,
       id_rest: idRestArray,
     };
