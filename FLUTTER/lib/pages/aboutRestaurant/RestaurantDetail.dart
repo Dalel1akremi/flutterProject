@@ -139,7 +139,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
             children: [
               Center(
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height / 3.5,
+                  height: MediaQuery.of(context).size.height / 2,
                   width: 1000,
                   child: Container(
                     height: restaurantLogo != null
@@ -152,7 +152,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               image: NetworkImage(restaurantImage),
                               fit: BoxFit.contain)
                           : null,
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(15.0),     
                       boxShadow: [
                         BoxShadow(
                           color: Colors.white.withOpacity(0.5),
