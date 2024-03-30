@@ -327,13 +327,13 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              '${menuItem['description']}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 16,
-                              ),
+                             Text(
+                            menuItem['description'] ?? '', // Display an empty string if description is null
+                            style: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16,
                             ),
+                          ),
                             
                             const SizedBox(height: 8),
                             if (!(menuItem['is_Redirect'] == true))
