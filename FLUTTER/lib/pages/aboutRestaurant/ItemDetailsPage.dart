@@ -12,7 +12,7 @@ class ItemDetailsPage extends StatelessWidget {
   final String nom;
   final int prix;
   final List<dynamic> id_Steps;
-  final int id_rest;
+ 
   const ItemDetailsPage({
     Key? key,
     required this.id_item,
@@ -20,7 +20,7 @@ class ItemDetailsPage extends StatelessWidget {
     required this.img,
     required this.prix,
     required this.id_Steps,
-    required  this.id_rest,
+   
   }) : super(key: key);
 
   @override
