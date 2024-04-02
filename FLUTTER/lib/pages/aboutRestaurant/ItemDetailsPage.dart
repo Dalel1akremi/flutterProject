@@ -88,19 +88,19 @@ class ItemDetailsPage extends StatelessWidget {
   Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StepDetailsPage(
-              id_Steps: [item['id_Steps'] ?? 0],
-              id_item: item['id_item'] ?? 0,
-              nom: item['nom'] ?? '',
-              img: item['image'] ?? '',
-              prix: (item['prix'] ?? 0).toInt(),
-              
-            ),
-          ),
-        );
+       Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => StepDetailsPage(
+      id_Steps: item['id_Steps'] ?? [],
+      id_item: item['id_item'] ?? 0,
+      nom: item['nom'] ?? '',
+      img: item['image'] ?? '',
+      prix: (item['prix'] ?? 0).toInt(),
+    ),
+  ),
+);
+
       },
       child: Container(
         padding: const EdgeInsets.all(16),
