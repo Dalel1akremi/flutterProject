@@ -261,7 +261,7 @@ class _RestaurantListState extends State<AcceuilScreen> {
               
                   return Container(
                     height: 2,
-                    color: Colors.black,
+                    color: const Color.fromARGB(255, 234, 231, 231),
                   );
                 }
               },
