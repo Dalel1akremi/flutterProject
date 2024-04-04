@@ -229,19 +229,26 @@ class _LoginPageState extends State<loginPage> {
                 onPressed: () => (context),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: const Color.fromARGB(255, 107, 101, 101),
+                  backgroundColor: const Color.fromARGB(255, 237, 21, 21),
                 ),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'images/google_logo.png',
-                      height: 20.0,
-                    ),
-                    const SizedBox(width: 10.0),
-                    const Text('Connecter avec Google'),
-                  ],
-                ),
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    Image.asset(
+      'images/google_logo.png',
+      height: 20.0,
+    ),
+    const SizedBox(width: 10.0),
+    const Text(
+      'Connecter avec Google',
+      style: TextStyle(
+        decoration: TextDecoration.underline,
+        color: Colors.black,
+      ),
+    ),
+  ],
+),
+
               ),
             ],
           ),

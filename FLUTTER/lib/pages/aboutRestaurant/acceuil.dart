@@ -168,98 +168,112 @@ class _RestaurantListState extends State<AcceuilScreen> {
               ],
             ),
           ),
-       Expanded(
+      Expanded(
   child: filteredRestaurants.isNotEmpty
     ? ListView.builder(
-      itemCount: filteredRestaurants.length,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            Panier().setSelectedRestaurant(filteredRestaurants[index]);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const RestaurantDetail(),
-              ),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-              leading: SizedBox(
-                width: 70,
-                height: 60,
-                child: Image.network(
-                  filteredRestaurants[index].logo,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    filteredRestaurants[index].nom,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+        itemCount: filteredRestaurants.length * 2 - 1,
+        itemBuilder: (context, index) {
+          if (index.isEven) {
+            // Rendre un élément de la liste
+            final restaurantIndex = index ~/ 2;
+            final restaurant = filteredRestaurants[restaurantIndex];
+            return GestureDetector(
+              onTap: () {
+                Panier().setSelectedRestaurant(restaurant);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RestaurantDetail(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  leading: SizedBox(
+                    width: 70,
+                    height: 60,
+                    child: Image.network(
+                      restaurant.logo,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  Text(filteredRestaurants[index].adresse),
-                ],
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        restaurant.nom,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(restaurant.adresse),
+                    ],
+                  ),
+                  subtitle: Row(
+                    children: [
+                      ...restaurant.modeDeRetrait.map((mode) {
+                        IconData iconData;
+                        switch (mode) {
+                          case 'En Livraison':
+                            iconData = Icons.delivery_dining;
+                            break;
+                          case 'A Emporter':
+                            iconData = Icons.takeout_dining;
+                            break;
+                          case 'Sur place':
+                            iconData = Icons.restaurant;
+                            break;
+                          default:
+                            iconData = Icons.error;
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Icon(iconData),
+                        );
+                      }).toList(),
+                      ...restaurant.modeDePaiement.map((mode) {
+                        IconData? iconData;
+                        switch (mode) {
+                          case 'espece':
+                            iconData = Icons.monetization_on;
+                            break;
+                          case 'carte bancaire':
+                            iconData = Icons.credit_card;
+                            break;
+                          case 'carnet des cheques':
+                            iconData = Icons.book;
+                            break;
+                          default:
+                            iconData = null;
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Icon(iconData),
+                        );
+                      }).toList(),
+                    ],
+                  ),
+                ),
               ),
-              subtitle: Row(
-                children: [
-                  ...filteredRestaurants[index].modeDeRetrait.map((mode) {
-                    IconData iconData;
-                    switch (mode) {
-                      case 'En Livraison':
-                        iconData = Icons.delivery_dining;
-                        break;
-                      case 'A Emporter':
-                        iconData = Icons.takeout_dining;
-                        break;
-                      case 'Sur place':
-                        iconData = Icons.restaurant;
-                        break;
-                      default:
-                        iconData = Icons.error;
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Icon(iconData),
-                    );
-                  }).toList(),
-                  ...filteredRestaurants[index].modeDePaiement.map((mode) {
-                    IconData? iconData;
-                    switch (mode) {
-                      case 'espece':
-                        iconData = Icons.monetization_on;
-                        break;
-                      case 'carte bancaire':
-                        iconData = Icons.credit_card;
-                        break;
-                      case 'carnet des cheques':
-                        iconData = Icons.book;
-                        break;
-                      default:
-                        iconData = null;
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Icon(iconData),
-                    );
-                  }).toList(),
-                ],
+            );
+          } else {
+            // Ajouter un espace
+            return Expanded(
+              child: Container(
+                height: 2,
+                color: Colors.black,
               ),
-            ),
-          ),
-        );
-      },
-    )
-   : const Center(
+            );
+          }
+        },
+      )
+    : const Center(
         child: Text('Aucun restaurant trouvé pour cette adresse.'),
       ),
 ),
+
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
