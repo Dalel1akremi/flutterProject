@@ -139,143 +139,139 @@ class _RestaurantListState extends State<AcceuilScreen> {
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
-      body: Column(
+     body: Column(
+  children: [
+    Container(
+      color: const Color.fromARGB(181, 123, 106, 106),
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
         children: [
-          Container(
-            color: const Color.fromARGB(181, 123, 106, 106),
-            padding: const EdgeInsets.all(8.0),
-           child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: const InputDecoration(
-                       prefixIcon: Icon(Icons.location_on),
-                      hintText: 'Saisissez votre adresse',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        searchQuery = value;
-                      });
-                    },
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    filterRestaurants();
-                  },
-                ),
-              ],
+          Expanded(
+            child: TextField(
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.location_on),
+                hintText: 'Saisissez votre adresse',
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                });
+              },
             ),
           ),
-      Expanded(
-  child: filteredRestaurants.isNotEmpty
-    ? ListView.builder(
-        itemCount: filteredRestaurants.length * 2 - 1,
-        itemBuilder: (context, index) {
-          if (index.isEven) {
-            // Rendre un élément de la liste
-            final restaurantIndex = index ~/ 2;
-            final restaurant = filteredRestaurants[restaurantIndex];
-            return GestureDetector(
-              onTap: () {
-                Panier().setSelectedRestaurant(restaurant);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RestaurantDetail(),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  leading: SizedBox(
-                    width: 70,
-                    height: 60,
-                    child: Image.network(
-                      restaurant.logo,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        restaurant.nom,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(restaurant.adresse),
-                    ],
-                  ),
-                  subtitle: Row(
-                    children: [
-                      ...restaurant.modeDeRetrait.map((mode) {
-                        IconData iconData;
-                        switch (mode) {
-                          case 'En Livraison':
-                            iconData = Icons.delivery_dining;
-                            break;
-                          case 'A Emporter':
-                            iconData = Icons.takeout_dining;
-                            break;
-                          case 'Sur place':
-                            iconData = Icons.restaurant;
-                            break;
-                          default:
-                            iconData = Icons.error;
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Icon(iconData),
-                        );
-                      }).toList(),
-                      ...restaurant.modeDePaiement.map((mode) {
-                        IconData? iconData;
-                        switch (mode) {
-                          case 'espece':
-                            iconData = Icons.monetization_on;
-                            break;
-                          case 'carte bancaire':
-                            iconData = Icons.credit_card;
-                            break;
-                          case 'carnet des cheques':
-                            iconData = Icons.book;
-                            break;
-                          default:
-                            iconData = null;
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Icon(iconData),
-                        );
-                      }).toList(),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          } else {
-            // Ajouter un espace
-            return Expanded(
-              child: Container(
-                height: 2,
-                color: Colors.black,
-              ),
-            );
-          }
-        },
-      )
-    : const Center(
-        child: Text('Aucun restaurant trouvé pour cette adresse.'),
-      ),
-),
-
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              filterRestaurants();
+            },
+          ),
         ],
       ),
+    ),
+    Expanded(
+      child: filteredRestaurants.isNotEmpty
+          ? ListView.builder(
+              itemCount: filteredRestaurants.length * 2 - 1,
+              itemBuilder: (context, index) {
+                if (index.isEven) {
+                  final restaurantIndex = index ~/ 2;
+                  final restaurant = filteredRestaurants[restaurantIndex];
+                  return GestureDetector(
+                    onTap: () {
+                      Panier().setSelectedRestaurant(restaurant);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RestaurantDetail(),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        leading: SizedBox(
+                          width: 70,
+                          height: 60,
+                          child: Image.network(
+                            restaurant.logo,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              restaurant.nom,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(restaurant.adresse),
+                          ],
+                        ),
+                        subtitle: Row(
+                          children: [
+                            ...restaurant.modeDeRetrait.map((mode) {
+                              IconData iconData;
+                              switch (mode) {
+                                case 'En Livraison':
+                                  iconData = Icons.delivery_dining;
+                                  break;
+                                case 'A Emporter':
+                                  iconData = Icons.takeout_dining;
+                                  break;
+                                case 'Sur place':
+                                  iconData = Icons.restaurant;
+                                  break;
+                                default:
+                                  iconData = Icons.error;
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Icon(iconData),
+                              );
+                            }).toList(),
+                            ...restaurant.modeDePaiement.map((mode) {
+                              IconData? iconData;
+                              switch (mode) {
+                                case 'espece':
+                                  iconData = Icons.monetization_on;
+                                  break;
+                                case 'carte bancaire':
+                                  iconData = Icons.credit_card;
+                                  break;
+                                case 'carnet des cheques':
+                                  iconData = Icons.book;
+                                  break;
+                                default:
+                                  iconData = null;
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Icon(iconData),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+              
+                  return Container(
+                    height: 2,
+                    color: Colors.black,
+                  );
+                }
+              },
+            )
+          : const Center(
+              child: Text('Aucun restaurant trouvé pour cette adresse.'),
+            ),
+    ),
+  ],
+),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
