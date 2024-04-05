@@ -40,21 +40,27 @@ const createRestaurant = async (req, res) => {
 
 const getRestau = async (req, res) => {
   try {
-    const restaurants = await Restaurant.find({}, 'id_rest'); // Récupère seulement le champ 'id_rest'
+    // Récupérer tous les restaurants avec leurs noms et id_rest
+    const restaurants = await Restaurant.find({}, 'id_rest nom');
 
     if (!restaurants || restaurants.length === 0) {
       return res.status(404).json({ success: false, status: 404, message: 'Aucun restaurant trouvé' });
     }
 
-    // Extrayez uniquement les noms des restaurants
-    const restaurantIds = restaurants.map(restaurant => restaurant.id_rest);
+    // Extrayez à la fois les noms et les id_rest des restaurants
+    const restaurantData = restaurants.map(restaurant => ({
+      id_rest: restaurant.id_rest,
+      nom: restaurant.nom
+    }));
+    
 
-    res.json({ success: true, status: 200, message: 'Noms des restaurants récupérés avec succès', restaurantIds });
+    res.json({ success: true, status: 200, message: 'Noms des restaurants récupérés avec succès', restaurants: restaurantData });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, status: 500, message: 'Erreur lors de la récupération des noms des restaurants' });
   }
 };
+
 
 const getRestaurant = async (req, res) => {
     try {
