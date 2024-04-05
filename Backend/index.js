@@ -59,12 +59,15 @@ app.post('/validate_code', userController.validate_code);
 app.put('/new_password', userController.new_password);
 app.post('/createCategorie', categoriesController.createCategorie);
 app.get('/getCategories', categoriesController.getCategories);
+app.put('/ArchivedCategorie/:id_cat', categoriesController.ArchivedCategorie);
+app.put('/updateCategory/:id_cat', categoriesController.updateCategory);
 app.post('/createRedirect', upload.single('image'),RedirectController.createRedirect);
 app.get('/getRedirect', RedirectController.getRedirect);
 app.post('/createStep', StepController.createStep);
 app.post('/createItem',upload.single('image'), itemController.createItem);
 app.get('/getItem', itemController.getItem);
 app.get('/getItems', itemController.getItems);
+app.get('/getItemsByRestaurantId', itemController.getItemsByRestaurantId);
 app.put('/updateItem/:itemId', itemController.updateItem);
 app.post('/porfeuille', paiement.porfeuille);
 app.post('/recupererCarteParId', paiement.recupererCarteParId);
@@ -76,7 +79,7 @@ app.get('/getCommandesPasse', Commande.getCommandesPassé);
 app.get('/getCommandes', Commande.getCommandes);
 app.post('/sendNotification', Commande.sendNotification);
 app.post('/createRestaurant',upload.fields([{ name: 'logo', maxCount: 1 }, { name: 'image', maxCount: 1 }]), Restaurant.createRestaurant);
-
+app.get('/getRestau',Restaurant.getRestau);
 app.get('/getRestaurant',Restaurant.getRestaurant);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
