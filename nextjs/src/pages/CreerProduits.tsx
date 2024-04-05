@@ -34,6 +34,9 @@ export default function AddItem() {
     image: null,
   });
 
+  const [message, setMessage] = useState<string>('');
+  const [isError, setIsError] = useState<boolean>(false);
+
   useEffect(() => {
     // Decode token and set restaurant ID
     const token = localStorage.getItem('token');
@@ -81,7 +84,8 @@ export default function AddItem() {
       }
 
       const response = await axios.post('http://localhost:3000/createItem', formDataToSend);
-      alert(response.data.message);
+      setMessage(response.data.message);
+      setIsError(false);
       setFormData({
         nom: '',
         prix: 0,
@@ -96,7 +100,8 @@ export default function AddItem() {
         image: null,
       });
     } catch (error: any) {
-      alert(error.response.data.message);
+      setMessage(error.response.data.message);
+      setIsError(true);
       console.error('Error adding item:', error);
     }
   };
@@ -107,11 +112,12 @@ export default function AddItem() {
       <div className="container">
         <h1>Ajouter un nouvel item</h1>
         <form onSubmit={handleSubmit} className="form">
-        <div className="formGroup">
-          <label className="input-label">Nom:</label>
-          <input type="text" className="input" name="nom" placeholder="Nom" value={formData.nom} onChange={handleChange} required />
-        </div>
-        <div className="formGroup">
+          {/* Form inputs */}
+          <div className="formGroup">
+            <label className="input-label">Nom:</label>
+            <input type="text" className="input" name="nom" placeholder="Nom" value={formData.nom} onChange={handleChange} required />
+          </div>
+          <div className="formGroup">
           <label className="input-label">Prix:</label>
           <input type="number" className="input" name="prix" placeholder="Prix" value={formData.prix} onChange={handleChange} required />
         </div>
@@ -149,8 +155,28 @@ export default function AddItem() {
           <input type="file" className="file-input" accept="image/*" onChange={handleImageChange} />
         </div>
         <button type="submit" className="submit-button">Ajouter</button>
-      </form>
-    </div>
+        </form>
+      </div>
+      {message && (
+  <div 
+    className={isError ? "error-message" : "success-message"}
+    style={{
+      textAlign: 'center',
+      backgroundColor: isError ? 'red' : 'green',
+      padding: '10px',
+      margin: '20px auto',
+      borderRadius: '5px',
+      width: 'fit-content',
+    }}
+  >
+    {message}
+  </div>
+)}
+
     </div>
   );
 }
+
+      
+        
+ 
