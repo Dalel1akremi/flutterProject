@@ -111,6 +111,7 @@ class Article {
  
 // ignore: non_constant_identifier_names
   List<String> elementsChoisis;
+  // ignore: non_constant_identifier_names
   final List<dynamic> id_Steps;
   Article({
     // ignore: non_constant_identifier_names

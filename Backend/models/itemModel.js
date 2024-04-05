@@ -17,7 +17,7 @@ const itemSchema = new Schema({
       id_Step: { type: Number, required: true },
     },
   ],
-  id_rest: [{ type: Number, ref: 'Restaurant' }], 
+  id_rest: { type: Number, ref: 'Restaurant' }, 
 });
 
 function isValidBoolean(value) {

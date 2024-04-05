@@ -42,14 +42,7 @@ exports.createItem = async (req, res) => {
       return;
     }
 
-    let idRestArray;
-    if (typeof id_rest === 'string') {
-      idRestArray = id_rest.split(',').map(id => parseInt(id.trim()));
-    } else if (Array.isArray(id_rest)) {
-      idRestArray = id_rest.map(id => parseInt(id));
-    } else {
-      idRestArray = [];
-    }
+   
 
     console.log('Nouvelles données d\'Item :', {
       nom,
@@ -61,7 +54,7 @@ exports.createItem = async (req, res) => {
       is_Menu: validatedIsMenu,
       is_Redirect: validatedIsRedirect,
       id_cat,
-      id_rest: idRestArray,
+      id_rest ,
     });
 
     const newItemData = {
@@ -75,7 +68,7 @@ exports.createItem = async (req, res) => {
       is_Redirect: validatedIsRedirect,
       id_cat,
       image: imageUrl,
-      id_rest: idRestArray,
+      id_rest,
     };
 
   
@@ -213,6 +206,26 @@ exports.updateItem = async (req, res) => {
     res.status(500).json({
       status: 500,
       message: 'Erreur lors de la mise à jour de l\'élément.',
+    });
+  }
+};
+exports.getItemsByRestaurantId = async (req, res) => {
+  try {
+    const id_restaurant = req.query.id_rest; // Récupère l'ID du restaurant à partir des paramètres de la requête
+
+    // Supposons que votre modèle Item soit importé et correctement défini
+    const items = await Item.find({ id_rest: id_restaurant }); // Requête pour récupérer les éléments du restaurant spécifié par son ID
+
+    res.status(200).json({
+      status: 200,
+      message: 'Items récupérés avec succès pour le restaurant correspondant',
+      items,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Erreur lors de la récupération des items pour le restaurant correspondant',
     });
   }
 };
