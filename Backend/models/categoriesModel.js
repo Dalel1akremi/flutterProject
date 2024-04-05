@@ -7,8 +7,14 @@ const mongoose = require('mongoose');
 const categoriesSchema = new mongoose.Schema({
   id_cat: { type: Number, unique: true },
   nom_cat: { type: String, unique: true },
-  id_rest: [{ type: Number, ref: 'Restaurant' }], 
+  id_rest: { type: Number, ref: 'Restaurant' },
+  isArchived: { type: Boolean, validate: [isValidBoolean, 'isArchived must be true or false'] },
+ 
 });
+function isValidBoolean(value) {
+  return typeof value === 'boolean';
+}
+
 categoriesSchema.pre('save', async function (next) {
   try {
     if (!this.id_cat) {
