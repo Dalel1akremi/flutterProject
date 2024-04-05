@@ -12,6 +12,10 @@ const AdminSchema = new mongoose.Schema({
   password: String,
   validationCode: String, 
   validationCodeTimestamp: Date,
+  id_rest: { 
+    type: Number,
+    required: true,
+  },
 });
 AdminSchema.pre('save', async function (next) {
   try {
