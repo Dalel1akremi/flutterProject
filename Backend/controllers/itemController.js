@@ -1,5 +1,7 @@
 const Item = require('../models/itemModel');
 const Step=require('./../models/StepModel');
+const mongoose = require('mongoose');
+const { ObjectId } = require('mongoose').Types;
 exports.createItem = async (req, res) => {
   try {
     const { body, file } = req;
@@ -164,12 +166,10 @@ exports.getItems = async (req, res) => {
     });
   }
 };
-exports.updateItem = async (req, res) => {
+exports.ArchiverItem = async (req, res) => {
   try {
     const { itemId } = req.params;
     const { isArchived } = req.body; 
-
-
     if (!itemId) {
       return res.status(400).json({
         status: 400,
@@ -208,6 +208,59 @@ exports.getItemsByRestaurantId = async (req, res) => {
     res.status(500).json({
       status: 500,
       message: 'Erreur lors de la récupération des items pour le restaurant correspondant',
+    });
+  }
+};
+exports.updateItem = async (req, res) => {
+  try {
+    const { _id } = req.params;
+    const { nom, prix, description, isArchived, quantite, max_quantite, is_Menu, is_Redirect, id_cat, id_item } = req.body;
+
+    // Convertir l'ID en ObjectId en utilisant le constructeur ObjectId
+    const itemId = new ObjectId(_id);
+
+    // Mettre à jour l'élément dans la base de données
+    await Item.findByIdAndUpdate(itemId, {
+      nom,
+      prix,
+      description,
+      isArchived,
+      quantite,
+      max_quantite,
+      is_Menu,
+      is_Redirect,
+      id_cat,
+      id_item
+    });
+
+    res.status(200).json({ success: true, message: 'L\'élément a été mis à jour avec succès.' });
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de l\'élément :', error);
+    res.status(500).json({ success: false, message: 'Une erreur s\'est produite lors de la mise à jour de l\'élément.' });
+  }
+};
+exports.getItemById = async (req, res) => {
+  try {
+    const itemId = req.params.itemId;
+    const item = await Item.findById(itemId);
+
+    if (!item) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Item non trouvé',
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: 'Item récupéré avec succès',
+      item,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Erreur lors de la récupération de l\'item',
     });
   }
 };
