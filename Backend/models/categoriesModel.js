@@ -1,16 +1,12 @@
-// models/categoriesModel.js
-
-
-const { boolean } = require('joi');
 const mongoose = require('mongoose');
 
 const categoriesSchema = new mongoose.Schema({
   id_cat: { type: Number, unique: true },
-  nom_cat: { type: String, unique: true },
+  nom_cat: String,
   id_rest: { type: Number, ref: 'Restaurant' },
   isArchived: { type: Boolean, validate: [isValidBoolean, 'isArchived must be true or false'] },
- 
 });
+
 function isValidBoolean(value) {
   return typeof value === 'boolean';
 }
@@ -26,6 +22,9 @@ categoriesSchema.pre('save', async function (next) {
     next(error);
   }
 });
+
+// Création d'un index unique personnalisé
+categoriesSchema.index({ nom_cat: 1, id_rest: 1 }, { unique: true });
 const Categories = mongoose.model('Categories', categoriesSchema);
 
 module.exports = Categories;
