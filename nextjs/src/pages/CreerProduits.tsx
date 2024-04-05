@@ -1,10 +1,10 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../styles/navbar';
+import jwt from 'jsonwebtoken';
 
 interface FormData {
   nom: string;
-  type: string;
   prix: number;
   description: string;
   quantite: number;
@@ -13,7 +13,7 @@ interface FormData {
   is_Redirect: boolean;
   id_cat: string;
   id_Steps: string;
-  id: string;
+  id_rest: string;
   image: File | null;
 
   [key: string]: string | number | boolean | File | null;
@@ -22,7 +22,6 @@ interface FormData {
 export default function AddItem() {
   const [formData, setFormData] = useState<FormData>({
     nom: '',
-    type: '',
     prix: 0,
     description: '',
     quantite: 0,
@@ -31,9 +30,22 @@ export default function AddItem() {
     is_Redirect: false,
     id_cat: '',
     id_Steps: '',
-    id: '',
+    id_rest: '',
     image: null,
   });
+
+  useEffect(() => {
+    // Decode token and set restaurant ID
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwt.decode(token) as { [key: string]: any };
+      const { id_rest } = decodedToken;
+      setFormData(prevState => ({
+        ...prevState,
+        id_rest: decodedToken.id_rest,
+      }));
+    }
+  }, []);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -67,11 +79,11 @@ export default function AddItem() {
           }
         }
       }
+
       const response = await axios.post('http://localhost:3000/createItem', formDataToSend);
       alert(response.data.message);
       setFormData({
         nom: '',
-        type: '',
         prix: 0,
         description: '',
         quantite: 0,
@@ -80,7 +92,7 @@ export default function AddItem() {
         is_Redirect: false,
         id_cat: '',
         id_Steps: '',
-        id: '',
+        id_rest: '',
         image: null,
       });
     } catch (error: any) {
@@ -90,18 +102,14 @@ export default function AddItem() {
   };
 
   return (
-    <div >
+    <div>
       <Navbar />
       <div className="container">
-      <h1>Ajouter un nouvel item</h1>
-      <form onSubmit={handleSubmit} className="form">
+        <h1>Ajouter un nouvel item</h1>
+        <form onSubmit={handleSubmit} className="form">
         <div className="formGroup">
           <label className="input-label">Nom:</label>
           <input type="text" className="input" name="nom" placeholder="Nom" value={formData.nom} onChange={handleChange} required />
-        </div>
-        <div className="formGroup">
-          <label className="input-label">Type:</label>
-          <input type="text" className="input" name="type" placeholder="Type" value={formData.type} onChange={handleChange} required />
         </div>
         <div className="formGroup">
           <label className="input-label">Prix:</label>
@@ -135,10 +143,7 @@ export default function AddItem() {
           <label className="input-label">ID des étapes (séparés par des virgules):</label>
           <input type="text" className="input" name="id_Steps" placeholder="ID des étapes" value={formData.id_Steps} onChange={handleChange} />
         </div>
-        <div className="formGroup">
-          <label className="input-label">ID:</label>
-          <input type="text" className="input" name="id" placeholder="ID" value={formData.id} onChange={handleChange} />
-        </div>
+        
         <div className="formGroup">
           <label className="input-label">Image:</label>
           <input type="file" className="file-input" accept="image/*" onChange={handleImageChange} />
