@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import Navbar from '../styles/navbar';
 import Link from 'next/link';
+import jwt from 'jsonwebtoken'; // Importer jwt pour décoder le token
+ 
 interface Item {
   _id: string;
   nom: string;
@@ -20,32 +22,33 @@ interface Item {
   id_item: string;
 }
 
+// Votre composant Produits
 const Produits = () => {
   const router = useRouter();
   const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
-    // Vérifier si l'utilisateur est connecté
-    const token = localStorage.getItem('token');
-    if (!token) {
-      // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
-      router.push('/connexion');
-    } else {
-      // Si l'utilisateur est connecté, récupérer les produits
-      const fetchItems = async () => {
-        try {
-          const response = await axios.get('http://localhost:3000/getItems');
-          setItems(response.data.items);
-        } catch (error) {
-          console.error('Erreur lors de la récupération des items :', error);
-        }
-      };
+    const fetchItems = async () => {
+      const token = localStorage.getItem('token'); // Récupérer le jeton du stockage local
+      if (!token) {
+        router.push('/connexion'); // Rediriger vers la page de connexion si le jeton n'existe pas
+        return;
+      }
 
-      fetchItems();
-    }
+      try {
+        const decodedToken = jwt.decode(token) as { [key: string]: any };
+      const { id_rest } = decodedToken;// Extraire l'identifiant du restaurant
+        const response = await axios.get(`http://localhost:3000/getItemsByRestaurantId?id_rest=${id_rest}`);
+        setItems(response.data.items); // Mettre à jour les produits avec ceux du restaurant
+      } catch (error) {
+        console.error('Erreur lors de la récupération des items :', error);
+      }
+    };
+
+    fetchItems();
   }, []);
 
-  const handleArchivedToggle = async (itemId: string, currentValue: boolean) => {
+  const handleArchivedToggle = async (itemId: any, currentValue: any) => {
     try {
       await axios.put(`http://localhost:3000/updateItem/${itemId}`, { isArchived: !currentValue });
       setItems(prevItems =>
@@ -105,7 +108,7 @@ const Produits = () => {
               </td>
               <td>{item.id}</td>
               <td>{item.id_cat}</td>
-              <td>{item.id_Steps ? item.id_Steps.map(step => step.id_Step).join(', ') : ''}</td>
+              <td>{item.id_Steps ? item.id_Steps.map((step: { id_Step: any; }) => step.id_Step).join(', ') : ''}</td>
               <td>{item.id_item}</td>
             </tr>
           ))}
