@@ -32,30 +32,18 @@ exports.createItem = async (req, res) => {
       return;
     }
 
-    const existingItem = await Item.findOne({ nom });
+    // Vérifier si un item avec le même nom existe déjà pour ce restaurant
+    const existingItem = await Item.findOne({ nom, id_rest });
 
     if (existingItem !== null) {
       res.status(400).json({
         status: 400,
-        message: 'Cet Item existe déjà',
+        message: 'Cet Item existe déjà pour ce restaurant',
       });
       return;
     }
 
-   
-
-    console.log('Nouvelles données d\'Item :', {
-      nom,
-      prix: validatedPrix,
-      description,
-      isArchived: false,
-      quantite: validatedQuantite,
-      max_quantite: validatedMaxQuantite,
-      is_Menu: validatedIsMenu,
-      is_Redirect: validatedIsRedirect,
-      id_cat,
-      id_rest ,
-    });
+    const idStepsArray = validatedIsMenu ? id_Steps.split(',').map(idStep => ({ id_Step: parseInt(idStep) })) : null;
 
     const newItemData = {
       nom,
@@ -69,15 +57,8 @@ exports.createItem = async (req, res) => {
       id_cat,
       image: imageUrl,
       id_rest,
+      id_Steps: idStepsArray,
     };
-
-  
-    if (validatedIsMenu) {
-      const idStepsArray = id_Steps.split(',').map(idStep => ({ id_Step: parseInt(idStep) }));
-      newItemData.id_Steps = idStepsArray;
-    } else {
-      newItemData.id_Steps = null;
-    }
 
     const newItem = new Item(newItemData);
 
@@ -97,6 +78,7 @@ exports.createItem = async (req, res) => {
     });
   }
 };
+
 
 exports.getItem = async (req, res) => {
   try {
