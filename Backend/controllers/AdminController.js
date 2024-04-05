@@ -4,11 +4,12 @@ const bcrypt = require('bcrypt');
 const Admin = require('../models/adminModel');
 const  nodemailer = require("nodemailer");
 
+
 const  crypto= require("crypto");
 const GeocodedAd=require ('../models/AdresseModel');
 const axios = require('axios');
 const registerAdmin = async (req, res) => {
-  const { nom, prenom, telephone, email, password, confirmPassword } = req.body;
+  const { nom, prenom, telephone, email, password, confirmPassword,id_rest } = req.body;
 
   try {
     // Check if a Admin with the same email already exists
@@ -34,7 +35,7 @@ const registerAdmin = async (req, res) => {
       telephone,
       email,
       password: hashedPassword,
-      
+      id_rest,
     });
 
     // Save the Admin to the database
@@ -47,38 +48,49 @@ const registerAdmin = async (req, res) => {
   }
 };
 const loginAdmin = async (req, res) => {
-                    const { email, password } = req.body;
-                  
-                    try {
-                      // Recherche de l'utilisateur dans la base de données
-                      const admin = await Admin.findOne({ email });
-                  
-                      if (!admin) {
-                        // L'utilisateur n'existe pas
-                        return res.status(401).json({ message: 'Invalid email or password' });
-                      }
-                  
-                      // Vérification du mot de passe
-                      const passwordMatch = await bcrypt.compare(password, admin.password);
-                  
-                      if (!passwordMatch) {
-                        // Mot de passe incorrect
-                        return res.status(401).json({ message: 'Invalid email or password' });
-                      }
-                  
-                      // Création d'un jeton JWT
-                      const token = jwt.sign(
-                        { adminId: admin._id, email: admin.email ,nom: admin.nom,telephone:admin.telephone},
-                        'your-secret-key', // Remplacez par une clé secrète plus sécurisée dans un environnement de production
-                        { expiresIn: '7d' } // Durée de validité du jeton (1 heure dans cet exemple)
-                      );
-                  
-                      res.status(200).json({ token, adminId: admin._id,nom: admin.nom,telephone:admin.telephone, message: 'Login successful' });
-                    } catch (error) {
-                      console.error(error);
-                      res.status(500).json({ message: 'Internal server error' });
-                    }
-                  };
+  const { email, password } = req.body;
+
+  try {
+    // Recherche de l'administrateur dans la base de données
+    const admin = await Admin.findOne({ email });
+
+    if (!admin) {
+      // L'administrateur n'existe pas
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Vérification du mot de passe
+    const passwordMatch = await bcrypt.compare(password, admin.password);
+
+    if (!passwordMatch) {
+      // Mot de passe incorrect
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    const tokenData = {
+      adminId: admin._id,
+      email: admin.email,
+      nom: admin.nom,
+      telephone: admin.telephone,
+      id_rest: admin.id_rest, 
+    };
+
+    const token = jwt.sign(
+      tokenData,
+      'your-secret-key', 
+      { expiresIn: '7d' } 
+    );
+
+  
+
+    res.status(200).json({ token, adminId: admin._id, nom: admin.nom, telephone: admin.telephone, message: 'Login successful' });
+    console.log(token);} catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
 const reset_password = async (req, res) => {
   const { email } = req.body;
 
