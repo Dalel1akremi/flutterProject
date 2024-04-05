@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
@@ -9,14 +9,10 @@ const Connexion = () => {
     password: '',
   });
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      router.push('/produits');
-    }
-  }, []);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
       ...prevState,
@@ -24,23 +20,20 @@ const Connexion = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:3000/loginAdmin', formData);
-      localStorage.setItem('token', response.data.token); // Stockage du token
-      alert(response.data.message);
+      localStorage.setItem('token', response.data.token);
+      setSuccessMessage(response.data.message);
+      setErrorMessage('');
       router.push('/produits');
-    } catch (error: any) {
-      alert(error.response.data.message);
+    } catch (error:any) {
+      setErrorMessage(error.response.data.message || 'An error occurred');
+      setSuccessMessage('');
     }
   };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // Suppression du token lors de la déconnexion
-    router.push('/connexion');
-  };
-
+  
   const handleRegisterClick = () => {
     router.push('/register');
   };
@@ -61,6 +54,12 @@ const Connexion = () => {
           <button type="submit" className="button">Se connecter</button>
         </form>
       </div>
+      {errorMessage && (
+        <div style={{ backgroundColor: 'red', textAlign: 'center', marginTop: '20px', padding: '10px' }}>{errorMessage}</div>
+      )}
+      {successMessage && (
+        <div style={{ backgroundColor: 'green', textAlign: 'center', marginTop: '20px', padding: '10px' }}>{successMessage}</div>
+      )}
       <div className="register-section">
         <p>Si vous êtes nouveaux, merci de vous inscrire en cliquant ici</p>
         <button onClick={handleRegisterClick} className="button">S'inscrire</button>
