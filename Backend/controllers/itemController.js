@@ -214,16 +214,8 @@ exports.getItemsByRestaurantId = async (req, res) => {
 };
 exports.updateItem = async (req, res) => {
   try {
-    const { _id } = req.params;
-    console.log(_id);
-    const { nom, prix, description, isArchived, quantite, max_quantite, is_Menu, is_Redirect, id_cat, id_item } = req.body;
-
-    // Convertir l'ID en ObjectId en utilisant le constructeur ObjectId
-    const itemId = new ObjectId(_id);
-    console.log(itemId);
-    // Mettre à jour l'élément dans la base de données
-    await Item.findByIdAndUpdate(itemId, {
-      nom,
+    const { itemId } = req.params;
+    const {  nom,
       prix,
       description,
       isArchived,
@@ -231,13 +223,34 @@ exports.updateItem = async (req, res) => {
       max_quantite,
       is_Menu,
       is_Redirect,
-      id_cat
-    }, { new: true });
+      id_cat } = req.body; 
+    if (!itemId) {
+      return res.status(400).json({
+        status: 400,
+        message: "L'ID de l'élément à mettre à jour est manquant.",
+      });
+    }
 
-    res.status(200).json({ success: true, message: 'L\'élément a été mis à jour avec succès.' });
+    await Item.findByIdAndUpdate(itemId, {  nom,
+      prix,
+      description,
+      isArchived,
+      quantite,
+      max_quantite,
+      is_Menu,
+      is_Redirect,
+      id_cat });
+
+    res.status(200).json({
+      status: 200,
+      message: "L'élément a été mis à jour avec succès.",
+    });
   } catch (error) {
-    console.error('Erreur lors de la mise à jour de l\'élément :', error);
-    res.status(500).json({ success: false, message: 'Une erreur s\'est produite lors de la mise à jour de l\'élément.' });
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Erreur lors de la mise à jour de l\'élément.',
+    });
   }
 };
 
@@ -246,7 +259,7 @@ exports.updateItem = async (req, res) => {
 exports.getItemById = async (req, res) => {
   try {
     const { itemId } = req.params; // Supposons que vous récupériez l'ID de l'item depuis les paramètres de la requête
-    const item = await Item.findOne({ id_item: itemId }); // Recherche par id_item plutôt que par _id
+    const item = await Item.findOne({ _id: itemId }); // Recherche par id_item plutôt que par _id
 
     if (!item) {
       return res.status(404).json({ message: 'Item not found' });
