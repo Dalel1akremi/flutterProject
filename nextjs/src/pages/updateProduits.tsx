@@ -1,3 +1,4 @@
+import Navbar from '@/styles/navbar';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -87,6 +88,7 @@ const UpdateProduits = () => {
 
   return (
     <div>
+      <Navbar />
       <h1>Modifier Produits</h1>
       <div className="container">
       <form onSubmit={handleSubmit}>
