@@ -4,48 +4,50 @@ exports.createStep = async (req, res) => {
   try {
     const { body } = req;
     
-    const { nom_Step, id_items ,is_Obligatoire} = body;
+    const { nom_Step, id_items, is_Obligatoire } = body;
 
-    // Check if the Step already exists
+    // Vérifiez si le Step existe déjà
     const existingStep = await Step.findOne({ nom_Step });
 
     if (existingStep) {
-      res.status(400).json({
+      return res.status(400).json({
         status: 400,
         message: 'Ce Step existe déjà',
       });
-      return;
     }
 
-    // Create a new Step with id_items included
+    // Convertissez la chaîne d'ID en un tableau d'objets
+    const idItemsArray = id_items.split(',').map(item => ({
+      id_item: parseInt(item.trim()),
+      // Vous pouvez ajouter d'autres propriétés si nécessaire
+    }));
+
+    // Créez un nouveau Step avec les id_items correctement formatés
     const newStep = new Step({
       nom_Step,
-
-      id_items,
+      id_items: idItemsArray,
       is_Obligatoire,
-
-     
-
+      // Vous pouvez ajouter d'autres propriétés ici
     });
 
-    // Save the new Step to the database
+    // Enregistrez le nouveau Step dans la base de données
     const savedStep = await newStep.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 200,
       message: 'Step créé avec succès',
       data: savedStep,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       status: 500,
       message: 'Erreur lors de la création de Step',
       error: error.message,
     });
   }
-
 }
+
 exports.getSteps = async (req, res) => {
   try {
     // Récupérer tous les Steps dans la base de données

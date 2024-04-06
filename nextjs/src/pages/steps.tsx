@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../styles/navbar';
+import Link from 'next/link';
 
 interface Step {
   _id: string;
@@ -78,11 +79,14 @@ const Steps = () => {
   };
 
   return (
-    <div>
-      <Navbar />
-      <div className="header">
-        <h1>Liste des étapes</h1>
-      </div>
+                    <div>
+                    <Navbar />
+                    <div className="header">
+  <h1>Liste des étapes disponibles</h1>
+  <Link href="/creerStep" passHref>
+    <button className="green-button">+</button>
+  </Link>
+</div>
       <table>
         <thead>
           <tr>
