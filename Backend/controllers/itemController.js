@@ -1,7 +1,8 @@
 const Item = require('../models/itemModel');
 const Step=require('./../models/StepModel');
 const mongoose = require('mongoose');
-const { ObjectId } = require('mongoose').Types;
+const { Types: { ObjectId } } = require('mongoose');
+const axios = require('axios');
 exports.createItem = async (req, res) => {
   try {
     const { body, file } = req;
@@ -214,11 +215,12 @@ exports.getItemsByRestaurantId = async (req, res) => {
 exports.updateItem = async (req, res) => {
   try {
     const { _id } = req.params;
+    console.log(_id);
     const { nom, prix, description, isArchived, quantite, max_quantite, is_Menu, is_Redirect, id_cat, id_item } = req.body;
 
     // Convertir l'ID en ObjectId en utilisant le constructeur ObjectId
     const itemId = new ObjectId(_id);
-
+    console.log(itemId);
     // Mettre à jour l'élément dans la base de données
     await Item.findByIdAndUpdate(itemId, {
       nom,
@@ -229,9 +231,8 @@ exports.updateItem = async (req, res) => {
       max_quantite,
       is_Menu,
       is_Redirect,
-      id_cat,
-      id_item
-    });
+      id_cat
+    }, { new: true });
 
     res.status(200).json({ success: true, message: 'L\'élément a été mis à jour avec succès.' });
   } catch (error) {
@@ -239,28 +240,32 @@ exports.updateItem = async (req, res) => {
     res.status(500).json({ success: false, message: 'Une erreur s\'est produite lors de la mise à jour de l\'élément.' });
   }
 };
+
+
+
 exports.getItemById = async (req, res) => {
   try {
-    const itemId = req.params.itemId;
-    const item = await Item.findById(itemId);
+    const { itemId } = req.params; // Supposons que vous récupériez l'ID de l'item depuis les paramètres de la requête
+    const item = await Item.findOne({ id_item: itemId }); // Recherche par id_item plutôt que par _id
 
     if (!item) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Item non trouvé',
-      });
+      return res.status(404).json({ message: 'Item not found' });
     }
 
-    res.status(200).json({
-      status: 200,
-      message: 'Item récupéré avec succès',
-      item,
-    });
+    res.status(200).json(item);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      status: 500,
-      message: 'Erreur lors de la récupération de l\'item',
-    });
+    console.error('Error getting item by ID:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+exports.getItemRest = async (req, res) => {
+  try {
+    // Récupérer tous les éléments avec leurs noms et identifiants de restaurant
+    const items = await Item.find({}, 'nom id_rest');
+
+    res.json({ success: true, data: items });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des éléments :', error);
+    res.status(500).json({ success: false, message: 'Une erreur s\'est produite lors de la récupération des éléments.' });
   }
 };
