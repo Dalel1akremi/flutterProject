@@ -64,6 +64,9 @@ app.put('/updateCategory/:id_cat', categoriesController.updateCategory);
 app.post('/createRedirect', upload.single('image'),RedirectController.createRedirect);
 app.get('/getRedirect', RedirectController.getRedirect);
 app.post('/createStep', StepController.createStep);
+app.get('/getSteps', StepController.getSteps);
+app.put('/ObligationStep/:stepId', StepController.ObligationStep);
+app.put('/updateStep/:stepId', StepController.updateStep);
 app.post('/createItem',upload.single('image'), itemController.createItem);
 app.get('/getItem', itemController.getItem);
 app.get('/getItems', itemController.getItems);
@@ -72,7 +75,7 @@ app.put('/ArchiverItem/:itemId', itemController.ArchiverItem);
 app.put('/updateItem/:itemId', itemController.updateItem);
 app.get('/getItemById/:itemId', itemController.getItemById);
 app.get('/getItemRest', itemController.getItemRest);
-
+app.get('/getNomItemById/:itemId', itemController.getNomItemById);
 app.post('/porfeuille', paiement.porfeuille);
 app.post('/recupererCarteParId', paiement.recupererCarteParId);
 app.get('/recupererCartesUtilisateur', paiement.recupererCartesUtilisateur);
