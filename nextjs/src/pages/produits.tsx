@@ -79,11 +79,11 @@ const Produits = () => {
 
   const handleEdit = (item: Item) => {
     setSelectedItem(item);
-    console.log('ID de l\'élément sélectionné :', item.id_item);
+    console.log('ID de l\'élément sélectionné :', item._id);
     // Encodez les anciennes valeurs dans l'URL et naviguez vers la page updateProduits
-    const oldValuesUrl = `/updateProduits?&nom=${encodeURIComponent(item.nom)}&prix=${encodeURIComponent(item.prix)}&description=${encodeURIComponent(item.description)}&isArchived=${encodeURIComponent(item.isArchived.toString())}&quantite=${encodeURIComponent(item.quantite.toString())}&max_quantite=${encodeURIComponent(item.max_quantite.toString())}&is_Menu=${encodeURIComponent(item.is_Menu.toString())}&is_Redirect=${encodeURIComponent(item.is_Redirect.toString())}&id_cat=${encodeURIComponent(item.id_cat)}&id_item=${encodeURIComponent(item.id_item)}`;
+    const oldValuesUrl = `/updateProduits?&nom=${encodeURIComponent(item.nom)}&prix=${encodeURIComponent(item.prix)}&description=${encodeURIComponent(item.description)}&isArchived=${encodeURIComponent(item.isArchived.toString())}&quantite=${encodeURIComponent(item.quantite.toString())}&max_quantite=${encodeURIComponent(item.max_quantite.toString())}&is_Menu=${encodeURIComponent(item.is_Menu.toString())}&is_Redirect=${encodeURIComponent(item.is_Redirect.toString())}&id_cat=${encodeURIComponent(item.id_cat)}&_id=${encodeURIComponent(item._id)}`;
     router.push(oldValuesUrl);
-  };
+};
 
   return (
     <div>
