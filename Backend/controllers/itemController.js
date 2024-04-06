@@ -271,6 +271,22 @@ exports.getItemById = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+exports.getNomItemById = async (req, res) => {
+  try {
+    const { itemId } = req.params; // Supposons que vous récupériez l'ID de l'item depuis les paramètres de la requête
+    const item = await Item.findOne({ id_item: itemId }); // Recherche par id_item plutôt que par _id
+
+    if (!item) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    res.status(200).json({ nom: item.nom }); // Renvoyer seulement le nom de l'item
+  } catch (error) {
+    console.error('Error getting item by ID:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 exports.getItemRest = async (req, res) => {
   try {
     // Récupérer tous les éléments avec leurs noms et identifiants de restaurant
