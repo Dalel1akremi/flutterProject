@@ -38,6 +38,6 @@ itemSchema.pre('save', async function (next) {
 
 // Création d'un index unique personnalisé
 itemSchema.index({ nom: 1, id_rest: 1 }, { unique: true });
-const item = model('Item', itemSchema);
+const Item = model('Item', itemSchema);
 
-module.exports = item;
+module.exports = Item;

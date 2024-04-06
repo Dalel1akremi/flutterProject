@@ -1,8 +1,6 @@
-// updateProduits.tsx
-
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 
 const UpdateProduits = () => {
   const router = useRouter();
@@ -11,33 +9,43 @@ const UpdateProduits = () => {
     nom: '',
     prix: '',
     description: '',
-    isArchived: '',
+    isArchived: false,
     quantite: '',
     max_quantite: '',
-    is_Menu: '',
-    is_Redirect: '',
+    is_Menu: false,
+    is_Redirect: false,
     id_cat: '',
-    id_item: '',
+    id_item: query.id_item || '',
   });
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+
   useEffect(() => {
-    setFormData({
-      nom: Array.isArray(query.nom) ? query.nom[0] : query.nom || '',
-      prix: Array.isArray(query.prix) ? query.prix[0] : query.prix || '',
-      description: Array.isArray(query.description) ? query.description[0] : query.description || '',
-      isArchived: Array.isArray(query.isArchived) ? query.isArchived[0] : query.isArchived || '',
-      quantite: Array.isArray(query.quantite) ? query.quantite[0] : query.quantite || '',
-      max_quantite: Array.isArray(query.max_quantite) ? query.max_quantite[0] : query.max_quantite || '',
-      is_Menu: Array.isArray(query.is_Menu) ? query.is_Menu[0] : query.is_Menu || '',
-      is_Redirect: Array.isArray(query.is_Redirect) ? query.is_Redirect[0] : query.is_Redirect || '',
-      id_cat: Array.isArray(query.id_cat) ? query.id_cat[0] : query.id_cat || '',
-      id_item: Array.isArray(query.id_item) ? query.id_item[0] : query.id_item || '',
-    });
+    if (query.id_item) {
+      axios.get(`http://localhost:3000/getItemById/${query.id_item}`)
+        .then(response => {
+          const itemData = response.data;
+          setFormData({
+            nom: itemData.nom || '',
+            prix: itemData.prix || '',
+            description: itemData.description || '',
+            isArchived: !!itemData.isArchived, // Convertir en boolean
+            quantite: itemData.quantite || '',
+            max_quantite: itemData.max_quantite || '',
+            is_Menu: !!itemData.is_Menu, // Convertir en boolean
+            is_Redirect: !!itemData.is_Redirect, // Convertir en boolean
+            id_cat: itemData.id_cat || '',
+            id_item: query.id_item || '',
+          });
+        })
+        .catch(error => {
+          console.error("Erreur lors de la récupération des données de l'API :", error);
+        });
+    }
   }, [query]);
 
-  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
       ...prevState,
@@ -45,22 +53,36 @@ const UpdateProduits = () => {
     }));
   };
 
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: checked,
+    }));
+  };
+  const handleTextareaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
-                    e.preventDefault();
-                    try {
-                      await axios.put(`http://localhost:3000/updateItem/${formData.id_item}`, formData);
-                      setIsSuccess(true);
-                      setMessage('Les données ont été mises à jour avec succès !');
-                   setTimeout(() => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://localhost:3000/updateItem/${formData.id_item}`, formData);
+      setIsSuccess(true);
+      setMessage('Les données ont été mises à jour avec succès !');
+      setTimeout(() => {
         setIsSuccess(false);
         setMessage('');
       }, 1000);
-                    } catch (error) {
-                      setIsSuccess(false);
-                      setMessage('Une erreur s\'est produite lors de la mise à jour des données.');
-                      console.error('Erreur lors de la mise à jour des données :', error);
-                    }
-                  };
+    } catch (error) {
+      setIsSuccess(false);
+      setMessage("Une erreur s'est produite lors de la mise à jour des données.");
+      console.error("Erreur lors de la mise à jour des données :", error);
+    }
+  };
 
   return (
     <div>
@@ -77,12 +99,9 @@ const UpdateProduits = () => {
         </div>
         <div className="formGroup">
           <label className="input-label" htmlFor="description"><strong>Description:</strong></label>
-          <textarea  className="textarea" id="description" name="description" value={formData.description} onChange={handleInputChange}></textarea>
+          <textarea  className="textarea" id="description" name="description" value={formData.description} onChange={handleTextareaChange}></textarea>
         </div>
-        <div className="formGroup">
-          <label className="input-label" htmlFor="isArchived"><strong>Archivé:</strong></label>
-          <input className="input" type="text" id="isArchived" name="isArchived" value={formData.isArchived} onChange={handleInputChange} />
-        </div>
+
         <div className="formGroup">
           <label className="input-label" htmlFor="quantite"><strong>Quantité:</strong></label>
           <input className="input" type="text" id="quantite" name="quantite" value={formData.quantite} onChange={handleInputChange} />
@@ -92,13 +111,38 @@ const UpdateProduits = () => {
           <input className="input" type="text" id="max_quantite" name="max_quantite" value={formData.max_quantite} onChange={handleInputChange} />
         </div>
         <div className="formGroup">
-          <label className="input-label" htmlFor="is_Menu"><strong>Est un menu:</strong></label>
-          <input className="input" type="text" id="is_Menu" name="is_Menu" value={formData.is_Menu} onChange={handleInputChange} />
-        </div>
-        <div className="formGroup">
-          <label className="input-label" htmlFor="is_Redirect"><strong>Redirection:</strong></label>
-          <input className="input" type="text" id="is_Redirect" name="is_Redirect" value={formData.is_Redirect} onChange={handleInputChange} />
-        </div>
+            <label className="input-label" htmlFor="isArchived"><strong>Archivé:</strong></label>
+            <input
+              className="checkbox"
+              type="checkbox"
+              id="isArchived"
+              name="isArchived"
+              checked={formData.isArchived}
+              onChange={handleCheckboxChange}
+            />
+          </div>
+          <div className="formGroup">
+            <label className="input-label" htmlFor="is_Menu"><strong>Est un menu:</strong></label>
+            <input
+              className="checkbox"
+              type="checkbox"
+              id="is_Menu"
+              name="is_Menu"
+              checked={formData.is_Menu}
+              onChange={handleCheckboxChange}
+            />
+          </div>
+          <div className="formGroup">
+            <label className="input-label" htmlFor="is_Redirect"><strong>Redirection:</strong></label>
+            <input
+              className="checkbox"
+              type="checkbox"
+              id="is_Redirect"
+              name="is_Redirect"
+              checked={formData.is_Redirect}
+              onChange={handleCheckboxChange}
+            />
+          </div>
         <div className="formGroup">
           <label htmlFor="id_cat"><strong>ID catégorie:</strong></label>
           <input className="input" type="text" id="id_cat" name="id_cat" value={formData.id_cat} onChange={handleInputChange} />

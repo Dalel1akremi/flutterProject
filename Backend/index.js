@@ -71,6 +71,8 @@ app.get('/getItemsByRestaurantId', itemController.getItemsByRestaurantId);
 app.put('/ArchiverItem/:itemId', itemController.ArchiverItem);
 app.put('/updateItem/:itemId', itemController.updateItem);
 app.get('/getItemById/:itemId', itemController.getItemById);
+app.get('/getItemRest', itemController.getItemRest);
+
 app.post('/porfeuille', paiement.porfeuille);
 app.post('/recupererCarteParId', paiement.recupererCarteParId);
 app.get('/recupererCartesUtilisateur', paiement.recupererCartesUtilisateur);
