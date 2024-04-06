@@ -52,6 +52,7 @@ export default function Navbar() {
         <a href="/Categorie" className={styles.link}>Catégorie</a>
         <a href="/produits" className={styles.link}>Produit</a>
         <a href="/commandes" className={styles.link}>Commande</a>
+        <a href="/steps" className={styles.link}>Steps</a>
       </div>
       <div className={styles.right}>
         <a href="/deconnexion" className={styles.link}>Se déconnecter</a>
