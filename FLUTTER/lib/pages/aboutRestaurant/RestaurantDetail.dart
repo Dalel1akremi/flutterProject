@@ -205,12 +205,12 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Adresse:',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
+                    
                     Text(restaurantAdress ?? 'Restaurant Detail'),
+                     const Text(
+                      'Nous acceptons:',
+                      style: TextStyle(fontSize: 18),
+                    ),
                   ],
                 ),
               ),
