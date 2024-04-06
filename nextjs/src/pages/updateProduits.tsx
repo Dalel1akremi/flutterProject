@@ -15,15 +15,15 @@ const UpdateProduits = () => {
     is_Menu: false,
     is_Redirect: false,
     id_cat: '',
-    id_item: query.id_item || '',
+    _id: query._id || '',
   });
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    if (query.id_item) {
-      axios.get(`http://localhost:3000/getItemById/${query.id_item}`)
+    if (query._id) {
+      axios.get(`http://localhost:3000/getItemById/${query._id}`) // Utiliser _id à la place de id_item
         .then(response => {
           const itemData = response.data;
           setFormData({
@@ -36,7 +36,7 @@ const UpdateProduits = () => {
             is_Menu: !!itemData.is_Menu, // Convertir en boolean
             is_Redirect: !!itemData.is_Redirect, // Convertir en boolean
             id_cat: itemData.id_cat || '',
-            id_item: query.id_item || '',
+            _id: query._id || '', // Utiliser _id à la place de id_item
           });
         })
         .catch(error => {
@@ -44,6 +44,7 @@ const UpdateProduits = () => {
         });
     }
   }, [query]);
+  
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -70,7 +71,7 @@ const UpdateProduits = () => {
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:3000/updateItem/${formData.id_item}`, formData);
+      await axios.put(`http://localhost:3000/updateItem/${formData._id}`, formData);
       setIsSuccess(true);
       setMessage('Les données ont été mises à jour avec succès !');
       setTimeout(() => {
@@ -146,10 +147,6 @@ const UpdateProduits = () => {
         <div className="formGroup">
           <label htmlFor="id_cat"><strong>ID catégorie:</strong></label>
           <input className="input" type="text" id="id_cat" name="id_cat" value={formData.id_cat} onChange={handleInputChange} />
-        </div>
-        <div className="formGroup">
-          <label className="input-label" htmlFor="id_item"><strong>ID item:</strong></label>
-          <input className="input" type="text" id="id_item" name="id_item" value={formData.id_item} onChange={handleInputChange} />
         </div>
         <button className="submit-button" type="submit">Enregistrer</button>
       </form>
