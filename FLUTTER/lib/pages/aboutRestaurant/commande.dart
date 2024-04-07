@@ -289,14 +289,55 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: articles.map((article) {
-                    return Text(
-                      '${article['nom'] ?? 'N/A'}, Prix: ${article['prix'] ?? 'N/A'}€, Quantité: ${article['quantite'] ?? 'N/A'}',
-                    );
-                  }).toList(),
-                ),
+ Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: articles.map((article) {
+    if (article['elements_choisis'] == null || article['elements_choisis'].isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Nom: ${article['nom'] ?? 'N/A'}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Prix: ${article['prix'] ?? 'N/A'}€',
+            ),
+            Text(
+              'Quantité: ${article['quantite'] ?? 'N/A'}',
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Nom: ${article['nom'] ?? 'N/A'}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Éléments choisis: ${article['elements_choisis'] ?? 'N/A'}',
+            ),
+            Text(
+              'Prix: ${article['prix'] ?? 'N/A'}€',
+            ),
+            Text(
+              'Quantité: ${article['quantite'] ?? 'N/A'}',
+            ),
+          ],
+        ),
+      );
+    }
+  }).toList(),
+),
+
+
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -419,6 +460,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
                 'nom': item['nom'],
                 'prix': item['prix'] ?? 0,
                 'quantite': item['quantite'] ?? 0,
+                'elements_choisis':item['elements_choisis'],
               };
             }).toList();
 
@@ -477,6 +519,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
                 'nom': item['nom'],
                 'prix': item['prix'] ?? 0,
                 'quantite': item['quantite'] ?? 0,
+                'elements_choisis':item['elements_choisis'],
               };
             }).toList();
 
