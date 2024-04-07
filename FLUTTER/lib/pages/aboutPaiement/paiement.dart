@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import './../global.dart';
 import './../aboutUser/auth_provider.dart';
+import 'package:bcrypt/bcrypt.dart';
 
 class CreditCard {
   final String fullCardNumber;
@@ -64,10 +65,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
         print('User ID not available.');
         return;
       }
- final int? idRest = Panier().getIdRestaurant();
-    if (idRest == null) {
-      throw Exception('Restaurant ID is null');
-    }
+      final int? idRest = Panier().getIdRestaurant();
+      if (idRest == null) {
+        throw Exception('Restaurant ID is null');
+      }
       List<Map<String, dynamic>> idItems = panier.articles.map((article) {
         return {
           'id_item': article.id_item,
@@ -76,7 +77,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
           'mode_retrait': mapRetraitMode(panier.getSelectedRetraitMode() ?? ''),
           'montant_Total': panier.getTotalPrix(),
         };
-       
       }).toList();
 
       var response = await http.post(
@@ -162,83 +162,51 @@ class _PaymentScreenState extends State<PaymentScreen> {
       MaterialPageRoute(builder: (context) => const CommandeApp()),
     );
   }
+Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
+  try {
+    var isMatch = await BCrypt.checkpw(enteredCVV, hashedCVV);
 
-  Future<void> showCVVDialog(String cvv) async {
-    String enteredCVV = '';
-    final TextEditingController controller = TextEditingController();
-
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Entrez votre code confidentiel'),
-          content: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            obscureText: true,
-            onChanged: (value) {
-              enteredCVV = value;
-            },
-            decoration: const InputDecoration(
-              hintText: 'Code confidentiel',
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Annuler'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(enteredCVV);
-              },
-              child: const Text('Valider'),
-            ),
-          ],
-        );
-      },
-    ).then((value) {
-      if (value != null && value == cvv) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Code correcte'),
-              content: const Text('Merci pour votre confiance.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Code confidentiel incorrect'),
-              content: const Text('Veuillez réessayer !'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    });
+    if (isMatch) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Code correct'),
+            content: const Text('Merci pour votre confiance.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Code incorrect'),
+            content: const Text('Veuillez réessayer !'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  } catch (error) {
+    print('Erreur lors de la comparaison des CVV: $error');
   }
+}
 
   Future<void> fetchUserCreditCards() async {
     String? userEmail = authProvider.email;
@@ -273,18 +241,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
     setState(() {});
   }
 
- String mapRetraitMode(String value) {
-  switch (value) {
-    case 'a emporter':
-      return 'A Emporter';
-    case 'sur place':
-      return 'Sur place';
-    case 'en livraison':
-      return 'En Livraison';
-    default:
-      return value;
+  String mapRetraitMode(String value) {
+    switch (value) {
+      case 'a emporter':
+        return 'A Emporter';
+      case 'sur place':
+        return 'Sur place';
+      case 'en livraison':
+        return 'En Livraison';
+      default:
+        return value;
+    }
   }
-}
 
   Future<void> showEditDialog() async {
     Map<String, dynamic>? newSelections = await showDialog(
@@ -305,7 +273,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     selectedRetraitMode = newValue!;
                   });
                 },
-                  items: <String>['A Emporter', 'Sur place', 'En Livraison']
+                items: <String>['A Emporter', 'Sur place', 'En Livraison']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -396,6 +364,49 @@ class _PaymentScreenState extends State<PaymentScreen> {
       });
     }
   }
+Future<void> showCVVDialog(String cvv) async {
+  String enteredCVV = ''; // Le CVV saisi par l'utilisateur
+  final TextEditingController controller = TextEditingController();
+
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Entrez votre code confidentiel'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          obscureText: true,
+          onChanged: (value) {
+            enteredCVV = value;
+          },
+          decoration: const InputDecoration(
+            hintText: 'Code confidentiel',
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop(enteredCVV); // Passe le CVV saisi à la fonction compareCVV
+            },
+            child: const Text('Valider'),
+          ),
+        ],
+      );
+    },
+  ).then((value) {
+    // Compare le CVV saisi avec le CVV haché récupéré de la base de données
+    if (value != null) {
+      compareCVV(cvv, value);
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {
