@@ -11,6 +11,7 @@ const Register = () => {
     telephone: '',
     password: '',
     confirmPassword: '',
+    id_rest:'',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +55,7 @@ const Register = () => {
         telephone: '',
         password: '',
         confirmPassword: '',
+        id_rest:'',
       });
     } catch (error: any) {
       alert(error.response.data.message); // Afficher le message d'erreur
@@ -89,6 +91,10 @@ const Register = () => {
             <label>Confirmer le mot de passe:</label>
             <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required className={"input"} />
           </div>
+          <div className={"formGroup"}>
+        <label>ID du restaurant:</label>
+        <input type="text" name="id_rest" value={formData.id_rest} onChange={handleChange} required className={"input"} />
+      </div>
           <button type="submit" className={"button"}>S'inscrire</button>
         </form>
       </div>
