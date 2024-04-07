@@ -40,7 +40,7 @@ Future<void> getUserData() async {
           nom = userData['nom'];
           prenom = userData['prenom'];
           numero = userData['telephone'];
-          userId = userData['_id'] ?? ''; // Assign an empty string if userId is null
+          userId = userData['_id'] ?? ''; 
           _email=_email;
         });
 
@@ -80,7 +80,6 @@ Future<void> getUserData() async {
       if (response.statusCode == 200) {
         await getUserData();
 
-        // Après la mise à jour, naviguer vers la page du profil
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -100,7 +99,7 @@ Future<void> getUserData() async {
     @override
   void initState() {
     super.initState();
-    // Récupérer l'e-mail depuis AuthProvider
+
     _email = Provider.of<AuthProvider>(context, listen: false).email!;
    
      getUserData();

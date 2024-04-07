@@ -31,14 +31,13 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize controllers
+
     countryController = TextEditingController();
     cityController = TextEditingController();
     streetController = TextEditingController();
     streetNumberController = TextEditingController();
     hasAddress = false;
 
-    // Fetch the user id from AuthProvider
     _userId = Provider.of<AuthProvider>(context, listen: false).userId!;
 
     fetchAddressDetails();
@@ -81,7 +80,7 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
       return;
     }
 
-    // Save the address
+ 
     Panier().setUserAddress('$country, $city, $street, $streetNumber');
     String apiUrl = 'http://localhost:3000/searchAddress?_id=$_userId';
 

@@ -33,28 +33,28 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
       if (response.statusCode == 200) {
         
         print('Password reset email sent successfully');
-        // Enable the button since email is valid
+  
         setState(() {
           isEmailValid = true;
           emailMessage = 'Email exists. You can proceed to reset.';
         });
       } else if (response.statusCode == 404) {
-        // Email not found
+
         setState(() {
           isEmailValid = false;
           emailMessage = 'Email not found. Please enter a valid email.';
         });
       } else {
-        // Handle other errors
+
         setState(() {
           isEmailValid = false;
           emailMessage = 'Error sending password reset email: ${response.statusCode}';
         });
       }
     } catch (error) {
-      // Handle network or other errors
+
       print('Error: $error');
-      // Disable the button since email is invalid
+
       setState(() {
         isEmailValid = false;
         emailMessage = 'Error: $error';
@@ -126,10 +126,10 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
               ),
               validator: (value) {
                 if (value?.isEmpty ?? true || !value!.contains('@')) {
-                  // Email is invalid
+           
                   return 'Enter a valid email address';
                 }
-                // Email is valid
+    
                 return null;
               },
             ),
@@ -182,10 +182,10 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
               ),
               validator: (value) {
                 if (value?.isEmpty ?? true) {
-                  // Validation code is empty
+                  
                   return 'Enter the validation code';
                 }
-                // Validation code is not empty
+      
                 return null;
               },
             ),

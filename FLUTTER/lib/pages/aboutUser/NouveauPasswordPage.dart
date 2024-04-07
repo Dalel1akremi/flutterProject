@@ -4,11 +4,10 @@ import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../../main.dart';
 import 'dart:convert';
 
 class NouveauPasswordPage extends StatefulWidget {
-  final String? email; // Make email nullable
+  final String? email; 
 
   const NouveauPasswordPage({Key? key, required this.email}) : super(key: key);
   @override
@@ -24,27 +23,23 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
   String? _passwordValidationError;
 
   String? validatePassword(String value) {
-    // Check if the password contains at least one uppercase letter
+    
     if (!value.contains(RegExp(r'[A-Z]'))) {
       return 'Le mot de passe doit contenir au moins une lettre majuscule.';
     }
 
-    // Check if the password contains at least one lowercase letter
     if (!value.contains(RegExp(r'[a-z]'))) {
       return 'Le mot de passe doit contenir au moins une lettre minuscule.';
     }
 
-    // Check if the password contains at least one digit
     if (!value.contains(RegExp(r'[0-9]'))) {
       return 'Le mot de passe doit contenir au moins un chiffre.';
     }
 
-    // Check if the password is at least 8 characters long
     if (value.length < 8) {
       return 'Le mot de passe doit contenir au moins 8 caractères.';
     }
 
-    // Return null if the password meets all criteria
     return null;
   }
 
@@ -66,25 +61,17 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
         final responseData = json.decode(response.body);
 
         if (response.statusCode == 200 && responseData['success']) {
-          // Password updated successfully
           if (kDebugMode) {
             print('Password updated successfully');
           }
 
-          // Navigate to the main page
-          // ignore: use_build_context_synchronously
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MyApp()),
-          ); 
+        
         } else {
-          // Handle other API response statuses
           if (kDebugMode) {
             print('Error updating password: ${responseData['message']}');
           }
         }
       } catch (error) {
-        // Handle network or other errors
         if (kDebugMode) {
           print('Error: $error');
         }
@@ -125,13 +112,9 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
                 ),
                 validator: (value) {
                   String? validationResult = validatePassword(value!);
-
-                  // Set the error message to be displayed
                   setState(() {
                     _passwordValidationError = validationResult;
                   });
-
-                  // Return the validation result
                   return validationResult;
                 },
               ),
@@ -166,13 +149,11 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
               const SizedBox(height: 16.0),
                ElevatedButton(
                 onPressed: () async {
-                  // Reset previous validation error
                   setState(() {
                     _passwordValidationError = null;
                   });
 
                   if (_formKey.currentState!.validate()) {
-                    // If form is valid, proceed with update
                     updatePassword();
                   }
                   Navigator.push( 

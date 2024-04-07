@@ -188,7 +188,6 @@ Future<void> initProfilData() async {
                         ),
                         TextButton(
                           onPressed: () {
-                            // Empty the cart and log out
                             Provider.of<AuthProvider>(context, listen: false).logout(context);
                             Panier().viderPanier();
                           },
