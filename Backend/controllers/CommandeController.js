@@ -52,6 +52,7 @@ const createCommande = async (req, res) => {
         nom: matchingItem.nom,
         prix: matchingItem.prix,
         quantite: itemInput.quantite,
+        elements_choisis: itemInput.elements_choisis,
       };
     });
 
@@ -105,10 +106,10 @@ const getCommandesEncours = async (req, res) => {
 
 
 const getCommandes = async (req, res) => {
-  const { id_rest } = req.query; // Récupérer l'id_rest depuis les paramètres de requête
+  const { id_rest } = req.query; 
 
   try {
-      // Rechercher les commandes en cours du restaurant spécifié
+      
       const commandes = await Commande.find({ etat: 'Encours', id_rest });
 
       if (!commandes || commandes.length === 0) {
@@ -116,19 +117,16 @@ const getCommandes = async (req, res) => {
           return res.status(404).json({ error: `No commandes with etat "encours" found for restaurant ${id_rest}` });
       }
 
-      // Récupérer les IDs des utilisateurs associés aux commandes
+  
       const userIds = commandes.map(commande => commande.id_user);
 
-      // Rechercher les informations des utilisateurs associés aux commandes
       const users = await User.find({ _id: { $in: userIds } });
 
-      // Créer une carte de correspondance entre les IDs d'utilisateur et leurs e-mails
       const userIdToEmailMap = {};
       users.forEach(user => {
           userIdToEmailMap[user._id] = user.email;
       });
 
-      // Enrichir les données des commandes avec les e-mails des utilisateurs associés
       const commandesWithEmails = commandes.map(commande => {
           return {
               ...commande.toObject(),
@@ -136,7 +134,6 @@ const getCommandes = async (req, res) => {
           };
       });
 
-      // Retourner les commandes avec les e-mails des utilisateurs associés
       return res.status(200).json(commandesWithEmails);
   } catch (error) {
       console.error('Error getting commandes with etat "encours" for restaurant:', id_rest, error.message);
@@ -202,9 +199,8 @@ const transporter = nodemailer.createTransport({
 });
 const sendNotification  = async (req, res) => {
   const { userEmail } = req.body;
-
   const mailOptions = {
-    from: 'meltingpot449@gmail.com',
+    from: '"Assistant de restaurant" <meltingpot449@gmail.com>',
     to: userEmail,
     subject: 'Votre commande est prête',
     text: 'Votre commande est prête. Venez la récupérer dès que possible.',
