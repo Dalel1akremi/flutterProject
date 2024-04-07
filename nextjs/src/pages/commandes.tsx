@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from '../styles/navbar';
 import { useRouter } from 'next/router';
+import jwt from 'jsonwebtoken'; // Importer le package jsonwebtoken
 
 interface Commande {
   _id: string;
@@ -21,23 +22,24 @@ interface Item {
 const CommandesPage = () => {
   const router = useRouter();
   const [commandes, setCommandes] = useState<Commande[]>([]);
+  const [idRest, setIdRest] = useState<string | null>(null);
 
   useEffect(() => {
-    const checkAuthentication = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.push('/connexion'); // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
-      } else {
-        fetchCommandes(); // Récupérer les commandes si l'utilisateur est connecté
-      }
-    };
-
-    checkAuthentication();
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwt.decode(token) as { [key: string]: any };
+      const { id_rest } = decodedToken;
+      setIdRest(id_rest);
+      fetchCommandes(id_rest);
+    } else {
+      router.push('/connexion');
+    }
   }, []);
 
-  const fetchCommandes = async () => {
+
+  const fetchCommandes = async (id_rest: any) => {
     try {
-      const response = await axios.get<Commande[]>('http://localhost:3000/getCommandes');
+      const response = await axios.get<Commande[]>(`http://localhost:3000/getCommandes?id_rest=${id_rest}`);
       setCommandes(response.data);
     } catch (error) {
       console.error('Erreur lors de la récupération des commandes :', error);

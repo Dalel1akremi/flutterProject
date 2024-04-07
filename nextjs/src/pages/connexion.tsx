@@ -28,14 +28,24 @@ const Connexion = () => {
       setSuccessMessage(response.data.message);
       setErrorMessage('');
       router.push('/produits');
-    } catch (error:any) {
-      setErrorMessage(error.response.data.message || 'An error occurred');
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(error.response?.data.message || 'An error occurred');
+      } else {
+        // Gérer d'autres types d'erreur ici
+        setErrorMessage('An unknown error occurred');
+      }
       setSuccessMessage('');
     }
   };
   
+  
   const handleRegisterClick = () => {
     router.push('/register');
+  };
+
+  const handleForgotPasswordClick = () => {
+    router.push('/oublieMP');
   };
 
   return (
@@ -53,6 +63,9 @@ const Connexion = () => {
           </div>
           <button type="submit" className="button">Se connecter</button>
         </form>
+        <div>
+          <button onClick={handleForgotPasswordClick} className="forgot-password-button">Mot de passe oublié ?</button>
+        </div>
       </div>
       {errorMessage && (
         <div style={{ backgroundColor: 'red', textAlign: 'center', marginTop: '20px', padding: '10px' }}>{errorMessage}</div>

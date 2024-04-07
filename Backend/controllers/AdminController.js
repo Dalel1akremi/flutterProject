@@ -156,7 +156,7 @@ const validate_code = async (req, res) => {
 
   try {
   
-    const admin = await admin.findOne({ email });
+    const admin = await Admin.findOne({ email });
 
     if (!admin) {
    
