@@ -3,32 +3,24 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Admin = require('../models/adminModel');
 const  nodemailer = require("nodemailer");
-
-
-const  crypto= require("crypto");
-const GeocodedAd=require ('../models/AdresseModel');
-const axios = require('axios');
 const registerAdmin = async (req, res) => {
   const { nom, prenom, telephone, email, password, confirmPassword,id_rest } = req.body;
 
   try {
-    // Check if a Admin with the same email already exists
+   
     const existingAdmin = await Admin.findOne({ email });
 
     if (existingAdmin) {
-      // Admin with the same email already exists
+
       return res.status(400).json({ message: 'Admin with this email already exists' });
     }
 
-    // Check if passwords match
     if (password !== confirmPassword) {
       return res.status(400).json({ message: 'Passwords do not match' });
     }
 
-    // Hash the password before saving it
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new Admin with the hashed password
     const newAdmin = new Admin({
       nom,
       prenom,
@@ -38,7 +30,7 @@ const registerAdmin = async (req, res) => {
       id_rest,
     });
 
-    // Save the Admin to the database
+
     await newAdmin.save();
 
     res.status(201).json({ message: 'Admin registered successfully' });
@@ -51,19 +43,17 @@ const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Recherche de l'administrateur dans la base de données
+
     const admin = await Admin.findOne({ email });
 
     if (!admin) {
-      // L'administrateur n'existe pas
+ 
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Vérification du mot de passe
     const passwordMatch = await bcrypt.compare(password, admin.password);
 
     if (!passwordMatch) {
-      // Mot de passe incorrect
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
@@ -90,30 +80,25 @@ const loginAdmin = async (req, res) => {
   }
 };
 
-
-const reset_passwordAdmin= async (req, res) => {
+const reset_passwordAdmin = async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Recherche de l'utilisateur dans la base de données
+
     const admin = await Admin.findOne({ email });
 
     if (!admin) {
-      // L'utilisateur n'existe pas
-      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+  
+      return res.status(404).json({ message: 'Administrateur non trouvé.' });
     }
 
-    // Générer un nouveau code de validation aléatoire à 6 chiffres
     const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Debugging: Log the generated validation code
     console.log('Generated Validation Code:', validationCode);
 
-    // Update the admin object with the new validation code
     admin.validationCode = validationCode;
     admin.validationCodeTimestamp = Date.now();
 
-    // Save the admin object with the new validation code
     await admin.save();
 
     const transporter = nodemailer.createTransport({
@@ -124,13 +109,13 @@ const reset_passwordAdmin= async (req, res) => {
       },
     });
 
-    // Envoyer le code de validation par e-mail
+    
     const mailOptions = {
-      from: '', // Put your email address here
+      from: '"Assistant de restaurant" <meltingpot449@gmail.com>', 
       to: email,
       subject: 'Code de validation',
       text: `Votre code de validation est : ${validationCode}`,
-      replyTo: email,
+      replyTo: 'meltingpot449@gmail.com',
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -147,6 +132,7 @@ const reset_passwordAdmin= async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur lors de la génération du code de validation.' });
   }
 };
+
 
 
 
@@ -273,7 +259,6 @@ const updateAdmin = async (req, res) => {
       existingAdmin.telephone = telephone;
     }
 
-    // Sauvegarder les modifications
     await existingAdmin.save();
 
     res.status(200).json({ message: 'Admin updated successfully' });
