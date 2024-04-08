@@ -3,24 +3,28 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Admin = require('../models/adminModel');
 const  nodemailer = require("nodemailer");
+
 const registerAdmin = async (req, res) => {
   const { nom, prenom, telephone, email, password, confirmPassword,id_rest } = req.body;
 
   try {
-   
+    // Check if a Admin with the same email already exists
     const existingAdmin = await Admin.findOne({ email });
 
     if (existingAdmin) {
-
+      // Admin with the same email already exists
       return res.status(400).json({ message: 'Admin with this email already exists' });
     }
 
+    // Check if passwords match
     if (password !== confirmPassword) {
       return res.status(400).json({ message: 'Passwords do not match' });
     }
 
+    // Hash the password before saving it
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create a new Admin with the hashed password
     const newAdmin = new Admin({
       nom,
       prenom,
@@ -30,7 +34,7 @@ const registerAdmin = async (req, res) => {
       id_rest,
     });
 
-
+    // Save the Admin to the database
     await newAdmin.save();
 
     res.status(201).json({ message: 'Admin registered successfully' });
@@ -43,17 +47,19 @@ const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-
+    // Recherche de l'administrateur dans la base de données
     const admin = await Admin.findOne({ email });
 
     if (!admin) {
- 
+      // L'administrateur n'existe pas
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
+    // Vérification du mot de passe
     const passwordMatch = await bcrypt.compare(password, admin.password);
 
     if (!passwordMatch) {
+      // Mot de passe incorrect
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
@@ -79,6 +85,7 @@ const loginAdmin = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 const reset_passwordAdmin = async (req, res) => {
   const { email } = req.body;
@@ -132,8 +139,6 @@ const reset_passwordAdmin = async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur lors de la génération du code de validation.' });
   }
 };
-
-
 const validate_codeAdmin = async (req, res) => {
   const { email, validationCode } = req.body;
 
@@ -173,7 +178,6 @@ const validate_codeAdmin = async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur lors de la validation du code.' });
   }
 };
-
 const new_passwordAdmin = async (req, res) => {
   const { newPassword, confirmNewPassword } = req.body;
   const adminEmail = req.query.email || req.body.email;
@@ -215,6 +219,7 @@ const new_passwordAdmin = async (req, res) => {
 };
 
 
+
 const getAdminByEmail = async (req, res) => {
   const { email } = req.query; // Utilisez req.query pour récupérer les paramètres de requête
   
@@ -246,16 +251,19 @@ const updateAdmin = async (req, res) => {
       return res.status(404).json({ message: 'Admin not found' });
     }
 
+    // Met à jour les champs nécessaires
+    existingAdmin.nom = nom || existingAdmin.nom;
+    existingAdmin.prenom = prenom || existingAdmin.prenom;
+    existingAdmin.telephone = telephone || existingAdmin.telephone;
     
-    if (nom) {
-      existingAdmin.nom = nom;
-    }
-    if (prenom) {
-      existingAdmin.prenom = prenom;
-    }
-    if (telephone)
- {
-      existingAdmin.telephone = telephone;
+    // Vérifie si l'email a été modifié
+    if (email && email !== existingAdmin.email) {
+      // Vérifie si le nouvel email est unique
+      const emailExists = await Admin.exists({ email });
+      if (emailExists) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+      existingAdmin.email = email;
     }
 
     // Enregistre les modifications
@@ -276,5 +284,5 @@ module.exports = {
   new_passwordAdmin,
   getAdminByEmail,
   updateAdmin,
- 
+  
 };
