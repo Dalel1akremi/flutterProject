@@ -3,8 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Admin = require('../models/adminModel');
 const  nodemailer = require("nodemailer");
-
-
 const  crypto= require("crypto");
 const GeocodedAd=require ('../models/AdresseModel');
 const axios = require('axios');
@@ -95,25 +93,17 @@ const reset_password = async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Recherche de l'utilisateur dans la base de données
     const admin = await Admin.findOne({ email });
 
     if (!admin) {
-      // L'utilisateur n'existe pas
+     
       return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
 
-    // Générer un nouveau code de validation aléatoire à 6 chiffres
     const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Debugging: Log the generated validation code
     console.log('Generated Validation Code:', validationCode);
-
-    // Update the admin object with the new validation code
     admin.validationCode = validationCode;
     admin.validationCodeTimestamp = Date.now();
-
-    // Save the admin object with the new validation code
     await admin.save();
 
     const transporter = nodemailer.createTransport({
@@ -123,10 +113,8 @@ const reset_password = async (req, res) => {
         pass: 'zcvy livf qkty thhr',
       },
     });
-
-    // Envoyer le code de validation par e-mail
     const mailOptions = {
-      from: '', // Put your email address here
+      from: '', 
       to: email,
       subject: 'Code de validation',
       text: `Votre code de validation est : ${validationCode}`,
@@ -147,9 +135,6 @@ const reset_password = async (req, res) => {
     res.status(500).json({ success: false, message: 'Erreur lors de la génération du code de validation.' });
   }
 };
-
-
-
 
 const validate_code = async (req, res) => {
   const { email, validationCode } = req.body;
@@ -232,48 +217,53 @@ const new_password = async (req, res) => {
 };
 
 
-const getAdmin = async (req, res) => {
- 
-  try{
- 
-  const admin = await Admin.findOne();
-
-  if (admin) {
-    res.json(admin);
-  } else {
-    res.status(404).json({ message: 'Admin not found' });
-  }
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ message: 'Internal server error' });
-}
-};
-const updateAdmin = async (req, res) => {
-  const {  nom, prenom, telephone } = req.body;
-
-  const adminEmail = req.query.email;
+const getAdminByEmail = async (req, res) => {
+  const { email } = req.query; // Utilisez req.query pour récupérer les paramètres de requête
+  
   try {
- 
-    const existingAdmin = await Admin.findOne({ email: adminEmail });
+    // Recherche de l'administrateur par email
+    const admin = await Admin.findOne({ email });
+    
+    if (admin) {
+      res.json(admin);
+    } else {
+      res.status(404).json({ message: 'Admin not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
+
+const updateAdmin = async (req, res) => {
+  const { nom, prenom, telephone, email } = req.body;
+
+  try {
+    // Recherche de l'administrateur par son email actuel
+    const existingAdmin = await Admin.findOne({ email: req.query.email });
+
+    // Vérifie si l'administrateur existe
     if (!existingAdmin) {
- 
       return res.status(404).json({ message: 'Admin not found' });
     }
 
+    // Met à jour les champs nécessaires
+    existingAdmin.nom = nom || existingAdmin.nom;
+    existingAdmin.prenom = prenom || existingAdmin.prenom;
+    existingAdmin.telephone = telephone || existingAdmin.telephone;
     
-    if (nom) {
-      existingAdmin.nom = nom;
-    }
-    if (prenom) {
-      existingAdmin.prenom = prenom;
-    }
-    if (telephone)
- {
-      existingAdmin.telephone = telephone;
+    // Vérifie si l'email a été modifié
+    if (email && email !== existingAdmin.email) {
+      // Vérifie si le nouvel email est unique
+      const emailExists = await Admin.exists({ email });
+      if (emailExists) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+      existingAdmin.email = email;
     }
 
-    // Sauvegarder les modifications
+    // Enregistre les modifications
     await existingAdmin.save();
 
     res.status(200).json({ message: 'Admin updated successfully' });
@@ -282,6 +272,7 @@ const updateAdmin = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 const searchAddress = async (req, res) => {
   const { country, city, street, streetNumber } = req.body;
   const { _id } = req.query;
@@ -434,7 +425,7 @@ module.exports = {
   reset_password,
   validate_code,
   new_password,
-  getAdmin,
+  getAdminByEmail,
   updateAdmin,
   searchAddress,
   getGeocodedDetails,
