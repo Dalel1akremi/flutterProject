@@ -172,7 +172,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
   ),
   child: Row(
     children: [
-      Container(
+      SizedBox(
         height: MediaQuery.of(context).size.height / 7,
         width: MediaQuery.of(context).size.height / 7,
         

@@ -48,8 +48,9 @@ app.post('/register', userController.registerUser);
 app.post('/registerAdmin', AdminController.registerAdmin);
 app.post('/login', userController.loginUser);
 app.post('/loginAdmin', AdminController.loginAdmin);
-app.post('/validate_code', AdminController.validate_code);
-app.post('/newPassword', AdminController.new_password);
+app.post('/reset_passwordAdmin', AdminController.reset_passwordAdmin)
+app.post('/validate_codeAdmin', AdminController.validate_codeAdmin);
+app.post('/newPasswordAdmin', AdminController.new_passwordAdmin);
 app.get('/getAdminByEmail', AdminController.getAdminByEmail);
 app.post('/updateAdmin', AdminController.updateAdmin);
 app.get('/', viewController.renderIndex);

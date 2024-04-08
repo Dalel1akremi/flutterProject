@@ -11,7 +11,7 @@ const OublieMP = () => {
 
   const handleRequestValidationCode = async () => {
                     try {
-                      const response = await axios.post('http://localhost:3000/reset_password', { email });
+                      const response = await axios.post('http://localhost:3000/reset_passwordAdmin', { email });
                       setMessage(response.data.message);
                       // Rediriger vers la page "ValidationMP" avec l'e-mail et le code de validation dans les paramètres de l'URL
                       router.push({

@@ -1,33 +1,29 @@
-// controllers/userController.js
+
 const jwt = require('jsonwebtoken'); 
 const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 const  nodemailer = require("nodemailer");
 
-const  crypto= require("crypto");
 const GeocodedAd=require ('../models/AdresseModel');
 const axios = require('axios');
 const registerUser = async (req, res) => {
   const { nom, prenom, telephone, email, password, confirmPassword } = req.body;
 
   try {
-    // Check if a user with the same email already exists
+ 
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      // User with the same email already exists
+  
       return res.status(400).json({ message: 'User with this email already exists' });
     }
 
-    // Check if passwords match
     if (password !== confirmPassword) {
       return res.status(400).json({ message: 'Passwords do not match' });
     }
 
-    // Hash the password before saving it
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user with the hashed password
     const newUser = new User({
       nom,
       prenom,
@@ -37,7 +33,6 @@ const registerUser = async (req, res) => {
       
     });
 
-    // Save the user to the database
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });
@@ -50,27 +45,26 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Recherche de l'utilisateur dans la base de données
+  
     const user = await User.findOne({ email });
 
     if (!user) {
-      // L'utilisateur n'existe pas
+      
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Vérification du mot de passe
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      // Mot de passe incorrect
+   
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Création d'un jeton JWT
+
     const token = jwt.sign(
       { userId: user._id, email: user.email ,nom: user.nom,telephone:user.telephone},
-      'your-secret-key', // Remplacez par une clé secrète plus sécurisée dans un environnement de production
-      { expiresIn: '7d' } // Durée de validité du jeton (1 heure dans cet exemple)
+      'your-secret-key',
+      { expiresIn: '7d' } 
     );
 
     res.status(200).json({ token, userId: user._id,nom: user.nom,telephone:user.telephone, message: 'Login successful' });
@@ -83,25 +77,22 @@ const reset_password = async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Recherche de l'utilisateur dans la base de données
+  
     const user = await User.findOne({ email });
 
     if (!user) {
-      // L'utilisateur n'existe pas
+
       return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
 
-    // Générer un nouveau code de validation aléatoire à 6 chiffres
     const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Debugging: Log the generated validation code
     console.log('Generated Validation Code:', validationCode);
 
-    // Update the user object with the new validation code
+ 
     user.validationCode = validationCode;
     user.validationCodeTimestamp = Date.now();
 
-    // Save the user object with the new validation code
     await user.save();
 
     const transporter = nodemailer.createTransport({
@@ -112,9 +103,9 @@ const reset_password = async (req, res) => {
       },
     });
 
-    // Envoyer le code de validation par e-mail
+
     const mailOptions = {
-      from: '', // Put your email address here
+      from:'"Assistant de restaurant" <meltingpot449@gmail.com>',
       to: email,
       subject: 'Code de validation',
       text: `Votre code de validation est : ${validationCode}`,
@@ -261,7 +252,6 @@ const updateUser = async (req, res) => {
       existingUser.telephone = telephone;
     }
 
-    // Sauvegarder les modifications
     await existingUser.save();
 
     res.status(200).json({ message: 'User updated successfully' });
@@ -278,7 +268,6 @@ const searchAddress = async (req, res) => {
     return res.status(400).json({ message: 'L\'ID utilisateur est manquant dans les en-têtes.' });
   }
 
-  // Validate that all four fields are provided
   if (!country || !city || !street || !streetNumber) {
     return res.status(400).json({ message: 'Veuillez fournir des valeurs valides pour tous les champs.' });
   }
@@ -286,7 +275,7 @@ const searchAddress = async (req, res) => {
   const searchQuery = `${streetNumber} ${street}, ${city}, ${country}`;
 
   try {
-    // Check if the geocoded address already exists in the database for the given user (_id)
+    
     const existingGeocodedAddress = await GeocodedAd.findOne({
       _id,
     });
@@ -295,7 +284,6 @@ const searchAddress = async (req, res) => {
       return res.status(400).json({ message: 'L\'adresse géocodée pour ce utilisateur existe déjà dans la base de données.' });
     }
 
-    // If not, proceed with the geocoding process
     const response = await axios.get('https://nominatim.openstreetmap.org/search', {
       params: {
         q: searchQuery,
@@ -306,9 +294,8 @@ const searchAddress = async (req, res) => {
     if (response.data.length > 0) {
       const firstGeocodedResult = response.data[0];
 
-      // Check if the geocoding result has a street number
       if (!firstGeocodedResult.address || !firstGeocodedResult.address.house_number) {
-        // Allow the geocoding without a house_number for certain places
+      
         console.log("Street Number not available. Proceeding without validation.");
       }
 
@@ -336,10 +323,10 @@ const searchAddress = async (req, res) => {
 
 
 const getGeocodedDetails = async (req, res) => {
-  const { _id } = req.query; // User ID
+  const { _id } = req.query;
 
   try {
-    // Find the geocoded address in the database based on user ID
+   
     const geocodedAddress = await GeocodedAd.findOne({ _id });
 
     if (!geocodedAddress) {
@@ -359,35 +346,31 @@ const getGeocodedDetails = async (req, res) => {
   }
 };
 const updateGeocodedDetails = async (req, res) => {
-  const { _id } = req.query; // User ID
-  const { country, city, street, streetNumber } = req.body; // Updated geocoded details
+  const { _id } = req.query;
+  const { country, city, street, streetNumber } = req.body; 
 
   try {
-    // Find the geocoded address in the database based on user ID
+
     const geocodedAddress = await GeocodedAd.findOne({ _id });
 
     if (!geocodedAddress) {
       return res.status(404).json({ message: 'Aucun résultat de géocodage trouvé pour cet utilisateur.' });
     }
 
-    // Validate that all four fields are provided for the update
     if (!country || !city || !street || !streetNumber) {
       return res.status(400).json({ message: 'Veuillez fournir des valeurs valides pour tous les champs lors de la mise à jour.' });
     }
 
-    // Save the current geocoded results
     const currentGeocodedResults = geocodedAddress.geocodedResults;
 
-    // Update the geocoded details
     geocodedAddress.country = country;
     geocodedAddress.city = city;
     geocodedAddress.street = street;
     geocodedAddress.streetNumber = streetNumber;
 
-    // Save the updated geocoded details
     await geocodedAddress.save();
 
-    // Re-geocode the updated address
+  
     const updatedResponse = await axios.get('https://nominatim.openstreetmap.org/search', {
       params: {
         q: `${streetNumber} ${street}, ${city}, ${country}`,
@@ -395,12 +378,12 @@ const updateGeocodedDetails = async (req, res) => {
       },
     });
 
-    // Check if there are results and update geocodedResults
+  
     if (updatedResponse.data.length > 0) {
       geocodedAddress.geocodedResults = updatedResponse.data[0];
       await geocodedAddress.save();
     } else {
-      // If no results, revert to the previous geocoded results
+  
       geocodedAddress.geocodedResults = currentGeocodedResults;
       await geocodedAddress.save();
     }

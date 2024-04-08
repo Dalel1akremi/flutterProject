@@ -16,6 +16,7 @@ const commandeSchema = new mongoose.Schema({
       nom: String,
       prix: Number,
       quantite:Number,
+      elements_choisis: [String],
       
     },
   ],

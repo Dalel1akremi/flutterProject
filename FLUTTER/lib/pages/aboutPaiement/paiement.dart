@@ -58,45 +58,48 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> createCommande() async {
-    try {
-      String? userId = authProvider.userId;
+  try {
+    String? userId = authProvider.userId;
 
-      if (userId == null) {
-        print('User ID not available.');
-        return;
-      }
-      final int? idRest = Panier().getIdRestaurant();
-      if (idRest == null) {
-        throw Exception('Restaurant ID is null');
-      }
-      List<Map<String, dynamic>> idItems = panier.articles.map((article) {
-        return {
-          'id_item': article.id_item,
-          'quantite': article.quantite,
-          'temps': panier.getCurrentSelectedTime().format(context),
-          'mode_retrait': mapRetraitMode(panier.getSelectedRetraitMode() ?? ''),
-          'montant_Total': panier.getTotalPrix(),
-        };
-      }).toList();
-
-      var response = await http.post(
-        Uri.parse(
-            'http://localhost:3000/createCommande?id_user=$userId&id_rest=$idRest'),
-        body: jsonEncode({
-          'id_items': idItems,
-        }),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 201) {
-        print('Commande created successfully.');
-      } else {
-        print('Failed to create Commande: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error creating Commande: $error');
+    if (userId == null) {
+      print('User ID not available.');
+      return;
     }
+    final int? idRest = Panier().getIdRestaurant();
+    if (idRest == null) {
+      throw Exception('Restaurant ID is null');
+    }
+    List<Map<String, dynamic>> idItems = panier.articles.map((article) {
+      print('Elements choisis pour l\'article ${article.id_item}: ${article.elementsChoisis}');
+      
+      return {
+        'id_item': article.id_item,
+        'quantite': article.quantite,
+        'temps': panier.getCurrentSelectedTime().format(context),
+        'mode_retrait': mapRetraitMode(panier.getSelectedRetraitMode() ?? ''),
+        'montant_Total': panier.getTotalPrix(),
+        'elements_choisis': article.elementsChoisis,
+      };
+    }).toList();
+
+    var response = await http.post(
+      Uri.parse(
+          'http://localhost:3000/createCommande?id_user=$userId&id_rest=$idRest'),
+      body: jsonEncode({
+        'id_items': idItems,
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 201) {
+      print('Commande created successfully.');
+    } else {
+      print('Failed to create Commande: ${response.statusCode}');
+    }
+  } catch (error) {
+    print('Error creating Commande: $error');
   }
+}
 
   Future<void> handlePayment() async {
     if (useCreditCard && selectedCreditCard != null) {
