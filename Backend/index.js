@@ -50,6 +50,8 @@ app.post('/login', userController.loginUser);
 app.post('/loginAdmin', AdminController.loginAdmin);
 app.post('/validate_code', AdminController.validate_code);
 app.post('/newPassword', AdminController.new_password);
+app.get('/getAdminByEmail', AdminController.getAdminByEmail);
+app.post('/updateAdmin', AdminController.updateAdmin);
 app.get('/', viewController.renderIndex);
 app.get('/getUser', userController.getUser);
 app.put('/updateUser', userController.updateUser);
