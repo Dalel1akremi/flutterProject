@@ -1,8 +1,5 @@
 const Item = require('../models/itemModel');
 const Step=require('./../models/StepModel');
-const mongoose = require('mongoose');
-const { Types: { ObjectId } } = require('mongoose');
-const axios = require('axios');
 exports.createItem = async (req, res) => {
   try {
     const { body, file } = req;
@@ -35,9 +32,8 @@ exports.createItem = async (req, res) => {
       return;
     }
 
-    // Vérifier si un item avec le même nom existe déjà pour ce restaurant
     const existingItem = await Item.findOne({ nom, id_rest });
-
+    
     if (existingItem !== null) {
       res.status(400).json({
         status: 400,
