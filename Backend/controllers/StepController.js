@@ -1,13 +1,12 @@
 const Step = require('../models/StepModel');
-const Item = require('../models/itemModel');
+
 exports.createStep = async (req, res) => {
   try {
     const { body } = req;
     
-    const { nom_Step, id_items, is_Obligatoire } = body;
+    const { nom_Step, id_items, is_Obligatoire ,id_rest} = body;
 
-    // Vérifiez si le Step existe déjà
-    const existingStep = await Step.findOne({ nom_Step });
+    const existingStep = await Step.findOne({ nom_Step ,id_rest});
 
     if (existingStep) {
       return res.status(400).json({
@@ -16,21 +15,14 @@ exports.createStep = async (req, res) => {
       });
     }
 
-    // Convertissez la chaîne d'ID en un tableau d'objets
-    const idItemsArray = id_items.split(',').map(item => ({
-      id_item: parseInt(item.trim()),
-      // Vous pouvez ajouter d'autres propriétés si nécessaire
-    }));
-
-    // Créez un nouveau Step avec les id_items correctement formatés
     const newStep = new Step({
       nom_Step,
-      id_items: idItemsArray,
+      id_items,
       is_Obligatoire,
-      // Vous pouvez ajouter d'autres propriétés ici
+      id_rest,
+    
     });
 
-    // Enregistrez le nouveau Step dans la base de données
     const savedStep = await newStep.save();
 
     return res.status(200).json({
@@ -46,14 +38,14 @@ exports.createStep = async (req, res) => {
       error: error.message,
     });
   }
-}
+};
+
 
 exports.getSteps = async (req, res) => {
   try {
-    // Récupérer tous les Steps dans la base de données
-    const steps = await Step.find().populate('id_items', 'nom_item prix description'); // Vous pouvez utiliser la méthode populate pour récupérer les informations des items associés
-    
-    // Si aucun Step n'est trouvé, retourner une réponse 404
+  
+    const steps = await Step.find().populate('id_items', 'nom_item prix description');
+ 
     if (!steps || steps.length === 0) {
       return res.status(404).json({
         status: 404,
@@ -61,7 +53,6 @@ exports.getSteps = async (req, res) => {
       });
     }
 
-    // Si des Steps sont trouvés, retourner la liste des Steps
     res.status(200).json({
       status: 200,
       message: 'Steps récupérés avec succès',
@@ -81,7 +72,6 @@ exports.ObligationStep = async (req, res) => {
     const { stepId } = req.params;
     const { is_Obligatoire } = req.body;
 
-    // Vérifier si l'ID du Step est fourni
     if (!stepId) {
       return res.status(400).json({
         status: 400,
@@ -89,7 +79,6 @@ exports.ObligationStep = async (req, res) => {
       });
     }
 
-    // Vérifier si le statut is_Obligatoire est fourni
     if (is_Obligatoire === undefined || is_Obligatoire === null) {
       return res.status(400).json({
         status: 400,
@@ -97,7 +86,6 @@ exports.ObligationStep = async (req, res) => {
       });
     }
 
-    // Vérifier si le Step existe
     const step = await Step.findById(stepId);
     if (!step) {
       return res.status(404).json({
@@ -106,7 +94,6 @@ exports.ObligationStep = async (req, res) => {
       });
     }
 
-    // Mettre à jour le statut is_Obligatoire du Step
     step.is_Obligatoire = is_Obligatoire;
     await step.save();
 
@@ -129,7 +116,6 @@ exports.updateStep = async (req, res) => {
     const { stepId } = req.params;
     const { nom_Step, id_items, is_Obligatoire } = req.body;
 
-    // Vérifier si l'ID du Step est fourni
     if (!stepId) {
       return res.status(400).json({
         status: 400,
@@ -137,7 +123,6 @@ exports.updateStep = async (req, res) => {
       });
     }
 
-    // Vérifier si le Step existe
     let step = await Step.findById(stepId);
     if (!step) {
       return res.status(404).json({
@@ -146,7 +131,6 @@ exports.updateStep = async (req, res) => {
       });
     }
 
-    // Mettre à jour les champs du Step
     if (nom_Step) {
       step.nom_Step = nom_Step;
     }
@@ -157,7 +141,6 @@ exports.updateStep = async (req, res) => {
       step.is_Obligatoire = is_Obligatoire;
     }
 
-    // Enregistrer les modifications dans la base de données
     step = await step.save();
 
     res.status(200).json({

@@ -41,7 +41,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
   Map<String, List<String>> itemNamesMap = {};
   late Map<String, dynamic> responseData = {};
 
-  // Ajouter une liste pour stocker les éléments choisis
+
   List<String> elementsChoisis = [];
 
   @override
@@ -51,23 +51,22 @@ class _StepMenuPageState extends State<StepMenuPage> {
   }
 
   void extractStepData() {
-    // Initialisation de la Map d'état de visibilité et de la Map des noms d'éléments pour chaque étape
+
     Map<String, bool> visibilityMap = {};
     Map<String, List<String>> itemNamesMap = {};
     for (var step in widget.id_Steps) {
       if (step['nom_Step'] != null) {
         String stepName = step['nom_Step'] as String;
         bool isObligatoire = step['is_Obligatoire'] ??
-            false; // Récupérer la valeur de is_Obligatoire, par défaut false si non défini
+            false; 
         visibilityMap[stepName] =
-            false; // Initialise l'état de visibilité à faux
+            false;
         boissonChoisieMap[stepName] =
-            null; // Initialise la boisson choisie à null
+            null; 
         itemNamesMap[stepName] = (step['id_items'] as List<dynamic>)
             .map<String>((item) => item['nom_item'] as String)
             .toList();
 
-        // Vous pouvez utiliser isObligatoire ici selon vos besoins
         if (kDebugMode) {
           print("L'étape $stepName est obligatoire ? $isObligatoire");
         }
@@ -79,7 +78,6 @@ class _StepMenuPageState extends State<StepMenuPage> {
     });
   }
 
-  // Méthode pour vérifier si tous les éléments obligatoires sont sélectionnés
   bool areAllRequiredElementsSelected() {
     for (var step in widget.id_Steps) {
       if (step['is_Obligatoire'] == true &&
@@ -147,7 +145,6 @@ class _StepMenuPageState extends State<StepMenuPage> {
                                     toggleListeVisibility(stepName);
                                   },
                                 ),
-                                // Afficher "Obligatoire" à côté de l'icône si l'étape est obligatoire
                               ],
                             ),
                           ),
@@ -165,7 +162,6 @@ class _StepMenuPageState extends State<StepMenuPage> {
                                   onChanged: (String? value) {
                                     setState(() {
                                       boissonChoisieMap[stepName] = value;
-                                      // Ajouter l'élément choisi à la liste
                                       elementsChoisis.add(value!);
                                     });
                                   },
@@ -245,7 +241,6 @@ class _StepMenuPageState extends State<StepMenuPage> {
                   child: ElevatedButton(
                     onPressed: areAllRequiredElementsSelected()
                         ? () {
-                            // Creating the article object
                             Article article = Article(
                               id_item: widget.id_item,
                               nom: widget.nom,
@@ -259,9 +254,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                                   .toList(),
                              
                             );
-                            // Adding the article to the cart
                             Panier().ajouterAuPanier1(article);
-                            // Navigating to the next page
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -284,7 +277,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                         : null,
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(150, 50),
-                      backgroundColor: Colors.green, // Change as needed
+                      backgroundColor: Colors.green, 
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -319,7 +312,6 @@ class _StepMenuPageState extends State<StepMenuPage> {
     setState(() {
       afficherListeMap[stepName] = !(afficherListeMap[stepName] ?? false);
       if (afficherListeMap[stepName]!) {
-        // Add logic to populate itemNamesMap based on the selected step
         itemNamesMap[stepName] = [];
         for (var step in widget.id_Steps) {
           if (step['nom_Step'] == stepName) {

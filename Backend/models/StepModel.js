@@ -8,8 +8,10 @@ const stepSchema = new mongoose.Schema({
       id_item: { type: Number, ref: 'Item', required: true },
     },
   ],
-  is_Obligatoire:{ type: Boolean, validate: [isValidBoolean, 'is_Obligatoire: must be true or false'] }, 
+  is_Obligatoire:{ type: Boolean, validate: [isValidBoolean, 'is_Obligatoire: must be true or false'] },
+  id_rest: { type: Number, ref: 'Restaurant' } , 
 });
+
 function isValidBoolean(value) {
   return typeof value === 'boolean';
 }
