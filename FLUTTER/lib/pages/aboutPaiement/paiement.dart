@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, library_private_types_in_public_api, use_build_context_synchronously
 import 'dart:convert';
 import 'package:demo/pages/aboutRestaurant/commande.dart';
+import 'package:demo/pages/aboutUser/adresse.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import './../global.dart';
@@ -105,6 +106,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 }
 
   Future<void> handlePayment() async {
+   
     if (useCreditCard && selectedCreditCard != null) {
       makePaymentWithCreditCard();
       panier.printPanier();
@@ -273,20 +275,26 @@ Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
           content: Column(
             children: [
               DropdownButton<String>(
-                value: selectedRetraitMode,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedRetraitMode = newValue!;
-                  });
-                },
-                items: <String>['A Emporter', 'Sur place', 'En Livraison']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(mapRetraitMode(value)),
-                  );
-                }).toList(),
-              ),
+  value: selectedRetraitMode,
+  onChanged: (String? newValue) {
+    setState(() {
+      selectedRetraitMode = newValue!;
+      if (selectedRetraitMode == 'En Livraison') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AddressSearchScreen()),
+        );
+      }
+    });
+  },
+  items: <String>['A Emporter', 'Sur place', 'En Livraison']
+      .map<DropdownMenuItem<String>>((String value) {
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(mapRetraitMode(value)),
+    );
+  }).toList(),
+),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
