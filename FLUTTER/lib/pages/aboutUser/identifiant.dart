@@ -1,19 +1,15 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print
-
 import 'dart:convert';
-import 'package:demo/pages/aboutUser/auth_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:demo/pages/aboutUser/auth_provider.dart';
 import 'profile.dart';
 
 class ProfileDetailsPage extends StatefulWidget {
-  
-
   const ProfileDetailsPage({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProfileDetailsPageState createState() => _ProfileDetailsPageState();
 }
 
@@ -22,91 +18,109 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   late String prenom;
   late String numero;
   late String userId;
-   late String _email;
+  late String _email;
 
   final TextEditingController nomController = TextEditingController();
   final TextEditingController prenomController = TextEditingController();
   final TextEditingController numeroController = TextEditingController();
 
-Future<void> getUserData() async {
+  Future<void> getUserData() async {
+    try {
+      final response = await http.get(
+          Uri.parse('http://localhost:3000/getUser?email=$_email'));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic>? userData =
+            json.decode(response.body) as Map<String, dynamic>;
+
+        if (userData != null &&
+            userData.containsKey('nom') &&
+            userData.containsKey('prenom') &&
+            userData.containsKey('telephone')) {
+          setState(() {
+            nom = userData['nom'];
+            prenom = userData['prenom'];
+            numero = userData['telephone'];
+            userId = userData['_id'] ?? '';
+          });
+
+          nomController.text = nom;
+          prenomController.text = prenom;
+          numeroController.text = numero;
+          
+
+        } else {
+          if (kDebugMode) {
+            print('Failed to load user data. Response: ${response.body}');
+          }
+        }
+      } else {
+        if (kDebugMode) {
+          print('Failed to load user data. Response: ${response.body}');
+        }
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print('Error during HTTP request: $error');
+      }
+    }
+  }
+Future<void> updateUserData(String userEmail) async {
+  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+  final Map<String, dynamic> updatedData = {
+    'nom': nomController.text,
+    'prenom': prenomController.text,
+    'telephone': numeroController.text,
+  };
+
   try {
-    final response = await http.get(Uri.parse('http://localhost:3000/getUser'));
+    final response = await http.put(
+      Uri.parse(
+          'http://localhost:3000/updateUser?email=${authProvider.email}'),
+      body: jsonEncode(updatedData),
+      headers: {'Content-Type': 'application/json'},
+    );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic>? userData = json.decode(response.body);
+      await getUserData();
 
-      if (userData != null && userData.containsKey('nom') && userData.containsKey('prenom') && userData.containsKey('telephone')) {
-        setState(() {
-          nom = userData['nom'];
-          prenom = userData['prenom'];
-          numero = userData['telephone'];
-          userId = userData['_id'] ?? ''; 
-          _email=_email;
-        });
+      authProvider.saveTokenToStorage(
+        authProvider.token!,
+        userId, 
+        authProvider.email!,
+        nomController.text, 
+        numeroController.text, 
+      );
 
-        nomController.text = nom;
-        prenomController.text = prenom;
-        numeroController.text = numero;
-      
-      } else {
-        print('Failed to load user data. Response: ${response.body}');
-      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ProfilPage(),
+        ),
+      );
     } else {
-      print('Failed to load user data. Response: ${response.body}');
+      if (kDebugMode) {
+        print('Failed to update user data. Response: ${response.body}');
+      }
+      throw Exception('Failed to update user data');
     }
   } catch (error) {
-    print('Error during HTTP request: $error');
+    if (kDebugMode) {
+      print('Error during HTTP request: $error');
+    }
   }
 }
 
 
-  Future<void> updateUserData(String userEmail) async {
-   final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    final Map<String, dynamic> updatedData = {
-      'nom': nomController.text,
-      'prenom': prenomController.text,
-      'telephone': numeroController.text,
-    };
-
-    try {
-      final response = await http.put(
-        Uri.parse(
-            'http://localhost:3000/updateUser?email=${authProvider.email}'),
-        body: jsonEncode(updatedData),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        await getUserData();
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProfilPage(),
-          ),
-        );
-      } else {
-        print('Failed to update user data. Response: ${response.body}');
-        throw Exception('Failed to update user data');
-      }
-    } catch (error) {
-      print('Error during HTTP request: $error');
-    }
-  }
-
-  
-    @override
+  @override
   void initState() {
     super.initState();
 
     _email = Provider.of<AuthProvider>(context, listen: false).email!;
-   
-     getUserData();
-      
+
+    getUserData();
   }
-   
-  
 
   @override
   Widget build(BuildContext context) {
@@ -135,11 +149,9 @@ Future<void> getUserData() async {
                     decoration: const InputDecoration(),
                   ),
                 ),
-
               ],
             ),
-           
-              Row(
+            Row(
               children: [
                 const Icon(Icons.person),
                 const SizedBox(width: 8),

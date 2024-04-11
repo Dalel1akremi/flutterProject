@@ -47,7 +47,7 @@ String? get telephone =>_telephone;
 
   bool get isAuthenticated => _token != null && _userId != null;
 
-  Future<void> _saveTokenToStorage(String token, String userId, String email,String nom,String telephone) async {
+  Future<void> saveTokenToStorage(String token, String userId, String email,String nom,String telephone) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
     await prefs.setString('userId', userId);
@@ -97,7 +97,7 @@ String? get telephone =>_telephone;
           print('login successful!UserId:$userId,nom:$nom,telephone:$telephone');
         }
         // Save token to storage before setting it
-        await _saveTokenToStorage(token, userId, email,nom,telephone);
+        await saveTokenToStorage(token, userId, email,nom,telephone);
 
         _token = token;
         _userId = data['userId'];
