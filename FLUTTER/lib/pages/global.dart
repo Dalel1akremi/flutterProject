@@ -2,13 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'aboutRestaurant/acceuil.dart';
 
-class Panier {
+class Panier extends Iterable<Article> {
+  List<Article> articles = [];
   static final Panier _instance = Panier._internal();
   factory Panier() => _instance;
-
+ @override
+  Iterator<Article> get iterator => articles.iterator;
   Panier._internal();
   List<String> elementsChoisis = [];
-  List<Article> articles = [];
+
   TimeOfDay? selectedTime;
   String? selectedRetraitMode;
   Restaurant? selectedRestaurant;
@@ -16,6 +18,9 @@ class Panier {
   String? origin;
   void viderPanier() {
     articles.clear();
+  }
+  Article operator [](int index) {
+    return articles[index];
   }
 
   void getOrigin() {}

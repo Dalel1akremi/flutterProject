@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, unused_local_variable
 
+import 'package:demo/pages/aboutPaiement/panier.dart';
 import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,35 +29,39 @@ class _LoginPageState extends State<loginPage> {
   String password = '';
   Panier panier = Panier();
 
-  void _submit(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      try {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final loginData = await authProvider.login(email, password);
-        final userId = loginData['userId'];
-        final nom = loginData['nom'];
- bool isLoggedIn = authProvider
-                .isAuthenticated;
-        if (panier.origin == 'panier') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const PaymentScreen()),
-          );
-        } else if (panier.origin == 'Restaurant') {
-          if (isLoggedIn) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const RestaurantDetail()),
-            );
-          }
-        } else {
-         Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(builder: (context) =>const ProfilPage()),
-);
-        }
-      } catch (error) {
+ void _submit(BuildContext context) async {
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final loginData = await authProvider.login(email, password);
+      final userId = loginData['userId'];
+      final nom = loginData['nom'];
+      
+      bool isLoggedIn = authProvider.isAuthenticated;
+      if (panier.origin == 'panier') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PaymentScreen()),
+        );
+      } else if (panier.origin == 'livraison') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PanierPage()),
+        );
+      } else if (panier.origin == 'Restaurant' && isLoggedIn) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RestaurantDetail()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilPage()),
+        );
+      }
+    } 
+ catch (error) {
         if (kDebugMode) {
           print('Error during login: $error');
         }

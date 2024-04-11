@@ -1,5 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
-
+import 'package:demo/pages/aboutUser/adresse.dart';
 import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,18 +7,11 @@ import 'paiement.dart';
 import '../aboutUser/auth_provider.dart';
 
 class PanierPage extends StatefulWidget {
-  final int numberOfItems;
-
-  final List<Article> panier;
-
   const PanierPage({
     Key? key,
-    required this.numberOfItems,
-    required this.panier,
   }) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _PanierPageState createState() => _PanierPageState();
 }
 
@@ -27,36 +19,40 @@ class _PanierPageState extends State<PanierPage> {
   TimeOfDay? newSelectedTime;
   String? newSelectedMode;
   AuthProvider authProvider = AuthProvider();
-  Panier panier = Panier();
+
+  late Panier panier;
+  
   int getTotalQuantity() {
     int totalQuantity = 0;
-    for (Article article in widget.panier) {
+    for (Article article in panier) {
       totalQuantity += article.quantite;
     }
     return totalQuantity;
   }
-IconData getModeIcon(String value) {
-  IconData iconData;
-  switch (value.trim().toLowerCase()) {
-    case 'en livraison':
-      iconData = Icons.delivery_dining; 
-      break;
-    case 'a emporter':
-      iconData = Icons.takeout_dining; 
-      break;
-    case 'sur place':
-      iconData = Icons.restaurant; 
-      break;
-    default:
-      iconData = Icons.error; 
+
+  IconData getModeIcon(String value) {
+    IconData iconData;
+    switch (value.trim().toLowerCase()) {
+      case 'en livraison':
+        iconData = Icons.delivery_dining;
+        break;
+      case 'a emporter':
+        iconData = Icons.takeout_dining;
+        break;
+      case 'sur place':
+        iconData = Icons.restaurant;
+        break;
+      default:
+        iconData = Icons.error;
+    }
+    return iconData;
   }
-  return iconData;
-}
 
   @override
   void initState() {
     super.initState();
     initAuthProvider();
+      panier = Panier();
   }
 
   Future<void> initAuthProvider() async {
@@ -65,19 +61,18 @@ IconData getModeIcon(String value) {
     setState(() {});
   }
 
-
-String mapRetraitMode(String value) {
-  switch (value) {
-    case 'a emporter':
-      return 'A Emporter';
-    case 'sur place':
-      return 'Sur place';
-    case 'en livraison':
-      return 'En Livraison';
-    default:
-      return value;
+  String mapRetraitMode(String value) {
+    switch (value) {
+      case 'a emporter':
+        return 'A Emporter';
+      case 'sur place':
+        return 'Sur place';
+      case 'en livraison':
+        return 'En Livraison';
+      default:
+        return value;
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -98,13 +93,12 @@ String mapRetraitMode(String value) {
                     shape: BoxShape.circle,
                     color: Colors.grey[300],
                   ),
-                  padding: const EdgeInsets.all(
-                      10),
+                  padding: const EdgeInsets.all(10),
                   child: Icon(
                     getModeIcon(newSelectedMode ??
                         panier.getSelectedRetraitMode() ??
                         ''),
-                    color: Colors.black, 
+                    color: Colors.black,
                   ),
                 ),
                 Expanded(
@@ -135,9 +129,9 @@ String mapRetraitMode(String value) {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: widget.panier.length,
+              itemCount: panier.length,
               itemBuilder: (context, index) {
-                final article = widget.panier[index];
+                final article = panier[index];
                 return ListTile(
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,7 +146,7 @@ String mapRetraitMode(String value) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: article.elementsChoisis
                             .map((element) => Text('     $element'))
-                            .toList(), 
+                            .toList(),
                       ),
                     ],
                   ),
@@ -176,7 +170,7 @@ String mapRetraitMode(String value) {
                 panier.updateCommandeDetails(
                     newSelectedMode ?? panier.getSelectedRetraitMode() ?? '',
                     newSelectedTime ?? panier.getCurrentSelectedTime());
-      
+
                 bool isLoggedIn =
                     Provider.of<AuthProvider>(context, listen: false)
                         .isAuthenticated;
@@ -189,7 +183,7 @@ String mapRetraitMode(String value) {
                   );
                 } else {
                   panier.origin = 'panier';
-                 
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const loginPage()),
@@ -198,7 +192,8 @@ String mapRetraitMode(String value) {
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(150, 50),
-                backgroundColor: Colors.green, ),
+                backgroundColor: Colors.green,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -230,115 +225,135 @@ String mapRetraitMode(String value) {
       ),
     );
   }
-  Future<void> showEditDialog() async {
-    Map<String, dynamic>? newSelections = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String? selectedRetraitMode =
-            newSelectedMode ?? panier.getSelectedRetraitMode() ?? "";
-        TimeOfDay? selectedTime = newSelectedTime ?? panier.selectedTime;
+void showEditDialog() async {
+  Map<String, dynamic>? newSelections = await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      String? selectedRetraitMode =
+          newSelectedMode ?? panier.getSelectedRetraitMode() ?? "";
+      TimeOfDay? selectedTime = newSelectedTime ?? panier.selectedTime;
 
-        return AlertDialog(
-          title: const Text('Modifier la commande'),
-          content: Column(
-            children: [
-              DropdownButton<String>(
-                value: selectedRetraitMode,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedRetraitMode = newValue!;
-                  });
-                },
-                items: <String>['A Emporter', 'Sur place', 'En Livraison']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(mapRetraitMode(value)),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  TimeOfDay? pickedTime = await showTimePicker(
-                    context: context,
-                    initialTime: selectedTime ?? TimeOfDay.now(),
-                  );
-
-                  if (pickedTime != null) {
-                    DateTime currentTime = DateTime.now();
-                    DateTime selectedDateTime = DateTime(
-                      currentTime.year,
-                      currentTime.month,
-                      currentTime.day,
-                      pickedTime.hour,
-                      pickedTime.minute,
-                    );
-
-                    if (selectedDateTime.isAfter(
-                        currentTime.add(const Duration(minutes: 15)))) {
-                      setState(() {
-                        selectedTime = pickedTime;
-                      });
+      return AlertDialog(
+        title: const Text('Modifier la commande'),
+        content: Column(
+          children: [
+            DropdownButton<String>(
+              value: selectedRetraitMode,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedRetraitMode = newValue!;
+                  if (selectedRetraitMode == 'En Livraison') {
+                    bool isLoggedIn =
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .isAuthenticated;
+                    if (isLoggedIn) {
+                      
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddressSearchScreen()),
+                      );
                     } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Heure invalide'),
-                            content: const Text(
-                                'Veuillez choisir une heure au moins 15 minutes plus tard.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
+                      panier.origin = 'livraison';
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const loginPage()),
                       );
                     }
                   }
-                },
-                child: const Text('Modifier l\'heure'),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
+                });
               },
-              child: const Text('Annuler'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(
-                  context,
-                  {
-                    'retraitMode': selectedRetraitMode,
-                    'selectedTime': selectedTime,
-                  },
+              items: <String>['A Emporter', 'Sur place', 'En Livraison']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(mapRetraitMode(value)),
                 );
+              }).toList(),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                TimeOfDay? pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: selectedTime ?? TimeOfDay.now(),
+                );
+
+                if (pickedTime != null) {
+                  DateTime currentTime = DateTime.now();
+                  DateTime selectedDateTime = DateTime(
+                    currentTime.year,
+                    currentTime.month,
+                    currentTime.day,
+                    pickedTime.hour,
+                    pickedTime.minute,
+                  );
+
+                  if (selectedDateTime.isAfter(
+                      currentTime.add(const Duration(minutes: 15)))) {
+                    setState(() {
+                      selectedTime = pickedTime;
+                    });
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Heure invalide'),
+                          content: const Text(
+                              'Veuillez choisir une heure au moins 15 minutes plus tard.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                }
               },
-              child: const Text('Enregistrer'),
+              child: const Text('Modifier l\'heure'),
             ),
           ],
-        );
-      },
-    );
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(
+                context,
+                {
+                  'retraitMode': selectedRetraitMode,
+                  'selectedTime': selectedTime,
+                },
+              );
+            },
+            child: const Text('Enregistrer'),
+          ),
+        ],
+      );
+    },
+  );
 
-    if (newSelections != null) {
-      setState(() {
-        newSelectedMode = newSelections['retraitMode'];
-        newSelectedTime = newSelections['selectedTime'];
-        panier.updateCommandeDetails(panier.getSelectedRetraitMode() ?? '',
-            newSelectedTime ?? panier.getCurrentSelectedTime());
-      });
-    }
+  if (newSelections != null) {
+    setState(() {
+      newSelectedMode = newSelections['retraitMode'];
+      newSelectedTime = newSelections['selectedTime'];
+      panier.updateCommandeDetails(panier.getSelectedRetraitMode() ?? '',
+          newSelectedTime ?? panier.getCurrentSelectedTime());
+    });
   }
+}
 
   Future<void> showUpdateQuantityDialog(Article article) async {
     int newQuantity = article.quantite;
@@ -355,10 +370,10 @@ String mapRetraitMode(String value) {
               const Text(
                 'Personnaliser votre plat',
                 style: TextStyle(
-                  color: Colors.green, // Changer la couleur en vert
+                  color: Colors.green,
                 ),
               ),
-              const SizedBox(height: 8), // Espacement entre les éléments
+              const SizedBox(height: 8),
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 8.0),
                 height: 2.0,
@@ -372,7 +387,7 @@ String mapRetraitMode(String value) {
                     onTap: () {
                       setState(() {
                         newQuantity++;
-                        newPrice; // Incrémenter la quantité
+                        newPrice;
                       });
                     },
                     child: Container(
@@ -384,18 +399,18 @@ String mapRetraitMode(String value) {
                       child: const Icon(Icons.add),
                     ),
                   ),
-                  const SizedBox(width: 16), // Espacement entre les boutons
+                  const SizedBox(width: 16), 
                   Text(
-                    '$newQuantity', // Afficher la nouvelle quantité
+                    '$newQuantity', 
                     style: const TextStyle(fontSize: 20),
                   ),
-                  const SizedBox(width: 16), // Espacement entre les boutons
+                  const SizedBox(width: 16), 
                   GestureDetector(
                     onTap: () {
                       setState(() {
                         if (newQuantity > 1) {
                           newQuantity--;
-                          newPrice; // Décrémenter la quantité si elle est supérieure à 1
+                          newPrice; 
                         }
                       });
                     },
@@ -410,9 +425,9 @@ String mapRetraitMode(String value) {
                   ),
                 ],
               ),
-              const SizedBox(width: 20), // Espacement entre les boutons
+              const SizedBox(width: 20),
               Text(
-                'Nouveau Total:$newPrice £', // Afficher la nouvelle quantité
+                'Nouveau Total:$newPrice £',
                 style: const TextStyle(fontSize: 20),
               ),
             ],

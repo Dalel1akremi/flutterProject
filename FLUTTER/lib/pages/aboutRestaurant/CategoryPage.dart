@@ -207,11 +207,7 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PanierPage(
-    
-              numberOfItems: numberOfItems,
-              panier: Panier().articles,
-            ),
+            builder: (context) => const PanierPage(),
           ),
         );
       } 
@@ -328,7 +324,7 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
                             ),
                             const SizedBox(height: 8),
                              Text(
-                            menuItem['description'] ?? '', // Display an empty string if description is null
+                            menuItem['description'] ?? '', 
                             style: const TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: 16,
