@@ -53,13 +53,14 @@ const createCommande = async (req, res) => {
         prix: matchingItem.prix,
         quantite: itemInput.quantite,
         elements_choisis: itemInput.elements_choisis,
+        
       };
     });
 
     const temps = id_items[0].temps;
     const mode_retrait = id_items[0].mode_retrait;
     const montant_Total = id_items[0].montant_Total;
-
+    const adresse = id_items[0].adresse;
     const newCommande = new Commande({
       id_rest: id_rest,
       id_items: formattedItems,
@@ -67,7 +68,8 @@ const createCommande = async (req, res) => {
       temps: temps,
       mode_retrait: mode_retrait,
       montant_Total: montant_Total,
-      numero_telephone: numero_telephone, 
+      numero_telephone: numero_telephone,
+      adresse:adresse, 
     });
 
     const savedCommande = await newCommande.save();

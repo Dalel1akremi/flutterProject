@@ -25,7 +25,8 @@ const commandeSchema = new mongoose.Schema({
   mode_retrait: { type: String },
   montant_Total:{ type: Number  }, 
   id_rest: { type: Number, ref: 'Restaurant' } ,
-  numero_telephone :{type: String}
+  numero_telephone :{type: String},
+  adresse:{ type: String },
 });
 
 commandeSchema.pre('save', async function (next) {

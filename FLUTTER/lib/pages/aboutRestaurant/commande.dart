@@ -282,6 +282,10 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
                 Text(
                   'Mode: ${commande['mode_retrait'] ?? 'N/A'}',
                 ),
+                Visibility(
+  visible: commande['mode_retrait'] == 'En Livraison', 
+  child: Text('Adresse:${commande['adresse'] ?? 'N/A'}',),
+),
                 const SizedBox(height: 12),
                 const Text(
                   'Articles:',
@@ -471,6 +475,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
               'Total': commande['montant_Total'],
               'etat': commande['etat'],
               'numero_telephone':commande[ 'numero_telephone'],
+              'adresse':commande['adresse'],
               'articles': articles,
             };
           }).toList();
@@ -530,6 +535,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
               'Total': commande['montant_Total'],
               'etat': commande['etat'],
                'numero_telephone':commande[ 'numero_telephone'],
+               'adresse':commande['adresse'],
               'articles': articles,
             };
           }).toList();
