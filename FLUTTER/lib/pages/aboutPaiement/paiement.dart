@@ -77,8 +77,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
         'quantite': article.quantite,
         'temps': panier.getCurrentSelectedTime().format(context),
         'mode_retrait': mapRetraitMode(panier.getSelectedRetraitMode() ?? ''),
-        'montant_Total': panier.getTotalPrix(),
+        'montant_Total': (panier.getSelectedRetraitMode() == 'En Livraison')
+            ? panier.getTotalPrix() + 7 
+            : panier.getTotalPrix(),
         'elements_choisis': article.elementsChoisis,
+        'adresse': panier.getUserAddress(),
       };
     }).toList();
 
@@ -368,7 +371,7 @@ Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
     }
   }
 Future<void> showCVVDialog(String cvv) async {
-  String enteredCVV = ''; // Le CVV saisi par l'utilisateur
+  String enteredCVV = ''; 
   final TextEditingController controller = TextEditingController();
 
   await showDialog(
@@ -396,7 +399,7 @@ Future<void> showCVVDialog(String cvv) async {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop(enteredCVV); // Passe le CVV saisi à la fonction compareCVV
+              Navigator.of(context).pop(enteredCVV); 
             },
             child: const Text('Valider'),
           ),
@@ -404,7 +407,7 @@ Future<void> showCVVDialog(String cvv) async {
       );
     },
   ).then((value) {
-    // Compare le CVV saisi avec le CVV haché récupéré de la base de données
+ 
     if (value != null) {
       compareCVV(cvv, value);
     }
@@ -465,13 +468,11 @@ Future<void> showCVVDialog(String cvv) async {
                 ),
               ],
             ),
-          ),
-          const Divider(),
-          Row(
+          ),Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Total',
+                'Montant',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -487,6 +488,42 @@ Future<void> showCVVDialog(String cvv) async {
               ),
             ],
           ),
+          const Divider(),
+       Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    const Text(
+      'Total',
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    const Spacer(),
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if (panier.getSelectedRetraitMode() == 'En Livraison')
+          const Text(
+            '+ Frais de livraison : \$7',
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
+        Text(
+          '\$${(panier.getSelectedRetraitMode() == 'En Livraison') ? (panier.getTotalPrix() + 7) : panier.getTotalPrix()}',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  ],
+),
+
+
+
           const Divider(),
           const Text(
             'Moyens de paiement',
