@@ -14,26 +14,26 @@ const CreateStep = () => {
   useEffect(() => {
     // Récupérer le token du stockage local
     const token = localStorage.getItem('token');
-
+  
     if (token) {
       const decodedToken = jwt.decode(token) as { [key: string]: any };
       const { id_rest } = decodedToken;
-      setRestaurantId((prevState: any) => ({
-        ...prevState,
-        id_rest: decodedToken.id_rest,
-      }));
+      setRestaurantId(id_rest); // Stocker uniquement l'ID du restaurant
     }
   }, []);
-
+  
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
+      // Formater idItems en tant que tableau d'objets
+      const idItemsArray = idItems.split(',').map(id => ({ id_item: id.trim() }));
+  
       const response = await axios.post('http://localhost:3000/createStep', {
         nom_Step: nomStep,
-        id_items: idItems,
+        id_items: idItemsArray, // Utiliser le tableau d'objets
         is_Obligatoire: isObligatoire,
-        id_rest: restaurantId, // Utilisation de l'ID du restaurant obtenu du token
+        id_rest: restaurantId, // Utiliser l'ID du restaurant
       });
       console.log(response.data);
       setIsLoading(false);
@@ -55,7 +55,9 @@ const CreateStep = () => {
       }
     }
   };
+  
 
+  
   return (
     <div>
       <Navbar />
