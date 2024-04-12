@@ -24,6 +24,7 @@ class Panier extends Iterable<Article> {
   }
 
   void getOrigin() {}
+
   void ajouterElementChoisi(String element) {
     elementsChoisis.add(element);
   }
@@ -116,6 +117,7 @@ class Article {
  
 // ignore: non_constant_identifier_names
   List<String> elementsChoisis;
+   String remarque;
   // ignore: non_constant_identifier_names
   final List<dynamic> id_Steps;
   Article({
@@ -128,7 +130,7 @@ class Article {
     required this.prix,
     required this.quantite,
     required this.elementsChoisis,
-    
+    required this.remarque,
   });
 }
 

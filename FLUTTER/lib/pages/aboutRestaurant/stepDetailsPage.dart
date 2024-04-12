@@ -134,7 +134,6 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // Creating the article object
                   Article article = Article(
                     id_item: widget.id_item,
                     nom: widget.nom,
@@ -142,14 +141,14 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                     prix: widget.prix,
                     id_Steps: [
                       widget.id_Steps
-                    ], // Wrap the value in a list if it's an int
+                    ],
                     quantite: _value,
                     elementsChoisis: [],
-                
+                 remarque: _remarkController.text,
                   );
-                  // Adding the article to the cart
+                 
+   
                   Panier().ajouterAuPanier1(article);
-                  // Navigating to the next page
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -171,7 +170,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(150, 50),
-                  backgroundColor: Colors.green, // Change as needed
+                  backgroundColor: Colors.green, 
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
