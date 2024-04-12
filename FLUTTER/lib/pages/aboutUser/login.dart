@@ -1,8 +1,12 @@
 // ignore_for_file: use_build_context_synchronously, unused_local_variable
 
 import 'package:demo/pages/aboutPaiement/panier.dart';
+import 'package:demo/pages/aboutRestaurant/conditionDuitilisation.dart';
+import 'package:demo/pages/aboutRestaurant/conditonDeVente.dart';
+import 'package:demo/pages/aboutRestaurant/confidentialite.dart';
 import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'auth_provider.dart';
@@ -204,32 +208,53 @@ class _LoginPageState extends State<loginPage> {
                 style: TextStyle(fontSize: 14.0),
               ),
               RichText(
-                text: const TextSpan(
-                  text: 'Conditions Générales d' 'utilisation ',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
-                  ),
+              text: TextSpan(
+                text: 'Conditions Générales d\'utilisation ',
+                style: const TextStyle(
+                  decoration: TextDecoration.underline,
+                  color: Colors.blue,
                 ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const TermsOfUsePage()),
+                    );
+                  },
               ),
-              RichText(
-                text: const TextSpan(
-                  text: 'Conditions Générales de Vente',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
-                  ),
+            ),
+            RichText(
+              text: TextSpan(
+                text: 'Conditions Générales de Vente',
+                style: const TextStyle(
+                  decoration: TextDecoration.underline,
+                  color: Colors.blue,
                 ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SalesTermsPage()),
+                    );
+                  },
               ),
-              RichText(
-                text: const TextSpan(
-                  text: 'politique de confidentialité',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
-                  ),
+            ),
+            RichText(
+              text: TextSpan(
+                text: 'politique de confidentialité',
+                style: const TextStyle(
+                  decoration: TextDecoration.underline,
+                  color: Colors.blue,
                 ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PrivacyPolicyPage()),
+                    );
+                  },
               ),
+            ),
               ElevatedButton(
                 onPressed: () => (context),
                 style: ElevatedButton.styleFrom(
