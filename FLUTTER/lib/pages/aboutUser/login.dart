@@ -15,8 +15,10 @@ import 'registre.dart';
 import './../aboutPaiement/paiement.dart';
 import './../global.dart';
 import './../aboutRestaurant/RestaurantDetail.dart';
-import 'dart:js' as js;
+import 'dart:html';
 import 'dart:async';
+import 'dart:js' as js;
+
 
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
@@ -34,44 +36,25 @@ class _LoginPageState extends State<loginPage> {
   String email = '';
   String password = '';
   Panier panier = Panier();
+String clientId = '800045568375-qveeo76qnq8p14jmtn6jcsh087uild6p.apps.googleusercontent.com';
+String redirectUri = 'http://localhost:49334';
+String scope = 'email'; 
 
+String buildAuthUrl() {
+  return 'https://accounts.google.com/o/oauth2/auth?'
+         'client_id=$clientId&'
+         'response_type=code&'
+         'redirect_uri=$redirectUri&'
+         'scope=$scope';
+}
 
 Future<void> _handleSignIn(BuildContext context) async {
   try {
-    if (js.context.hasProperty('gapi') && 
-        !js.context['gapi'].hasProperty('auth2')) {
-      // Initialiser gapi.auth2
-      await js.context['gapi'].callMethod('load', [
-        'auth2',
-        () {
-          final auth2 = js.context['gapi'].callMethod('auth2.init', [
-            {
-              'client_id':
-                  '800045568375-qveeo76qnq8p14jmtn6jcsh087uild6p.apps.googleusercontent.com',
-              'scope': 'email'
-            }
-          ]);
 
-          auth2.callMethod('then', [
-            (_) {
-              _attemptGoogleSignIn();
-            }
-          ]);
-        }
-      ]);
-    } else if (js.context.hasProperty('gapi') &&
-               js.context['gapi'].hasProperty('auth2')) {
-      _attemptGoogleSignIn();
-    } else {
-      print('Erreur: gapi n\'est pas chargé.');
-    }
-  } catch (error) {
-    print('Erreur de connexion avec Google: $error');
-  }
-}
+    String authUrl = buildAuthUrl();
 
-Future<void> _attemptGoogleSignIn() async {
-  try {
+    window.open(authUrl, 'google-auth');
+
     final completer = Completer();
 
     void checkAuthInstance(int attempts) {
@@ -85,7 +68,7 @@ Future<void> _attemptGoogleSignIn() async {
       if (authInstance != null) {
         completer.complete(authInstance);
       } else {
-        Future.delayed(const Duration(milliseconds: 500), () {
+        Future.delayed(Duration(milliseconds: 500), () {
           checkAuthInstance(attempts + 1);
         });
       }
@@ -97,7 +80,7 @@ Future<void> _attemptGoogleSignIn() async {
     
     if (authInstance != null) {
       final googleUser = await authInstance.callMethod('signIn');
-      // Traitez les informations de connexion ici...
+  
     } else {
       print('Erreur: authInstance est null.');
     }
