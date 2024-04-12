@@ -15,6 +15,7 @@ import 'registre.dart';
 import './../aboutPaiement/paiement.dart';
 import './../global.dart';
 import './../aboutRestaurant/RestaurantDetail.dart';
+import 'dart:js' as js;
 
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
@@ -32,6 +33,28 @@ class _LoginPageState extends State<loginPage> {
   String email = '';
   String password = '';
   Panier panier = Panier();
+
+
+  Future<void> _handleSignIn(BuildContext context) async {
+  try {
+    if (js.context.hasProperty('gapi') && js.context['gapi'].hasProperty('auth2')) {
+      final authInstance = js.context['gapi']['auth2'].callMethod('getAuthInstance');
+      final googleUser = await authInstance.callMethod('signIn');
+
+
+    } else {
+      if (kDebugMode) {
+        print('Erreur: gapi.auth2 n\'est pas initialisé.');
+      }
+
+    }
+  } catch (error) {
+    if (kDebugMode) {
+      print('Erreur de connexion avec Google: $error');
+    }
+
+  }
+}
 
  void _submit(BuildContext context) async {
   if (_formKey.currentState!.validate()) {
@@ -255,31 +278,31 @@ class _LoginPageState extends State<loginPage> {
                   },
               ),
             ),
-              ElevatedButton(
-                onPressed: () => (context),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: const Color.fromARGB(255, 237, 21, 21),
-                ),
-                child: Row(
-  mainAxisSize: MainAxisSize.min,
-  children: [
-    Image.asset(
-      'images/google_logo.png',
-      height: 20.0,
-    ),
-    const SizedBox(width: 10.0),
-    const Text(
-      'Connecter avec Google',
-      style: TextStyle(
-        decoration: TextDecoration.underline,
-        color: Colors.black,
+             ElevatedButton(
+      onPressed: () => _handleSignIn(context),
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 50),
+        backgroundColor: const Color.fromARGB(255, 237, 21, 21),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'images/google_logo.png',
+            height: 20.0,
+          ),
+          const SizedBox(width: 10.0),
+          const Text(
+            'Connecter avec Google',
+            style: TextStyle(
+              decoration: TextDecoration.underline,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
     ),
-  ],
-),
-
-              ),
+  
             ],
           ),
         ),
