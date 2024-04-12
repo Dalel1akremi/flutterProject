@@ -16,6 +16,7 @@ import './../aboutPaiement/paiement.dart';
 import './../global.dart';
 import './../aboutRestaurant/RestaurantDetail.dart';
 import 'dart:js' as js;
+import 'dart:async';
 
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
@@ -35,60 +36,108 @@ class _LoginPageState extends State<loginPage> {
   Panier panier = Panier();
 
 
-  Future<void> _handleSignIn(BuildContext context) async {
+Future<void> _handleSignIn(BuildContext context) async {
   try {
-    if (js.context.hasProperty('gapi') && js.context['gapi'].hasProperty('auth2')) {
-      final authInstance = js.context['gapi']['auth2'].callMethod('getAuthInstance');
-      final googleUser = await authInstance.callMethod('signIn');
+    if (js.context.hasProperty('gapi') && 
+        !js.context['gapi'].hasProperty('auth2')) {
+      // Initialiser gapi.auth2
+      await js.context['gapi'].callMethod('load', [
+        'auth2',
+        () {
+          final auth2 = js.context['gapi'].callMethod('auth2.init', [
+            {
+              'client_id':
+                  '800045568375-qveeo76qnq8p14jmtn6jcsh087uild6p.apps.googleusercontent.com',
+              'scope': 'email'
+            }
+          ]);
 
-
+          auth2.callMethod('then', [
+            (_) {
+              _attemptGoogleSignIn();
+            }
+          ]);
+        }
+      ]);
+    } else if (js.context.hasProperty('gapi') &&
+               js.context['gapi'].hasProperty('auth2')) {
+      _attemptGoogleSignIn();
     } else {
-      if (kDebugMode) {
-        print('Erreur: gapi.auth2 n\'est pas initialisé.');
-      }
-
+      print('Erreur: gapi n\'est pas chargé.');
     }
   } catch (error) {
-    if (kDebugMode) {
-      print('Erreur de connexion avec Google: $error');
-    }
-
+    print('Erreur de connexion avec Google: $error');
   }
 }
 
- void _submit(BuildContext context) async {
-  if (_formKey.currentState!.validate()) {
-    _formKey.currentState!.save();
-    try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final loginData = await authProvider.login(email, password);
-      final userId = loginData['userId'];
-      final nom = loginData['nom'];
-      
-      bool isLoggedIn = authProvider.isAuthenticated;
-      if (panier.origin == 'panier') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PaymentScreen()),
-        );
-      } else if (panier.origin == 'livraison') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PanierPage()),
-        );
-      } else if (panier.origin == 'Restaurant' && isLoggedIn) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const RestaurantDetail()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ProfilPage()),
-        );
+Future<void> _attemptGoogleSignIn() async {
+  try {
+    final completer = Completer();
+
+    void checkAuthInstance(int attempts) {
+      if (attempts >= 10) {
+        completer.completeError('Timeout: authInstance est null après 10 tentatives.');
+        return;
       }
-    } 
- catch (error) {
+
+      final authInstance = js.context['gapi']['auth2'].callMethod('getAuthInstance');
+      
+      if (authInstance != null) {
+        completer.complete(authInstance);
+      } else {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          checkAuthInstance(attempts + 1);
+        });
+      }
+    }
+
+    checkAuthInstance(0);
+
+    final authInstance = await completer.future;
+    
+    if (authInstance != null) {
+      final googleUser = await authInstance.callMethod('signIn');
+      // Traitez les informations de connexion ici...
+    } else {
+      print('Erreur: authInstance est null.');
+    }
+  } catch (e) {
+    print('Erreur lors de la connexion avec Google: $e');
+  }
+}
+
+  void _submit(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      try {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final loginData = await authProvider.login(email, password);
+        final userId = loginData['userId'];
+        final nom = loginData['nom'];
+
+        bool isLoggedIn = authProvider.isAuthenticated;
+        if (panier.origin == 'panier') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PaymentScreen()),
+          );
+        } else if (panier.origin == 'livraison') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PanierPage()),
+          );
+        } else if (panier.origin == 'Restaurant' && isLoggedIn) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RestaurantDetail()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfilPage()),
+          );
+        }
+      } catch (error) {
         if (kDebugMode) {
           print('Error during login: $error');
         }
@@ -231,78 +280,80 @@ class _LoginPageState extends State<loginPage> {
                 style: TextStyle(fontSize: 14.0),
               ),
               RichText(
-              text: TextSpan(
-                text: 'Conditions Générales d\'utilisation ',
-                style: const TextStyle(
-                  decoration: TextDecoration.underline,
-                  color: Colors.blue,
+                text: TextSpan(
+                  text: 'Conditions Générales d\'utilisation ',
+                  style: const TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: Colors.blue,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TermsOfUsePage()),
+                      );
+                    },
                 ),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const TermsOfUsePage()),
-                    );
-                  },
               ),
-            ),
-            RichText(
-              text: TextSpan(
-                text: 'Conditions Générales de Vente',
-                style: const TextStyle(
-                  decoration: TextDecoration.underline,
-                  color: Colors.blue,
+              RichText(
+                text: TextSpan(
+                  text: 'Conditions Générales de Vente',
+                  style: const TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: Colors.blue,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SalesTermsPage()),
+                      );
+                    },
                 ),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SalesTermsPage()),
-                    );
-                  },
               ),
-            ),
-            RichText(
-              text: TextSpan(
-                text: 'politique de confidentialité',
-                style: const TextStyle(
-                  decoration: TextDecoration.underline,
-                  color: Colors.blue,
+              RichText(
+                text: TextSpan(
+                  text: 'politique de confidentialité',
+                  style: const TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: Colors.blue,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PrivacyPolicyPage()),
+                      );
+                    },
                 ),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const PrivacyPolicyPage()),
-                    );
-                  },
               ),
-            ),
-             ElevatedButton(
-      onPressed: () => _handleSignIn(context),
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 50),
-        backgroundColor: const Color.fromARGB(255, 237, 21, 21),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset(
-            'images/google_logo.png',
-            height: 20.0,
-          ),
-          const SizedBox(width: 10.0),
-          const Text(
-            'Connecter avec Google',
-            style: TextStyle(
-              decoration: TextDecoration.underline,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
-    ),
-  
+              ElevatedButton(
+                onPressed: () => _handleSignIn(context),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: const Color.fromARGB(255, 237, 21, 21),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'images/google_logo.png',
+                      height: 20.0,
+                    ),
+                    const SizedBox(width: 10.0),
+                    const Text(
+                      'Connecter avec Google',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
