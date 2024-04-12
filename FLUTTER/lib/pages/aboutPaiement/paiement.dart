@@ -83,6 +83,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             : panier.getTotalPrix(),
         'elements_choisis': article.elementsChoisis,
         'adresse': panier.getUserAddress(),
+        'remarque':article.remarque,
       };
     }).toList();
 
