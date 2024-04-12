@@ -240,7 +240,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
         Color circle1Color = Colors.grey; 
         Color circle2Color = Colors.grey;
         Color circle3Color = Colors.grey; 
-        if (etatCommande == 'Validé') {
+        if (etatCommande == 'Validée') {
           circle1Color = Colors.green;
         } else if (etatCommande == 'Préparation') {
           circle1Color = Colors.green;
@@ -250,49 +250,87 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
           circle2Color = Colors.orange;
           circle3Color = Colors.blue;
         }
-
+  IconData modeRetraitIcon;
+        switch (commande['mode_retrait']) {
+          case 'En Livraison':
+            modeRetraitIcon = Icons.delivery_dining;
+            break;
+           case 'Sur place':
+            modeRetraitIcon = Icons.restaurant;
+            break;
+          case 'A Emporter':
+            modeRetraitIcon = Icons.shopping_bag;
+            break;
+          default:
+            modeRetraitIcon = Icons.error; 
+        }
         return Card(
           margin: const EdgeInsets.all(8.0),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Commande: ${commande['commande'] ?? 'N/A'}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Total: ${commande['Total'] ?? 'N/A'}€',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Center(
+            child: Text(
+              '${commande['nom_restaurant'] ?? 'N/A'}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('  à ${commande['temps'] ?? 'N/A'}',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          'Total: ${commande['Total'] ?? 'N/A'}€',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  
                 const SizedBox(height: 8),
-                Text(
-                  'Temps: ${commande['temps'] ?? 'N/A'}',
-                ),
-                Text(
-                  'Mode: ${commande['mode_retrait'] ?? 'N/A'}',
-                ),
+               Row(
+                
+  children: [
+    Icon(modeRetraitIcon), 
+    const SizedBox(width: 8),
+    Text(
+      'Commande: ${commande['commande'] ?? 'N/A'}',
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    const Spacer(),
+    ElevatedButton.icon(
+                      onPressed: () {
+                        makePhoneCall(phoneNumber);
+                      },
+                      icon: const Icon(Icons.phone),
+                      label: const Text('Appeler'),
+                    ),
+  ],
+),
+const Divider(),
                 Visibility(
   visible: commande['mode_retrait'] == 'En Livraison', 
   child: Text('Adresse:${commande['adresse'] ?? 'N/A'}',),
 ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Articles:',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+               
  Column(
   crossAxisAlignment: CrossAxisAlignment.start,
   children: articles.map((article) {
@@ -303,15 +341,13 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Nom: ${article['nom'] ?? 'N/A'}',
+              '${article['quantite'] ?? 'N/A'} X ${article['nom'] ?? 'N/A'}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
               'Prix: ${article['prix'] ?? 'N/A'}€',
             ),
-            Text(
-              'Quantité: ${article['quantite'] ?? 'N/A'}',
-            ),
+            
           ],
         ),
       );
@@ -322,18 +358,15 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Nom: ${article['nom'] ?? 'N/A'}',
+             '${article['quantite'] ?? 'N/A'} X ${article['nom'] ?? 'N/A'} ${article['elements_choisis'] ?? 'N/A'}',
               style: const TextStyle(fontWeight: FontWeight.bold),
+              
             ),
-            Text(
-              'Éléments choisis: ${article['elements_choisis'] ?? 'N/A'}',
-            ),
+           
             Text(
               'Prix: ${article['prix'] ?? 'N/A'}€',
             ),
-            Text(
-              'Quantité: ${article['quantite'] ?? 'N/A'}',
-            ),
+           Text('Remarque :${article['remarque']?? 'N/A'}',)
           ],
         ),
       );
@@ -352,13 +385,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        makePhoneCall(phoneNumber);
-                      },
-                      icon: const Icon(Icons.phone),
-                      label: const Text('Appeler'),
-                    ),
+                    
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -374,7 +401,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
             backgroundColor: circle1Color,
             child: const Text('1', style: TextStyle(color: Colors.white)),
           ),
-          const Text('Validé'),
+          const Text('Validée'),
         ],
       ),
     ),
@@ -465,6 +492,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
                 'prix': item['prix'] ?? 0,
                 'quantite': item['quantite'] ?? 0,
                 'elements_choisis':item['elements_choisis'],
+                'remarque':item['remarque'],
               };
             }).toList();
 
@@ -476,6 +504,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
               'etat': commande['etat'],
               'numero_telephone':commande[ 'numero_telephone'],
               'adresse':commande['adresse'],
+              'nom_restaurant': commande['nom_restaurant'], 
               'articles': articles,
             };
           }).toList();
@@ -525,6 +554,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
                 'prix': item['prix'] ?? 0,
                 'quantite': item['quantite'] ?? 0,
                 'elements_choisis':item['elements_choisis'],
+                'remarque':item['remarque'],
               };
             }).toList();
 
@@ -536,6 +566,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
               'etat': commande['etat'],
                'numero_telephone':commande[ 'numero_telephone'],
                'adresse':commande['adresse'],
+                'nom_restaurant': commande['nom_restaurant'], 
               'articles': articles,
             };
           }).toList();
