@@ -41,32 +41,26 @@ exports.createStep = async (req, res) => {
 };
 
 
-exports.getSteps = async (req, res) => {
+exports.getStepsByRestaurantId = async (req, res) => {
   try {
-  
-    const steps = await Step.find().populate('id_items', 'nom_item prix description');
- 
-    if (!steps || steps.length === 0) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Aucun Step trouvé',
-      });
-    }
+    const id_restaurant = req.query.id_rest; // Récupère l'ID du restaurant à partir des paramètres de la requête
+
+    // Supposons que votre modèle Item soit importé et correctement défini
+    const steps = await Step.find({ id_rest: id_restaurant }); // Requête pour récupérer les éléments du restaurant spécifié par son ID
 
     res.status(200).json({
       status: 200,
-      message: 'Steps récupérés avec succès',
-      data: steps,
+      message: 'Steps récupérés avec succès pour le restaurant correspondant',
+      steps,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: 'Erreur lors de la récupération des Steps',
-      error: error.message,
+      message: 'Erreur lors de la récupération des items pour le restaurant correspondant',
     });
   }
-}
+};
 exports.ObligationStep = async (req, res) => {
   try {
     const { stepId } = req.params;
