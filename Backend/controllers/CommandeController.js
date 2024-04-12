@@ -53,7 +53,7 @@ const createCommande = async (req, res) => {
         prix: matchingItem.prix,
         quantite: itemInput.quantite,
         elements_choisis: itemInput.elements_choisis,
-        
+        remarque:itemInput.remarque,
       };
     });
 
