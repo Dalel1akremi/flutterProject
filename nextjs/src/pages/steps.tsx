@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../styles/navbar';
 import Link from 'next/link';
-
+import router from 'next/router';
+import jwt from 'jsonwebtoken';
 interface Step {
   _id: string;
   nom_Step: string;
@@ -19,9 +20,17 @@ const Steps = () => {
 
   useEffect(() => {
     const fetchSteps = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/connexion');
+        return;
+      }
+
       try {
-        const response = await axios.get('http://localhost:3000/getSteps');
-        setSteps(response.data.data);
+        const decodedToken = jwt.decode(token) as { [key: string]: any };
+        const { id_rest } = decodedToken;
+        const response = await axios.get(`http://localhost:3000/getStepsByRestaurantId?id_rest=${id_rest}`);
+        setSteps(response.data.steps);
       } catch (error) {
         console.error('Erreur lors de la récupération des steps :', error);
       }
@@ -79,14 +88,14 @@ const Steps = () => {
   };
 
   return (
-                    <div>
-                    <Navbar />
-                    <div className="header">
-  <h1>Liste des étapes disponibles</h1>
-  <Link href="/creerStep" passHref>
-    <button className="green-button">+</button>
-  </Link>
-</div>
+    <div>
+      <Navbar />
+      <div className="header">
+        <h1>Liste des étapes disponibles</h1>
+        <Link href="/creerStep" passHref>
+          <button className="green-button">+</button>
+        </Link>
+      </div>
       <table>
         <thead>
           <tr>
@@ -97,26 +106,27 @@ const Steps = () => {
           </tr>
         </thead>
         <tbody>
-          {steps.map((step) => (
+          {steps && steps.map((step) => ( // Check if steps is not undefined before mapping
             <tr key={step._id}>
-<td>
-  {isEditMode ? (
-    <input 
-      type="text" 
-      value={step.nom_Step} 
-      onChange={(e) => {
-        const updatedValue = e.target.value;
-        setSteps(prevSteps =>
-          prevSteps.map(s =>
-            s._id === step._id ? { ...s, nom_Step: updatedValue } : s
-          )
-        );
-      }} 
-    />
-  ) : (
-    step.nom_Step
-  )}
-</td>              <td>
+              <td>
+                {isEditMode ? (
+                  <input 
+                    type="text" 
+                    value={step.nom_Step} 
+                    onChange={(e) => {
+                      const updatedValue = e.target.value;
+                      setSteps(prevSteps =>
+                        prevSteps.map(s =>
+                          s._id === step._id ? { ...s, nom_Step: updatedValue } : s
+                        )
+                      );
+                    }} 
+                  />
+                ) : (
+                  step.nom_Step
+                )}
+              </td>              
+              <td>
                 <ul>
                   {step.id_items.map((item) => (
                     <li key={item._id} onClick={() => getNomItemById(item.id_item)} style={{ cursor: 'pointer' }}>
@@ -155,6 +165,7 @@ const Steps = () => {
       </table>
     </div>
   );
+  
 };
 
 export default Steps;
