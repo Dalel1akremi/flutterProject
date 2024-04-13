@@ -1,4 +1,4 @@
-// Importez le modèle de paiement
+
 const Payment = require('../models/PaiementModel');
 const bcrypt = require('bcrypt');
 const braintree = require('braintree');
@@ -13,7 +13,7 @@ const porfeuille = async (req, res) => {
   const email = req.query.email;
   
   try {
-    // Check if the cardNumber already exists
+
     const existingCard = await Payment.findOne({ cardNumber });
     
     if (existingCard) {
