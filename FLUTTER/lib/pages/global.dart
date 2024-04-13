@@ -78,9 +78,10 @@ String? getSelectedRestaurantImage() {
     return selectedRestaurant?.modeDeRetrait.join(', ') ?? '';
   }
 
-  List<String>? getSelectedRestaurantRMode() {
-    return selectedRestaurant?.modeDeRetrait;
-  }
+
+String? getSelectedRestaurantPaiement() {
+  return selectedRestaurant?.modeDePaiement.join(', ') ?? '';
+}
 
   void setUserAddress(String address) {
     userAddress = address;
