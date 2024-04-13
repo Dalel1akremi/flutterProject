@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, unused_local_variable
+// ignore_for_file: use_build_context_synchronously, unused_local_variable, avoid_web_libraries_in_flutter
 
 import 'package:demo/pages/aboutPaiement/panier.dart';
 import 'package:demo/pages/aboutRestaurant/conditionDuitilisation.dart';
@@ -68,7 +68,7 @@ Future<void> _handleSignIn(BuildContext context) async {
       if (authInstance != null) {
         completer.complete(authInstance);
       } else {
-        Future.delayed(Duration(milliseconds: 500), () {
+        Future.delayed(const Duration(milliseconds: 500), () {
           checkAuthInstance(attempts + 1);
         });
       }
@@ -82,10 +82,14 @@ Future<void> _handleSignIn(BuildContext context) async {
       final googleUser = await authInstance.callMethod('signIn');
   
     } else {
-      print('Erreur: authInstance est null.');
+      if (kDebugMode) {
+        print('Erreur: authInstance est null.');
+      }
     }
   } catch (e) {
-    print('Erreur lors de la connexion avec Google: $e');
+    if (kDebugMode) {
+      print('Erreur lors de la connexion avec Google: $e');
+    }
   }
 }
 

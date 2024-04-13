@@ -183,7 +183,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
     try {
-      var isMatch = await BCrypt.checkpw(enteredCVV, hashedCVV);
+      var isMatch = BCrypt.checkpw(enteredCVV, hashedCVV);
 
       if (isMatch) {
         showDialog(
