@@ -88,11 +88,35 @@ class _PortefeuilleState extends State<Portefeuille> {
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: const Text('Portefeuille payline'),
       ),
-      body: Padding(
+       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
+        child: ListView(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height / 3,
+              decoration: BoxDecoration(
+                image: const DecorationImage(
+                  image: AssetImage('images/paiement.png'), 
+                  fit: BoxFit.fitHeight,
+                ),
+                borderRadius: BorderRadius.circular(15.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 1,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+            ), 
+             const Divider(),
+            const Text('Enregistre ma carte'),
+             Form(
           key: _formKey,
+          
           child: Column(
+           
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextFormField(
@@ -136,14 +160,18 @@ class _PortefeuilleState extends State<Portefeuille> {
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                    Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ProfilPage()),
-      );
-                    await sendPaymentRequest();
+                    try {
+                      await sendPaymentRequest();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ProfilPage()),
+                      );
+                    } catch (error) {
+                      print('Error during payment: $error');
+                    }
                   }
                 },
-             
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                   backgroundColor: Colors.black,
@@ -154,74 +182,67 @@ class _PortefeuilleState extends State<Portefeuille> {
                 ),
               ),
               const SizedBox(height: 16.0),
-             
-            ],
+         ],
+            ),
           ),
-        ),
+        ],
       ),
+    ),
+  );
+}
+Future<void> sendPaymentRequest() async {
+  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+  String apiUrl =
+      'http://localhost:3000/porfeuille?email=${authProvider.email}';
+
+  Map<String, dynamic> paymentData = {
+    "cardNumber": cardNumberController.text,
+    "expirationDate": expirationDateController.text,
+    "cvv": cvvController.text,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(paymentData),
     );
-  }
 
-  Future<void> sendPaymentRequest() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-     String apiUrl =
-        'http://localhost:3000/porfeuille?email=${authProvider.email}';
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
 
-    Map<String, dynamic> paymentData = {
-      "cardNumber": cardNumberController.text,
-      "expirationDate": expirationDateController.text,
-      "cvv": cvvController.text,
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(paymentData),
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(responseData['success'] ? 'Succès' : 'Erreur'),
-              content: Text(responseData['message']),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        throw Exception(
-            "Erreur lors de la requête HTTP : ${response.statusCode}");
-      }
-    } catch (error) {
-      print("Erreur lors de la requête HTTP : $error");
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Erreur'),
-            content: const Text('Erreur lors de la requête HTTP'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
+      if (responseData['success']) {
+         Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfilPage()),
           );
-        },
+       
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(responseData['message']),
+            backgroundColor: Colors.red,
+          ),
+        );
+        throw Exception(responseData['message']);
+      }
+    } else if (response.statusCode == 400) {
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(responseData['message']),
+          backgroundColor: Colors.red,
+        ),
       );
+      throw Exception(responseData['message']);
+    } else {
+      throw Exception(
+          "Erreur lors de la requête HTTP : ${response.statusCode}");
     }
+  } catch (error) {
+    print("Erreur lors de la requête HTTP : $error");
+    rethrow;
   }
+}
+
 }

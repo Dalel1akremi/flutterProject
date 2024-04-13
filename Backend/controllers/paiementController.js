@@ -8,14 +8,20 @@ const gateway = new braintree.BraintreeGateway({
   publicKey: 'rqyt73bwxp7wsv9y',
   privateKey: '36aab07db19d6ca6b8f74c0fa75867be',
 });
-
 const porfeuille = async (req, res) => {
   const { cardNumber, expirationDate, cvv } = req.body;
   const email = req.query.email;
+  
   try {
-    const saltRounds = 6; 
+    // Check if the cardNumber already exists
+    const existingCard = await Payment.findOne({ cardNumber });
+    
+    if (existingCard) {
+      return res.status(400).json({ success: false, message: 'ce numéro de carte exite déjà ' });
+    }
 
-const hashedCVV = await bcrypt.hash(cvv, saltRounds);
+    const saltRounds = 6; 
+    const hashedCVV = await bcrypt.hash(cvv, saltRounds);
 
     const nouvelleCarte = new Payment({
       cardNumber,
@@ -25,6 +31,7 @@ const hashedCVV = await bcrypt.hash(cvv, saltRounds);
     });
 
     await nouvelleCarte.save();
+    
     const carteBraintree = await gateway.paymentMethod.create({
       customerId: '87802661003', 
       paymentMethodNonce: 'fake-valid-nonce', 
@@ -36,6 +43,7 @@ const hashedCVV = await bcrypt.hash(cvv, saltRounds);
     res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout de la carte' });
   }
 };
+
 const recupererCarteParId = async (req, res) => {
   const email = req.query.email;
   const cardId = req.query.cardId; 

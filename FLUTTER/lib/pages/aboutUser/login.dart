@@ -128,7 +128,7 @@ Future<void> _handleSignIn(BuildContext context) async {
         if (kDebugMode) {
           print('Error during login: $error');
         }
-        String errorMessage = 'Error during login. Please try again.';
+        String errorMessage = 'Adresse ou Mot de passe invalide';
 
         if (error is FormatException) {
           errorMessage = 'Invalid response format from the server.';
