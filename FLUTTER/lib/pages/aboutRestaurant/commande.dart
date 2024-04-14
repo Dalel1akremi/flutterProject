@@ -395,7 +395,7 @@ const Divider(),
   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
   children: [
     Visibility(
-      visible: etatCommande != 'Passé' && etatCommande != 'Annuler',
+      visible: etatCommande != 'Passé' && etatCommande != 'Non validée',
       child: Column(
         children: [
           CircleAvatar(
@@ -414,7 +414,7 @@ const Divider(),
       ),
     ),
     Visibility(
-      visible: etatCommande != 'Passé' && etatCommande != 'Annuler',
+      visible: etatCommande != 'Passé' && etatCommande != 'Non validée',
       child: Column(
         children: [
           CircleAvatar(
@@ -433,7 +433,7 @@ const Divider(),
       ),
     ),
     Visibility(
-      visible: etatCommande != 'Passé' && etatCommande != 'Annuler',
+      visible: etatCommande != 'Passé' && etatCommande != 'Non validée',
       child: Column(
         children: [
           CircleAvatar(

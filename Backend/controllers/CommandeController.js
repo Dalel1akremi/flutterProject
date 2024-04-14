@@ -237,7 +237,7 @@ if (newStateCleaned === 'Validée' || newStateCleaned === 'Non validée') {
         console.error('id_user is missing in the request query parameters.');
         return res.status(400).json({ error: 'id_user is required in the request query parameters.' });
       }
-      const etats = ['Passée', 'Annuler'];
+      const etats = ['Passée', 'Non validée'];
 
       const commandes = await Commande.find({ id_user, etat: { $in: etats } });
   
