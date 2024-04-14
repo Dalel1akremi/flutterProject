@@ -161,3 +161,21 @@ input[type="password"] {
   border-radius: 5px;
 }
 /*  */
+.logout-button {
+  background-color: green; /* Couleur de fond rouge */
+  color: #FFFFFF; /* Texte blanc */
+  border: none; /* Pas de bordure */
+  padding: 10px 20px; /* Espacement intérieur */
+  cursor: pointer; /* Curseur pointer au survol */
+  border-radius: 5px; /* Coins arrondis */
+  margin-right: 10px; /* Marge à droite pour l'espace entre les boutons */
+}
+
+.cancel-button {
+  background-color: #FF0000; /* Couleur de fond grise */
+  color: #000000; /* Texte noir */
+  border: none; /* Pas de bordure */
+  padding: 10px 20px; /* Espacement intérieur */
+  cursor: pointer; /* Curseur pointer au survol */
+  border-radius: 5px; /* Coins arrondis */
+}
