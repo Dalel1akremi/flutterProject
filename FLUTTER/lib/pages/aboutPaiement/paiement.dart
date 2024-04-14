@@ -117,11 +117,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> handlePayment() async {
-    if (useCreditCard && selectedCreditCard != null) {
+    if (isCreditCardChecked && selectedCreditCard != null) {
       makePaymentWithCreditCard();
       panier.printPanier();
       await createCommande();
-    } else if (payInStore && selectedPaymentMethod != null) {
+    } else if (enableInStoreCheckbox && selectedPaymentMethod != null) {
       panier.printPanier();
       await createCommande();
       Navigator.push(
