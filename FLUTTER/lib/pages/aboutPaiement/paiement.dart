@@ -46,7 +46,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   List<CreditCard> userCreditCards = [];
   String? selectedCreditCard;
   String? id;
-
+  bool isCreditCardChecked = false;
   List<String> onlinePaymentMethods = ['Carte bancaire'];
   List<String> inStorePaymentMethods = [
     'Espèces',
@@ -117,11 +117,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> handlePayment() async {
-    if (useCreditCard && selectedCreditCard != null) {
+    if (isCreditCardChecked && selectedCreditCard != null) {
       makePaymentWithCreditCard();
       panier.printPanier();
       await createCommande();
-    } else if (payInStore && selectedPaymentMethod != null) {
+    } else if (enableInStoreCheckbox && selectedPaymentMethod != null) {
       panier.printPanier();
       await createCommande();
       Navigator.push(
@@ -179,52 +179,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
       context,
       MaterialPageRoute(builder: (context) => const CommandeApp()),
     );
-  }
-
-  Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
-    try {
-      var isMatch = BCrypt.checkpw(enteredCVV, hashedCVV);
-
-      if (isMatch) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Code correct'),
-              content: const Text('Merci pour votre confiance.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Code incorrect'),
-              content: const Text('Veuillez réessayer !'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } catch (error) {
-      print('Erreur lors de la comparaison des CVV: $error');
-    }
   }
 
   Future<void> fetchUserCreditCards() async {
@@ -390,8 +344,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       });
     }
   }
-
-  Future<void> showCVVDialog(String cvv) async {
+ Future<void> showCVVDialog(String cvv) async {
     String enteredCVV = '';
     final TextEditingController controller = TextEditingController();
 
@@ -432,6 +385,51 @@ class _PaymentScreenState extends State<PaymentScreen> {
         compareCVV(cvv, value);
       }
     });
+  }
+  Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
+    try {
+      var isMatch = BCrypt.checkpw(enteredCVV, hashedCVV);
+
+      if (isMatch) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Code correct'),
+              content: const Text('Merci pour votre confiance.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Code incorrect'),
+              content: const Text('Veuillez réessayer !'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (error) {
+      print('Erreur lors de la comparaison des CVV: $error');
+    }
   }
 
   @override
@@ -559,24 +557,85 @@ class _PaymentScreenState extends State<PaymentScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-Column(
-  children: [
-    for (var method in selectedPaymentMethods)
-      CheckboxListTile(
-        title: Text(method),
-        value: selectedPaymentMethods.contains(method),
-        onChanged: (bool? value) {
-          setState(() {
-            if (value != null && value) {
-              selectedPaymentMethods.add(method);
-            } else {
-              selectedPaymentMethods.remove(method);
-            }
-          });
-        },
-      ),
-  ],
-),
+          Column(
+            children: [
+              // Choix de la carte bancaire
+              CheckboxListTile(
+                title: const Text('Carte bancaire'),
+                value: isCreditCardChecked,
+                onChanged: (bool? value) {
+                  setState(() {
+                    isCreditCardChecked = value ?? false;
+                    // Si la carte bancaire est sélectionnée, désactiver le paiement en magasin
+                    if (isCreditCardChecked) {
+                      enableInStoreCheckbox = false;
+                      fetchUserCreditCards();
+                    } else {
+                      selectedCreditCard = null;
+                    }
+                  });
+                },
+              ),
+              if (isCreditCardChecked && userCreditCards.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Sélectionnez une carte bancaire :',
+                      style: TextStyle(fontSize: 16, color: Colors.blue),
+                    ),
+                    ...userCreditCards.map((card) => RadioListTile(
+                          title: Text(card.maskedCardNumber),
+                          value: card.fullCardNumber,
+                          groupValue: selectedCreditCard,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCreditCard = value.toString();
+                              showCVVDialog(card.cvv);
+                            });
+                          },
+                        )),
+                  ],
+                ),
+              // Choix du paiement en magasin
+              Column(
+                children: [
+                  if (selectedPaymentMethods.length > 1)
+                    Column(
+                      children: [
+                        CheckboxListTile(
+                          title: const Text('En magasin'),
+                          value: enableInStoreCheckbox,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value != null) {
+                                enableInStoreCheckbox = value;
+                              }
+                            });
+                          },
+                        ),
+                        if (enableInStoreCheckbox)
+                          Column(
+                            children: [
+                              for (var method in selectedPaymentMethods)
+                                RadioListTile<String>(
+                                  title: Text(method),
+                                  value: method,
+                                  groupValue: selectedPaymentMethod,
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      selectedPaymentMethod = value;
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                      ],
+                    ),
+                ],
+              ),
+            ],
+          ),
           const Divider(),
           const Spacer(),
           Container(
