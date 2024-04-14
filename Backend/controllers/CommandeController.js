@@ -89,7 +89,7 @@ const getCommandesEncours = async (req, res) => {
     }
 
   
-    const etats = ['Encours', 'Validée', 'En Préparation', 'Prête','Non validée'];
+    const etats = ['Encours', 'Validée', 'En Préparation', 'Prête'];
 
     const commandes = await Commande.find({ id_user, etat: { $in: etats } });
 
