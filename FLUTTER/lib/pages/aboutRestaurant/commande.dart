@@ -244,7 +244,7 @@ Widget buildCommandesListView(List<Map<String, dynamic>> commandes) {
         Color circle3Color = Colors.grey; 
         if (etatCommande == 'Validée') {
           circle1Color = Colors.green;
-        } else if (etatCommande == 'Préparation') {
+        } else if (etatCommande == 'En Préparation') {
           circle1Color = Colors.green;
           circle2Color = Colors.orange;
         } else if (etatCommande == 'Prête') {
@@ -422,7 +422,7 @@ const Divider(),
             backgroundColor: circle2Color,
             child: const Text('2', style: TextStyle(color: Colors.white)),
           ),
-          const Text('Préparation'),
+          const Text('En Préparation'),
         ],
       ),
     ),
