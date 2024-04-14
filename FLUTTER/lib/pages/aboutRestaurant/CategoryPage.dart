@@ -232,7 +232,7 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
           style: TextStyle(color: Colors.white),
         ),
         Text(
-          ' $totalPrice £',
+          ' $totalPrice €',
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
@@ -334,7 +334,7 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
                             const SizedBox(height: 8),
                             if (!(menuItem['is_Redirect'] == true))
                               Text(
-                                'Prix: ${menuItem['prix']}£',
+                                'Prix: ${menuItem['prix']}€',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,

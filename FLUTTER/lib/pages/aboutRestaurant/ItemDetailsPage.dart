@@ -139,7 +139,7 @@ class ItemDetailsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Prix: ${item['prix'] ?? ''}£',
+                    'Prix: ${item['prix'] ?? ''}€',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
