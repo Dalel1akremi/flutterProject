@@ -181,52 +181,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
-    try {
-      var isMatch = BCrypt.checkpw(enteredCVV, hashedCVV);
-
-      if (isMatch) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Code correct'),
-              content: const Text('Merci pour votre confiance.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Code incorrect'),
-              content: const Text('Veuillez réessayer !'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } catch (error) {
-      print('Erreur lors de la comparaison des CVV: $error');
-    }
-  }
-
   Future<void> fetchUserCreditCards() async {
     String? userEmail = authProvider.email;
     if (userEmail != null) {
@@ -434,6 +388,55 @@ class _PaymentScreenState extends State<PaymentScreen> {
     });
   }
 
+  Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
+    try {
+      // Hash the entered CVV
+      String hashedEnteredCVV =
+          BCrypt.hashpw(enteredCVV, BCrypt.gensalt());
+      print(hashedEnteredCVV);
+      // Compare the hashed entered CVV with the hashed CVV from the database
+      if (hashedEnteredCVV == hashedCVV) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Code correct'),
+              content: const Text('Merci pour votre confiance.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Code incorrect'),
+              content: const Text('Veuillez réessayer !'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (error) {
+      print('Erreur lors de la comparaison des CVV: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String? modepaiement = selectedRestaurantPaymentModes;
@@ -563,7 +566,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             children: [
               // Choix de la carte bancaire
               CheckboxListTile(
-                title: Text('Carte bancaire'),
+                title: const Text('Carte bancaire'),
                 value: isCreditCardChecked,
                 onChanged: (bool? value) {
                   setState(() {
@@ -571,97 +574,95 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     // Si la carte bancaire est sélectionnée, désactiver le paiement en magasin
                     if (isCreditCardChecked) {
                       enableInStoreCheckbox = false;
-                       fetchUserCreditCards();
+                      fetchUserCreditCards();
+                    } else {
+                      selectedCreditCard = null;
                     }
-                    else {
-                  selectedCreditCard = null;
-                }
                   });
                 },
               ),
-                 if (isCreditCardChecked && userCreditCards.isNotEmpty)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Sélectionnez une carte bancaire :',
-                  style: TextStyle(fontSize: 16, color: Colors.blue),
+              if (isCreditCardChecked && userCreditCards.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Sélectionnez une carte bancaire :',
+                      style: TextStyle(fontSize: 16, color: Colors.blue),
+                    ),
+                    ...userCreditCards.map((card) => RadioListTile(
+                          title: Text(card.maskedCardNumber),
+                          value: card.fullCardNumber,
+                          groupValue: selectedCreditCard,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCreditCard = value.toString();
+                              showCVVDialog(card.cvv);
+                            });
+                          },
+                        )),
+                  ],
                 ),
-                ...userCreditCards.map((card) => RadioListTile(
-                      title: Text(card.maskedCardNumber),
-                      value: card.fullCardNumber,
-                      groupValue: selectedCreditCard,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedCreditCard = value.toString();
-                          showCVVDialog(card.cvv);
-                        });
-                      },
-                    )),
-              ],
-            ),
               // Choix du paiement en magasin
-             Column(
-  children: [
-    if (selectedPaymentMethods.length > 1)
-      Column(
-        children: [
-          CheckboxListTile(
-            title: const Text('En magasin'),
-            value: enableInStoreCheckbox,
-            onChanged: (bool? value) {
-              setState(() {
-                if (value != null) {
-                  enableInStoreCheckbox = value;
-                }
-              });
-            },
-          ),
-          if (enableInStoreCheckbox)
-            Column(
-              children: [
-                for (var method in selectedPaymentMethods)
-                  RadioListTile<String>(
-                    title: Text(method),
-                    value: method,
-                    groupValue: selectedPaymentMethod,
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedPaymentMethod = value;
-                      });
-                    },
-                  ),
-              ],
-            ),
-        ],
-      ),
-  ],
-),
-               ],
-      ),
-              const Divider(),
-              const Spacer(),
-              Container(
-                width: double.infinity,
-                color: Colors.green,
-                child: ElevatedButton(
-                  onPressed: () {
-                    handlePayment();
-                    Panier().viderPanier();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: Colors.green,
-                  ),
-                  child: const Text(
-                    'Valider la commande',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+              Column(
+                children: [
+                  if (selectedPaymentMethods.length > 1)
+                    Column(
+                      children: [
+                        CheckboxListTile(
+                          title: const Text('En magasin'),
+                          value: enableInStoreCheckbox,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value != null) {
+                                enableInStoreCheckbox = value;
+                              }
+                            });
+                          },
+                        ),
+                        if (enableInStoreCheckbox)
+                          Column(
+                            children: [
+                              for (var method in selectedPaymentMethods)
+                                RadioListTile<String>(
+                                  title: Text(method),
+                                  value: method,
+                                  groupValue: selectedPaymentMethod,
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      selectedPaymentMethod = value;
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                      ],
+                    ),
+                ],
               ),
             ],
           ),
-       
+          const Divider(),
+          const Spacer(),
+          Container(
+            width: double.infinity,
+            color: Colors.green,
+            child: ElevatedButton(
+              onPressed: () {
+                handlePayment();
+                Panier().viderPanier();
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: Colors.green,
+              ),
+              child: const Text(
+                'Valider la commande',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
