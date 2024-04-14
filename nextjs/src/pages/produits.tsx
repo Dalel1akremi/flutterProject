@@ -116,7 +116,7 @@ const Produits = () => {
           {items.map((item) => (
             <tr key={item._id}>
               <td>{item.nom}</td>
-              <td>{item.prix}</td>
+              <td>{item.prix}£</td>
               <td>{item.description}</td>
               <td>{item.quantite}</td>
               <td>{item.max_quantite}</td>

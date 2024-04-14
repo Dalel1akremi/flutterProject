@@ -117,7 +117,7 @@ const CommandesPage = () => {
                   {commande.id_items.map((item, itemIndex) => (
                     <li key={itemIndex}>
                       <p>Nom : {item.nom}</p>
-                      <p>Prix : {item.prix}</p>
+                      <p>Prix : {item.prix}£</p>
                       {item.quantite && <p>Quantité : {item.quantite}</p>}
                     </li>
                   ))}
