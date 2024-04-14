@@ -23,6 +23,15 @@ const restaurantSchema = new mongoose.Schema({
       
       message: 'Le numéro de téléphone doit être un numéro français valide.'
     }
+  },
+  email: {
+    type: String, unique: true,
+    validate: {
+      validator: function(value) {
+        return /^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(value);
+      },
+      message: 'L\'adresse e-mail doit être un compte Gmail valide.'
+    }
   }
 });
 restaurantSchema.pre('save', async function (next) {
