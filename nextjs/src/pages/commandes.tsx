@@ -36,7 +36,6 @@ const CommandesPage = () => {
     }
   }, []);
 
-
   const fetchCommandes = async (id_rest: any) => {
     try {
       const response = await axios.get<Commande[]>(`http://localhost:3000/getCommandes?id_rest=${id_rest}`);
@@ -46,25 +45,37 @@ const CommandesPage = () => {
     }
   };
 
-  const handleClick = async (id: string) => {
+  const handleStateChange = async (id: string, newState: string) => {
     try {
       // Mettre à jour l'état de la commande dans le backend
-      await axios.put(`http://localhost:3000/commandes?commandeId=${id}`, { etat: 'passé' });
-
-      // Appeler l'API sendNotification
-      await axios.post('http://localhost:3000/sendNotification', { userEmail: commandes.find(commande => commande._id === id)?.userEmail });
+      const response = await axios.put(`http://localhost:3000/commandes?commandeId=${id}&newState=${newState}`);
 
       // Mettre à jour l'état de la commande dans le state local
       setCommandes(prevCommandes =>
         prevCommandes.map(commande => {
           if (commande._id === id) {
-            return { ...commande, etat: 'passé' };
+            return { ...commande, etat: newState };
           }
           return commande;
         })
       );
+
+      // Si le nouvel état est "Prête", appeler la fonction sendNotification
+      if (newState === "Prête") {
+        await sendNotification(idRest); // Appeler la fonction sendNotification avec l'identifiant du restaurant
+      }
     } catch (error: any) {
       console.error('Error updating commande:', error.message);
+    }
+  };
+
+  const sendNotification = async (idRest: string | null) => {
+    try {
+      // Appeler l'API pour envoyer la notification
+      const response = await axios.post(`http://localhost:3000/sendNotification?id_rest=${idRest}`);
+      console.log('Notification sent successfully:', response.data);
+    } catch (error:any) {
+      console.error('Error sending notification:', error.message);
     }
   };
 
@@ -88,8 +99,18 @@ const CommandesPage = () => {
               <td>{commande._id}</td>
               <td>{commande.userEmail}</td>
               <td>{commande.numero_commande}</td>
-              <td onClick={() => handleClick(commande._id)} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
-                {commande.etat}
+              <td>
+                <select
+                  value={commande.etat}
+                  onChange={e => handleStateChange(commande._id, e.target.value)}
+                >
+                  <option value="En cours">En cours</option>
+                  <option value="Validée">Validée</option>
+                  <option value="En Préparation">En Préparation</option>
+                  <option value="Prête">Prête</option>
+                  <option value="Non validée">Non validée</option>
+                  <option value="Passée">Passée</option>
+                </select>
               </td>
               <td>
                 <ul>
