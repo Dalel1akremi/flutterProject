@@ -7,7 +7,7 @@ const commandeSchema = new mongoose.Schema({
   },
   etat: {
     type: String,
-    enum: ['Encours','Validé', 'Préparation','Prête','Annuler','Passé'],
+    enum: ['Encours','Validée', 'En Préparation','Prête','Non validée','Passée'],
     default: 'Encours',
   },
   id_items: [
