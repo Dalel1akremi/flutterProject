@@ -135,7 +135,7 @@ const getCommandes = async (req, res) => {
   const { id_rest } = req.query; 
 
   try {
-    const allowedStates = ['Validée', 'En Préparation', 'En cours', 'Prête', 'Passée'];
+    const allowedStates = ['Validée', 'En Préparation', 'Encours', 'Prête', 'Passée'];
       
     const commandes = await Commande.find({ etat: { $in: allowedStates }, id_rest });
 
@@ -195,9 +195,9 @@ const updateCommandeState = async (req, res) => {
 
      // Vérifier l'ordre des états
 if (newStateCleaned === 'Validée' || newStateCleaned === 'Non validée') {
-  if (commande.etat !== 'En cours') {
-    console.error(`Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "En cours".`);
-    return res.status(400).json({ error: `Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "En cours".` });
+  if (commande.etat !== 'Encours') {
+    console.error(`Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "Encours".`);
+    return res.status(400).json({ error: `Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "Encours".` });
   }
 } else if (newStateCleaned === 'En Préparation') {
   if (commande.etat !== 'Validée') {
