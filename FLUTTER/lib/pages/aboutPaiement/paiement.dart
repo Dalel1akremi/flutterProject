@@ -571,10 +571,35 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     // Si la carte bancaire est sélectionnée, désactiver le paiement en magasin
                     if (isCreditCardChecked) {
                       enableInStoreCheckbox = false;
+                       fetchUserCreditCards();
                     }
+                    else {
+                  selectedCreditCard = null;
+                }
                   });
                 },
               ),
+                 if (isCreditCardChecked && userCreditCards.isNotEmpty)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Sélectionnez une carte bancaire :',
+                  style: TextStyle(fontSize: 16, color: Colors.blue),
+                ),
+                ...userCreditCards.map((card) => RadioListTile(
+                      title: Text(card.maskedCardNumber),
+                      value: card.fullCardNumber,
+                      groupValue: selectedCreditCard,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCreditCard = value.toString();
+                          showCVVDialog(card.cvv);
+                        });
+                      },
+                    )),
+              ],
+            ),
               // Choix du paiement en magasin
              Column(
   children: [
