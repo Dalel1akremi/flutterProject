@@ -55,5 +55,23 @@
       });
     });
   </script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+  <script>
+    function initAuth() {
+      gapi.load('auth2', function() {
+        gapi.auth2.init({
+          client_id: '800045568375-qveeo76qnq8p14jmtn6jcsh087uild6p.apps.googleusercontent.com',
+          scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly'],
+        });
+      });
+    }
+  </script>
+   <script>
+    window.addEventListener('load', function(ev) {
+      // ...
+      initAuth(); 
+    });
+  </script>
 </body>
 </html>

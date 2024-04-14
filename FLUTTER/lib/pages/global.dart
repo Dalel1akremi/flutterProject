@@ -24,6 +24,7 @@ class Panier extends Iterable<Article> {
   }
 
   void getOrigin() {}
+
   void ajouterElementChoisi(String element) {
     elementsChoisis.add(element);
   }
@@ -77,9 +78,10 @@ String? getSelectedRestaurantImage() {
     return selectedRestaurant?.modeDeRetrait.join(', ') ?? '';
   }
 
-  List<String>? getSelectedRestaurantRMode() {
-    return selectedRestaurant?.modeDeRetrait;
-  }
+
+String? getSelectedRestaurantPaiement() {
+  return selectedRestaurant?.modeDePaiement.join(', ') ?? '';
+}
 
   void setUserAddress(String address) {
     userAddress = address;
@@ -116,6 +118,7 @@ class Article {
  
 // ignore: non_constant_identifier_names
   List<String> elementsChoisis;
+   String remarque;
   // ignore: non_constant_identifier_names
   final List<dynamic> id_Steps;
   Article({
@@ -128,7 +131,7 @@ class Article {
     required this.prix,
     required this.quantite,
     required this.elementsChoisis,
-    
+    required this.remarque,
   });
 }
 

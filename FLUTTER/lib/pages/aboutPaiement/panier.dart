@@ -142,12 +142,20 @@ class _PanierPageState extends State<PanierPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                     
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: article.elementsChoisis
                             .map((element) => Text('     $element'))
                             .toList(),
                       ),
+                       if (article.remarque.isNotEmpty)
+              Text(
+                'Remarque: ${article.remarque}',
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
                     ],
                   ),
                   trailing: Text('Prix: ${article.prix} £'),

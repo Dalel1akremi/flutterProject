@@ -53,7 +53,7 @@ const createCommande = async (req, res) => {
         prix: matchingItem.prix,
         quantite: itemInput.quantite,
         elements_choisis: itemInput.elements_choisis,
-        
+        remarque:itemInput.remarque,
       };
     });
 
@@ -80,7 +80,6 @@ const createCommande = async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
-
 const getCommandesEncours = async (req, res) => {
   try {
     const id_user = req.query.id_user;
@@ -93,18 +92,43 @@ const getCommandesEncours = async (req, res) => {
     const etats = ['Encours', 'Validée', 'En Préparation', 'Prête','Non validée'];
 
     const commandes = await Commande.find({ id_user, etat: { $in: etats } });
-    
+
     if (!commandes || commandes.length === 0) {
       console.error('No commandes found with the specified etats.');
       return res.status(404).json({ error: 'No commandes found with the specified etats.' });
     }
+    const commandesAvecRestaurants = [];
+    for (let commande of commandes) {
+      try {
+        const id_rest = commande.id_rest;
+        const restaurant = await Restaurant.findOne({ id_rest });
+        
+        if (restaurant) {
+          const commandeAvecRestaurant = {
+            ...commande.toObject(),
+            nom_restaurant: restaurant.nom
+          };
+          
+          commandesAvecRestaurants.push(commandeAvecRestaurant);
+          
+    
+        } else {
+          console.log('Restaurant introuvable pour id_rest:', id_rest);
+        }
+      } catch (error) {
+        console.error('Error retrieving restaurant name:', error.message);
+       console.error('Erreur lors de la récupération du nom du restaurant pour la commande:', commande._id);
+      }
+    }
 
-    return res.status(200).json(commandes);
+    return res.status(200).json(commandesAvecRestaurants);
   } catch (error) {
     console.error('Error getting commandes with specified etats:', error.message);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+
 
 
 const getCommandes = async (req, res) => {
@@ -208,7 +232,7 @@ if (newStateCleaned === 'Validée' || newStateCleaned === 'Non validée') {
   const getCommandesPassé = async (req, res) => {
     try {
       const id_user = req.query.id_user;
-
+  
       if (!id_user) {
         console.error('id_user is missing in the request query parameters.');
         return res.status(400).json({ error: 'id_user is required in the request query parameters.' });
@@ -216,13 +240,34 @@ if (newStateCleaned === 'Validée' || newStateCleaned === 'Non validée') {
       const etats = ['Passée', 'Annuler'];
 
       const commandes = await Commande.find({ id_user, etat: { $in: etats } });
-
+  
       if (!commandes || commandes.length === 0) {
         console.error(`No past commandes found for id_user ${id_user}.`);
         return res.status(404).json({ error: `No past commandes found for id_user ${id_user}.` });
       }
-
-      return res.status(200).json(commandes);
+      const commandesAvecRestaurants = [];
+      for (let commande of commandes) {
+        try {
+          const id_rest = commande.id_rest;
+          const restaurant = await Restaurant.findOne({ id_rest });
+          
+          if (restaurant) {
+            const commandeAvecRestaurant = {
+              ...commande.toObject(),
+              nom_restaurant: restaurant.nom
+            };
+            
+            commandesAvecRestaurants.push(commandeAvecRestaurant);
+      
+          } else {
+            console.log('Restaurant introuvable pour id_rest:', id_rest);
+          }
+        } catch (error) {
+          console.error('Error retrieving restaurant name:', error.message);
+          console.error('Erreur lors de la récupération du nom du restaurant pour la commande:', commande._id);
+        }
+      }
+      return res.status(200).json(commandesAvecRestaurants);
     } catch (error) {
       console.error('Error getting past commandes:', error.message);
       return res.status(500).json({ error: 'Internal Server Error' });

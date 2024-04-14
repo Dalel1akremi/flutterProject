@@ -252,7 +252,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                                   .where((element) => element != null)
                                   .cast<String>()
                                   .toList(),
-                             
+                              remarque: _remarkController.text,
                             );
                             Panier().ajouterAuPanier1(article);
                             Navigator.push(

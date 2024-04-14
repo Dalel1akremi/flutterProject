@@ -235,10 +235,10 @@ class _RestaurantListState extends State<AcceuilScreen> {
                             ...restaurant.modeDePaiement.map((mode) {
                               IconData? iconData;
                               switch (mode) {
-                                case 'espece':
+                                case 'Espèces':
                                   iconData = Icons.monetization_on;
                                   break;
-                                case 'carte bancaire':
+                                case 'Carte bancaire':
                                   iconData = Icons.credit_card;
                                   break;
                                 case 'carnet des cheques':

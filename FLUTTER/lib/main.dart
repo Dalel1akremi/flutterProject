@@ -1,11 +1,7 @@
-import 'package:demo/pages/aboutRestaurant/ReserverTable.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './pages/aboutUser/auth_provider.dart'; 
+import './pages/aboutUser/auth_provider.dart';
 import './pages/aboutRestaurant/acceuil.dart';
-
-import './pages/aboutRestaurant/offers.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +9,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,29 +26,16 @@ class MyApp extends StatelessWidget {
 }
 
 class AppStart extends StatelessWidget {
-  const AppStart({super.key});
+  const AppStart({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-   
-    
-      return const HomeScreen();
-    
+    return const HomeScreen();
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-  final List<String> pageTitles = ['Discover', 'Reserve Table', 'Offers'];
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -62,12 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Expanded(
             child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
-              },
               children: [
                 Center(
                   child: Column(
@@ -75,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       SizedBox(
                         height: MediaQuery.of(context).size.height / 1.5,
-                        width: 1500,
                         child: Container(
                           decoration: BoxDecoration(
                             image: const DecorationImage(
@@ -109,7 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) =>  const AcceuilScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => const AcceuilScreen()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -126,44 +103,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                const ReserverTableScreen(),
-                const OffersScreen(),
               ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              pageTitles.length,
-              (index) => buildDot(index),
             ),
           ),
         ],
       ),
     );
-  }
-
-  Widget buildDot(int pageIndex) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Container(
-        width: 10,
-        height: 10,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: _currentPage == pageIndex ? Colors.blue : Colors.grey,
-        ),
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page!.round();
-      });
-    });
   }
 }
