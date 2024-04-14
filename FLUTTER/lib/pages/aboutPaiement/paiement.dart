@@ -46,7 +46,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   List<CreditCard> userCreditCards = [];
   String? selectedCreditCard;
   String? id;
-
+  bool isCreditCardChecked = false;
   List<String> onlinePaymentMethods = ['Carte bancaire'];
   List<String> inStorePaymentMethods = [
     'Espèces',
@@ -559,46 +559,84 @@ class _PaymentScreenState extends State<PaymentScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-Column(
+          Column(
+            children: [
+              // Choix de la carte bancaire
+              CheckboxListTile(
+                title: Text('Carte bancaire'),
+                value: isCreditCardChecked,
+                onChanged: (bool? value) {
+                  setState(() {
+                    isCreditCardChecked = value ?? false;
+                    // Si la carte bancaire est sélectionnée, désactiver le paiement en magasin
+                    if (isCreditCardChecked) {
+                      enableInStoreCheckbox = false;
+                    }
+                  });
+                },
+              ),
+              // Choix du paiement en magasin
+             Column(
   children: [
-    for (var method in selectedPaymentMethods)
-      CheckboxListTile(
-        title: Text(method),
-        value: selectedPaymentMethods.contains(method),
-        onChanged: (bool? value) {
-          setState(() {
-            if (value != null && value) {
-              selectedPaymentMethods.add(method);
-            } else {
-              selectedPaymentMethods.remove(method);
-            }
-          });
-        },
+    if (selectedPaymentMethods.length > 1)
+      Column(
+        children: [
+          CheckboxListTile(
+            title: const Text('En magasin'),
+            value: enableInStoreCheckbox,
+            onChanged: (bool? value) {
+              setState(() {
+                if (value != null) {
+                  enableInStoreCheckbox = value;
+                }
+              });
+            },
+          ),
+          if (enableInStoreCheckbox)
+            Column(
+              children: [
+                for (var method in selectedPaymentMethods)
+                  RadioListTile<String>(
+                    title: Text(method),
+                    value: method,
+                    groupValue: selectedPaymentMethod,
+                    onChanged: (String? value) {
+                      setState(() {
+                        selectedPaymentMethod = value;
+                      });
+                    },
+                  ),
+              ],
+            ),
+        ],
       ),
   ],
 ),
-          const Divider(),
-          const Spacer(),
-          Container(
-            width: double.infinity,
-            color: Colors.green,
-            child: ElevatedButton(
-              onPressed: () {
-                handlePayment();
-                Panier().viderPanier();
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-                backgroundColor: Colors.green,
-              ),
-              child: const Text(
-                'Valider la commande',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ],
+               ],
       ),
+              const Divider(),
+              const Spacer(),
+              Container(
+                width: double.infinity,
+                color: Colors.green,
+                child: ElevatedButton(
+                  onPressed: () {
+                    handlePayment();
+                    Panier().viderPanier();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    backgroundColor: Colors.green,
+                  ),
+                  child: const Text(
+                    'Valider la commande',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+       
     );
   }
 }
