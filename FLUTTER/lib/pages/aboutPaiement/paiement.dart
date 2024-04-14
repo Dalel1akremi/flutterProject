@@ -344,8 +344,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       });
     }
   }
-
-  Future<void> showCVVDialog(String cvv) async {
+ Future<void> showCVVDialog(String cvv) async {
     String enteredCVV = '';
     final TextEditingController controller = TextEditingController();
 
@@ -387,15 +386,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
       }
     });
   }
-
   Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
     try {
-      // Hash the entered CVV
-      String hashedEnteredCVV =
-          BCrypt.hashpw(enteredCVV, BCrypt.gensalt());
-      print(hashedEnteredCVV);
-      // Compare the hashed entered CVV with the hashed CVV from the database
-      if (hashedEnteredCVV == hashedCVV) {
+      var isMatch = BCrypt.checkpw(enteredCVV, hashedCVV);
+
+      if (isMatch) {
         showDialog(
           context: context,
           builder: (BuildContext context) {
