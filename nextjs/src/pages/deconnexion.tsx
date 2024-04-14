@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Navbar from '@/styles/navbar';
 
 const Deconnexion = () => {
   const router = useRouter();
@@ -31,17 +32,20 @@ const Deconnexion = () => {
 
   return (
     <div>
+      <Navbar />
+      <div className="container">
       {confirmLogout && (
         <div className="modal">
           <div className="modal-content">
             <p>Voulez-vous vraiment vous déconnecter ?</p>
             <div className="buttons">
-              <button onClick={handleLogout}>Oui</button>
-              <button onClick={handleCancel}>Non</button>
+            <button className="logout-button" onClick={handleLogout}>Oui</button>
+            <button className="cancel-button" onClick={handleCancel}>Non</button>
             </div>
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
