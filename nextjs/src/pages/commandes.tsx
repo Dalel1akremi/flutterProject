@@ -10,6 +10,7 @@ interface Commande {
   numero_commande: string;
   etat: string;
   id_items: Item[];
+  
 }
 
 interface Item {
@@ -17,6 +18,8 @@ interface Item {
   nom: string;
   prix: number;
   quantite?: number;
+  remarque?:String;
+  elements_choisis: string[];
 }
 
 const CommandesPage = () => {
@@ -86,19 +89,18 @@ const CommandesPage = () => {
       <table>
         <thead>
           <tr>
-            <th>ID de la commande</th>
-            <th>Email de l'utilisateur</th>
             <th>Numéro de commande</th>
+            <th>Email de l'utilisateur</th>
             <th>État de la commande</th>
             <th>Articles commandés</th>
+            <th>Remarques</th>
           </tr>
         </thead>
         <tbody>
           {commandes.map((commande, index) => (
             <tr key={index}>
-              <td>{commande._id}</td>
-              <td>{commande.userEmail}</td>
               <td>{commande.numero_commande}</td>
+              <td>{commande.userEmail}</td>
               <td>
                 <select
                   value={commande.etat}
@@ -116,13 +118,21 @@ const CommandesPage = () => {
                 <ul>
                   {commande.id_items.map((item, itemIndex) => (
                     <li key={itemIndex}>
-                      <p>Nom : {item.nom}</p>
-                      <p>Prix : {item.prix}£</p>
-                      {item.quantite && <p>Quantité : {item.quantite}</p>}
+                      <p> <span style={{ color: 'purple', fontWeight: 'bold' }}>Nom :</span>{item.nom}</p>
+                      <p> <span style={{ color: 'green', fontWeight: 'bold' }}>{item.elements_choisis.join(', ')}</span></p>
+                      <p><span style={{ color: 'purple', fontWeight: 'bold' }}>Prix :</span> {item.prix}£</p>
+                      {item.quantite && <p><span style={{ color: 'purple', fontWeight: 'bold' }}>Quantité :</span> {item.quantite}</p>}
                     </li>
                   ))}
                 </ul>
               </td>
+              <td> <ul>
+                  {commande.id_items.map((item, itemIndex) => (
+                    <li key={itemIndex}>
+                      <span style={{ color: 'black', fontWeight: 'bold' }}>{item.nom}</span>: <span style={{ color: 'red' }}>{item.remarque}</span>
+                    </li>
+                  ))}
+                </ul></td>
             </tr>
           ))}
         </tbody>
