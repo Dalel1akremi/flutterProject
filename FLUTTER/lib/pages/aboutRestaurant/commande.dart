@@ -349,7 +349,8 @@ const Divider(),
             Text(
               'Prix: ${article['prix'] ?? 'N/A'}€',
             ),
-           Text('Remarque :${article['remarque']?? 'N/A'}',)
+            if (article['remarque'] != null && article['remarque'].isNotEmpty)
+              Text('Remarque : ${article['remarque']}'),
           ],
         ),
       );
@@ -360,22 +361,21 @@ const Divider(),
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-             '${article['quantite'] ?? 'N/A'} X ${article['nom'] ?? 'N/A'} ${article['elements_choisis'] ?? 'N/A'}',
+              '${article['quantite'] ?? 'N/A'} X ${article['nom'] ?? 'N/A'} ${article['elements_choisis'] ?? 'N/A'}',
               style: const TextStyle(fontWeight: FontWeight.bold),
-              
             ),
-           
             Text(
               'Prix: ${article['prix'] ?? 'N/A'}€',
             ),
-           Text('Remarque :${article['remarque']?? 'N/A'}',)
+            if (article['remarque'] != null && article['remarque'].isNotEmpty)
+              Text('Remarque : ${article['remarque']}'),
           ],
         ),
       );
     }
   }).toList(),
-),
-
+)
+,
 
                 const SizedBox(height: 12),
                 Row(

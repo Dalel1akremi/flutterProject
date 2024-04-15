@@ -87,6 +87,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
         return {
           'id_item': article.id_item,
+          'nom':article.nom,
+          'prix'  : article.prix ,
           'quantite': article.quantite,
           'temps': panier.getCurrentSelectedTime().format(context),
           'mode_retrait': mapRetraitMode(panier.getSelectedRetraitMode() ?? ''),
