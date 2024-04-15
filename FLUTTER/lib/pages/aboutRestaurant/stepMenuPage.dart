@@ -291,7 +291,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
                           ),
                         ),
                         Text(
-                          ' $totalPrice £',
+                          ' $totalPrice €',
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,

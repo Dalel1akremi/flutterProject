@@ -158,7 +158,7 @@ class _PanierPageState extends State<PanierPage> {
               ),
                     ],
                   ),
-                  trailing: Text('Prix: ${article.prix} £'),
+                  trailing: Text('Prix: ${article.prix} €'),
                   onTap: () {
                     showUpdateQuantityDialog(article);
                   },
@@ -218,7 +218,7 @@ class _PanierPageState extends State<PanierPage> {
                     style: TextStyle(color: Colors.white),
                   ),
                   Text(
-                    ' ${panier.getTotalPrix()} £',
+                    ' ${panier.getTotalPrix()} €',
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,

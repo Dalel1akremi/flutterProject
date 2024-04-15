@@ -184,7 +184,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
                       ),
                     ),
                     Text(
-                      ' $totalPrice £',
+                      ' $totalPrice €',
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
