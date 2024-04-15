@@ -51,7 +51,7 @@ class CommandesModel with ChangeNotifier {
   void startPolling(BuildContext context) {
     stopPolling();
 
-    _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       await checkEncoursState(context);
       await checkPassState(context);
     });
