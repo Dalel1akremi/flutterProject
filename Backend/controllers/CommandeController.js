@@ -49,8 +49,8 @@ const createCommande = async (req, res) => {
 
       return {
         id_item: matchingItem.id_item,
-        nom: matchingItem.nom,
-        prix: matchingItem.prix,
+        nom: itemInput.nom,
+        prix: itemInput.prix,
         quantite: itemInput.quantite,
         elements_choisis: itemInput.elements_choisis,
         remarque:itemInput.remarque,
