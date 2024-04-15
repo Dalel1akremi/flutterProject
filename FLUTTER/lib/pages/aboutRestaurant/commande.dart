@@ -349,7 +349,7 @@ const Divider(),
             Text(
               'Prix: ${article['prix'] ?? 'N/A'}€',
             ),
-            
+           Text('Remarque :${article['remarque']?? 'N/A'}',)
           ],
         ),
       );
