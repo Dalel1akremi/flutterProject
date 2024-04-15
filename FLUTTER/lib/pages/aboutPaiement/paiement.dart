@@ -433,7 +433,7 @@ Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
       selectedPaymentMethods
           .addAll(modepaiement.split(',').map((mode) => mode.trim()));
     }
-
+  bool showCreditCardCheckbox = selectedPaymentMethods.contains('Carte bancaire');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -552,20 +552,21 @@ Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
             ),
             Column(
               children: [
-             CheckboxListTile(
-  title: const Text('Carte bancaire'),
-  value: isCreditCardChecked,
-  onChanged: (bool? value) {
-    setState(() {
-      isCreditCardChecked = value ?? false;
-      if (isCreditCardChecked) {
-        enableInStoreCheckbox = false;
-        selectedPaymentMethod = null; 
-        fetchUserCreditCards();
-      }
-    });
-  },
-),
+             if (showCreditCardCheckbox)
+                CheckboxListTile(
+                  title: const Text('Carte bancaire'),
+                  value: isCreditCardChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isCreditCardChecked = value ?? false;
+                      if (isCreditCardChecked) {
+                        enableInStoreCheckbox = false;
+                        selectedPaymentMethod = null;
+                        fetchUserCreditCards();
+                      }
+                    });
+                  },
+                ),
 if (isCreditCardChecked && userCreditCards.isNotEmpty)
   Column(
     crossAxisAlignment: CrossAxisAlignment.start,
