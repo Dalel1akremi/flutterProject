@@ -1,3 +1,4 @@
+import 'package:demo/pages/aboutRestaurant/commandeNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './pages/aboutUser/auth_provider.dart';
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+         ChangeNotifierProvider(create: (_) => CommandesModel()),
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,

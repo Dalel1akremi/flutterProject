@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:demo/pages/aboutRestaurant/commandeNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
@@ -27,12 +28,12 @@ class CommandeApp extends StatefulWidget {
 class _CommandeAppState extends State<CommandeApp> {
   int _currentIndex = 1;
 
-  @override
-  void initState() {
-    super.initState();
-    // Initialize AuthProvider directly in initState
-    Provider.of<AuthProvider>(context, listen: false).initTokenFromStorage();
-  }
+ @override
+void initState() {
+  super.initState();
+  Provider.of<CommandesModel>(context, listen: false).startPolling(context);
+  Provider.of<AuthProvider>(context, listen: false).initTokenFromStorage();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +81,7 @@ class CommandeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
     final isLoggedIn = authProvider.isAuthenticated;
 
     return DefaultTabController(
@@ -127,7 +129,7 @@ class CommandeScreen extends StatelessWidget {
               child: TabBarView(
                 children: [
                   FutureBuilder(
-                    future: fetchCommandesEncours(context),
+                    future:  Provider.of<CommandesModel>(context).fetchCommandesEncours(context),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -150,7 +152,7 @@ class CommandeScreen extends StatelessWidget {
                     },
                   ),
                   FutureBuilder(
-                      future: fetchCommandesPass(context),
+                     future: Provider.of<CommandesModel>(context).fetchCommandesPass(context),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
