@@ -35,13 +35,15 @@ commandeSchema.pre('save', async function (next) {
     if (!this.numero_commande) {
       const lastComp = await this.constructor.findOne({}, {}, { sort: { numero_commande: -1 } });
       const lastNumber = lastComp ? parseInt(lastComp.numero_commande.slice(1)) : 0;
-      this.numero_commande = 'C00' + (lastNumber + 1);
+      const nextNumber = lastNumber + 1;
+      this.numero_commande = `C${nextNumber.toString().padStart(3, '0')}`;
     }
     next();
   } catch (error) {
     next(error);
   }
 });
+
 
 const Commande = mongoose.model('Commande', commandeSchema);
 
