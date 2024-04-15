@@ -38,6 +38,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   TimeOfDay? newSelectedTime;
   String? newSelectedMode;
   Panier panier = Panier();
+  bool isCVVValidated = false;
+
   AuthProvider authProvider = AuthProvider();
   bool useCreditCard = false;
   bool payInStore = false;
@@ -116,72 +118,70 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
   }
 Future<bool> handlePayment() async {
-  if (isCreditCardChecked && selectedCreditCard != null) {
-    CreditCard selectedCard = userCreditCards
-        .firstWhere((card) => card.fullCardNumber == selectedCreditCard);
-    String cardCVV = selectedCard.cvv;
-
-    showCVVDialog(cardCVV);
-    return false; 
+  if (isCreditCardChecked && selectedCreditCard != null && isCVVValidated) {
+    await createCommande(); 
+    return true; 
   } else if (enableInStoreCheckbox && selectedPaymentMethod != null) {
     panier.printPanier();
-    await createCommande();
-  
-    return true; 
+    await createCommande(); 
+    return true;
   } else {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Erreur'),
-          content: const Text(
-              'Merci de vérifier votre mode de paiement avant de passer votre commande.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+    showPaymentMethodErrorDialog();
     return false; 
   }
 }
 
 
-  void makePaymentWithCreditCard() async {
-    if (selectedCreditCard != null) {
-      try {
-        CreditCard selectedCard = userCreditCards
-            .firstWhere((card) => card.fullCardNumber == selectedCreditCard);
-        String cardId = selectedCard._id;
 
-        var response = await http.post(
-          Uri.parse(
-              'http://localhost:3000/recupererCarteParId?email=${authProvider.email}&cardId=$cardId'),
-          body: jsonEncode({'montant': panier.getTotalPrix()}),
-          headers: {'Content-Type': 'application/json'},
-        );
-        if (response.statusCode == 200) {
-          print('Payment successful!');
-        } else {
-          throw Exception('Failed to process payment: ${response.statusCode}');
-        }
-      } catch (e) {
-        print('Error processing payment: $e');
+void showPaymentMethodErrorDialog() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Erreur'),
+        content: const Text(
+            'Merci de vérifier votre mode de paiement avant de passer votre commande.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<void> makePaymentWithCreditCard() async {
+  if (selectedCreditCard != null) {
+    try {
+      CreditCard selectedCard = userCreditCards
+          .firstWhere((card) => card.fullCardNumber == selectedCreditCard);
+      String cardId = selectedCard._id;
+
+      var response = await http.post(
+        Uri.parse(
+            'http://localhost:3000/recupererCarteParId?email=${authProvider.email}&cardId=$cardId'),
+        body: jsonEncode({'montant': panier.getTotalPrix()}),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        print('Payment successful!');
+        await createCommande(); 
+      } else {
+        throw Exception('Failed to process payment: ${response.statusCode}');
       }
-    } else {
-      print('Please select a credit card for payment.');
+    } catch (e) {
+      print('Error processing payment: $e');
     }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const CommandeApp()),
-    );
+  } else {
+    print('Please select a credit card for payment.');
   }
+
+  
+}
 
   Future<void> fetchUserCreditCards() async {
     String? userEmail = authProvider.email;
@@ -389,13 +389,13 @@ Future<bool> handlePayment() async {
     }
   });
 }
-
 Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
   try {
     var isMatch = BCrypt.checkpw(enteredCVV, hashedCVV);
 
     if (isMatch) {
-      makePaymentWithCreditCard();
+      isCVVValidated = true; // Mettre à jour l'état de validation
+      await makePaymentWithCreditCard();
       await createCommande();
     } else {
       showDialog(
@@ -619,11 +619,17 @@ if (enableInStoreCheckbox)
                   ),
               ],
             ),
-          ElevatedButton(
+      ElevatedButton(
   onPressed: () async {
-    bool paymentHandled = await handlePayment();
+    bool paymentHandled = await handlePayment(); // Attendre que handlePayment soit terminé
+
     if (paymentHandled) {
-      Panier().viderPanier();
+      Panier().viderPanier(); // Attendre que le panier soit vidé
+      // Naviguer vers la page CommandeApp
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const CommandeApp()),
+      );
     }
   },
   style: ElevatedButton.styleFrom(
