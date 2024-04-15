@@ -346,8 +346,7 @@ Future<void> makePaymentWithCreditCard() async {
       });
     }
   }
-
-  Future<void> showCVVDialog(String cvv) async {
+Future<void> showCVVDialog(String cvv) async {
   String enteredCVV = '';
   final TextEditingController controller = TextEditingController();
 
@@ -367,9 +366,12 @@ Future<void> makePaymentWithCreditCard() async {
             hintText: 'Code confidentiel',
           ),
         ),
-        actions: <Widget>[
+         actions: <Widget>[
           TextButton(
             onPressed: () {
+              setState(() {
+                selectedCreditCard = null;
+              });
               Navigator.of(context).pop();
             },
             child: const Text('Annuler'),
@@ -394,7 +396,7 @@ Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
     var isMatch = BCrypt.checkpw(enteredCVV, hashedCVV);
 
     if (isMatch) {
-      isCVVValidated = true; // Mettre à jour l'état de validation
+      isCVVValidated = true; 
       await makePaymentWithCreditCard();
       await createCommande();
     } else {
