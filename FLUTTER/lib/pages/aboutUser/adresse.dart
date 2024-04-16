@@ -1,11 +1,8 @@
-// ignore_for_file: library_private_types_in_public_api
-
-import 'dart:convert';
-import 'package:demo/pages/aboutUser/auth_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import './../global.dart';
 
 class AddressSearchScreen extends StatefulWidget {
@@ -38,12 +35,18 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
     streetNumberController = TextEditingController();
     hasAddress = false;
 
-    _userId = Provider.of<AuthProvider>(context, listen: false).userId!;
+    _retrieveUserId();
+   
+  }
 
-    fetchAddressDetails();
+  Future<void> _retrieveUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _userId = prefs.getString('userId') ?? '';
+    fetchAddressDetails(); // Call fetchAddressDetails after retrieving the user ID
   }
 
   Future<void> fetchAddressDetails() async {
+    
     try {
       final response = await http.get(
         Uri.parse('http://localhost:3000/getGeocodedDetails?_id=$_userId'),
@@ -72,6 +75,7 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
   }
 
   Future<void> searchAddress() async {
+    
     if (hasAddress) {
       if (kDebugMode) {
         print(
