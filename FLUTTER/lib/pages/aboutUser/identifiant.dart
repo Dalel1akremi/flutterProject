@@ -48,9 +48,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
       if (response.statusCode == 200) {
         final Map<String, dynamic>? userData =
             json.decode(response.body) as Map<String, dynamic>;
-        if (kDebugMode) {
-          print('Success to load user data. Response: ${response.body}');
-        }
+       
         if (userData != null &&
             userData.containsKey('nom') &&
             userData.containsKey('prenom') &&
@@ -65,11 +63,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
           nomController.text = nom;
           prenomController.text = prenom;
           numeroController.text = numero;
-        } else {
-          if (kDebugMode) {
-            print('Success to load user data. Response: ${response.body}');
-          }
-        }
+        } 
       } else {
         if (kDebugMode) {
           print('Failed to load user data. Response: ${response.body}');
@@ -123,12 +117,6 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
 
       if (response.statusCode == 200) {
         await getUserData();
-        if (kDebugMode) {
-          print('Success to update user data. Response: ${response.body}');
-        }
-
-        
-
         final bool savedSuccessfully = await saveTokenToStorage(
           token,
           userId,
@@ -138,17 +126,14 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
         );
 
         if (savedSuccessfully) {
-          if (kDebugMode) {
-            print('Data saved successfully.');
-          }
+          
         } else {
           if (kDebugMode) {
             print('Data not saved.');
           }
         }
 
-        // Print after saving
-       
+     
         Navigator.push(
           context,
           MaterialPageRoute(
