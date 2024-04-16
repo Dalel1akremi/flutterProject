@@ -92,6 +92,18 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
       return false; // Indiquer que les données n'ont pas été sauvegardées avec succès
     }
   }
+Future<bool> saveNameToStorage(String name) async {
+  try {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('nom', name);
+    return true; // Indiquer que les données ont été sauvegardées avec succès
+  } catch (e) {
+    if (kDebugMode) {
+      print('Failed to save name to local storage: $e');
+    }
+    return false; // Indiquer que les données n'ont pas été sauvegardées avec succès
+  }
+}
 
   Future<void> updateUserData(BuildContext context, String userEmail) async {
     // Récupération du fournisseur d'authentification depuis le contexte
@@ -125,13 +137,20 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
           numeroController.text,
         );
 
-        if (savedSuccessfully) {
-          
-        } else {
-          if (kDebugMode) {
-            print('Data not saved.');
-          }
-        }
+       if (savedSuccessfully) {
+    // Enregistrer le nom mis à jour dans le stockage local
+    final bool nameSaved = await saveNameToStorage(nomController.text);
+    if (!nameSaved) {
+      if (kDebugMode) {
+        print('Failed to save name to local storage.');
+      }
+    }
+  } else {
+    if (kDebugMode) {
+      print('Data not saved.');
+    }
+  }
+
 
      
         Navigator.push(
