@@ -34,31 +34,17 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  double montantAPayer = 0.0;
   TimeOfDay? newSelectedTime;
   String? newSelectedMode;
   Panier panier = Panier();
   bool isCVVValidated = false;
-
   AuthProvider authProvider = AuthProvider();
-  bool useCreditCard = false;
-  bool payInStore = false;
   String? selectedRestaurantPaymentModes;
   bool enableInStoreCheckbox = false;
   List<CreditCard> userCreditCards = [];
   String? selectedCreditCard;
   String? id;
   bool isCreditCardChecked = false;
-  List<String> onlinePaymentMethods = ['Carte bancaire'];
-  List<String> inStorePaymentMethods = [
-    'Espèces',
-    'Carte bancaire',
-    'Tickets Restaurant'
-  ];
-  bool isPaymentMethodSelected() {
-    return selectedPaymentMethod != null;
-  }
-
   String? selectedPaymentMethod;
   @override
   void initState() {

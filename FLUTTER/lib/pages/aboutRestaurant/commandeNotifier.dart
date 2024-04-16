@@ -64,7 +64,6 @@ class CommandesModel with ChangeNotifier {
   Future<List<Map<String, dynamic>>> fetchCommandesEncours(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (!authProvider.isAuthenticated) {
-      debugPrint('User not authenticated. Returning empty list.');
       return [];
     }
 
@@ -74,10 +73,6 @@ class CommandesModel with ChangeNotifier {
       final response = await http.get(
         Uri.parse('http://localhost:3000/getCommandesEncours?id_user=$idUser'),
       );
-
-      debugPrint('Response Status Code: ${response.statusCode}');
-      debugPrint('Response Body: ${response.body}');
-
       if (response.statusCode == 200) {
         final dynamic responseBody = jsonDecode(response.body);
 
@@ -94,8 +89,8 @@ class CommandesModel with ChangeNotifier {
                 'nom': item['nom'],
                 'prix': item['prix'] ?? 0,
                 'quantite': item['quantite'] ?? 0,
-                'elements_choisis':item['elements_choisis'],
-                'remarque':item['remarque'],
+                'elements_choisis': item['elements_choisis'],
+                'remarque': item['remarque'],
               };
             }).toList();
 
@@ -105,24 +100,20 @@ class CommandesModel with ChangeNotifier {
               'mode_retrait': commande['mode_retrait'],
               'Total': commande['montant_Total'],
               'etat': commande['etat'],
-              'numero_telephone':commande[ 'numero_telephone'],
-              'adresse':commande['adresse'],
-              'nom_restaurant': commande['nom_restaurant'], 
+              'numero_telephone': commande['numero_telephone'],
+              'adresse': commande['adresse'],
+              'nom_restaurant': commande['nom_restaurant'],
               'articles': articles,
             };
           }).toList();
-
-          debugPrint('Commandes en cours: $commandes');
           return commandes;
         } else {
-          debugPrint('Response body is not a List');
           return [];
         }
       } else {
         throw Exception('Failed to load commandes en cours');
       }
     } catch (error) {
-      debugPrint('Error: $error');
       return [];
     }
   }
@@ -135,10 +126,6 @@ class CommandesModel with ChangeNotifier {
       final response = await http.get(
         Uri.parse('http://localhost:3000/getCommandesPasse?id_user=$idUser'),
       );
-
-      debugPrint('Response Status Code: ${response.statusCode}');
-      debugPrint('Response Body: ${response.body}');
-
       if (response.statusCode == 200) {
         final dynamic responseBody = jsonDecode(response.body);
 
@@ -155,8 +142,8 @@ class CommandesModel with ChangeNotifier {
                 'nom': item['nom'],
                 'prix': item['prix'] ?? 0,
                 'quantite': item['quantite'] ?? 0,
-                'elements_choisis':item['elements_choisis'],
-                'remarque':item['remarque'],
+                'elements_choisis': item['elements_choisis'],
+                'remarque': item['remarque'],
               };
             }).toList();
 
@@ -166,24 +153,21 @@ class CommandesModel with ChangeNotifier {
               'mode_retrait': commande['mode_retrait'],
               'Total': commande['montant_Total'],
               'etat': commande['etat'],
-               'numero_telephone':commande[ 'numero_telephone'],
-               'adresse':commande['adresse'],
-                'nom_restaurant': commande['nom_restaurant'], 
+              'numero_telephone': commande['numero_telephone'],
+              'adresse': commande['adresse'],
+              'nom_restaurant': commande['nom_restaurant'],
               'articles': articles,
             };
           }).toList();
 
-          debugPrint('Commandes: $commandes');
           return commandes;
         } else {
-          debugPrint('Response body is not a List');
           return [];
         }
       } else {
         throw Exception('Failed to load commandes');
       }
     } catch (error) {
-      debugPrint('Error: $error');
       return [];
     }
   }
