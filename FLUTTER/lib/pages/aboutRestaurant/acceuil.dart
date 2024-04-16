@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:js';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import './../aboutRestaurant/commande.dart';
 import './../aboutUser/login.dart';
 import "./RestaurantDetail.dart";
@@ -93,6 +95,38 @@ class AcceuilScreen extends StatefulWidget {
   @override
   // ignore: library_private_types_in_public_api
   _RestaurantListState createState() => _RestaurantListState();
+  
+  void initState() {
+    initAuthProvider();
+    _printStorageContent();
+    
+  }
+  Future<void> initAuthProvider() async {
+            final authProvider = Provider.of<AuthProvider>(context as BuildContext, listen: false);
+
+    await authProvider.initTokenFromStorage();
+
+    
+  }
+   Future<void> _printStorageContent() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (kDebugMode) {
+      print('Token: ${prefs.getString('token')}');
+    }
+    if (kDebugMode) {
+      print('UserId: ${prefs.getString('userId')}');
+    }
+    if (kDebugMode) {
+      print('Nom: ${prefs.getString('nom')}');
+    }
+    if (kDebugMode) {
+      print('Email: ${prefs.getString('email')}');
+    }
+    if (kDebugMode) {
+      print('Telephone: ${prefs.getString('telephone')}');
+    }
+  }
+
 }
 
 class _RestaurantListState extends State<AcceuilScreen> {
@@ -301,19 +335,26 @@ class _RestaurantListState extends State<AcceuilScreen> {
             );
           }
           if (index == 2) {
-            if (isLoggedIn) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ProfilPage()),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const loginPage()),
-              );
-            }
-          }
+  onPressed() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    // Check if a token is present in local storage
+    if (token != null && token.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfilPage()),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const loginPage()),
+      );
+    }
+  }
+  onPressed();
+}
+
         },
       ),
     );
