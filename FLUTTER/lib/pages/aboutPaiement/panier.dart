@@ -1,10 +1,12 @@
 import 'package:demo/pages/aboutUser/adresse.dart';
 import 'package:demo/pages/aboutUser/login.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './../global.dart';
 import 'paiement.dart';
 import '../aboutUser/auth_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PanierPage extends StatefulWidget {
   const PanierPage({
@@ -21,7 +23,7 @@ class _PanierPageState extends State<PanierPage> {
   AuthProvider authProvider = AuthProvider();
 
   late Panier panier;
-  
+
   int getTotalQuantity() {
     int totalQuantity = 0;
     for (Article article in panier) {
@@ -52,13 +54,31 @@ class _PanierPageState extends State<PanierPage> {
   void initState() {
     super.initState();
     initAuthProvider();
-      panier = Panier();
+    _printStorageContent();
+    panier = Panier();
   }
-
-  Future<void> initAuthProvider() async {
+Future<void> initAuthProvider() async {
     await authProvider.initTokenFromStorage();
 
     setState(() {});
+  }
+   Future<void> _printStorageContent() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (kDebugMode) {
+      print('Token: ${prefs.getString('token')}');
+    }
+    if (kDebugMode) {
+      print('UserId: ${prefs.getString('userId')}');
+    }
+    if (kDebugMode) {
+      print('Nom: ${prefs.getString('nom')}');
+    }
+    if (kDebugMode) {
+      print('Email: ${prefs.getString('email')}');
+    }
+    if (kDebugMode) {
+      print('Telephone: ${prefs.getString('telephone')}');
+    }
   }
 
   String mapRetraitMode(String value) {
@@ -142,20 +162,19 @@ class _PanierPageState extends State<PanierPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                     
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: article.elementsChoisis
                             .map((element) => Text('     $element'))
                             .toList(),
                       ),
-                       if (article.remarque.isNotEmpty)
-              Text(
-                'Remarque: ${article.remarque}',
-                style: const TextStyle(
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
+                      if (article.remarque.isNotEmpty)
+                        Text(
+                          'Remarque: ${article.remarque}',
+                          style: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
                     ],
                   ),
                   trailing: Text('Prix: ${article.prix} €'),
@@ -173,16 +192,14 @@ class _PanierPageState extends State<PanierPage> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                Text(panier.getSelectedRetraitMode() ?? '');
-                panier.updateCommandeDetails(
-                    newSelectedMode ?? panier.getSelectedRetraitMode() ?? '',
-                    newSelectedTime ?? panier.getCurrentSelectedTime());
+              onPressed: () async {
+                // Récupérer le token depuis le stockage local
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? token = prefs.getString('token');
 
-                bool isLoggedIn =
-                    Provider.of<AuthProvider>(context, listen: false)
-                        .isAuthenticated;
-                if (isLoggedIn) {
+                // Vérifier si un token est présent dans le stockage local
+                if (token != null && token.isNotEmpty) {
+                  // Utilisateur authentifié, naviguer vers la page de paiement
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -190,8 +207,8 @@ class _PanierPageState extends State<PanierPage> {
                     ),
                   );
                 } else {
+                  // Utilisateur non authentifié, naviguer vers la page de connexion
                   panier.origin = 'panier';
-
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const loginPage()),
@@ -233,135 +250,136 @@ class _PanierPageState extends State<PanierPage> {
       ),
     );
   }
-void showEditDialog() async {
-  Map<String, dynamic>? newSelections = await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      String? selectedRetraitMode =
-          newSelectedMode ?? panier.getSelectedRetraitMode() ?? "";
-      TimeOfDay? selectedTime = newSelectedTime ?? panier.selectedTime;
 
-      return AlertDialog(
-        title: const Text('Modifier la commande'),
-        content: Column(
-          children: [
-            DropdownButton<String>(
-              value: selectedRetraitMode,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedRetraitMode = newValue!;
-                  if (selectedRetraitMode == 'En Livraison') {
-                    bool isLoggedIn =
-                        Provider.of<AuthProvider>(context, listen: false)
-                            .isAuthenticated;
-                    if (isLoggedIn) {
-                      
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddressSearchScreen()),
-                      );
+  void showEditDialog() async {
+    Map<String, dynamic>? newSelections = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String? selectedRetraitMode =
+            newSelectedMode ?? panier.getSelectedRetraitMode() ?? "";
+        TimeOfDay? selectedTime = newSelectedTime ?? panier.selectedTime;
+
+        return AlertDialog(
+          title: const Text('Modifier la commande'),
+          content: Column(
+            children: [
+              DropdownButton<String>(
+                value: selectedRetraitMode,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedRetraitMode = newValue!;
+                    if (selectedRetraitMode == 'En Livraison') {
+                      bool isLoggedIn =
+                          Provider.of<AuthProvider>(context, listen: false)
+                              .isAuthenticated;
+                      if (isLoggedIn) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const AddressSearchScreen()),
+                        );
+                      } else {
+                        panier.origin = 'livraison';
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const loginPage()),
+                        );
+                      }
+                    }
+                  });
+                },
+                items: <String>['A Emporter', 'Sur place', 'En Livraison']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(mapRetraitMode(value)),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  TimeOfDay? pickedTime = await showTimePicker(
+                    context: context,
+                    initialTime: selectedTime ?? TimeOfDay.now(),
+                  );
+
+                  if (pickedTime != null) {
+                    DateTime currentTime = DateTime.now();
+                    DateTime selectedDateTime = DateTime(
+                      currentTime.year,
+                      currentTime.month,
+                      currentTime.day,
+                      pickedTime.hour,
+                      pickedTime.minute,
+                    );
+
+                    if (selectedDateTime.isAfter(
+                        currentTime.add(const Duration(minutes: 15)))) {
+                      setState(() {
+                        selectedTime = pickedTime;
+                      });
                     } else {
-                      panier.origin = 'livraison';
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const loginPage()),
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Heure invalide'),
+                            content: const Text(
+                                'Veuillez choisir une heure au moins 15 minutes plus tard.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
                       );
                     }
                   }
-                });
+                },
+                child: const Text('Modifier l\'heure'),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
               },
-              items: <String>['A Emporter', 'Sur place', 'En Livraison']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(mapRetraitMode(value)),
-                );
-              }).toList(),
+              child: const Text('Annuler'),
             ),
-            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () async {
-                TimeOfDay? pickedTime = await showTimePicker(
-                  context: context,
-                  initialTime: selectedTime ?? TimeOfDay.now(),
+              onPressed: () {
+                Navigator.pop(
+                  context,
+                  {
+                    'retraitMode': selectedRetraitMode,
+                    'selectedTime': selectedTime,
+                  },
                 );
-
-                if (pickedTime != null) {
-                  DateTime currentTime = DateTime.now();
-                  DateTime selectedDateTime = DateTime(
-                    currentTime.year,
-                    currentTime.month,
-                    currentTime.day,
-                    pickedTime.hour,
-                    pickedTime.minute,
-                  );
-
-                  if (selectedDateTime.isAfter(
-                      currentTime.add(const Duration(minutes: 15)))) {
-                    setState(() {
-                      selectedTime = pickedTime;
-                    });
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Heure invalide'),
-                          content: const Text(
-                              'Veuillez choisir une heure au moins 15 minutes plus tard.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                }
               },
-              child: const Text('Modifier l\'heure'),
+              child: const Text('Enregistrer'),
             ),
           ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(
-                context,
-                {
-                  'retraitMode': selectedRetraitMode,
-                  'selectedTime': selectedTime,
-                },
-              );
-            },
-            child: const Text('Enregistrer'),
-          ),
-        ],
-      );
-    },
-  );
+        );
+      },
+    );
 
-  if (newSelections != null) {
-    setState(() {
-      newSelectedMode = newSelections['retraitMode'];
-      newSelectedTime = newSelections['selectedTime'];
-      panier.updateCommandeDetails(panier.getSelectedRetraitMode() ?? '',
-          newSelectedTime ?? panier.getCurrentSelectedTime());
-    });
+    if (newSelections != null) {
+      setState(() {
+        newSelectedMode = newSelections['retraitMode'];
+        newSelectedTime = newSelections['selectedTime'];
+        panier.updateCommandeDetails(panier.getSelectedRetraitMode() ?? '',
+            newSelectedTime ?? panier.getCurrentSelectedTime());
+      });
+    }
   }
-}
 
   Future<void> showUpdateQuantityDialog(Article article) async {
     int newQuantity = article.quantite;
@@ -387,7 +405,6 @@ void showEditDialog() async {
                 height: 2.0,
                 color: Colors.black,
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -407,18 +424,18 @@ void showEditDialog() async {
                       child: const Icon(Icons.add),
                     ),
                   ),
-                  const SizedBox(width: 16), 
+                  const SizedBox(width: 16),
                   Text(
-                    '$newQuantity', 
+                    '$newQuantity',
                     style: const TextStyle(fontSize: 20),
                   ),
-                  const SizedBox(width: 16), 
+                  const SizedBox(width: 16),
                   GestureDetector(
                     onTap: () {
                       setState(() {
                         if (newQuantity > 1) {
                           newQuantity--;
-                          newPrice; 
+                          newPrice;
                         }
                       });
                     },

@@ -21,7 +21,8 @@ class AuthProvider with ChangeNotifier {
   String? get userId => _userId;
   String? get nom => _nom;
   String? get email => _email;
-String? get telephone =>_telephone;
+  String? get telephone => _telephone;
+
   // Méthode pour initialiser le token depuis le stockage
   Future<void> initTokenFromStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -29,8 +30,10 @@ String? get telephone =>_telephone;
     _userId = prefs.getString('userId');
     _nom = prefs.getString('nom');
     _email = prefs.getString('email');
-    _telephone = prefs.getString('telephone'); 
-    if (kDebugMode) {
+    _telephone = prefs.getString('telephone');
+    notifyListeners(); // notifier les écouteurs une fois que les valeurs ont été récupérées
+  
+if (kDebugMode) {
       print('User ID from storage: $_userId');
     }
     if (kDebugMode) {
@@ -44,8 +47,8 @@ String? get telephone =>_telephone;
     } 
     notifyListeners();
   }
-
-  bool get isAuthenticated => _token != null && _userId != null;
+  // Méthode pour vérifier si un utilisateur est authentifié
+  bool get isAuthenticated => _token != null;
 
   Future<void> saveTokenToStorage(String token, String userId, String email,String nom,String telephone) async {
     final prefs = await SharedPreferences.getInstance();
