@@ -266,13 +266,14 @@ Future<void> initAuthProvider() async {
               DropdownButton<String>(
                 value: selectedRetraitMode,
                 onChanged: (String? newValue) {
-                  setState(() {
+                  setState(() async {
                     selectedRetraitMode = newValue!;
                     if (selectedRetraitMode == 'En Livraison') {
-                      bool isLoggedIn =
-                          Provider.of<AuthProvider>(context, listen: false)
-                              .isAuthenticated;
-                      if (isLoggedIn) {
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? token = prefs.getString('token');
+
+                // Vérifier si un token est présent dans le stockage local
+                if (token != null && token.isNotEmpty) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
