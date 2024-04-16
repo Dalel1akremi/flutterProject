@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore, unnecessary_null_comparison, use_build_context_synchronously, unused_element
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'CategoryPage.dart';
 import './../global.dart';
@@ -103,9 +104,11 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               selectedRetraitMode,
               selectedTime,
             );
-            bool isLoggedIn = Provider.of<AuthProvider>(context, listen: false)
-                .isAuthenticated;
-            if (isLoggedIn) {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? token = prefs.getString('token');
+
+                // Vérifier si un token est présent dans le stockage local
+                if (token != null && token.isNotEmpty) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
