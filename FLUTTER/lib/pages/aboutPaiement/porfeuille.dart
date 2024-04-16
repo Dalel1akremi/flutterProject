@@ -6,7 +6,8 @@ import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart'; // Import this
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import this
 
 class Portefeuille extends StatefulWidget {
   const Portefeuille({Key? key}) : super(key: key);
@@ -191,9 +192,10 @@ class _PortefeuilleState extends State<Portefeuille> {
   );
 }
 Future<void> sendPaymentRequest() async {
-  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? email = prefs.getString('email');
   String apiUrl =
-      'http://localhost:3000/porfeuille?email=${authProvider.email}';
+      'http://localhost:3000/porfeuille?email=${email}';
 
   Map<String, dynamic> paymentData = {
     "cardNumber": cardNumberController.text,
