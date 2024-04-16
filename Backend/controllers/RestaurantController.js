@@ -78,10 +78,27 @@ const getRestaurant = async (req, res) => {
     }
   };
   
- 
+  const getAllRestaurantNames = async (req, res) => {
+    try {
+        const restaurants = await Restaurant.find({}, 'nom'); 
+
+        if (!restaurants || restaurants.length === 0) {
+            return res.status(404).json({ success: false, status: 404, message: 'Aucun restaurant trouvé' });
+        }
+
+        const restaurantNames = restaurants.map(restaurant => restaurant.nom);
+
+        res.json({ success: true, status: 200, message: 'Noms des restaurants récupérés avec succès', restaurantNames });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, status: 500, message: 'Erreur lors de la récupération des noms des restaurants' });
+    }
+};
+
 module.exports = {
     createRestaurant,
     getRestaurant,
     getRestau,
+    getAllRestaurantNames
    
 };
