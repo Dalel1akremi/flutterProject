@@ -19,24 +19,26 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
-  String _nom = '';
-  
+   late String _nom = '';
+  late String _userId = '';
+  late String _token = '';
+  late String _telephone = '';
   int currentIndex = 2;
+  
 
   @override
   void initState() {
     super.initState();
     initProfilData();
   }
-Future<void> initProfilData() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.isAuthenticated) {
-      final prefs = await SharedPreferences.getInstance();
-      setState(() {
-        _nom = prefs.getString('nom') ?? '';
-       
-      });
-    }
+ Future<void> initProfilData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _nom = prefs.getString('nom') ?? '';
+      _userId = prefs.getString('userId') ?? '';
+      _token = prefs.getString('token') ?? '';
+      _telephone = prefs.getString('telephone') ?? '';
+    });
   }
  
     void onTabTapped(int index) {
