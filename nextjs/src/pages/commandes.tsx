@@ -120,7 +120,7 @@ const CommandesPage = () => {
                     <li key={itemIndex}>
                       <p> <span style={{ color: 'purple', fontWeight: 'bold' }}>Nom :</span>{item.nom}</p>
                       <p> <span style={{ color: 'green', fontWeight: 'bold' }}>{item.elements_choisis.join(', ')}</span></p>
-                      <p><span style={{ color: 'purple', fontWeight: 'bold' }}>Prix :</span> {item.prix}£</p>
+                      <p><span style={{ color: 'purple', fontWeight: 'bold' }}>Prix :</span> {item.prix}€</p>
                       {item.quantite && <p><span style={{ color: 'purple', fontWeight: 'bold' }}>Quantité :</span> {item.quantite}</p>}
                     </li>
                   ))}
