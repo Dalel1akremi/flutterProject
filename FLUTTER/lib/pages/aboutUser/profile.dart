@@ -20,9 +20,6 @@ class ProfilPage extends StatefulWidget {
 
 class _ProfilPageState extends State<ProfilPage> {
    late String _nom = '';
-  late String _userId = '';
-  late String _token = '';
-  late String _telephone = '';
   int currentIndex = 2;
   
 
@@ -35,9 +32,6 @@ class _ProfilPageState extends State<ProfilPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _nom = prefs.getString('nom') ?? '';
-      _userId = prefs.getString('userId') ?? '';
-      _token = prefs.getString('token') ?? '';
-      _telephone = prefs.getString('telephone') ?? '';
     });
   }
  
