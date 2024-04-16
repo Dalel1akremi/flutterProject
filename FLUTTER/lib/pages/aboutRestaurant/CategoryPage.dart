@@ -71,10 +71,7 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
 
     if (response.statusCode == 200) {
       final List<dynamic>? responseData = json.decode(response.body)['formattedItems'];
-      if (kDebugMode) {
-        print('Response data: $responseData');
-      }
-
+  
       if (responseData != null && responseData.isNotEmpty) {
         return responseData.map<Map<String, dynamic>>((item) => item as Map<String, dynamic>).toList();
       } else {
@@ -265,6 +262,10 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
               return GestureDetector(
                 onTap: () {
                   if (menuItem['is_Redirect'] == true) {
+                      final int? idRest = Panier().getIdRestaurant();
+    if (idRest == null) {
+      throw Exception('Restaurant ID is null');
+    }
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -274,7 +275,7 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
                           img: menuItem['image'],
                           prix: menuItem['prix'],
                            id_Steps:menuItem['id_Steps'] ?? [],
-                      
+                           id_rest: menuItem['idRest']??0,
             
                         ),
                       ),
