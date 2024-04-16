@@ -12,7 +12,7 @@ const restaurantSchema = new mongoose.Schema({
   }] 
 , 
   ModeDePaiement: [{ type: String,
-    enum: ['carte bancaire','espece','carnet des cheques'] 
+    enum: ['Carte bancaire','Espèces','Tickets Restaurant'] 
    }],
    numero_telephone: {
     type: String,

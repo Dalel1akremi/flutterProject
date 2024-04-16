@@ -274,7 +274,7 @@ class _RestaurantListState extends State<AcceuilScreen> {
                                 case 'Carte bancaire':
                                   iconData = Icons.credit_card;
                                   break;
-                                case 'carnet des cheques':
+                                case 'Tickets Restaurant':
                                   iconData = Icons.book;
                                   break;
                                 default:
