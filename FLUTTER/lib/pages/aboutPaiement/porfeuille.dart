@@ -195,7 +195,7 @@ Future<void> sendPaymentRequest() async {
    SharedPreferences prefs = await SharedPreferences.getInstance();
   String? email = prefs.getString('email');
   String apiUrl =
-      'http://localhost:3000/porfeuille?email=${email}';
+      'http://localhost:3000/porfeuille?email=$email';
 
   Map<String, dynamic> paymentData = {
     "cardNumber": cardNumberController.text,
