@@ -15,6 +15,7 @@ exports.createRedirect = async (req, res) => {
       max_quantite,
       is_Menu,
       id_cat,
+      id_rest,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
     // Validate data types
@@ -45,7 +46,7 @@ exports.createRedirect = async (req, res) => {
       return;
     }
 
-    const existingRedirect = await Redirect.findOne({nom });
+    const existingRedirect = await Redirect.findOne({nom,id_rest });
 
     if (existingRedirect) {
       
@@ -65,7 +66,7 @@ exports.createRedirect = async (req, res) => {
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
       id_cat,
-       // Log the id field
+      id_rest,
     });
     const newRedirect = new Redirect({
       id_item,
@@ -78,6 +79,7 @@ exports.createRedirect = async (req, res) => {
       is_Menu: validatedIsMenu,
       id_cat,
       image: imageUrl,
+      id_rest
     });
 
     const savedRedirect = await newRedirect.save();
@@ -98,11 +100,9 @@ exports.createRedirect = async (req, res) => {
 
 exports.getRedirect= async (req, res) => {
   try {
-    const { id_item} = req.query;
+    const { id_item,id_rest} = req.query;
 
-    // Fetch menus based on the provided type
-    
-    const Redirects = await Redirect.find({ id_item });
+    const Redirects = await Redirect.find({ id_item ,id_rest});
 
 
     if (Redirect.length === 0) {

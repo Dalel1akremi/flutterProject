@@ -16,6 +16,7 @@ const RedirectSchema = new Schema({
   is_Menu:  { type: Boolean, default: false},
   is_Redirect: { type: Boolean, default: false},
   id_cat: { type:Number, ref: 'Categories' },
+  id_rest: { type: Number, ref: 'Restaurant' }, 
 });
 function isValidBoolean(value) {
   return typeof value === 'boolean';
