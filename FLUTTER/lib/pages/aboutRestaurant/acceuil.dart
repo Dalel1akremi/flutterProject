@@ -1,4 +1,5 @@
 import 'dart:convert';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:js';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -162,8 +163,6 @@ class _RestaurantListState extends State<AcceuilScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final isLoggedIn = authProvider.isAuthenticated;
 
     return Scaffold(
       appBar: AppBar(
