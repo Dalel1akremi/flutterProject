@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:demo/pages/aboutUser/auth_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'profile.dart';
 
 class ProfileDetailsPage extends StatefulWidget {
@@ -18,21 +19,41 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   late String prenom;
   late String numero;
   late String userId;
-  late String _email;
+  late String _email='';
 
   final TextEditingController nomController = TextEditingController();
   final TextEditingController prenomController = TextEditingController();
   final TextEditingController numeroController = TextEditingController();
+  
+@override
+void initState() {
+  super.initState();
+
+  getEmailFromLocalStorage();
+  
+}
+
+Future<void> getEmailFromLocalStorage() async {
+    
+  final prefs = await SharedPreferences.getInstance();
+  setState(() {
+    _email = prefs.getString('email') ?? '';
+  });
+  print('_email récupéré depuis le stockage local : $_email');
+  await getUserData();
+}
 
   Future<void> getUserData() async {
     try {
       final response = await http.get(
-          Uri.parse('http://localhost:3000/getUser?email=$_email'));
+    Uri.parse('http://localhost:3000/getUser?email=$_email'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic>? userData =
             json.decode(response.body) as Map<String, dynamic>;
-
+ if (kDebugMode) {
+            print('Success to load user data. Response: ${response.body}');
+          }
         if (userData != null &&
             userData.containsKey('nom') &&
             userData.containsKey('prenom') &&
@@ -51,7 +72,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
 
         } else {
           if (kDebugMode) {
-            print('Failed to load user data. Response: ${response.body}');
+            print('Success to load user data. Response: ${response.body}');
           }
         }
       } else {
@@ -65,6 +86,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
       }
     }
   }
+  
 Future<void> updateUserData(String userEmail) async {
   final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
@@ -77,7 +99,7 @@ Future<void> updateUserData(String userEmail) async {
   try {
     final response = await http.put(
       Uri.parse(
-          'http://localhost:3000/updateUser?email=${authProvider.email}'),
+          'http://localhost:3000/updateUser?email=$_email'),
       body: jsonEncode(updatedData),
       headers: {'Content-Type': 'application/json'},
     );
@@ -113,14 +135,7 @@ Future<void> updateUserData(String userEmail) async {
 }
 
 
-  @override
-  void initState() {
-    super.initState();
-
-    _email = Provider.of<AuthProvider>(context, listen: false).email!;
-
-    getUserData();
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
