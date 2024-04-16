@@ -19,41 +19,38 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   late String prenom;
   late String numero;
   late String userId;
-  late String _email='';
+  late String _email = '';
 
   final TextEditingController nomController = TextEditingController();
   final TextEditingController prenomController = TextEditingController();
   final TextEditingController numeroController = TextEditingController();
-  
-@override
-void initState() {
-  super.initState();
 
-  getEmailFromLocalStorage();
-  
-}
+  @override
+  void initState() {
+    super.initState();
+    getEmailFromLocalStorage();
+  }
 
-Future<void> getEmailFromLocalStorage() async {
-    
-  final prefs = await SharedPreferences.getInstance();
-  setState(() {
-    _email = prefs.getString('email') ?? '';
-  });
-  print('_email récupéré depuis le stockage local : $_email');
-  await getUserData();
-}
+  Future<void> getEmailFromLocalStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _email = prefs.getString('email') ?? '';
+    });
+
+    await getUserData();
+  }
 
   Future<void> getUserData() async {
     try {
-      final response = await http.get(
-    Uri.parse('http://localhost:3000/getUser?email=$_email'));
+      final response = await http
+          .get(Uri.parse('http://localhost:3000/getUser?email=$_email'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic>? userData =
             json.decode(response.body) as Map<String, dynamic>;
- if (kDebugMode) {
-            print('Success to load user data. Response: ${response.body}');
-          }
+        if (kDebugMode) {
+          print('Success to load user data. Response: ${response.body}');
+        }
         if (userData != null &&
             userData.containsKey('nom') &&
             userData.containsKey('prenom') &&
@@ -68,8 +65,6 @@ Future<void> getEmailFromLocalStorage() async {
           nomController.text = nom;
           prenomController.text = prenom;
           numeroController.text = numero;
-          
-
         } else {
           if (kDebugMode) {
             print('Success to load user data. Response: ${response.body}');
@@ -86,56 +81,97 @@ Future<void> getEmailFromLocalStorage() async {
       }
     }
   }
-  
-Future<void> updateUserData(String userEmail) async {
-  final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-  final Map<String, dynamic> updatedData = {
-    'nom': nomController.text,
-    'prenom': prenomController.text,
-    'telephone': numeroController.text,
-  };
-
-  try {
-    final response = await http.put(
-      Uri.parse(
-          'http://localhost:3000/updateUser?email=$_email'),
-      body: jsonEncode(updatedData),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode == 200) {
-      await getUserData();
-
-      authProvider.saveTokenToStorage(
-        authProvider.token!,
-        userId, 
-        authProvider.email!,
-        nomController.text, 
-        numeroController.text, 
-      );
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ProfilPage(),
-        ),
-      );
-    } else {
+  Future<bool> saveTokenToStorage(
+      String token, String userId, String userEmail, String nom, String numero) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+      await prefs.setString('userId', userId);
+      await prefs.setString('userEmail', userEmail);
+      // Sauvegarder d'autres données si nécessaire
+      return true; // Indiquer que les données ont été sauvegardées avec succès
+    } catch (e) {
       if (kDebugMode) {
-        print('Failed to update user data. Response: ${response.body}');
+        print('Failed to save data to local storage: $e');
       }
-      throw Exception('Failed to update user data');
-    }
-  } catch (error) {
-    if (kDebugMode) {
-      print('Error during HTTP request: $error');
+      return false; // Indiquer que les données n'ont pas été sauvegardées avec succès
     }
   }
-}
 
+  Future<void> updateUserData(BuildContext context, String userEmail) async {
+    // Récupération du fournisseur d'authentification depuis le contexte
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token') ?? '';
+    final String userId = prefs.getString('userId') ?? '';
 
- 
+    final Map<String, dynamic> updatedData = {
+      'nom': nomController.text,
+      'prenom': prenomController.text,
+      'telephone': numeroController.text,
+    };
+
+    try {
+      final response = await http.put(
+        Uri.parse('http://localhost:3000/updateUser?email=$_email'),
+        body: jsonEncode(updatedData),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        await getUserData();
+        if (kDebugMode) {
+          print('Success to update user data. Response: ${response.body}');
+        }
+
+        
+
+        final bool savedSuccessfully = await saveTokenToStorage(
+          token,
+          userId,
+          _email,
+          nomController.text,
+          numeroController.text,
+        );
+
+        if (savedSuccessfully) {
+          if (kDebugMode) {
+            print('Data saved successfully.');
+          }
+        } else {
+          if (kDebugMode) {
+            print('Data not saved.');
+          }
+        }
+
+        // Print after saving
+       
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProfilPage(),
+          ),
+        );
+      } else {
+        if (kDebugMode) {
+          print('Failed to update user data. Response: ${response.body}');
+        }
+        throw Exception('Failed to update user data');
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print('Context: $context');
+        print('Token: $token');
+        print('UserId: $userId');
+        print(
+            'AuthProvider: ${Provider.of<AuthProvider>(context, listen: false)}');
+        print(' during HTTP request: $error');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +261,7 @@ Future<void> updateUserData(String userEmail) async {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                updateUserData(_email);
+                updateUserData(context, _email);
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
