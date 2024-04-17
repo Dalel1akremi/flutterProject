@@ -181,7 +181,7 @@ const updateCommandeState = async (req, res) => {
     // Nettoyer le nouvel état en supprimant les espaces blancs inutiles
     const newStateCleaned = newState.trim();
 
-    const allowedStates = ['Validée', 'En Préparation', 'Prête', 'Non validée','Passée'];
+    const allowedStates = ['Validée', 'En Préparation', 'Prête', 'Non validée', 'Passée'];
     if (!allowedStates.includes(newStateCleaned)) {
       console.error(`Invalid state "${newStateCleaned}" specified.`);
       return res.status(400).json({ error: `Invalid state "${newStateCleaned}" specified. Allowed states are: ${allowedStates.join(', ')}` });
@@ -193,30 +193,24 @@ const updateCommandeState = async (req, res) => {
       return res.status(404).json({ error: `Commande with ID ${commandeId} not found.` });
     }
 
-     // Vérifier l'ordre des états
-if (newStateCleaned === 'Validée' || newStateCleaned === 'Non validée') {
-  if (commande.etat !== 'Encours') {
-    console.error(`Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "Encours".`);
-    return res.status(400).json({ error: `Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "Encours".` });
-  }
-} else if (newStateCleaned === 'En Préparation') {
-  if (commande.etat !== 'Validée') {
-    console.error(`Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "Validée".`);
-    return res.status(400).json({ error: `Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "Validée".` });
-  }
-} else if (newStateCleaned === 'Prête') {
-  if (commande.etat !== 'En Préparation') {
-    console.error(`Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "En Préparation".`);
-    return res.status(400).json({ error: `Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "En Préparation".` });
-  }
-} else if (newStateCleaned === 'Passée') {
-  if (commande.etat !== 'Prête') {
-    console.error(`Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "Prête".`);
-    return res.status(400).json({ error: `Cannot update to state "${newStateCleaned}" directly from "${commande.etat}". Must be updated from "Prête".` });
-  }
-}
-
-  
+    // Vérifier l'ordre des états
+    if (newStateCleaned === 'Validée' || newStateCleaned === 'Non validée') {
+      if (commande.etat !== 'Encours') {
+         res.status(400).json({ message: `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directe. Veuillez la modifier depuis "Encours"` });
+      }
+    } else if (newStateCleaned === 'En Préparation') {
+      if (commande.etat !== 'Validée') {
+        return res.status(400).json({ message: `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directe. Veuillez la modifier depuis "Validée"` });
+      }
+    } else if (newStateCleaned === 'Prête') {
+      if (commande.etat !== 'En Préparation') {
+        return res.status(400).json({ message: `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directe. Veuillez la modifier depuis "En Préparation"` });
+      }
+    } else if (newStateCleaned === 'Passée') {
+      if (commande.etat !== 'Prête') {
+        return res.status(400).json({ message: `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directe. Veuillez la modifier depuis "Prête"` });
+      }
+    }
 
     // Mettre à jour l'état de la commande
     commande.etat = newStateCleaned;
