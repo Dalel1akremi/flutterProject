@@ -10,7 +10,6 @@ interface Commande {
   numero_commande: string;
   etat: string;
   id_items: Item[];
-  
 }
 
 interface Item {
@@ -18,7 +17,7 @@ interface Item {
   nom: string;
   prix: number;
   quantite?: number;
-  remarque?:String;
+  remarque?: string;
   elements_choisis: string[];
 }
 
@@ -26,6 +25,7 @@ const CommandesPage = () => {
   const router = useRouter();
   const [commandes, setCommandes] = useState<Commande[]>([]);
   const [idRest, setIdRest] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -38,6 +38,12 @@ const CommandesPage = () => {
       router.push('/connexion');
     }
   }, []);
+
+  useEffect(() => {
+    if (errorMessage) {
+      window.alert(errorMessage);
+    }
+  }, [errorMessage]);
 
   const fetchCommandes = async (id_rest: any) => {
     try {
@@ -52,7 +58,7 @@ const CommandesPage = () => {
     try {
       // Mettre à jour l'état de la commande dans le backend
       const response = await axios.put(`http://localhost:3000/commandes?commandeId=${id}&newState=${newState}`);
-
+  
       // Mettre à jour l'état de la commande dans le state local
       setCommandes(prevCommandes =>
         prevCommandes.map(commande => {
@@ -62,22 +68,29 @@ const CommandesPage = () => {
           return commande;
         })
       );
-
+  
       // Si le nouvel état est "Prête", appeler la fonction sendNotification
       if (newState === "Prête") {
         await sendNotification(idRest); // Appeler la fonction sendNotification avec l'identifiant du restaurant
       }
     } catch (error: any) {
       console.error('Error updating commande:', error.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorMessage(error.response.data.message); // Mettre à jour l'état errorMessage pour afficher dans l'alerte
+      } else {
+        setErrorMessage('Une erreur est survenue lors de la mise à jour de l\'état de la commande.');
+      }
     }
   };
+  
+  
 
   const sendNotification = async (idRest: string | null) => {
     try {
       // Appeler l'API pour envoyer la notification
       const response = await axios.post(`http://localhost:3000/sendNotification?id_rest=${idRest}`);
       console.log('Notification sent successfully:', response.data);
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error sending notification:', error.message);
     }
   };
