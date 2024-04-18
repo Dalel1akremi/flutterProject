@@ -1,6 +1,6 @@
 const Step = require('../models/StepModel');
 
-exports.createStep = async (req, res) => {
+const createStep = async (req, res) => {
   try {
     const { body } = req;
     
@@ -20,7 +20,7 @@ exports.createStep = async (req, res) => {
       id_items,
       is_Obligatoire,
       id_rest,
-    
+      isArchived: false, 
     });
 
     const savedStep = await newStep.save();
@@ -41,13 +41,10 @@ exports.createStep = async (req, res) => {
 };
 
 
-exports.getStepsByRestaurantId = async (req, res) => {
+const getStepsByRestaurantId = async (req, res) => {
   try {
-    const id_restaurant = req.query.id_rest; // Récupère l'ID du restaurant à partir des paramètres de la requête
-
-    // Supposons que votre modèle Item soit importé et correctement défini
-    const steps = await Step.find({ id_rest: id_restaurant }); // Requête pour récupérer les éléments du restaurant spécifié par son ID
-
+    const id_restaurant = req.query.id_rest; 
+    const steps = await Step.find({ id_rest: id_restaurant }); 
     res.status(200).json({
       status: 200,
       message: 'Steps récupérés avec succès pour le restaurant correspondant',
@@ -61,7 +58,7 @@ exports.getStepsByRestaurantId = async (req, res) => {
     });
   }
 };
-exports.ObligationStep = async (req, res) => {
+const ObligationStep = async (req, res) => {
   try {
     const { stepId } = req.params;
     const { is_Obligatoire } = req.body;
@@ -105,7 +102,7 @@ exports.ObligationStep = async (req, res) => {
     });
   }
 };
-exports.updateStep = async (req, res) => {
+const updateStep = async (req, res) => {
   try {
     const { stepId } = req.params;
     const { nom_Step, id_items, is_Obligatoire } = req.body;
@@ -151,4 +148,39 @@ exports.updateStep = async (req, res) => {
     });
   }
 };
+const ArchiverStep = async (req, res) => {
+  try {
+    const { _id} = req.params;
+    const { isArchived } = req.body;
+   
 
+    if (!_id) {
+      return res.status(400).json({
+        status: 400,
+        message: "L'ID de l'élément à mettre à jour est manquant.",
+      });
+    }
+
+    await Step.findOneAndUpdate({ _id: _id }, { isArchived });
+
+    res.status(200).json({
+      status: 200,
+      message: "L'élément a été mis à jour avec succès.",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Erreur lors de la mise à jour de l\'élément.',
+    });
+  }
+};
+
+module.exports = {
+  createStep ,
+  updateStep,
+   ArchiverStep,
+  ObligationStep,
+  getStepsByRestaurantId,
+
+}
