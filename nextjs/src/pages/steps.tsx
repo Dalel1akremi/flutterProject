@@ -172,14 +172,13 @@ const Steps = () => {
                 />
               </td>
               <td>
-  <input
-    type="checkbox"
-    checked={step.isArchived}
-    onChange={() => handleArchivedToggle(step._id.toString(), step.isArchived)}
-    disabled={isLoading}
-  />
-</td>
-
+                  <input
+                    type="checkbox"
+                    checked={step.isArchived}
+                    onChange={() => handleArchivedToggle(step._id, step.isArchived)}
+                    disabled={isLoading}
+                  />
+                </td>
               <td>
                 {isEditMode ? (
                   <button onClick={() => handleSave(step._id)}>Enregistrer</button>
