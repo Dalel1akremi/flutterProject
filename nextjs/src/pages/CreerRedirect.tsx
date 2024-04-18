@@ -17,9 +17,11 @@ interface RedirectFormData {
 }
 
 export default function AddRedirect() {
+  const [message, setMessage] = useState<string>('');
+  const [isError, setIsError] = useState<boolean>(false);
   const router = useRouter();
   const { id_item } = router.query; 
-
+  const [id_rest, setIdRest] = useState<number>(0); 
   const [formData, setFormData] = useState<RedirectFormData>({
     nom: '',
     prix: 0,
@@ -33,16 +35,17 @@ export default function AddRedirect() {
   });
 
 
-  const [message, setMessage] = useState<string>('');
-  const [isError, setIsError] = useState<boolean>(false);
+  
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwt.decode(token) as { [key: string]: any };
       const { id_rest } = decodedToken;
+      setIdRest(id_rest);
       setFormData(prevState => ({
         ...prevState,
         id_rest: id_rest,
+
       }));
     }
   
@@ -53,26 +56,6 @@ export default function AddRedirect() {
       }));
     }
   }, [id_item]);
-  
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: name === 'prix' || name === 'quantite' || name === 'max_quantite' ? parseFloat(value) : name === 'id_cat' || name === 'id_rest' ? parseInt(value) : value,
-    }));
-  };
-
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files ?? [];
-    if (files.length > 0) {
-      setFormData(prevState => ({
-        ...prevState,
-        image: files[0],
-      }));
-    }
-  };
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -101,17 +84,39 @@ export default function AddRedirect() {
         quantite: 0,
         max_quantite: 0,
         id_cat: 0,
-        id_rest: 0,
+        id_rest: id_rest,
         image: null,
         id_item: 0,
         
       });
+      const redirectUrl = `/Redirect?id_item=${id_item}&id_rest=${id_rest}`;
+      router.push(redirectUrl);
     } catch (error: any) {
       setMessage(error.response.data.message);
       setIsError(true);
       console.error('Error adding redirect:', error);
     }
   };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: name === 'prix' || name === 'quantite' || name === 'max_quantite' ? parseFloat(value) : name === 'id_cat' || name === 'id_rest' ? parseInt(value) : value,
+    }));
+  };
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ?? [];
+    if (files.length > 0) {
+      setFormData(prevState => ({
+        ...prevState,
+        image: files[0],
+      }));
+    }
+  };
+
+ 
 
   return (
     <div>
