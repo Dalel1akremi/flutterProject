@@ -67,7 +67,6 @@ const ArchivedCategorie = async (req, res) => {
       });
     }
 
-    // Recherche du document par son ID
     const category = await Categories.findOne({ id_cat });
 
     if (!category) {
@@ -77,7 +76,6 @@ const ArchivedCategorie = async (req, res) => {
       });
     }
 
-    // Bascule de l'état de isArchived
     category.isArchived = !category.isArchived;
     await category.save();
 
@@ -101,8 +99,6 @@ const updateCategory = async (req, res) => {
   try {
     let { id_cat } = req.params;
     const { nom_cat } = req.body;
-
-    // Convertir id_cat en nombre
     id_cat = parseInt(id_cat);
 
     if (!id_cat || isNaN(id_cat) || !nom_cat) {
@@ -112,7 +108,6 @@ const updateCategory = async (req, res) => {
       });
     }
 
-    // Recherche de la catégorie par son ID
     const category = await Categories.findOne({ id_cat });
 
     if (!category) {
@@ -122,7 +117,6 @@ const updateCategory = async (req, res) => {
       });
     }
 
-    // Mettre à jour le nom de la catégorie
     category.nom_cat = nom_cat.charAt(0).toUpperCase() + nom_cat.slice(1).toLowerCase();
     await category.save();
 
