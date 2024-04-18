@@ -18,14 +18,11 @@ const createRedirect  = async (req, res) => {
       id_rest,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
-    // Validate data types
     const validatedPrix = parseFloat(prix);
     const validatedIsArchived = Boolean(isArchived);
     const validatedQuantite = parseInt(quantite);
     const validatedMaxQuantite = parseInt(max_quantite);
     const validatedIsMenu = Boolean(is_Menu);
-
-    // Check if validation fails
     if (isNaN(validatedPrix)) {
       console.error('Invalid prix:', prix);
     }
@@ -102,7 +99,7 @@ const getRedirect= async (req, res) => {
   try {
     const { id_item,id_rest} = req.query;
 
-    const Redirects = await Redirect.find({ id_item ,id_rest});
+    const Redirects = await Redirect.find({ id_item ,id_rest,'isArchived': false});
 
 
     if (Redirect.length === 0) {
