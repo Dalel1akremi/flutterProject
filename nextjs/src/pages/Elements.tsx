@@ -6,9 +6,11 @@ import router from 'next/router';
 import jwt from 'jsonwebtoken';
 interface Step {
   _id: string;
+  id_Step: string; 
   nom_Step: string;
   id_items: { id_item: number; nom: string; _id: string }[];
   is_Obligatoire: boolean;
+  isArchived: boolean;
 }
 
 const Steps = () => {
@@ -71,14 +73,12 @@ const Steps = () => {
 
   const handleSave = async (stepId: string) => {
     try {
-      // Récupérer les données modifiées du Step
       const modifiedStep = steps.find(step => step._id === stepId);
       if (!modifiedStep) {
         console.error('Step non trouvé');
         return;
       }
 
-      // Faire appel à l'API updateStep pour mettre à jour les données du Step avec stepId
       await axios.put(`http://localhost:3000/updateStep/${stepId}`, modifiedStep);
 
       setIsEditMode(false);
@@ -86,7 +86,25 @@ const Steps = () => {
       console.error('Erreur lors de la mise à jour du Step :', error);
     }
   };
-
+  const handleArchivedToggle = async (_id: string, isArchived: boolean) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.put(`http://localhost:3000/ArchiverStep/${_id}`, { isArchived: !isArchived });
+      console.log('Réponse de l\'API pour ArchiverStep:', response.data); 
+      setSteps(prevSteps =>
+        prevSteps.map(step =>
+          step._id === _id ? { ...step, isArchived: !isArchived } : step
+        )
+      );
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de l\'archivage de l\'étape :', error);
+      setIsLoading(false);
+    }
+  };
+  
+  
+  
   return (
     <div>
       <Navbar />
@@ -102,11 +120,12 @@ const Steps = () => {
             <th>Nom de l'étape</th>
             <th>Items associés</th>
             <th>Est obligatoire</th>
+            <th>Archiver</th>
             <th>Modification</th>
           </tr>
         </thead>
         <tbody>
-          {steps && steps.map((step) => ( // Check if steps is not undefined before mapping
+          {steps && steps.map((step) => ( 
             <tr key={step._id}>
               <td>
                 {isEditMode ? (
@@ -152,6 +171,14 @@ const Steps = () => {
                   disabled={isLoading}
                 />
               </td>
+              <td>
+                  <input
+                    type="checkbox"
+                    checked={step.isArchived}
+                    onChange={() => handleArchivedToggle(step._id, step.isArchived)}
+                    disabled={isLoading}
+                  />
+                </td>
               <td>
                 {isEditMode ? (
                   <button onClick={() => handleSave(step._id)}>Enregistrer</button>

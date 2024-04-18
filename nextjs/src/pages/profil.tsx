@@ -35,7 +35,7 @@ const Profile = () => {
         const { email } = decodedToken;
 
         const response = await axios.get(`http://localhost:3000/getAdminByEmail?email=${email}`);
-        setAdminData(response.data); // Supposons que l'API renvoie directement les données de l'administrateur
+        setAdminData(response.data);
         setLoading(false);
       } catch (error) {
         console.error('Erreur lors de la récupération des données :', error);
@@ -73,13 +73,13 @@ const Profile = () => {
         nom: editedNom,
         prenom: editedPrenom,
         telephone: editedTelephone,
-        email: editedEmail, // Utilisez la valeur de l'email modifiée
+        email: editedEmail,
       });
-      console.log(response.data); // Afficher la réponse du serveur
+      console.log(response.data); 
       setSuccessMessage('Modifications enregistrées avec succès');
       setTimeout(() => {
         setSuccessMessage(null);
-        router.push('/connexion'); // Naviguer vers la page d'accueil après 1000ms
+        router.push('/profil'); 
       }, 1000);
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'administrateur :', error);
