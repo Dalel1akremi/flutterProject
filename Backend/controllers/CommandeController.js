@@ -193,35 +193,41 @@ const updateCommandeState = async (req, res) => {
       return res.status(404).json({ error: `Commande with ID ${commandeId} not found.` });
     }
 
+    let errorMessage;
+
     // Vérifier l'ordre des états
     if (newStateCleaned === 'Validée' || newStateCleaned === 'Non validée') {
       if (commande.etat !== 'Encours') {
-         res.status(400).json({ message: `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directe. Veuillez la modifier depuis "Encours"` });
+        errorMessage = `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directement. Veuillez la modifier depuis "Encours"`;
       }
     } else if (newStateCleaned === 'En Préparation') {
       if (commande.etat !== 'Validée') {
-        return res.status(400).json({ message: `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directe. Veuillez la modifier depuis "Validée"` });
+        errorMessage = `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directement. Veuillez la modifier depuis "Validée"`;
       }
     } else if (newStateCleaned === 'Prête') {
       if (commande.etat !== 'En Préparation') {
-        return res.status(400).json({ message: `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directe. Veuillez la modifier depuis "En Préparation"` });
+        errorMessage = `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directement. Veuillez la modifier depuis "En Préparation"`;
       }
     } else if (newStateCleaned === 'Passée') {
       if (commande.etat !== 'Prête') {
-        return res.status(400).json({ message: `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directe. Veuillez la modifier depuis "Prête"` });
+        errorMessage = `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directement. Veuillez la modifier depuis "Prête"`;
       }
+    }
+
+    if (errorMessage) {
+      return res.status(400).json({ message: errorMessage });
     }
 
     // Mettre à jour l'état de la commande
     commande.etat = newStateCleaned;
     await commande.save();
-    console.log(`Commande with ID ${commandeId} updated successfully to "${newStateCleaned}".`);
     return res.status(200).json({ message: `Commande with ID ${commandeId} updated successfully to "${newStateCleaned}".` });
   } catch (error) {
     console.error('Error updating commande state:', error.message);
-    return res.status(500).json({ error: 'Internal Server Error' });
+     return res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de l\'état de la commande.' });
   }
 };
+
 
   const getCommandesPassé = async (req, res) => {
     try {
