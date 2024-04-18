@@ -4,6 +4,10 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Navbar from '../styles/navbar'; 
 
+interface RedirectProps {
+  id_item: string;
+  id_rest: string;
+}
 
 const Redirect = () => {
   const router = useRouter();
@@ -19,7 +23,7 @@ const Redirect = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/getRedirect?id_item=${id_item}&id_rest=${id_rest}`);
+        const response = await axios.get(`http://localhost:3000/getRedirectAd?id_item=${id_item}&id_rest=${id_rest}`);
         setRedirectData(response.data.data); 
       } catch (error) {
         console.error('Erreur lors de la récupération des données redirect :', error);
@@ -36,17 +40,17 @@ const Redirect = () => {
   }
 
 
-const handleArchivedToggle = async (id_item: string, currentValue: boolean) => {
+const handleArchivedToggle = async (_id: string, currentValue: boolean) => {
   try {
-    console.log('ID de redirection à archiver:', id_item);
-    await axios.put(`http://localhost:3000/ArchiverRedirect/${id_item}`, { isArchived: !currentValue });
+    console.log('ID de redirection à archiver:', _id);
+    await axios.put(`http://localhost:3000/ArchiverRedirect/${_id}`, { isArchived: !currentValue });
 
     setRedirectData(prevItems =>
       prevItems.map(item =>
-        item.id_item.toString() === id_item ? { ...item, isArchived: !currentValue } : item
+        item._id.toString() === _id ? { ...item, isArchived: !currentValue } : item
       )
     );
-    const response = await axios.get(`http://localhost:3000/getRedirect?id_item=${id_item}&id_rest=${id_rest}`);
+    const response = await axios.get(`http://localhost:3000/getRedirectAd?id_item=${id_item}&id_rest=${id_rest}`);
     setRedirectData(response.data.data);
 
   } catch (error) {
@@ -172,7 +176,7 @@ const handleUpdateRedirect = async () => {
       <input
         type="checkbox"
         checked={item.isArchived}
-        onChange={() => handleArchivedToggle(item.id_item, item.isArchived)}
+        onChange={() => handleArchivedToggle(item._id, item.isArchived)}
         className={item.isArchived ? 'redCheckbox' : ''}
       />
     </td>

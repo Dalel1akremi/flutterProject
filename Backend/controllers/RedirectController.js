@@ -99,7 +99,41 @@ const getRedirect= async (req, res) => {
   try {
     const { id_item,id_rest} = req.query;
 
-    const Redirects = await Redirect.find({ id_item ,id_rest,'isArchived': false});
+    const Redirects = await Redirect.find({ id_item ,id_rest,'isArchived': false });
+
+
+    if (Redirect.length === 0) {
+      
+      res.json({
+        status: 404,
+        message: 'Aucun Redirect trouvé pour ce type',
+        
+      });
+    } else {
+      
+      res.json({
+        status: 200,
+        message: 'Redirect récupérés avec succès',
+        data:Redirects
+        
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.json({
+      status: 500,
+      message: 'Erreur lors de la récupération des Redirects',
+      error:error.message
+      
+    });
+   
+  }
+};
+const getRedirectAd= async (req, res) => {
+  try {
+    const { id_item,id_rest} = req.query;
+
+    const Redirects = await Redirect.find({ id_item ,id_rest});
 
 
     if (Redirect.length === 0) {
@@ -131,18 +165,18 @@ const getRedirect= async (req, res) => {
 };
 const ArchiverRedirect = async (req, res) => {
   try {
-    const { id_item } = req.params;
+    const { _id} = req.params;
     const { isArchived } = req.body;
-    const itemId = parseInt(id_item, 10);
+   
 
-    if (!itemId) {
+    if (!_id) {
       return res.status(400).json({
         status: 400,
         message: "L'ID de l'élément à mettre à jour est manquant.",
       });
     }
 
-    await Redirect.findOneAndUpdate({ id_item: itemId }, { isArchived });
+    await Redirect.findOneAndUpdate({ _id: _id }, { isArchived });
 
     res.status(200).json({
       status: 200,
@@ -197,5 +231,5 @@ module.exports = {
    getRedirect,
   ArchiverRedirect,
   updateRedirect,
-
+  getRedirectAd,
 }
