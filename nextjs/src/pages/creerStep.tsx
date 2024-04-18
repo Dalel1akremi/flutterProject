@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '@/styles/navbar';
 import jwt from 'jsonwebtoken'; // Remplacez par votre librairie de décodage de token
+import router from 'next/router';
 
 const CreateStep = () => {
   const [nomStep, setNomStep] = useState('');
@@ -42,6 +43,7 @@ const CreateStep = () => {
       setIdItems('');
       setIsObligatoire(false);
       setErrorMessage('');
+      router.push('/step');
     } catch (error) {
       setIsLoading(false);
       if (axios.isAxiosError(error)) {
