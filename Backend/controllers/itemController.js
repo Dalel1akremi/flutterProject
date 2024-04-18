@@ -210,8 +210,9 @@ exports.getItemsByRestaurantId = async (req, res) => {
 };
 exports.updateItem = async (req, res) => {
   try {
-    const { itemId } = req.params;
-    const {  nom,
+    const { itemId } = req.query;
+    const { 
+      nom,
       prix,
       description,
       isArchived,
@@ -219,7 +220,10 @@ exports.updateItem = async (req, res) => {
       max_quantite,
       is_Menu,
       is_Redirect,
-      id_cat } = req.body; 
+      id_cat,
+      id_Steps // Ajout de id_Steps dans les paramètres de la requête
+    } = req.body; 
+
     if (!itemId) {
       return res.status(400).json({
         status: 400,
@@ -227,7 +231,13 @@ exports.updateItem = async (req, res) => {
       });
     }
 
-    await Item.findByIdAndUpdate(itemId, {  nom,
+    // Traitement des données d'entrée, si nécessaire
+    // Conversion de id_Steps en tableau d'objets si c'est une chaîne séparée par des virgules
+    const idStepsArray = is_Menu ? id_Steps.split(',').map(idStep => ({ id_Step: parseInt(idStep) })) : null;
+
+    // Mise à jour de l'élément avec les nouvelles valeurs, y compris id_Steps
+    await Item.findByIdAndUpdate(itemId, { 
+      nom,
       prix,
       description,
       isArchived,
@@ -235,7 +245,9 @@ exports.updateItem = async (req, res) => {
       max_quantite,
       is_Menu,
       is_Redirect,
-      id_cat });
+      id_cat,
+      id_Steps: idStepsArray, // Assigner idStepsArray à id_Steps
+    });
 
     res.status(200).json({
       status: 200,
@@ -252,9 +264,10 @@ exports.updateItem = async (req, res) => {
 
 
 
+
 exports.getItemById = async (req, res) => {
   try {
-    const { itemId } = req.params; // Supposons que vous récupériez l'ID de l'item depuis les paramètres de la requête
+    const { itemId } = req.query; // Supposons que vous récupériez l'ID de l'item depuis les paramètres de la requête
     const item = await Item.findOne({ _id: itemId }); // Recherche par id_item plutôt que par _id
 
     if (!item) {
