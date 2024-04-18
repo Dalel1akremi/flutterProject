@@ -55,29 +55,37 @@ const getCategories = async (req, res) => {
     });
   }
 };
-
+const getCategoriesAd = async (req, res) => {
+  try {
+    const { id_rest } = req.query;
+    const categories = await Categories.find({ id_rest: id_rest }, 'nom_cat  id_cat , isArchived');
+    res.status(200).json({
+      status: 200,
+      message: "Succès de récupération des catégories",
+      data: categories
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: "Erreur lors de la récupération des catégories"
+    });
+  }
+};
 const ArchivedCategorie = async (req, res) => {
   try {
-    const { id_cat } = req.params;
+    const { _id} = req.params;
+    const { isArchived } = req.body;
+   
 
-    if (!id_cat) {
+    if (!_id) {
       return res.status(400).json({
         status: 400,
         message: "L'ID de l'élément à mettre à jour est manquant.",
       });
     }
 
-    const category = await Categories.findOne({ id_cat });
-
-    if (!category) {
-      return res.status(404).json({
-        status: 404,
-        message: "Catégorie non trouvée.",
-      });
-    }
-
-    category.isArchived = !category.isArchived;
-    await category.save();
+    await Categories.findOneAndUpdate({ _id: _id }, { isArchived });
 
     res.status(200).json({
       status: 200,
@@ -141,6 +149,7 @@ module.exports = {
   getCategories,
   ArchivedCategorie,
   updateCategory,
+  getCategoriesAd,
 };
 
 
