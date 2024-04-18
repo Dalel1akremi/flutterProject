@@ -10,6 +10,7 @@ const stepSchema = new mongoose.Schema({
   ],
   is_Obligatoire:{ type: Boolean, validate: [isValidBoolean, 'is_Obligatoire: must be true or false'] },
   id_rest: { type: Number, ref: 'Restaurant' } , 
+  isArchived: { type: Boolean, validate: [isValidBoolean, 'isArchived must be true or false'] },
 });
 
 function isValidBoolean(value) {
