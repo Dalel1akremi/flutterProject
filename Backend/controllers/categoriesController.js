@@ -41,7 +41,7 @@ const createCategorie = async (req, res) => {
 const getCategories = async (req, res) => {
   try {
     const { id_rest } = req.query;
-    const categories = await Categories.find({ id_rest: id_rest }, 'nom_cat  id_cat , isArchived');
+    const categories = await Categories.find({ id_rest: id_rest ,'isArchived': false}, 'nom_cat  id_cat , isArchived');
     res.status(200).json({
       status: 200,
       message: "Succès de récupération des catégories",
