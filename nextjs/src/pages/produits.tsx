@@ -20,31 +20,23 @@ interface Item {
   image: string | null;
   id: string;
   id_item: string;
-  id_rest:number;
+  id_rest: number;
 }
 
 const Produits = () => {
   const router = useRouter();
   const [items, setItems] = useState<Item[]>([]);
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const [formData, setFormData] = useState<Item>({
-    _id: '',
-    nom: '',
-    prix: 0,
-    description: '',
-    isArchived: false,
-    quantite: 0,
-    max_quantite: 0,
-    is_Menu: false,
-    is_Redirect: false,
-    id_cat: '',
-    id_Steps: [],
-    image: null,
-    id: '',
-    id_item: '',
-    id_rest: 0,
-  });
-
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editedItem, setEditedItem] = useState<Item | null>(null);
+  const [editedPrix, setEditedPrix] = useState<number | null>(null);
+  const [editedDescription, setEditedDescription] = useState<string | null>(null);
+  const [editedQuantite, setEditedQuantite] = useState<number | null>(null);
+  const [editedMaxQuantite, setEditedMaxQuantite] = useState<number | null>(null);
+  const [message, setMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isRMenu, setIsMenu] = useState<boolean>(false);
+  const [isRedirect, setIsRedirect] = useState<boolean>(false);
   useEffect(() => {
     const fetchItems = async () => {
       const token = localStorage.getItem('token');
@@ -56,10 +48,13 @@ const Produits = () => {
       try {
         const decodedToken = jwt.decode(token) as { [key: string]: any };
         const { id_rest } = decodedToken;
+        setIsLoading(true);
         const response = await axios.get(`http://localhost:3000/getItemsByRestaurantId?id_rest=${id_rest}`);
         setItems(response.data.items);
+        setIsLoading(false);
       } catch (error) {
         console.error('Erreur lors de la récupération des items :', error);
+        setIsLoading(false);
       }
     };
 
@@ -68,34 +63,78 @@ const Produits = () => {
 
   const handleArchivedToggle = async (itemId: string, currentValue: boolean) => {
     try {
-      console.log('ID de redirection à archiver:', itemId);
-      await axios.put(`http://localhost:3000/ArchiverItem/${itemId}`, { isArchived: !currentValue });
+      // Mettre à jour immédiatement l'état local du checkbox
       setItems(prevItems =>
         prevItems.map(item =>
-          item.id_item === itemId ? { ...item, isArchived: !currentValue } : item
+          item._id === itemId ? { ...item, isArchived: !currentValue } : item
         )
       );
+  
+      // Envoyer une requête à l'API pour mettre à jour l'état dans la base de données
+      await axios.put(`http://localhost:3000/ArchiverItem/${itemId}`, { isArchived: !currentValue });
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut isArchived :', error);
     }
   };
-
-  const handleEdit = (item: Item) => {
-    setSelectedItem(item);
-    console.log('ID de l\'élément sélectionné :', item._id);
-    const oldValuesUrl = `/updateProduits?&nom=${encodeURIComponent(item.nom)}&prix=${encodeURIComponent(item.prix)}&description=${encodeURIComponent(item.description)}&isArchived=${encodeURIComponent(item.isArchived.toString())}&quantite=${encodeURIComponent(item.quantite.toString())}&max_quantite=${encodeURIComponent(item.max_quantite.toString())}&is_Menu=${encodeURIComponent(item.is_Menu.toString())}&is_Redirect=${encodeURIComponent(item.is_Redirect.toString())}&id_cat=${encodeURIComponent(item.id_cat)}&_id=${encodeURIComponent(item._id)}`;
-    router.push(oldValuesUrl);
-};
-const handleRedirectClick = (item: Item) => {
-  setSelectedItem(item);
   
-  if (item.is_Redirect) {
-    const redirectUrl = `/Redirects?id_item=${item.id_item}&id_rest=${item.id_rest}`;
-    router.push(redirectUrl);
-  }
-};
 
+  
 
+  const startEditingItem = (item: Item) => {
+    setEditingItemId(item._id);
+    if (item._id) {
+      setEditedItem({ ...item });
+    }
+    setEditedPrix(item.prix);
+    setEditedDescription(item.description);
+    setEditedQuantite(item.quantite);
+    setEditedMaxQuantite(item.max_quantite);
+  };
+  
+
+  const handleEditItem = async () => {
+    try {
+      const { _id } = editedItem!;
+      setIsLoading(true);
+      await axios.put(`http://localhost:3000/updateItem?itemId=${_id}`, {
+        nom: editedItem?.nom,
+        prix: editedPrix,
+        description: editedDescription,
+        quantite: editedQuantite,
+        max_quantite: editedMaxQuantite,
+      });
+  
+      const response = await axios.get(`http://localhost:3000/getItemById?itemId=${_id}`);
+      setEditedItem(response.data.data);
+  
+      setEditingItemId(null);
+      setEditedPrix(null);
+      setEditedDescription(null);
+      setEditedQuantite(null);
+      setEditedMaxQuantite(null);
+      setIsSuccess(true);
+      setMessage('Les données ont été mises à jour avec succès !');
+  
+      // Mettre à jour items avec les modifications
+      setItems(prevItems =>
+        prevItems.map(item =>
+          item._id === _id ? { ...item, nom: editedItem?.nom || '', prix: editedPrix || 0, description: editedDescription || '', quantite: editedQuantite || 0, max_quantite: editedMaxQuantite || 0 } : item
+        )
+      );
+  
+      setTimeout(() => {
+        setIsSuccess(false);
+        setMessage('');
+      }, 1000);
+      setIsLoading(false);
+    } catch (error) {
+      setIsSuccess(false);
+      setMessage("Une erreur s'est produite lors de la mise à jour des données.");
+      console.error("Erreur lors de la mise à jour des données :", error);
+      setIsLoading(false);
+    }
+  };
+  
   return (
     <div>
       <Navbar />
@@ -125,39 +164,85 @@ const handleRedirectClick = (item: Item) => {
         <tbody>
           {items.map((item) => (
             <tr key={item._id}>
-            <td>
-                  {item.is_Redirect ? (
-                    <button 
-                      onClick={() => handleRedirectClick(item)} 
-                      className="redirectButton"
-                    >
-                      {item.nom}
-                    </button>
-                  ) : (
-                    item.nom
-                  )}
-                </td>
-
-              <td>{item.prix}€</td>
-              <td>{item.description}</td>
-              <td>{item.quantite}</td>
-              <td>{item.max_quantite}</td>
+              {editingItemId === item._id ? (
+                <>
+                  <td>
+                    <input
+                      type="text"
+                      value={editedItem?.nom || ''}
+                      onChange={(e) => {
+                        setEditedItem(prevItem => {
+                          if (!prevItem) return null; // Return null if prevItem is null
+                      
+                          const updatedItem: Item = { ...prevItem, nom: e.target.value };
+                          if (typeof prevItem._id !== 'undefined') {
+                            updatedItem._id = prevItem._id;
+                          }
+                          return updatedItem;
+                        });
+                      }}
+                      
+                      
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={editedPrix || ''}
+                      onChange={(e) => setEditedPrix(Number(e.target.value))}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={editedDescription || ''}
+                      onChange={(e) => setEditedDescription(e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={editedQuantite || ''}
+                      onChange={(e) => setEditedQuantite(Number(e.target.value))}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={editedMaxQuantite || ''}
+                      onChange={(e) => setEditedMaxQuantite(Number(e.target.value))}
+                    />
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td>{item.nom}</td>
+                  <td>{item.prix}€</td>
+                  <td>{item.description}</td>
+                  <td>{item.quantite}</td>
+                  <td>{item.max_quantite}</td>
+                </>
+              )}
               <td>{item.is_Menu ? 'Oui' : 'Non'}</td>
               <td>{item.is_Redirect ? 'Oui' : 'Non'}</td>
               <td>
-                <input
-                  type="checkbox"
-                  checked={item.isArchived}
-                  onChange={() => handleArchivedToggle(item._id, item.isArchived)}
-                  className={item.isArchived ? 'redCheckbox' : ''}
-                />
-                
+              <input
+              type="checkbox"
+              checked={item.isArchived}
+              onChange={() => handleArchivedToggle(item._id, item.isArchived)}
+              className={item.isArchived ? 'redCheckbox' : ''}
+            />
+
               </td>
               <td>{item.id_cat}</td>
               <td>{item.id_Steps ? item.id_Steps.map((step: { id_Step: any; }) => step.id_Step).join(', ') : ''}</td>
               <td>{item.id_item}</td>
               <td>
-                <button onClick={() => handleEdit(item)}>Modifier</button>
+                {editingItemId === item._id ? (
+                  <button onClick={handleEditItem}>Enregistrer</button>
+                ) : (
+                  <button onClick={() => startEditingItem(item)}>Modifier</button>
+                )}
               </td>
             </tr>
           ))}
