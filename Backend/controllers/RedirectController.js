@@ -1,7 +1,7 @@
 // controllers/itemController.js
 
 const Redirect =require( '../models/RedirectModel');
-exports.createRedirect = async (req, res) => {
+const createRedirect  = async (req, res) => {
   try {
     const { body, file } = req;
 
@@ -15,6 +15,7 @@ exports.createRedirect = async (req, res) => {
       max_quantite,
       is_Menu,
       id_cat,
+      id_rest,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
     // Validate data types
@@ -45,7 +46,7 @@ exports.createRedirect = async (req, res) => {
       return;
     }
 
-    const existingRedirect = await Redirect.findOne({nom });
+    const existingRedirect = await Redirect.findOne({nom,id_rest });
 
     if (existingRedirect) {
       
@@ -65,7 +66,7 @@ exports.createRedirect = async (req, res) => {
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
       id_cat,
-       // Log the id field
+      id_rest,
     });
     const newRedirect = new Redirect({
       id_item,
@@ -78,6 +79,7 @@ exports.createRedirect = async (req, res) => {
       is_Menu: validatedIsMenu,
       id_cat,
       image: imageUrl,
+      id_rest
     });
 
     const savedRedirect = await newRedirect.save();
@@ -96,13 +98,11 @@ exports.createRedirect = async (req, res) => {
   }
 };
 
-exports.getRedirect= async (req, res) => {
+const getRedirect= async (req, res) => {
   try {
-    const { id_item} = req.query;
+    const { id_item,id_rest} = req.query;
 
-    // Fetch menus based on the provided type
-    
-    const Redirects = await Redirect.find({ id_item });
+    const Redirects = await Redirect.find({ id_item ,id_rest});
 
 
     if (Redirect.length === 0) {
@@ -132,3 +132,73 @@ exports.getRedirect= async (req, res) => {
    
   }
 };
+const ArchiverRedirect = async (req, res) => {
+  try {
+    const { id_item } = req.params;
+    const { isArchived } = req.body;
+    const itemId = parseInt(id_item, 10);
+
+    if (!itemId) {
+      return res.status(400).json({
+        status: 400,
+        message: "L'ID de l'élément à mettre à jour est manquant.",
+      });
+    }
+
+    await Redirect.findOneAndUpdate({ id_item: itemId }, { isArchived });
+
+    res.status(200).json({
+      status: 200,
+      message: "L'élément a été mis à jour avec succès.",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Erreur lors de la mise à jour de l\'élément.',
+    });
+  }
+};
+
+const updateRedirect = async (req, res) => {
+  try {
+    const { _id } = req.params;
+    const { nom, prix, description, quantite, max_quantite } = req.body;
+
+
+    if (!_id) {
+      return res.status(400).json({
+        status: 400,
+        message: "L'ID de l'élément à mettre à jour est manquant.",
+      });
+    }
+
+    await Redirect.findOneAndUpdate({ _id:_id}, {
+      nom,
+      prix,
+      description,
+      quantite,
+      max_quantite,
+    });
+
+    res.status(200).json({
+      status: 200,
+      message: "L'élément a été mis à jour avec succès.",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Erreur lors de la mise à jour de l\'élément.',
+    });
+  }
+};
+
+
+module.exports = {
+  createRedirect ,
+   getRedirect,
+  ArchiverRedirect,
+  updateRedirect,
+
+}

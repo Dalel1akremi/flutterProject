@@ -20,6 +20,7 @@ interface Item {
   image: string | null;
   id: string;
   id_item: string;
+  id_rest:number;
 }
 
 const Produits = () => {
@@ -41,6 +42,7 @@ const Produits = () => {
     image: null,
     id: '',
     id_item: '',
+    id_rest: 0,
   });
 
   useEffect(() => {
@@ -66,10 +68,11 @@ const Produits = () => {
 
   const handleArchivedToggle = async (itemId: string, currentValue: boolean) => {
     try {
+      console.log('ID de redirection à archiver:', itemId);
       await axios.put(`http://localhost:3000/ArchiverItem/${itemId}`, { isArchived: !currentValue });
       setItems(prevItems =>
         prevItems.map(item =>
-          item._id === itemId ? { ...item, isArchived: !currentValue } : item
+          item.id_item === itemId ? { ...item, isArchived: !currentValue } : item
         )
       );
     } catch (error) {
@@ -80,10 +83,18 @@ const Produits = () => {
   const handleEdit = (item: Item) => {
     setSelectedItem(item);
     console.log('ID de l\'élément sélectionné :', item._id);
-    // Encodez les anciennes valeurs dans l'URL et naviguez vers la page updateProduits
     const oldValuesUrl = `/updateProduits?&nom=${encodeURIComponent(item.nom)}&prix=${encodeURIComponent(item.prix)}&description=${encodeURIComponent(item.description)}&isArchived=${encodeURIComponent(item.isArchived.toString())}&quantite=${encodeURIComponent(item.quantite.toString())}&max_quantite=${encodeURIComponent(item.max_quantite.toString())}&is_Menu=${encodeURIComponent(item.is_Menu.toString())}&is_Redirect=${encodeURIComponent(item.is_Redirect.toString())}&id_cat=${encodeURIComponent(item.id_cat)}&_id=${encodeURIComponent(item._id)}`;
     router.push(oldValuesUrl);
 };
+const handleRedirectClick = (item: Item) => {
+  setSelectedItem(item);
+  
+  if (item.is_Redirect) {
+    const redirectUrl = `/Redirect?id_item=${item.id_item}&id_rest=${item.id_rest}`;
+    router.push(redirectUrl);
+  }
+};
+
 
   return (
     <div>
@@ -115,7 +126,19 @@ const Produits = () => {
         <tbody>
           {items.map((item) => (
             <tr key={item._id}>
-              <td>{item.nom}</td>
+            <td>
+                  {item.is_Redirect ? (
+                    <button 
+                      onClick={() => handleRedirectClick(item)} 
+                      className="redirectButton"
+                    >
+                      {item.nom}
+                    </button>
+                  ) : (
+                    item.nom
+                  )}
+                </td>
+
               <td>{item.prix}€</td>
               <td>{item.description}</td>
               <td>{item.quantite}</td>
@@ -129,6 +152,7 @@ const Produits = () => {
                   onChange={() => handleArchivedToggle(item._id, item.isArchived)}
                   className={item.isArchived ? 'redCheckbox' : ''}
                 />
+                
               </td>
               <td>{item.id}</td>
               <td>{item.id_cat}</td>

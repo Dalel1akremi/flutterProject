@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, non_constant_identifier_names
 
 import 'dart:convert';
+import 'package:demo/pages/global.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -11,8 +12,9 @@ class ItemDetailsPage extends StatelessWidget {
   final String img;
   final String nom;
   final int prix;
+  final int id_rest;
   final List<dynamic> id_Steps;
- 
+
   const ItemDetailsPage({
     Key? key,
     required this.id_item,
@@ -20,7 +22,7 @@ class ItemDetailsPage extends StatelessWidget {
     required this.img,
     required this.prix,
     required this.id_Steps,
-   
+    required this.id_rest,
   }) : super(key: key);
 
   @override
@@ -31,7 +33,7 @@ class ItemDetailsPage extends StatelessWidget {
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchItemDetails(id_item),
+        future: fetchItemDetails(id_item, id_rest),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -59,10 +61,16 @@ class ItemDetailsPage extends StatelessWidget {
     );
   }
 
-  Future<List<Map<String, dynamic>>> fetchItemDetails(int id_item) async {
+  Future<List<Map<String, dynamic>>> fetchItemDetails(
+      int id_item, int id_rest) async {
     try {
+      final int? idRest = Panier().getIdRestaurant();
+      if (idRest == null) {
+        throw Exception('Restaurant ID is null');
+      }
       final response = await http.get(
-        Uri.parse('http://localhost:3000/getRedirect?id_item=$id_item'),
+        Uri.parse(
+            'http://localhost:3000/getRedirect?id_item=$id_item&id_rest=$idRest'),
       );
       if (response.statusCode == 200) {
         final dynamic responseData = json.decode(response.body)['data'];
@@ -88,19 +96,18 @@ class ItemDetailsPage extends StatelessWidget {
   Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
     return GestureDetector(
       onTap: () {
-       Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => StepDetailsPage(
-      id_Steps: item['id_Steps'] ?? [],
-      id_item: item['id_item'] ?? 0,
-      nom: item['nom'] ?? '',
-      img: item['image'] ?? '',
-      prix: (item['prix'] ?? 0).toInt(),
-    ),
-  ),
-);
-
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StepDetailsPage(
+              id_Steps: item['id_Steps'] ?? [],
+              id_item: item['id_item'] ?? 0,
+              nom: item['nom'] ?? '',
+              img: item['image'] ?? '',
+              prix: (item['prix'] ?? 0).toInt(),
+            ),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(16),

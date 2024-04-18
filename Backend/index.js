@@ -68,6 +68,8 @@ app.put('/ArchivedCategorie/:id_cat', categoriesController.ArchivedCategorie);
 app.put('/updateCategory/:id_cat', categoriesController.updateCategory);
 app.post('/createRedirect', upload.single('image'),RedirectController.createRedirect);
 app.get('/getRedirect', RedirectController.getRedirect);
+app.put('/ArchiverRedirect/:id_item', RedirectController.ArchiverRedirect);
+app.put('/updateRedirect/:_id', RedirectController.updateRedirect);
 app.post('/createStep', StepController.createStep);
 app.get('/getStepsByRestaurantId', StepController.getStepsByRestaurantId);
 app.put('/ObligationStep/:stepId', StepController.ObligationStep);
