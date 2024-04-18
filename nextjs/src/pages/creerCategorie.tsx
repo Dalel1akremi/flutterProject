@@ -23,25 +23,26 @@ const CreateCategoriePage = () => {
       const token = localStorage.getItem('token');
       if (token) {
         const decodedToken = jwt.decode(token) as { [key: string]: any };
-        const { id_rest } = decodedToken; // Récupérer l'ID du restaurant du token
+        const { id_rest } = decodedToken; 
   
         const nomCatNormalized = nomCat.charAt(0).toUpperCase() + nomCat.slice(1).toLowerCase();
   
         const response = await axios.post('http://localhost:3000/createCategorie', {
           nom_cat: nomCatNormalized,
-          id_rest: id_rest, // Définir l'ID du restaurant dans la catégorie
+          id_rest: id_rest, 
         });
   
         if (response.data.status === 200) {
           setMessage('Catégorie créée avec succès');
-          setIsError(false); // Définir isError à false pour indiquer un succès
+          router.push('/Categorie');
+          setIsError(false); 
         } else {
           setMessage(response.data.message);
-          setIsError(true); // Définir isError à true pour indiquer une erreur
+          setIsError(true); 
         }
-      } // Fermer la condition if (token)
+      } 
     } catch (error: any) {
-      setIsError(true); // Définir isError à true pour indiquer une erreur
+      setIsError(true); 
       if (error.response && error.response.data.status === 400 && error.response.data.message === 'Cette catégorie existe déjà') {
         setMessage('erreur,Cette catégorie existe déjà');
       } else {

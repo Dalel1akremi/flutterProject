@@ -2,6 +2,7 @@ import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../styles/navbar';
 import jwt from 'jsonwebtoken';
+import router from 'next/router';
 
 interface FormData {
   nom: string;
@@ -85,6 +86,7 @@ export default function AddItem() {
 
       const response = await axios.post('http://localhost:3000/createItem', formDataToSend);
       setMessage(response.data.message);
+      
       setIsError(false);
       setFormData({
         nom: '',
@@ -99,6 +101,7 @@ export default function AddItem() {
         id_rest: '',
         image: null,
       });
+      router.push('/produits');
     } catch (error: any) {
       setMessage(error.response.data.message);
       setIsError(true);
