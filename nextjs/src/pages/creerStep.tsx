@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '@/styles/navbar';
-import jwt from 'jsonwebtoken'; // Remplacez par votre librairie de décodage de token
+import jwt from 'jsonwebtoken'; 
 import router from 'next/router';
 
 const CreateStep = () => {
@@ -10,16 +10,15 @@ const CreateStep = () => {
   const [isObligatoire, setIsObligatoire] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [restaurantId, setRestaurantId] = useState(null); // État pour stocker l'ID du restaurant
+  const [restaurantId, setRestaurantId] = useState(null);
 
   useEffect(() => {
-    // Récupérer le token du stockage local
     const token = localStorage.getItem('token');
   
     if (token) {
       const decodedToken = jwt.decode(token) as { [key: string]: any };
       const { id_rest } = decodedToken;
-      setRestaurantId(id_rest); // Stocker uniquement l'ID du restaurant
+      setRestaurantId(id_rest); 
     }
   }, []);
   
@@ -27,23 +26,21 @@ const CreateStep = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      // Formater idItems en tant que tableau d'objets
       const idItemsArray = idItems.split(',').map(id => ({ id_item: id.trim() }));
   
       const response = await axios.post('http://localhost:3000/createStep', {
         nom_Step: nomStep,
-        id_items: idItemsArray, // Utiliser le tableau d'objets
+        id_items: idItemsArray,
         is_Obligatoire: isObligatoire,
-        id_rest: restaurantId, // Utiliser l'ID du restaurant
+        id_rest: restaurantId, 
       });
       console.log(response.data);
       setIsLoading(false);
-      // Réinitialiser les champs après la soumission réussie
       setNomStep('');
       setIdItems('');
       setIsObligatoire(false);
       setErrorMessage('');
-      router.push('/step');
+      router.push('/steps');
     } catch (error) {
       setIsLoading(false);
       if (axios.isAxiosError(error)) {
