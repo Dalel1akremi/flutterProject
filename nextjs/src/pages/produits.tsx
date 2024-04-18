@@ -90,7 +90,7 @@ const handleRedirectClick = (item: Item) => {
   setSelectedItem(item);
   
   if (item.is_Redirect) {
-    const redirectUrl = `/Redirect?id_item=${item.id_item}&id_rest=${item.id_rest}`;
+    const redirectUrl = `/Redirects?id_item=${item.id_item}&id_rest=${item.id_rest}`;
     router.push(redirectUrl);
   }
 };
@@ -116,7 +116,6 @@ const handleRedirectClick = (item: Item) => {
             <th>isMenu</th>
             <th>Redirection</th>
             <th>isArchived</th>
-            <th>id</th>
             <th>id_cat</th>
             <th>id_Steps</th>
             <th>id_item</th>
@@ -154,7 +153,6 @@ const handleRedirectClick = (item: Item) => {
                 />
                 
               </td>
-              <td>{item.id}</td>
               <td>{item.id_cat}</td>
               <td>{item.id_Steps ? item.id_Steps.map((step: { id_Step: any; }) => step.id_Step).join(', ') : ''}</td>
               <td>{item.id_item}</td>

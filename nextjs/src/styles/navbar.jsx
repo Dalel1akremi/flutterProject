@@ -49,10 +49,10 @@ export default function Navbar() {
       </div>
       <div className={styles.center}>
         <a href="/" className={styles.link}>Accueil</a>
-        <a href="/Categorie" className={styles.link}>Catégorie</a>
-        <a href="/produits" className={styles.link}>Produit</a>
-        <a href="/commandes" className={styles.link}>Commande</a>
-        <a href="/steps" className={styles.link}>Steps</a>
+        <a href="/Categories" className={styles.link}>Catégories</a>
+        <a href="/produits" className={styles.link}>Produits</a>
+        <a href="/commandes" className={styles.link}>Commandes</a>
+        <a href="/Elements" className={styles.link}>Elements</a>
         <a href="/profil" className={styles.link}>Profil</a>
        
 

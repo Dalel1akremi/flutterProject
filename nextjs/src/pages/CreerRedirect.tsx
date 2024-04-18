@@ -89,7 +89,7 @@ export default function AddRedirect() {
         id_item: 0,
         
       });
-      const redirectUrl = `/Redirect?id_item=${id_item}&id_rest=${id_rest}`;
+      const redirectUrl = `/Redirects?id_item=${id_item}&id_rest=${id_rest}`;
       router.push(redirectUrl);
     } catch (error: any) {
       setMessage(error.response.data.message);

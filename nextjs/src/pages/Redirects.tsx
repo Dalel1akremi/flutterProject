@@ -31,9 +31,7 @@ const Redirect = () => {
     }
   }, [id_item, id_rest]);
 
-  if (!redirectData.length) {
-    return <p>Chargement...</p>;
-  }
+ 
 
 
 const handleArchivedToggle = async (id_item: string, currentValue: boolean) => {
