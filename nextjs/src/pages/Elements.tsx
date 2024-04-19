@@ -77,11 +77,19 @@ const Steps = () => {
   
   const handleSave = async (_id: string) => {
     try {
-      const modifiedStep = steps.find(step => step._id === _id);
-      if (!modifiedStep || !editedItem) {
-        console.error('Step non trouvé ou item non modifié');
+      const modifiedStepIndex = steps.findIndex(step => step._id === _id);
+      if (modifiedStepIndex === -1 || !editedItem) {
+        console.error('Étape non trouvée ou élément non modifié');
         return;
       }
+  
+      const updatedSteps = [...steps];
+      updatedSteps[modifiedStepIndex] = {
+        ...updatedSteps[modifiedStepIndex],
+        nom_Step: editedItem.nom_Step,
+      };
+  
+      setSteps(updatedSteps);
   
       await axios.put(`http://localhost:3000/updateStep/${_id}`, {
         nom_Step: editedItem.nom_Step,
@@ -93,6 +101,7 @@ const Steps = () => {
       console.error('Erreur lors de la mise à jour du nom du Step :', error);
     }
   };
+  
   
   const handleArchivedToggle = async (_id: string, isArchived: boolean) => {
     try {
