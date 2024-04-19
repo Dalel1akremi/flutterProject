@@ -75,6 +75,7 @@ app.put('/updateRedirect/:_id', RedirectController.updateRedirect);
 app.post('/createStep', StepController.createStep);
 app.get('/getStepsByRestaurantId', StepController.getStepsByRestaurantId);
 app.put('/ObligationStep/:stepId', StepController.ObligationStep);
+app.put('/updateStep/:_id', StepController.updateStep);
 app.put('/ArchiverStep/:_id', StepController.ArchiverStep);
 app.post('/createItem',upload.single('image'), itemController.createItem);
 app.get('/getItem', itemController.getItem);

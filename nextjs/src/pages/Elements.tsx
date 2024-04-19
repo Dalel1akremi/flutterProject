@@ -19,7 +19,8 @@ const Steps = () => {
   const [itemName, setItemName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
-
+  const [editedItem, setEditedItem] = useState<any | null>(null);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   useEffect(() => {
     const fetchSteps = async () => {
       const token = localStorage.getItem('token');
@@ -67,25 +68,32 @@ const Steps = () => {
     }
   };
 
-  const handleEdit = () => {
-    setIsEditMode(true);
+  const handleEdit = (step: Step) => {
+    setEditingItemId(step._id);
+    setEditedItem({ 
+      ...step,
+       });
   };
-
-  const handleSave = async (stepId: string) => {
+  
+  const handleSave = async (_id: string) => {
     try {
-      const modifiedStep = steps.find(step => step._id === stepId);
-      if (!modifiedStep) {
-        console.error('Step non trouvé');
+      const modifiedStep = steps.find(step => step._id === _id);
+      if (!modifiedStep || !editedItem) {
+        console.error('Step non trouvé ou item non modifié');
         return;
       }
-
-      await axios.put(`http://localhost:3000/updateStep/${stepId}`, modifiedStep);
-
-      setIsEditMode(false);
+  
+      await axios.put(`http://localhost:3000/updateStep/${_id}`, {
+        nom_Step: editedItem.nom_Step,
+      });
+  
+      setEditingItemId(null);
+      setEditedItem(null);
     } catch (error) {
-      console.error('Erreur lors de la mise à jour du Step :', error);
+      console.error('Erreur lors de la mise à jour du nom du Step :', error);
     }
   };
+  
   const handleArchivedToggle = async (_id: string, isArchived: boolean) => {
     try {
       setIsLoading(true);
@@ -117,6 +125,7 @@ const Steps = () => {
       <table>
         <thead>
           <tr>
+          <th>ID de l'étape</th>
             <th>Nom de l'étape</th>
             <th>Items associés</th>
             <th>Est obligatoire</th>
@@ -125,26 +134,19 @@ const Steps = () => {
           </tr>
         </thead>
         <tbody>
-          {steps && steps.map((step) => ( 
-            <tr key={step._id}>
-              <td>
-                {isEditMode ? (
-                  <input 
-                    type="text" 
-                    value={step.nom_Step} 
-                    onChange={(e) => {
-                      const updatedValue = e.target.value;
-                      setSteps(prevSteps =>
-                        prevSteps.map(s =>
-                          s._id === step._id ? { ...s, nom_Step: updatedValue } : s
-                        )
-                      );
-                    }} 
-                  />
-                ) : (
-                  step.nom_Step
-                )}
-              </td>              
+        {steps && steps.map((step, index) => (
+          <tr key={index}>
+            <td>{step.id_Step}</td>
+            <td>
+              {editingItemId === step._id ? (
+                <input 
+                  value={editedItem?.nom_Step || ''}
+                  onChange={(e) => setEditedItem({ ...editedItem, nom_Step: e.target.value })}
+                />
+              ) : (
+                step.nom_Step
+              )}
+            </td>          
               <td>
                 <ul>
                   {step.id_items.map((item) => (
@@ -179,13 +181,14 @@ const Steps = () => {
                     disabled={isLoading}
                   />
                 </td>
-              <td>
-                {isEditMode ? (
-                  <button onClick={() => handleSave(step._id)}>Enregistrer</button>
-                ) : (
-                  <button onClick={handleEdit}>Modifier</button>
-                )}
-              </td>
+                <td>
+              {/* Utilisez l'état editingItemId pour déterminer le texte du bouton */}
+              {editingItemId === step._id ? (
+                <button onClick={() => handleSave(step._id)}>Enregistrer</button>
+              ) : (
+                <button onClick={() => handleEdit(step)}>Modifier</button>
+              )}
+            </td>
             </tr>
           ))}
         </tbody>

@@ -190,11 +190,8 @@ exports.ArchiverItem = async (req, res) => {
 };
 exports.getItemsByRestaurantId = async (req, res) => {
   try {
-    const id_restaurant = req.query.id_rest; // Récupère l'ID du restaurant à partir des paramètres de la requête
-
-    // Supposons que votre modèle Item soit importé et correctement défini
-    const items = await Item.find({ id_rest: id_restaurant }); // Requête pour récupérer les éléments du restaurant spécifié par son ID
-
+    const id_restaurant = req.query.id_rest;
+    const items = await Item.find({ id_rest: id_restaurant });
     res.status(200).json({
       status: 200,
       message: 'Items récupérés avec succès pour le restaurant correspondant',
@@ -221,7 +218,7 @@ exports.updateItem = async (req, res) => {
       is_Menu,
       is_Redirect,
       id_cat,
-      id_Steps // Ajout de id_Steps dans les paramètres de la requête
+      id_Steps
     } = req.body; 
 
     if (!itemId) {
@@ -231,11 +228,9 @@ exports.updateItem = async (req, res) => {
       });
     }
 
-    // Traitement des données d'entrée, si nécessaire
-    // Conversion de id_Steps en tableau d'objets si c'est une chaîne séparée par des virgules
     const idStepsArray = is_Menu ? id_Steps.split(',').map(idStep => ({ id_Step: parseInt(idStep) })) : null;
 
-    // Mise à jour de l'élément avec les nouvelles valeurs, y compris id_Steps
+
     await Item.findByIdAndUpdate(itemId, { 
       nom,
       prix,
@@ -246,7 +241,7 @@ exports.updateItem = async (req, res) => {
       is_Menu,
       is_Redirect,
       id_cat,
-      id_Steps: idStepsArray, // Assigner idStepsArray à id_Steps
+      id_Steps: idStepsArray, 
     });
 
     res.status(200).json({
@@ -282,14 +277,14 @@ exports.getItemById = async (req, res) => {
 };
 exports.getNomItemById = async (req, res) => {
   try {
-    const { itemId } = req.params; // Supposons que vous récupériez l'ID de l'item depuis les paramètres de la requête
-    const item = await Item.findOne({ id_item: itemId }); // Recherche par id_item plutôt que par _id
+    const { itemId } = req.params; 
+    const item = await Item.findOne({ id_item: itemId }); 
 
     if (!item) {
       return res.status(404).json({ message: 'Item not found' });
     }
 
-    res.status(200).json({ nom: item.nom }); // Renvoyer seulement le nom de l'item
+    res.status(200).json({ nom: item.nom }); 
   } catch (error) {
     console.error('Error getting item by ID:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -298,7 +293,6 @@ exports.getNomItemById = async (req, res) => {
 
 exports.getItemRest = async (req, res) => {
   try {
-    // Récupérer tous les éléments avec leurs noms et identifiants de restaurant
     const items = await Item.find({}, 'nom id_rest');
 
     res.json({ success: true, data: items });
