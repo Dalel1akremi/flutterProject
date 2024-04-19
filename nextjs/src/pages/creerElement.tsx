@@ -40,7 +40,7 @@ const CreateStep = () => {
       setIdItems('');
       setIsObligatoire(false);
       setErrorMessage('');
-      router.push('/steps');
+      router.push('/Elements');
     } catch (error) {
       setIsLoading(false);
       if (axios.isAxiosError(error)) {
