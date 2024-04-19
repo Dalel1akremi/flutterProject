@@ -38,8 +38,7 @@ const Produits = () => {
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isRMenu, setIsMenu] = useState<boolean>(false);
-  const [isRedirect, setIsRedirect] = useState<boolean>(false);
+  
   useEffect(() => {
     const fetchItems = async () => {
       const token = localStorage.getItem('token');
@@ -66,14 +65,11 @@ const Produits = () => {
 
   const handleArchivedToggle = async (itemId: string, currentValue: boolean) => {
     try {
-      // Mettre à jour immédiatement l'état local du checkbox
-      setItems(prevItems =>
+            setItems(prevItems =>
         prevItems.map(item =>
           item._id === itemId ? { ...item, isArchived: !currentValue } : item
         )
       );
-  
-      // Envoyer une requête à l'API pour mettre à jour l'état dans la base de données
       await axios.put(`http://localhost:3000/ArchiverItem/${itemId}`, { isArchived: !currentValue });
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut isArchived :', error);
@@ -117,7 +113,7 @@ const Produits = () => {
         max_quantite: editedMaxQuantite,
         is_Menu: editedIsMenu, 
         is_Redirect: editedIsRedirect,
-        id_Steps: editedIdSteps // Utilise la valeur éditée de id_steps
+        id_Steps: editedIdSteps 
       });
   
       const response = await axios.get(`http://localhost:3000/getItemById?itemId=${_id}`);
@@ -129,8 +125,6 @@ const Produits = () => {
       setEditedMaxQuantite(null);
       setIsSuccess(true);
       setMessage('Les données ont été mises à jour avec succès !');
-  
-      // Mettre à jour items avec les modifications
       setItems(prevItems =>
         prevItems.map(item =>
           item._id === _id ? { 
@@ -163,7 +157,13 @@ const Produits = () => {
       setIsLoading(false);
     }
   };
-  
+  const handleRedirectClick = (item: Item) => {
+
+  if (item.is_Redirect) {
+    const redirectUrl = `/Redirects?id_item=${item.id_item}&id_rest=${item.id_rest}`;
+    router.push(redirectUrl);
+  }
+};
   return (
     <div>
       <Navbar />
@@ -201,7 +201,7 @@ const Produits = () => {
                       value={editedItem?.nom || ''}
                       onChange={(e) => {
                         setEditedItem(prevItem => {
-                          if (!prevItem) return null; // Return null if prevItem is null
+                          if (!prevItem) return null; 
                       
                           const updatedItem: Item = { ...prevItem, nom: e.target.value };
                           if (typeof prevItem._id !== 'undefined') {
@@ -215,12 +215,18 @@ const Produits = () => {
                     />
                   </td>
                   <td>
-                    <input
-                      type="number"
-                      value={editedPrix || ''}
-                      onChange={(e) => setEditedPrix(Number(e.target.value))}
-                    />
-                  </td>
+              {item.is_Redirect ? (
+                <span></span> 
+              ) : editingItemId === item._id ? (
+                <input
+                  type="number"
+                  value={editedPrix || ''}
+                  onChange={(e) => setEditedPrix(Number(e.target.value))}
+                />
+              ) : (
+                <span>{item.prix}€</span>
+              )}
+            </td>
                   <td>
                     <input
                       type="text"
@@ -228,28 +234,87 @@ const Produits = () => {
                       onChange={(e) => setEditedDescription(e.target.value)}
                     />
                   </td>
+                     <td>
+                        {item.is_Redirect ? (
+                          <span></span> 
+                        ) : editingItemId === item._id ? (
+                          <input
+                            type="number"
+                            value={editedQuantite || ''}
+                            onChange={(e) => setEditedQuantite(Number(e.target.value))}
+                          />
+                        ) : (
+                          <span>{item.quantite}</span>
+                        )}
+                      </td>
+                      <td>
+                        {item.is_Redirect ? (
+                          <span></span> 
+                        ) : editingItemId === item._id ? (
+                          <input
+                            type="number"
+                            value={editedMaxQuantite || ''}
+                            onChange={(e) => setEditedMaxQuantite(Number(e.target.value))}
+                          />
+                        ) : (
+                          <span>{item.max_quantite}</span>
+                        )}
+                      </td>
+                </>
+              ) : (
+                <>
+                <td>
+                  {item.is_Redirect ? (
+                    <button 
+                      onClick={() => handleRedirectClick(item)} 
+                      className="redirectButton"
+                    >
+                      {item.nom}
+                    </button>
+                  ) : (
+                    item.nom
+                  )}
+                </td>
+                <td>
+              {item.is_Redirect ? (
+                <span></span> 
+              ) : editingItemId === item._id ? (
+                <input
+                  type="number"
+                  value={editedPrix || ''}
+                  onChange={(e) => setEditedPrix(Number(e.target.value))}
+                />
+              ) : (
+                <span>{item.prix}€</span>
+              )}
+            </td>
+                  <td>{item.description}</td>
                   <td>
+                  {item.is_Redirect ? (
+                    <span></span> 
+                  ) : editingItemId === item._id ? (
                     <input
                       type="number"
                       value={editedQuantite || ''}
                       onChange={(e) => setEditedQuantite(Number(e.target.value))}
                     />
-                  </td>
-                  <td>
+                  ) : (
+                    <span>{item.quantite}</span>
+                  )}
+                </td>
+                <td>
+                  {item.is_Redirect ? (
+                    <span></span> 
+                  ) : editingItemId === item._id ? (
                     <input
                       type="number"
                       value={editedMaxQuantite || ''}
                       onChange={(e) => setEditedMaxQuantite(Number(e.target.value))}
                     />
-                  </td>
-                </>
-              ) : (
-                <>
-                  <td>{item.nom}</td>
-                  <td>{item.prix}€</td>
-                  <td>{item.description}</td>
-                  <td>{item.quantite}</td>
-                  <td>{item.max_quantite}</td>
+                  ) : (
+                    <span>{item.max_quantite}</span>
+                  )}
+                </td>
                 </>
               )}
               <td>

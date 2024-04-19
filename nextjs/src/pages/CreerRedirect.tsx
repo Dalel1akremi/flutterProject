@@ -10,7 +10,6 @@ interface RedirectFormData {
   description: string;
   quantite: number;
   max_quantite: number;
-  id_cat: number;
   id_rest: number;
   id_item: number;
   image: File | null;
@@ -28,7 +27,6 @@ export default function AddRedirect() {
     description: '',
     quantite: 0,
     max_quantite: 0,
-    id_cat: 0,
     id_rest: 0,
     id_item: id_item ? parseInt(id_item as string, 10) : 0,
     image: null,
@@ -83,7 +81,6 @@ export default function AddRedirect() {
         description: '',
         quantite: 0,
         max_quantite: 0,
-        id_cat: 0,
         id_rest: id_rest,
         image: null,
         id_item: 0,
@@ -147,11 +144,6 @@ export default function AddRedirect() {
             <label className="input-label">Quantité maximale:</label>
             <input type="number" className="input" name="max_quantite" placeholder="Quantité maximale" value={formData.max_quantite} onChange={handleChange} />
           </div>
-          <div className="formGroup">
-            <label className="input-label">Catégorie ID:</label>
-            <input type="number" className="input" name="id_cat" placeholder="ID de la catégorie" value={formData.id_cat} onChange={handleChange} />
-          </div>
-          
           <div className="formGroup">
             <label className="input-label">Image:</label>
             <input type="file" className="file-input" accept="image/*" onChange={handleImageChange} />
