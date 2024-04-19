@@ -5,7 +5,7 @@ const stepSchema = new mongoose.Schema({
   nom_Step: { type: String, required: true },
   id_items: [
     {
-      id_item: { type: Number, ref: 'Item', required: true },
+      id_item: { type: Number, required: true },
     },
   ],
   is_Obligatoire:{ type: Boolean, validate: [isValidBoolean, 'is_Obligatoire: must be true or false'] },
