@@ -32,6 +32,8 @@ const Produits = () => {
   const [editedDescription, setEditedDescription] = useState<string | null>(null);
   const [editedQuantite, setEditedQuantite] = useState<number | null>(null);
   const [editedMaxQuantite, setEditedMaxQuantite] = useState<number | null>(null);
+  const [editedIsMenu, setEditedIsMenu] = useState<boolean | null>(null); 
+  const [editedIsRedirect, setEditedIsRedirect] = useState<boolean | null>(null); 
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -89,11 +91,19 @@ const Produits = () => {
     setEditedDescription(item.description);
     setEditedQuantite(item.quantite);
     setEditedMaxQuantite(item.max_quantite);
+    setEditedIsMenu(item.is_Menu); 
+    setEditedIsRedirect(item.is_Redirect);
   };
   
 
   const handleEditItem = async () => {
     try {
+      if (editedIsMenu && editedIsRedirect) {
+        setIsLoading(false);
+        setIsSuccess(false);
+        alert("Erreur: le bouton de redirection ne peut pas être qu'un produit simple.");
+        return;
+      }
       const { _id } = editedItem!;
       setIsLoading(true);
       await axios.put(`http://localhost:3000/updateItem?itemId=${_id}`, {
@@ -102,6 +112,8 @@ const Produits = () => {
         description: editedDescription,
         quantite: editedQuantite,
         max_quantite: editedMaxQuantite,
+        is_Menu: editedIsMenu, 
+        is_Redirect: editedIsRedirect,
       });
   
       const response = await axios.get(`http://localhost:3000/getItemById?itemId=${_id}`);
@@ -118,7 +130,7 @@ const Produits = () => {
       // Mettre à jour items avec les modifications
       setItems(prevItems =>
         prevItems.map(item =>
-          item._id === _id ? { ...item, nom: editedItem?.nom || '', prix: editedPrix || 0, description: editedDescription || '', quantite: editedQuantite || 0, max_quantite: editedMaxQuantite || 0 } : item
+          item._id === _id ? { ...item, nom: editedItem?.nom || '', prix: editedPrix || 0, description: editedDescription || '', quantite: editedQuantite || 0, max_quantite: editedMaxQuantite || 0,is_Menu: editedIsMenu || false,  is_Redirect: editedIsRedirect || false, } : item
         )
       );
   
@@ -223,8 +235,32 @@ const Produits = () => {
                   <td>{item.max_quantite}</td>
                 </>
               )}
-              <td>{item.is_Menu ? 'Oui' : 'Non'}</td>
-              <td>{item.is_Redirect ? 'Oui' : 'Non'}</td>
+              <td>
+                {editingItemId === item._id ? (
+                  <select
+                    value={editedIsMenu ? "Oui" : "Non"}
+                    onChange={(e) => setEditedIsMenu(e.target.value === "Oui")}
+                  >
+                    <option value="Oui">Oui</option>
+                    <option value="Non">Non</option>
+                  </select>
+                ) : (
+                  item.is_Menu ? 'Oui' : 'Non'
+                )}
+              </td>
+              <td>
+                {editingItemId === item._id ? (
+                  <select
+                    value={editedIsRedirect ? "Oui" : "Non"}
+                    onChange={(e) => setEditedIsRedirect(e.target.value === "Oui")}
+                  >
+                    <option value="Oui">Oui</option>
+                    <option value="Non">Non</option>
+                  </select>
+                ) : (
+                  item.is_Redirect ? 'Oui' : 'Non'
+                )}
+              </td>
               <td>
               <input
               type="checkbox"
