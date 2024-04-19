@@ -94,7 +94,7 @@ exports.getItem = async (req, res) => {
       const formattedItems = await Promise.all(items.map(async (item) => {
         const idStepData = await Promise.all((item.id_Steps || []).map(async (step) => {
           if (step.id_Step) {
-            const stepData = await Step.findOne({ 'id_Step': step.id_Step }).lean();
+            const stepData = await Step.findOne({ 'id_Step': step.id_Step, 'isArchived': false }).lean();
             const idItemsData = await Promise.all((stepData ? stepData.id_items : []).map(async (idItem) => {
               const itemData = await Item.findOne({ 'id_item': idItem.id_item }).lean();
               return {
@@ -145,7 +145,6 @@ exports.getItem = async (req, res) => {
     });
   }
 };
-
 
 exports.getItems = async (req, res) => {
   try {
@@ -233,8 +232,7 @@ exports.updateItem = async (req, res) => {
         message: "Erreur: le bouton de redirection ne peut pas être qu'un produit simple.",
       });
     }
-    // Traitement des données d'entrée, si nécessaire
-    // Conversion de id_Steps en tableau d'objets si c'est une chaîne séparée par des virgules
+
     let idStepsArray = null;
     if (is_Menu && id_Steps) {
       idStepsArray = id_Steps.split(',').map(idStep => ({ id_Step: parseInt(idStep) }));
@@ -272,8 +270,8 @@ exports.updateItem = async (req, res) => {
 
 exports.getItemById = async (req, res) => {
   try {
-    const { itemId } = req.query; // Supposons que vous récupériez l'ID de l'item depuis les paramètres de la requête
-    const item = await Item.findOne({ _id: itemId }); // Recherche par id_item plutôt que par _id
+    const { itemId } = req.query; 
+    const item = await Item.findOne({ _id: itemId });
 
     if (!item) {
       return res.status(404).json({ message: 'Item not found' });
