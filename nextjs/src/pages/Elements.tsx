@@ -127,7 +127,7 @@ const Steps = () => {
       <Navbar />
       <div className="header">
         <h1>Liste des étapes disponibles</h1>
-        <Link href="/creerStep" passHref>
+        <Link href="/creerElement" passHref>
           <button className="green-button">+</button>
         </Link>
       </div>
