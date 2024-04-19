@@ -14,7 +14,6 @@ const createRedirect  = async (req, res) => {
       quantite,
       max_quantite,
       is_Menu,
-      id_cat,
       id_rest,
     } = body;
     const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
@@ -62,7 +61,6 @@ const createRedirect  = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-      id_cat,
       id_rest,
     });
     const newRedirect = new Redirect({
@@ -74,7 +72,6 @@ const createRedirect  = async (req, res) => {
       quantite: validatedQuantite,
       max_quantite: validatedMaxQuantite,
       is_Menu: validatedIsMenu,
-      id_cat,
       image: imageUrl,
       id_rest
     });
