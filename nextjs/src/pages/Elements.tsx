@@ -18,7 +18,6 @@ const Steps = () => {
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
   const [itemName, setItemName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [editedItem, setEditedItem] = useState<any | null>(null);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   useEffect(() => {
