@@ -32,6 +32,7 @@ const Produits = () => {
   const [editedDescription, setEditedDescription] = useState<string | null>(null);
   const [editedQuantite, setEditedQuantite] = useState<number | null>(null);
   const [editedMaxQuantite, setEditedMaxQuantite] = useState<number | null>(null);
+  const [editedIdSteps, setEditedIdSteps] = useState<string | null>('');
   const [editedIsMenu, setEditedIsMenu] = useState<boolean | null>(null); 
   const [editedIsRedirect, setEditedIsRedirect] = useState<boolean | null>(null); 
   const [message, setMessage] = useState('');
@@ -91,11 +92,13 @@ const Produits = () => {
     setEditedDescription(item.description);
     setEditedQuantite(item.quantite);
     setEditedMaxQuantite(item.max_quantite);
+    setEditedIdSteps(item.id_Steps ? item.id_Steps.map(step => step.id_Step).join(', ') : '');
     setEditedIsMenu(item.is_Menu); 
     setEditedIsRedirect(item.is_Redirect);
   };
   
 
+  
   const handleEditItem = async () => {
     try {
       if (editedIsMenu && editedIsRedirect) {
@@ -114,6 +117,7 @@ const Produits = () => {
         max_quantite: editedMaxQuantite,
         is_Menu: editedIsMenu, 
         is_Redirect: editedIsRedirect,
+        id_Steps: editedIdSteps // Utilise la valeur éditée de id_steps
       });
   
       const response = await axios.get(`http://localhost:3000/getItemById?itemId=${_id}`);
@@ -130,9 +134,23 @@ const Produits = () => {
       // Mettre à jour items avec les modifications
       setItems(prevItems =>
         prevItems.map(item =>
-          item._id === _id ? { ...item, nom: editedItem?.nom || '', prix: editedPrix || 0, description: editedDescription || '', quantite: editedQuantite || 0, max_quantite: editedMaxQuantite || 0,is_Menu: editedIsMenu || false,  is_Redirect: editedIsRedirect || false, } : item
+          item._id === _id ? { 
+            ...item, 
+            nom: editedItem?.nom || '', 
+            prix: editedPrix || 0, 
+            description: editedDescription || '', 
+            quantite: editedQuantite || 0, 
+            max_quantite: editedMaxQuantite || 0, 
+            is_Menu: editedIsMenu || false, 
+            is_Redirect: editedIsRedirect || false, 
+            id_Steps: editedIdSteps ? editedIdSteps.split(',').map(id => ({ id_Step: id, nom_Step: '', id_items: [] })) : [], 
+            id_rest: item.id_rest 
+          } : item
         )
       );
+      
+      
+      
   
       setTimeout(() => {
         setIsSuccess(false);
@@ -271,8 +289,17 @@ const Produits = () => {
 
               </td>
               <td>{item.id_cat}</td>
-              <td>{item.id_Steps ? item.id_Steps.map((step: { id_Step: any; }) => step.id_Step).join(', ') : ''}</td>
-              <td>{item.id_item}</td>
+              <td>
+                {editingItemId === item._id ? (
+                  <input
+                    type="text"
+                    value={editedIdSteps || ''}
+                    onChange={(e) => setEditedIdSteps(e.target.value)}
+                  />
+                ) : (
+                  item.id_Steps ? item.id_Steps.map((step: { id_Step: any; }) => step.id_Step).join(', ') : ''
+                )}
+              </td>              <td>{item.id_item}</td>
               <td>
                 {editingItemId === item._id ? (
                   <button onClick={handleEditItem}>Enregistrer</button>
