@@ -21,6 +21,7 @@ const Steps = () => {
   const [editedItem, setEditedItem] = useState<any | null>(null);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editedIdItems, setEditedIdItems] = useState<string | null>('');
+
   useEffect(() => {
     const fetchSteps = async () => {
       const token = localStorage.getItem('token');
@@ -72,16 +73,20 @@ const Steps = () => {
     setEditingItemId(step._id);
     setEditedItem({ 
       ...step,
-       });
-       setEditedIdItems(step.id_items ? step.id_items.map(item => item.id_item).join(', ') : '');
-
+    });
+    setEditedIdItems(step.id_items ? step.id_items.map(item => item.id_item).join(',') : ''); // Mise à jour de la valeur de editedIdItems
   };
   
   const handleSave = async (_id: string) => {
     try {
-      const modifiedStepIndex = steps.findIndex(step => step._id === _id);
-      if (modifiedStepIndex === -1 || !editedItem) {
+      if (!editedItem) {
         console.error('Étape non trouvée ou élément non modifié');
+        return;
+      }
+  
+      const modifiedStepIndex = steps.findIndex(step => step._id === _id);
+      if (modifiedStepIndex === -1) {
+        console.error('Étape non trouvée');
         return;
       }
   
@@ -102,20 +107,17 @@ const Steps = () => {
   
       await axios.put(`http://localhost:3000/updateStep?_id=${_id}`, {
         nom_Step: editedItem.nom_Step,
-        id_items: updatedIdItems.map(item => item.id_item), // Ne pas envoyer d'objets complets ici, juste les ID
+        id_items: updatedIdItems,
       });
   
       setEditingItemId(null);
       setEditedItem(null);
-      setEditedIdItems(''); // Réinitialisez les id_items édités après l'enregistrement
+      setEditedIdItems('');
     } catch (error) {
       console.error('Erreur lors de la mise à jour du nom du Step :', error);
     }
   };
-  
-  
-  
-  
+
   const handleArchivedToggle = async (_id: string, isArchived: boolean) => {
     try {
       setIsLoading(true);
@@ -132,7 +134,6 @@ const Steps = () => {
       setIsLoading(false);
     }
   };
-  
   
   
   return (
@@ -197,7 +198,6 @@ const Steps = () => {
                   />
                 </td>
                 <td>
-              {/* Utilisez l'état editingItemId pour déterminer le texte du bouton */}
               {editingItemId === step._id ? (
                 <button onClick={() => handleSave(step._id)}>Enregistrer</button>
               ) : (
