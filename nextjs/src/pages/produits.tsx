@@ -122,7 +122,6 @@ const Produits = () => {
   
       const response = await axios.get(`http://localhost:3000/getItemById?itemId=${_id}`);
       setEditedItem(response.data.data);
-  
       setEditingItemId(null);
       setEditedPrix(null);
       setEditedDescription(null);
@@ -299,7 +298,8 @@ const Produits = () => {
                 ) : (
                   item.id_Steps ? item.id_Steps.map((step: { id_Step: any; }) => step.id_Step).join(', ') : ''
                 )}
-              </td>              <td>{item.id_item}</td>
+              </td>    
+              <td>{item.id_item}</td>
               <td>
                 {editingItemId === item._id ? (
                   <button onClick={handleEditItem}>Enregistrer</button>

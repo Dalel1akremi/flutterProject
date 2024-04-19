@@ -104,28 +104,35 @@ const ObligationStep = async (req, res) => {
 };
 const updateStep = async (req, res) => {
   try {
-    const { _id } = req.params;
-    const { nom_Step, id_items } = req.body;
+    const { _id } = req.query;
+    const { 
+      nom_Step,
+      id_items
+    } = req.body; 
 
-    if (!_id) { 
+    if (!_id) {
       return res.status(400).json({
         status: 400,
-        message: "L'ID de l'élément est manquant.",
+        message: "L'ID de l'élément à mettre à jour est manquant.",
       });
     }
 
-    let updateData = {};
-
-    if (nom_Step) {
-      updateData.nom_Step = nom_Step;
+    let idItemsArray = null;
+    if (typeof id_items === 'string') {
+      // Séparer la chaîne en un tableau d'identifiants en utilisant la virgule comme séparateur
+      const ids = id_items.split(',');
+      // Convertir les identifiants en nombres entiers et les mapper dans un tableau d'objets
+      idItemsArray = ids.map(idItem => ({ id_item: parseInt(idItem) }));
     }
 
-    if (id_items) {
-      const id_itemsArray = id_items.split(',').map(idItem => ({ id_item: parseInt(idItem.trim()) }));
-      updateData.id_items = id_itemsArray;
-    }
+    console.log('ID de l\'élément à mettre à jour :', _id);
+    console.log('Nouveau nom du Step :', nom_Step);
+    console.log('Nouveau tableau d\'id_items :', idItemsArray);
 
-    await Step.findByIdAndUpdate(_id, updateData);
+    await Step.findByIdAndUpdate(_id, { 
+      nom_Step,
+      id_items: idItemsArray, 
+    });
 
     res.status(200).json({
       status: 200,
@@ -139,6 +146,10 @@ const updateStep = async (req, res) => {
     });
   }
 };
+
+
+
+
 
 
 

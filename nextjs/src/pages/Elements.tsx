@@ -18,9 +18,9 @@ const Steps = () => {
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
   const [itemName, setItemName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [editedItem, setEditedItem] = useState<any | null>(null);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editedIdItems, setEditedIdItems] = useState<string | null>('');
   useEffect(() => {
     const fetchSteps = async () => {
       const token = localStorage.getItem('token');
@@ -73,6 +73,8 @@ const Steps = () => {
     setEditedItem({ 
       ...step,
        });
+       setEditedIdItems(step.id_items ? step.id_items.map(item => item.id_item).join(', ') : '');
+
   };
   
   const handleSave = async (_id: string) => {
@@ -84,23 +86,34 @@ const Steps = () => {
       }
   
       const updatedSteps = [...steps];
+      const updatedIdItems = editedIdItems ? editedIdItems.split(',').map((id: string) => ({
+        id_item: parseInt(id),
+        nom: '', // Vous devez fournir la valeur appropriée pour cette propriété
+        _id: ''   // Vous devez fournir la valeur appropriée pour cette propriété
+      })) : [];
+  
       updatedSteps[modifiedStepIndex] = {
         ...updatedSteps[modifiedStepIndex],
         nom_Step: editedItem.nom_Step,
+        id_items: updatedIdItems,
       };
   
       setSteps(updatedSteps);
   
-      await axios.put(`http://localhost:3000/updateStep/${_id}`, {
+      await axios.put(`http://localhost:3000/updateStep?_id=${_id}`, {
         nom_Step: editedItem.nom_Step,
+        id_items: updatedIdItems.map(item => item.id_item), // Ne pas envoyer d'objets complets ici, juste les ID
       });
   
       setEditingItemId(null);
       setEditedItem(null);
+      setEditedIdItems(''); // Réinitialisez les id_items édités après l'enregistrement
     } catch (error) {
       console.error('Erreur lors de la mise à jour du nom du Step :', error);
     }
   };
+  
+  
   
   
   const handleArchivedToggle = async (_id: string, isArchived: boolean) => {
@@ -156,24 +169,17 @@ const Steps = () => {
                 step.nom_Step
               )}
             </td>          
-              <td>
-                <ul>
-                  {step.id_items.map((item) => (
-                    <li key={item._id} onClick={() => getNomItemById(item.id_item)} style={{ cursor: 'pointer' }}>
-                      {selectedItemId === item.id_item && (
-                        <>
-                          {item.id_item} - <strong>{itemName}</strong>
-                        </>
-                      )}
-                      {selectedItemId !== item.id_item && (
-                        <>
-                          {item.id_item} - {item.nom}
-                        </>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </td>
+            <td>
+                {editingItemId === step._id ? (
+                  <input
+                    type="text"
+                    value={editedIdItems || ''}
+                    onChange={(e) => setEditedIdItems(e.target.value)}
+                  />
+                ) : (
+                  step.id_items ? step.id_items.map((step: { id_item: any; }) => step.id_item).join(', ') : ''
+                )}
+              </td>  
               <td>
                 <input
                   type="checkbox"
