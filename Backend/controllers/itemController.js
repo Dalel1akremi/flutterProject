@@ -230,10 +230,18 @@ exports.updateItem = async (req, res) => {
         message: "L'ID de l'élément à mettre à jour est manquant.",
       });
     }
-
+    if (is_Menu && is_Redirect) {
+      return res.status(400).json({
+        status: 400,
+        message: "Erreur: le bouton de redirection ne peut pas être qu'un produit simple.",
+      });
+    }
     // Traitement des données d'entrée, si nécessaire
     // Conversion de id_Steps en tableau d'objets si c'est une chaîne séparée par des virgules
-    const idStepsArray = is_Menu ? id_Steps.split(',').map(idStep => ({ id_Step: parseInt(idStep) })) : null;
+    let idStepsArray = null;
+    if (is_Menu && id_Steps) {
+      idStepsArray = id_Steps.split(',').map(idStep => ({ id_Step: parseInt(idStep) }));
+    }
 
     // Mise à jour de l'élément avec les nouvelles valeurs, y compris id_Steps
     await Item.findByIdAndUpdate(itemId, { 
