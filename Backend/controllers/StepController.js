@@ -1,12 +1,13 @@
 const Step = require('../models/StepModel');
+const mongoose = require('mongoose');
 
 const createStep = async (req, res) => {
   try {
     const { body } = req;
     
-    const { nom_Step, id_items, is_Obligatoire ,id_rest} = body;
+    const { nom_Step, id_items, is_Obligatoire, id_rest } = body;
 
-    const existingStep = await Step.findOne({ nom_Step ,id_rest});
+    const existingStep = await Step.findOne({ nom_Step, id_rest });
 
     if (existingStep) {
       return res.status(400).json({
@@ -15,12 +16,30 @@ const createStep = async (req, res) => {
       });
     }
 
+    let idItemsArray = null;
+
+    if (typeof id_items === 'string') {
+      idItemsArray = id_items.split(',').map(idItem => ({ id_item: parseInt(idItem.trim(), 10) }));
+    } else if (Array.isArray(id_items)) {
+      idItemsArray = id_items.map(idItem => {
+        if (typeof idItem === 'string' || typeof idItem === 'number') {
+          return { id_item: parseInt(idItem.toString().trim(), 10) };
+        } else if (typeof idItem === 'object' && idItem.id_item) {
+          return { id_item: parseInt(idItem.id_item.toString().trim(), 10) };
+        } else {
+          throw new Error('Invalid id_item type');
+        }
+      });
+    } else {
+      throw new Error('Invalid id_items type');
+    }
+
     const newStep = new Step({
       nom_Step,
-      id_items,
+      id_items: idItemsArray,
       is_Obligatoire,
       id_rest,
-      isArchived: false, 
+      isArchived: false,
     });
 
     const savedStep = await newStep.save();
@@ -39,7 +58,6 @@ const createStep = async (req, res) => {
     });
   }
 };
-
 
 const getStepsByRestaurantId = async (req, res) => {
   try {
@@ -102,13 +120,11 @@ const ObligationStep = async (req, res) => {
     });
   }
 };
+
 const updateStep = async (req, res) => {
   try {
     const { _id } = req.query;
-    const { 
-      nom_Step,
-      id_items
-    } = req.body; 
+    const { nom_Step, id_items } = req.body;
 
     if (!_id) {
       return res.status(400).json({
@@ -117,23 +133,22 @@ const updateStep = async (req, res) => {
       });
     }
 
-    let idItemsArray = null;
-    if (typeof id_items === 'string') {
-      // Séparer la chaîne en un tableau d'identifiants en utilisant la virgule comme séparateur
-      const ids = id_items.split(',');
-      // Convertir les identifiants en nombres entiers et les mapper dans un tableau d'objets
-      idItemsArray = ids.map(idItem => ({ id_item: parseInt(idItem) }));
+    const step = await Step.findById(_id);
+    if (!step) {
+      return res.status(404).json({
+        status: 404,
+        message: "L'élément à mettre à jour n'a pas été trouvé.",
+      });
     }
 
-    console.log('ID de l\'élément à mettre à jour :', _id);
-    console.log('Nouveau nom du Step :', nom_Step);
-    console.log('Nouveau tableau d\'id_items :', idItemsArray);
-
-    await Step.findByIdAndUpdate(_id, { 
-      nom_Step,
-      id_items: idItemsArray, 
+    step.nom_Step = nom_Step;
+    step.id_items = id_items.map(item => {
+      if (!item._id || !mongoose.Types.ObjectId.isValid(item._id)) {
+        item._id = new mongoose.Types.ObjectId();
+      }
+      return item;
     });
-
+    await step.save();
     res.status(200).json({
       status: 200,
       message: "L'élément a été mis à jour avec succès.",
@@ -146,13 +161,6 @@ const updateStep = async (req, res) => {
     });
   }
 };
-
-
-
-
-
-
-
 
 const ArchiverStep = async (req, res) => {
   try {
