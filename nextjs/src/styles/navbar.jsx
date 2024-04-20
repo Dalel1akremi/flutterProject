@@ -34,7 +34,7 @@ export default function Navbar() {
     fetchRestaurantName();
   }, []);
 
-  const shouldDisplayRestaurantLink = router.pathname === 'admin/Restaurant';
+  const shouldDisplayRestaurantLink = router.pathname === 'admin/RestaurantAdmin';
 
   return (
     <nav className={styles.navbar}>
@@ -51,7 +51,7 @@ export default function Navbar() {
         
 
         {shouldDisplayRestaurantLink && (
-          <a href="/Restaurant" className={styles.link}>Restauant</a>
+          <a href="/RestaurantAdmin" className={styles.link}>Restaurant</a>
         )}
       </div>
       <div className={styles.right}>

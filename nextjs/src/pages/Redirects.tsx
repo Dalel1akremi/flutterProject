@@ -4,11 +4,6 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Navbar from '../styles/navbar'; 
 
-interface RedirectProps {
-  id_item: string;
-  id_rest: string;
-}
-
 const Redirect = () => {
   const router = useRouter();
   const { id_item, id_rest } = router.query;
