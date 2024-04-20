@@ -38,6 +38,10 @@ const Produits = () => {
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedStepId, setSelectedStepId] = useState<number | null>(null);
+  const [StepName, setStepName] = useState<string>('');
+
+
   
   useEffect(() => {
     const fetchItems = async () => {
@@ -93,7 +97,17 @@ const Produits = () => {
     setEditedIsRedirect(item.is_Redirect);
   };
   
-
+  const getNomStepById = async (id_Step: number) => {
+    try {
+      console.log('Appel de getNomItemById avec id_item :', id_Step);
+      const response = await axios.get(`http://localhost:3000/getNomStepById/${id_Step}`);
+      console.log('Réponse de getNomItemById :', response.data);
+      setStepName(response.data.nom_Step);
+      setSelectedStepId(id_Step);
+    } catch (error) {
+      console.error('Erreur lors de la récupération de l\'item :', error);
+    }
+  };
   
   const handleEditItem = async () => {
     try {
@@ -354,16 +368,38 @@ const Produits = () => {
               </td>
               <td>{item.id_cat}</td>
               <td>
-                {editingItemId === item._id ? (
-                  <input
-                    type="text"
-                    value={editedIdSteps || ''}
-                    onChange={(e) => setEditedIdSteps(e.target.value)}
-                  />
-                ) : (
-                  item.id_Steps ? item.id_Steps.map((step: { id_Step: any; }) => step.id_Step).join(', ') : ''
-                )}
-              </td>    
+  {editingItemId === item._id ? (
+    <input
+      type="text"
+      value={editedIdSteps || ''}
+      onChange={(e) => setEditedIdSteps(e.target.value)}
+    />
+  ) : (
+    item.id_Steps ? (
+      item.id_Steps.map((step: { id_Step: any; nom_Step: string }) => (
+        <div key={step.id_Step}>
+          <span
+            onClick={() => getNomStepById(step.id_Step)}
+            style={{ cursor: 'pointer', textDecoration: 'underline', marginRight: '5px' }}
+          >
+            {selectedStepId === step.id_Step ? (
+              <>
+                {step.id_Step} - <strong>{StepName}</strong>
+              </>
+            ) : (
+              <>
+                {step.id_Step}  {step.nom_Step}
+              </>
+            )}
+          </span>
+          <span></span>
+        </div>
+      ))
+    ) : null
+  )}
+</td>
+
+    
               <td>{item.id_item}</td>
               <td>
                 {editingItemId === item._id ? (
