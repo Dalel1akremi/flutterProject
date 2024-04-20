@@ -45,7 +45,9 @@ const Steps = () => {
 
   const getNomItemById = async (id_item: number) => {
     try {
+      console.log('Appel de getNomItemById avec id_item :', id_item);
       const response = await axios.get(`http://localhost:3000/getNomItemById/${id_item}`);
+      console.log('Réponse de getNomItemById :', response.data);
       setItemName(response.data.nom);
       setSelectedItemId(id_item);
     } catch (error) {
@@ -171,16 +173,27 @@ const Steps = () => {
               )}
             </td>          
             <td>
-                {editingItemId === step._id ? (
-                  <input
-                    type="text"
-                    value={editedIdItems || ''}
-                    onChange={(e) => setEditedIdItems(e.target.value)}
-                  />
-                ) : (
-                  step.id_items ? step.id_items.map((step: { id_item: any; }) => step.id_item).join(', ') : ''
-                )}
-              </td>  
+  {editingItemId === step._id ? (
+    <input
+      type="text"
+      value={editedIdItems || ''}
+      onChange={(e) => setEditedIdItems(e.target.value)}
+    />
+  ) : (
+    step.id_items ? step.id_items.map((item, index) => (
+      <div key={index}>
+        <span
+          onClick={() => getNomItemById(item.id_item)}
+          style={{ cursor: 'pointer', textDecoration: 'underline', marginLeft: '5px' }}
+        >
+          {item.id_item}
+          {item.nom}
+        </span>
+      </div>
+    )) : ''
+  )}
+</td>
+
               <td>
                 <input
                   type="checkbox"
