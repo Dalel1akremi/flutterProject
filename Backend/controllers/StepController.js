@@ -189,12 +189,26 @@ const ArchiverStep = async (req, res) => {
     });
   }
 };
+const getNomStepById = async (req, res) => {
+  try {
+    const { stepId } = req.params; 
+    const step = await Step.findOne({ id_step: stepId }); 
 
+    if (!step) {
+      return res.status(404).json({ message: 'Step not found' });
+    }
+
+    res.status(200).json({ nom_Step: step.nom_Step }); 
+  } catch (error) {
+    console.error('Error getting step by ID:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 module.exports = {
   createStep ,
   updateStep,
    ArchiverStep,
   ObligationStep,
   getStepsByRestaurantId,
-
+  getNomStepById,
 }
