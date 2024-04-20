@@ -21,11 +21,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String password = '';
   String confirmPassword = '';
 
-  // Added this line
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
   void _submit(BuildContext context) async {
     setState(() {
-      // Enable validation on submit
+
     });
 
     if (_formKey.currentState!.validate()) {
@@ -41,7 +40,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
         return;
       }
 
-      // Capture the context before the asynchronous call
       final currentContext = context;
 
       try {
@@ -95,13 +93,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
         log('Signup successful! Token: $token, UserId: $userId');
 
-        // Navigate to the main page and replace the current route
       } else {
         final data = json.decode(response.body);
         final String message = data['message'];
 
         if (message.toLowerCase().contains('password')) {
-          // If the error message contains 'password', show it as a password error
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Password error: $message'),
@@ -109,7 +106,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             ),
           );
         } else {
-          // Otherwise, show a general error message
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Signup done : $message'),
@@ -144,6 +141,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+         child: SingleChildScrollView(
         child: Form(
           key: _formKey,
           autovalidateMode: autovalidateMode,
@@ -226,22 +224,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     return 'Tapez votre mot de passe';
                   }
 
-                  // Password must have at least 6 characters
                   if (value!.length < 6) {
                     return 'Le mot de passe doit comporter au moins 6 caractères';
                   }
 
-                  // Check for at least 1 capital letter
                   if (!RegExp(r'[A-Z]').hasMatch(value)) {
                     return 'Le mot de passe doit contenir au moins 1 lettre majuscule';
                   }
 
-                  // Check for at least 1 number
                   if (!RegExp(r'[0-9]').hasMatch(value)) {
                     return 'Le mot de passe doit contenir au moins 1 chiffre';
                   }
 
-                  // Check for at least 1 symbol
                   if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
                     return 'Le mot de passe doit contenir au moins 1 symbole';
                   }
@@ -286,6 +280,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

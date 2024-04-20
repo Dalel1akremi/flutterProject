@@ -42,7 +42,7 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
   Future<void> _retrieveUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _userId = prefs.getString('userId') ?? '';
-    fetchAddressDetails(); // Call fetchAddressDetails after retrieving the user ID
+    fetchAddressDetails(); 
   }
 
   Future<void> fetchAddressDetails() async {
@@ -206,7 +206,9 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+         child: SingleChildScrollView(
         child: hasAddress ? _buildAddressDetails() : _buildAddressInputFields(),
+      ),
       ),
     );
   }

@@ -92,6 +92,7 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+         child: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Column(
@@ -174,6 +175,7 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

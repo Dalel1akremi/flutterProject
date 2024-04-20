@@ -97,6 +97,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+         child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -205,6 +206,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

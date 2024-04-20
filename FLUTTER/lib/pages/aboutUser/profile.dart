@@ -50,6 +50,7 @@ class _ProfilPageState extends State<ProfilPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+         child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -224,6 +225,7 @@ class _ProfilPageState extends State<ProfilPage> {
             ),
           ],
         ),
+      ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,

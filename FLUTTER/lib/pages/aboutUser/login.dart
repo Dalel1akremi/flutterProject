@@ -146,6 +146,7 @@ Future<void> _handleSignIn(BuildContext context) async {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+         child: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Column(
@@ -337,6 +338,7 @@ Future<void> _handleSignIn(BuildContext context) async {
             ],
           ),
         ),
+      ),
       ),
     );
   }

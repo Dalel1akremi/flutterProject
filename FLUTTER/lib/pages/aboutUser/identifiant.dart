@@ -186,6 +186,7 @@ Future<bool> saveNameToStorage(String name) async {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+         child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -278,6 +279,7 @@ Future<bool> saveNameToStorage(String name) async {
             ),
           ],
         ),
+      ),
       ),
     );
   }
