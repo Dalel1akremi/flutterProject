@@ -31,13 +31,12 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  http: ^0.13.3  
+  google_fonts: ^6.2.1
+  http: ^1.2.1
   logger: 2.0.2+1
-  google_fonts: ^2.1.0 
   font_awesome_flutter: ^9.1.0  
   flutter_lints: ^1.0.0  
   google_sign_in: ^5.2.1
-  stripe_payment: ^1.1.4
   http_parser: ^4.0.0
   image_picker: ^0.8.4+4
   dio: ^4.0.0

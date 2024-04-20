@@ -1,6 +1,6 @@
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:js';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -98,17 +98,11 @@ class AcceuilScreen extends StatefulWidget {
   _RestaurantListState createState() => _RestaurantListState();
   
   void initState() {
-    initAuthProvider();
+
     _printStorageContent();
     
   }
-  Future<void> initAuthProvider() async {
-            final authProvider = Provider.of<AuthProvider>(context as BuildContext, listen: false);
-
-    await authProvider.initTokenFromStorage();
-
-    
-  }
+ 
    Future<void> _printStorageContent() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (kDebugMode) {
@@ -163,6 +157,8 @@ class _RestaurantListState extends State<AcceuilScreen> {
 
   @override
   Widget build(BuildContext context) {
+final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.initTokenFromStorage();
 
     return Scaffold(
       appBar: AppBar(
@@ -334,23 +330,24 @@ class _RestaurantListState extends State<AcceuilScreen> {
             );
           }
           if (index == 2) {
-  onPressed() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
+ Future<void> onPressed() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('token');
 
-    // Check if a token is present in local storage
-    if (token != null && token.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ProfilPage()),
-      );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const loginPage()),
-      );
-    }
+  // Check if a token is present in local storage
+  if (token != null && token.isNotEmpty) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ProfilPage()),
+    );
+  } else {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const loginPage()), 
+    );
   }
+}
+
   onPressed();
 }
 

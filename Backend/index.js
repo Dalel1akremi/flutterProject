@@ -33,8 +33,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
 mongoose
-  .connect('mongodb://127.0.0.1:27017/registration', {
+  .connect('mongodb://192.168.1.6:27017/registration', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

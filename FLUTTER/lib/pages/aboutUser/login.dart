@@ -15,9 +15,8 @@ import 'registre.dart';
 import './../aboutPaiement/paiement.dart';
 import './../global.dart';
 import './../aboutRestaurant/RestaurantDetail.dart';
-import 'dart:html';
 import 'dart:async';
-import 'dart:js' as js;
+
 
 
 // ignore: camel_case_types
@@ -53,7 +52,7 @@ Future<void> _handleSignIn(BuildContext context) async {
 
     String authUrl = buildAuthUrl();
 
-    window.open(authUrl, 'google-auth');
+  
 
     final completer = Completer();
 
@@ -63,15 +62,9 @@ Future<void> _handleSignIn(BuildContext context) async {
         return;
       }
 
-      final authInstance = js.context['gapi']['auth2'].callMethod('getAuthInstance');
+
       
-      if (authInstance != null) {
-        completer.complete(authInstance);
-      } else {
-        Future.delayed(const Duration(milliseconds: 500), () {
-          checkAuthInstance(attempts + 1);
-        });
-      }
+    
     }
 
     checkAuthInstance(0);
