@@ -182,13 +182,19 @@ const Steps = () => {
   ) : (
     step.id_items ? step.id_items.map((item, index) => (
       <div key={index}>
-        <span
-          onClick={() => getNomItemById(item.id_item)}
-          style={{ cursor: 'pointer', textDecoration: 'underline', marginLeft: '5px' }}
-        >
-          {item.id_item}
-          {item.nom}
-        </span>
+        <li key={item._id} onClick={() => getNomItemById(item.id_item)} style={{ cursor: 'pointer' }}>
+                      {selectedItemId === item.id_item && (
+                        <>
+                          {item.id_item} - <strong>{itemName}</strong>
+                        </>
+                      )}
+                      {selectedItemId !== item.id_item && (
+                        <>
+                          {item.id_item} - {item.nom}
+                        </>
+                      )}
+                    </li>
+
       </div>
     )) : ''
   )}
