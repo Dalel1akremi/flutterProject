@@ -19,7 +19,8 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmNewPasswordController = TextEditingController();
-
+bool obscureNewPassword = true;
+bool obscureConfirmPassword = true;
   String? _passwordValidationError;
 
   String? validatePassword(String value) {
@@ -82,7 +83,17 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
       }
     }
   }
+ void toggleNewPasswordVisibility() {
+    setState(() {
+      obscureNewPassword = !obscureNewPassword;
+    });
+  }
 
+  void toggleConfirmPasswordVisibility() {
+    setState(() {
+      obscureConfirmPassword = !obscureConfirmPassword;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,17 +111,24 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
             children: <Widget>[
               const SizedBox(height: 16.0),
               const Text(
-                'Nouveau Mot de Passe',
+                'Nouveau mot de passe',
                 style: TextStyle(fontSize: 16.0),
               ),
               const SizedBox(height: 16.0),
-              TextFormField(
-                controller: newPasswordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Saisissez votre Nouveau Mot de Passe',
-                  prefixIcon: Icon(Icons.lock),
-                ),
+             TextFormField(
+                  controller: newPasswordController,
+                  obscureText: obscureNewPassword, 
+                  decoration: InputDecoration(
+                    labelText: 'Saisissez votre nouveau mot de passe',
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: GestureDetector(
+                      onTap: toggleNewPasswordVisibility, 
+                      child: Icon(
+                        obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
                 validator: (value) {
                   String? validationResult = validatePassword(value!);
                   setState(() {
@@ -119,27 +137,21 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
                   return validationResult;
                 },
               ),
-              if (_passwordValidationError != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    _passwordValidationError!,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ),
-              const SizedBox(height: 16.0),
-              const Text(
-                'Confirmez le Nouveau Mot de Passe',
-                style: TextStyle(fontSize: 16.0),
-              ),
-              const SizedBox(height: 16.0),
+
               TextFormField(
-                controller: confirmNewPasswordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Confirmez le Nouveau Mot de Passe',
-                  prefixIcon: Icon(Icons.lock),
-                ),
+                  controller: confirmNewPasswordController,
+                  obscureText: obscureConfirmPassword, 
+                  decoration: InputDecoration(
+                    labelText: 'Confirmez le Nouveau Mot de Passe',
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: GestureDetector(
+                      onTap: toggleConfirmPasswordVisibility, 
+                      child: Icon(
+                        obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
                 validator: (value) {
                   if (value != newPasswordController.text) {
                     return 'Les mots de passe ne correspondent pas.';
@@ -147,30 +159,44 @@ class _NouveauPasswordPageState extends State<NouveauPasswordPage> {
                   return null;
                 },
               ),
+
               const SizedBox(height: 16.0),
                ElevatedButton(
-                onPressed: () async {
-                  setState(() {
-                    _passwordValidationError = null;
-                  });
+                  onPressed: () async {
+                    setState(() {
+                      _passwordValidationError = null;
+                    });
 
-                  if (_formKey.currentState!.validate()) {
-                    updatePassword();
-                  }
-                  Navigator.push( 
-                    context,
-                     MaterialPageRoute(builder: (context) => const loginPage()),
-                                );
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.black,
+                    if (_formKey.currentState!.validate()) {
+                      final String newPassword = newPasswordController.text;
+                      final String confirmNewPassword = confirmNewPasswordController.text;
+
+                      if (newPassword == confirmNewPassword) {
+
+                        await updatePassword();
+
+                        if (_passwordValidationError == null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const loginPage()),
+                          );
+                        }
+                      } else {
+                        setState(() {
+                          _passwordValidationError = 'Les mots de passe ne correspondent pas.';
+                        });
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    backgroundColor: Colors.black,
+                  ),
+                  child: const Text(
+                    'Continuer',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-                child: const Text(
-                  'Continuer',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
              
             ],
           ),

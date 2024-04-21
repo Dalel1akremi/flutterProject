@@ -15,10 +15,6 @@ import 'registre.dart';
 import './../aboutPaiement/paiement.dart';
 import './../global.dart';
 import './../aboutRestaurant/RestaurantDetail.dart';
-import 'dart:async';
-
-
-
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
   const loginPage({
@@ -35,57 +31,7 @@ class _LoginPageState extends State<loginPage> {
   String email = '';
   String password = '';
   Panier panier = Panier();
-String clientId = '800045568375-qveeo76qnq8p14jmtn6jcsh087uild6p.apps.googleusercontent.com';
-String redirectUri = 'http://localhost:49334';
-String scope = 'email'; 
-
-String buildAuthUrl() {
-  return 'https://accounts.google.com/o/oauth2/auth?'
-         'client_id=$clientId&'
-         'response_type=code&'
-         'redirect_uri=$redirectUri&'
-         'scope=$scope';
-}
-
-Future<void> _handleSignIn(BuildContext context) async {
-  try {
-
-    String authUrl = buildAuthUrl();
-
-  
-
-    final completer = Completer();
-
-    void checkAuthInstance(int attempts) {
-      if (attempts >= 10) {
-        completer.completeError('Timeout: authInstance est null après 10 tentatives.');
-        return;
-      }
-
-
-      
-    
-    }
-
-    checkAuthInstance(0);
-
-    final authInstance = await completer.future;
-    
-    if (authInstance != null) {
-      final googleUser = await authInstance.callMethod('signIn');
-  
-    } else {
-      if (kDebugMode) {
-        print('Erreur: authInstance est null.');
-      }
-    }
-  } catch (e) {
-    if (kDebugMode) {
-      print('Erreur lors de la connexion avec Google: $e');
-    }
-  }
-}
-
+ bool obscurePassword = true;
   void _submit(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -136,6 +82,11 @@ Future<void> _handleSignIn(BuildContext context) async {
       }
     }
   }
+  void togglePasswordVisibility() {
+    setState(() {
+      obscurePassword = !obscurePassword;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +104,7 @@ Future<void> _handleSignIn(BuildContext context) async {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const Text(
-                'Email',
+                'E-mail',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16.0,
@@ -178,26 +129,34 @@ Future<void> _handleSignIn(BuildContext context) async {
               ),
               const SizedBox(height: 16.0),
               const Text(
-                'Mot de passe',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
+                  'Mot de passe',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
+                  ),
                 ),
-              ),
-              TextFormField(
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Enter your password';
-                  }
-                  return null;
-                },
-                onSaved: (value) => password = value ?? '',
-                decoration: const InputDecoration(
-                  labelText: 'Saisissez votre mot de passe',
-                  prefixIcon: Icon(Icons.lock),
+                TextFormField(
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Enter your password';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => password = value ?? '',
+                  decoration: InputDecoration(
+                    labelText: 'Saisissez votre mot de passe',
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: GestureDetector(
+                      onTap: togglePasswordVisibility,
+                      child: Icon(
+                        obscurePassword ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  obscureText: obscurePassword,
                 ),
-                obscureText: true,
-              ),
+
               const SizedBox(height: 8.0),
               Align(
                 alignment: Alignment.centerRight,
@@ -260,9 +219,9 @@ Future<void> _handleSignIn(BuildContext context) async {
                 'En continuant, vous acceptez nos : ',
                 style: TextStyle(fontSize: 14.0),
               ),
-              RichText(
+             RichText(
                 text: TextSpan(
-                  text: 'Conditions Générales d\'utilisation ',
+                  text: '- Conditions Générales d\'utilisation ',
                   style: const TextStyle(
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
@@ -277,9 +236,10 @@ Future<void> _handleSignIn(BuildContext context) async {
                     },
                 ),
               ),
+              const SizedBox(height: 10),  
               RichText(
                 text: TextSpan(
-                  text: 'Conditions Générales de Vente',
+                  text: '- Conditions Générales de Vente',
                   style: const TextStyle(
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
@@ -294,9 +254,10 @@ Future<void> _handleSignIn(BuildContext context) async {
                     },
                 ),
               ),
+              const SizedBox(height: 10),  
               RichText(
                 text: TextSpan(
-                  text: 'politique de confidentialité',
+                  text: '- Politique de confidentialité',
                   style: const TextStyle(
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
@@ -311,30 +272,7 @@ Future<void> _handleSignIn(BuildContext context) async {
                     },
                 ),
               ),
-              ElevatedButton(
-                onPressed: () => _handleSignIn(context),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: const Color.fromARGB(255, 237, 21, 21),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'images/google_logo.png',
-                      height: 20.0,
-                    ),
-                    const SizedBox(width: 10.0),
-                    const Text(
-                      'Connecter avec Google',
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
             ],
           ),
         ),

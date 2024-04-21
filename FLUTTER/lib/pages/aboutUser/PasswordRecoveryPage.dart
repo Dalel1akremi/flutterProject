@@ -106,13 +106,22 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
               'Pas d\'inquiétude, nous allons vous envoyer le code de validation à l\'adresse suivante :',
               style: TextStyle(fontSize: 16.0),
             ),
-            const Text(
-              'Reinitialise mon mot de passe',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18.0,
+             const Row(
+                children: [
+                  Icon(
+                    Icons.looks_one, 
+                    color: Colors.black, 
+                  ),
+                  SizedBox(width: 10), 
+                  Text(
+                    'Réinitialiser mon mot de passe',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                ],
               ),
-            ),
             const SizedBox(height: 16.0),
             const Text(
               'E-mail',
@@ -122,7 +131,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
             TextFormField(
               controller: emailController,
               decoration: const InputDecoration(
-                labelText: 'Saisissez votre Email',
+                labelText: 'Saisissez votre E-mail',
                 prefixIcon: Icon(Icons.email),
               ),
               validator: (value) {
@@ -163,13 +172,24 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
               'Merci de vérifier vos courriers indésirables après avoir cliqué sur *Je réinitialise mon mot de passe"',
               style: TextStyle(fontSize: 16.0),
             ),
-            const Text(
-              'Reinitialise mon mot de passe',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18.0,
+             const Row(
+                children: [
+                  Icon(
+                    Icons.looks_two, 
+                    color: Colors.black, 
+                  ),
+                  SizedBox(width: 10), 
+                  Text(
+                    'Confirmer le code',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                ],
               ),
-            ),
+
+            const SizedBox(height: 16.0),
             const Text(
               'Code',
               style: TextStyle(fontSize: 16.0),
@@ -178,7 +198,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
             TextFormField(
               controller: validationCodeController,
               decoration: const InputDecoration(
-                labelText: 'saissisez le Code de 6 chiffre ',
+                labelText: 'Saisissez le code de 6 chiffres ',
                 prefixIcon: Icon(Icons.lock),
               ),
               validator: (value) {
