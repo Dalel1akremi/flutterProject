@@ -9,12 +9,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'auth_provider.dart';
 import 'PasswordRecoveryPage.dart';
 import 'registre.dart';
 import './../aboutPaiement/paiement.dart';
 import './../global.dart';
 import './../aboutRestaurant/RestaurantDetail.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:demo/pages/aboutUser/auth_provider.dart' as CustomAuthProvider;
+
+
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
   const loginPage({
@@ -31,17 +35,31 @@ class _LoginPageState extends State<loginPage> {
   String email = '';
   String password = '';
   Panier panier = Panier();
+ late final GoogleSignIn googleSignIn = GoogleSignIn(clientId: '800045568375-qveeo76qnq8p14jmtn6jcsh087uild6p.apps.googleusercontent.com');
+
+   CustomAuthProvider.AuthProvider? authProvider;
  bool obscurePassword = true;
+ @override
+  void initState() {
+    super.initState();
+    authProvider = Provider.of<CustomAuthProvider.AuthProvider>(context, listen: false);
+  }
   void _submit(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+     final authProvider = Provider.of<CustomAuthProvider.AuthProvider>(context, listen: false);
+
         final loginData = await authProvider.login(email, password);
         final userId = loginData['userId'];
         final nom = loginData['nom'];
 
-        bool isLoggedIn = authProvider.isAuthenticated;
+     bool isLoggedIn = authProvider.currentUser != null;
+
+          if (panier.origin == 'google') {
+          await _signInWithGoogle(context);
+          return; 
+        }
         if (panier.origin == 'panier') {
           Navigator.push(
             context,
@@ -87,6 +105,43 @@ class _LoginPageState extends State<loginPage> {
       obscurePassword = !obscurePassword;
     });
   }
+  
+Future<void> _signInWithGoogle(BuildContext context) async {
+  if (authProvider == null) {
+    return;
+  }
+  try {
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+    if (googleUser != null) {
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final AuthCredential authCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await authProvider!.firebaseAuth.signInWithCredential(authCredential);  
+      if (authProvider!.firebaseAuth.currentUser != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilPage()),
+        );
+      }
+    }
+  } catch (error) {
+    if (kDebugMode) {
+      print('Error during Google sign in: $error');
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Erreur lors de la connexion avec Google'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -272,6 +327,15 @@ class _LoginPageState extends State<loginPage> {
                     },
                 ),
               ),
+ElevatedButton.icon(
+  onPressed: () => _signInWithGoogle(context),
+  icon: const Icon(Icons.login_rounded),
+  label: const Text('Connexion avec Google'),
+  style: ElevatedButton.styleFrom(
+    minimumSize: const Size(double.infinity, 50),
+    backgroundColor: Colors.red,
+  ),
+),
 
             ],
           ),
