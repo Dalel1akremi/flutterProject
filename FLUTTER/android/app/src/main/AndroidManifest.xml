@@ -2,9 +2,9 @@
           xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:label="FR Restaurants"
+        android:label="RestoList FR"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/restaurant"
         tools:replace="android:label">
 
         <activity
