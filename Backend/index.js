@@ -35,7 +35,7 @@ const upload = multer({ storage: storage });
 
 
 mongoose
-  .connect('mongodb://192.168.1.6:27017/registration', {
+  .connect('mongodb+srv://dalelakremi2020:Omiyoussef2020@cluster0.0c5rw0u.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
