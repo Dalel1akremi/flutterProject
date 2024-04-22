@@ -34,7 +34,7 @@ const CreateCategoriePage = () => {
   
         if (response.data.status === 200) {
           setMessage('Catégorie créée avec succès');
-          router.push('/Categorie');
+          router.push('/Categories');
           setIsError(false); 
         } else {
           setMessage(response.data.message);
