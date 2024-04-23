@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const categoriesSchema = new mongoose.Schema({
   id_cat: { type: Number, unique: true },
   nom_cat: String,
+  image: String,
   id_rest: { type: Number, ref: 'Restaurant' },
   isArchived: { type: Boolean, validate: [isValidBoolean, 'isArchived must be true or false'] },
 });

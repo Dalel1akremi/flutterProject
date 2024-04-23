@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 const Categories = require('../models/categoriesModel');
 const createCategorie = async (req, res) => {
   try {
-    let { nom_cat, id_rest } = req.body; 
+    let { nom_cat, id_rest } = req.body;
+    const imageUrl = file ? `http://192.168.2.65:3000/images/${file.filename}` : null;
+ 
     nom_cat = nom_cat.charAt(0).toUpperCase() + nom_cat.slice(1).toLowerCase();
     const existingCategorie = await Categories.findOne({ nom_cat, id_rest });
 
@@ -17,6 +19,7 @@ const createCategorie = async (req, res) => {
     const newCategorie = new Categories({
       id_rest,
       nom_cat,
+      image: imageUrl,
       isArchived: false,
     });
 
@@ -41,7 +44,7 @@ const createCategorie = async (req, res) => {
 const getCategories = async (req, res) => {
   try {
     const { id_rest } = req.query;
-    const categories = await Categories.find({ id_rest: id_rest ,'isArchived': false}, 'nom_cat  id_cat , isArchived');
+    const categories = await Categories.find({ id_rest: id_rest ,'isArchived': false}, 'nom_cat  id_cat ,image, isArchived');
     res.status(200).json({
       status: 200,
       message: "Succès de récupération des catégories",
@@ -58,7 +61,7 @@ const getCategories = async (req, res) => {
 const getCategoriesAd = async (req, res) => {
   try {
     const { id_rest } = req.query;
-    const categories = await Categories.find({ id_rest: id_rest }, 'nom_cat  id_cat , isArchived');
+    const categories = await Categories.find({ id_rest: id_rest }, 'nom_cat  id_cat ,image, isArchived');
     res.status(200).json({
       status: 200,
       message: "Succès de récupération des catégories",
