@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'login.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthProvider with ChangeNotifier {
   String? _token;
@@ -12,7 +14,10 @@ class AuthProvider with ChangeNotifier {
   String? _email;
   String? _telephone;
   String? get token => _token;
-
+ final GoogleSignIn googleSignIn = GoogleSignIn();
+ final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+   FirebaseAuth get firebaseAuth => _firebaseAuth;
+  User? get currentUser => _firebaseAuth.currentUser;
   set token(String? value) {
     _token = value;
     notifyListeners();
@@ -120,6 +125,47 @@ if (kDebugMode) {
         throw Exception('Login failed');
       }
     } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> signInWithCredential(AuthCredential credential) async { // Utilisation de AuthCredential au lieu de OAuthCredential
+    try {
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        final userId = user.uid;
+        final email = user.email;
+        final nom = user.displayName ?? '';
+        const telephone = ''; // Vous pouvez obtenir le numéro de téléphone si nécessaire
+
+        _userId = userId;
+        _nom = nom;
+        _email = email;
+        _telephone = telephone;
+
+        if (kDebugMode) {
+          print('Sign-in successful! UserId: $userId, Nom: $nom, Email: $email');
+        }
+
+    await saveTokenToStorage('firebase_token', userId , email ?? '', nom , telephone );
+
+        notifyListeners();
+      } else {
+        throw Exception('Sign-in failed');
+      }
+    } catch (error) {
+      print('Error signing in: $error');
+      rethrow;
+    }
+  }
+
+  Future<void> signInWithOAuthCredential(OAuthCredential credential) async {
+    try {
+      await signInWithCredential(credential); // Utilisation de signInWithCredential pour Google sign-in
+    } catch (error) {
+      print('Error signing in with Google: $error');
       rethrow;
     }
   }
