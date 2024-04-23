@@ -63,7 +63,7 @@ app.put('/updateGeocodedDetails', userController.updateGeocodedDetails);
 app.post('/reset_password', userController.reset_password);
 app.post('/validate_code', userController.validate_code);
 app.put('/new_password', userController.new_password);
-app.post('/createCategorie', categoriesController.createCategorie);
+app.post('/createCategorie', upload.single('image'), categoriesController.createCategorie);
 app.get('/getCategories', categoriesController.getCategories);
 app.get('/getCategoriesAd', categoriesController.getCategoriesAd);
 app.put('/ArchivedCategorie/:_id', categoriesController.ArchivedCategorie);
