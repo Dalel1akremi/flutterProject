@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "800045568375",
+    "project_id": "speedy-cedar-413809",
+    "storage_bucket": "speedy-cedar-413809.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800045568375:android:7f0724e26fe416c1f55172",
+        "android_client_info": {
+          "package_name": "com.example.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "800045568375-47u4eicpcmafn6b1j21j2a9ump5hva2n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.demo",
+            "certificate_hash": "1cff5daa56ac8a79cfaf7361192fd66265663ea3"
+          }
+        },
+        {
+          "client_id": "800045568375-qveeo76qnq8p14jmtn6jcsh087uild6p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBN1rJOZGPDAkPuzqvxHM9ONG6bsepGN-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "800045568375-qveeo76qnq8p14jmtn6jcsh087uild6p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
