@@ -104,144 +104,148 @@ Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
       numberOfItems += article.quantite;
     }
     String? restaurantName = Panier().getSelectedRestaurantName();
-   return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: Text(restaurantName ?? 'Restaurant Detail'),
+         title: Text(restaurantName ?? 'Restaurant Detail'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Confirmation'),
-                  content: const Text('Vous avez des articles dans votre panier. Voulez-vous le vider ?'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child:const Text('Non'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Panier().viderPanier();
-                        Navigator.of(context).pop(); 
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const RestaurantDetail(),
-                          ),
-                        );
-                      },
-                      child: const Text('Oui'),
-                    ),
-                  ],
+  icon: const Icon(Icons.arrow_back),
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Vous avez des articles dans votre panier. Voulez-vous le vider ?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child:const Text('Non'),
+            ),
+            TextButton(
+              onPressed: () {
+                Panier().viderPanier();
+                 Navigator.of(context).pop(); 
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const RestaurantDetail(),
+                  ),
                 );
               },
-            );
-          },
-        ),
+              child: const Text('Oui'),
+            ),
+          ],
+        );
+      },
+    );
+  },
+),
+
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 56,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _categories.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedCategoryIndex = index;
-                      });
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / _categories.length,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      color: _selectedCategoryIndex == index
-                          ? Colors.grey[200]
-                          : Colors.white,
-                      child: Center(
-                        child: Row(
-                          children: [
-                            Icon(Icons.restaurant_menu,
-                                color: _selectedCategoryIndex == index
-                                    ? Colors.purple
-                                    : Colors.black),
-                            const SizedBox(width: 8),
-                            Text(
-                              _categories[index].nomCat,
-                              style: TextStyle(
-                                color: _selectedCategoryIndex == index
-                                    ? Colors.purple
-                                    : Colors.black,
-                              ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 56,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _categories.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedCategoryIndex = index;
+                    });
+                  },
+                  child: Container(
+                    width:
+                        MediaQuery.of(context).size.width / _categories.length,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    color: _selectedCategoryIndex == index
+                        ? Colors.grey[200]
+                        : Colors.white,
+                    child: Center(
+                      child: Row(
+                        children: [
+                          Icon(Icons.restaurant_menu,
+                              color: _selectedCategoryIndex == index
+                                  ? Colors.purple
+                                  : Colors.black),
+                          const SizedBox(width: 8),
+                          Text(
+                            _categories[index].nomCat,
+                            style: TextStyle(
+                              color: _selectedCategoryIndex == index
+                                  ? Colors.purple
+                                  : Colors.black,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-            Expanded(
+          ),
+          Expanded(
+            child: Center(
               child: _buildMenuForCategory(_categories.isNotEmpty
                   ? _categories[_selectedCategoryIndex]
                   : Category(idCat: 1, nomCat: '')),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  if (totalPrice > 0) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const PanierPage(),
-                      ),
-                    );
-                  } 
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(150, 50),
-                  backgroundColor: Colors.green,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const Text(
-                      'Paiement',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Text(
-                      ' $totalPrice €',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
+          ),
+       Padding(
+  padding: const EdgeInsets.all(16.0),
+  child: ElevatedButton(
+    onPressed: () {
+      if (totalPrice > 0) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PanierPage(),
+          ),
+        );
+      } 
+    },
+    style: ElevatedButton.styleFrom(
+                minimumSize: const Size(150, 50),
+                backgroundColor: Colors.green,
               ),
-            ),
-          ],
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
+        const Text(
+          'Paiement',
+          style: TextStyle(color: Colors.white),
+        ),
+        Text(
+          ' $totalPrice €',
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  ),
+)
+,
+        ],
       ),
     );
   }
+
   Widget _buildMenuForCategory(Category category) {
    return FutureBuilder<List<Map<String?, dynamic>>>(
   future: fetchMenu(category.idCat),
