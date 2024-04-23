@@ -136,6 +136,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
+           child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -320,6 +321,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               ),
             ],
           ),
+        ),
         ),
       ),
     );

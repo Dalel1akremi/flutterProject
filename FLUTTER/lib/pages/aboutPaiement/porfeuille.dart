@@ -89,7 +89,7 @@ class _PortefeuilleState extends State<Portefeuille> {
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: const Text('Portefeuille payline'),
       ),
-       body: Padding(
+       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
@@ -195,7 +195,7 @@ Future<void> sendPaymentRequest() async {
    SharedPreferences prefs = await SharedPreferences.getInstance();
   String? email = prefs.getString('email');
   String apiUrl =
-      'http://localhost:3000/porfeuille?email=$email';
+      'http://192.168.2.65:3000/porfeuille?email=$email';
 
   Map<String, dynamic> paymentData = {
     "cardNumber": cardNumberController.text,

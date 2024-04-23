@@ -16,7 +16,7 @@ exports.createItem = async (req, res) => {
       id_rest,
     } = body;
 
-    const imageUrl = file ? `http://localhost:3000/images/${file.filename}` : null;
+    const imageUrl = file ? `http://192.168.2.65:3000/images/${file.filename}` : null;
 
     const validatedPrix = parseFloat(prix);
     const validatedQuantite = parseInt(quantite);

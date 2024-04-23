@@ -70,7 +70,7 @@ class ItemDetailsPage extends StatelessWidget {
       }
       final response = await http.get(
         Uri.parse(
-            'http://localhost:3000/getRedirect?id_item=$id_item&id_rest=$idRest'),
+            'http://192.168.2.65:3000/getRedirect?id_item=$id_item&id_rest=$idRest'),
       );
       if (response.statusCode == 200) {
         final dynamic responseData = json.decode(response.body)['data'];
@@ -111,6 +111,7 @@ class ItemDetailsPage extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.all(16),
+        
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,

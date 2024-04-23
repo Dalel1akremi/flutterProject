@@ -52,7 +52,7 @@ bool obscureConfirmPassword = true;
       try {
         final response = await http.put(
           Uri.parse(
-              'http://localhost:3000/new_password?email=${Uri.encodeQueryComponent(widget.email!)}'),
+              'http://192.168.2.65:3000/new_password?email=${Uri.encodeQueryComponent(widget.email!)}'),
           body: {
             'newPassword': newPassword,
             'confirmNewPassword': confirmNewPassword,

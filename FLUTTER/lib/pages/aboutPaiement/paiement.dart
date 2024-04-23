@@ -89,7 +89,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       var response = await http.post(
         Uri.parse(
-            'http://localhost:3000/createCommande?id_user=$userId&id_rest=$idRest'),
+            'http://192.168.2.65:3000/createCommande?id_user=$userId&id_rest=$idRest'),
         body: jsonEncode({
           'id_items': idItems,
         }),
@@ -151,7 +151,7 @@ Future<void> makePaymentWithCreditCard() async {
 
       var response = await http.post(
         Uri.parse(
-            'http://localhost:3000/recupererCarteParId?email=${authProvider.email}&cardId=$cardId'),
+            'http://192.168.2.65:3000/recupererCarteParId?email=${authProvider.email}&cardId=$cardId'),
         body: jsonEncode({'montant': panier.getTotalPrix()}),
         headers: {'Content-Type': 'application/json'},
       );
@@ -176,7 +176,7 @@ Future<void> makePaymentWithCreditCard() async {
     if (userEmail != null) {
       try {
         var response = await http.get(Uri.parse(
-            'http://localhost:3000/recupererCartesUtilisateur?email=$userEmail'));
+            'http://192.168.2.65:3000/recupererCartesUtilisateur?email=$userEmail'));
         if (response.statusCode == 200) {
           var responseData = json.decode(response.body);
           if (responseData is Map && responseData.containsKey('cards')) {

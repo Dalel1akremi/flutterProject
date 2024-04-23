@@ -136,7 +136,7 @@ class _RestaurantListState extends State<AcceuilScreen> {
   }
 
   Future<void> fetchRestaurants() async {
-    final response = await http.get(Uri.parse('http://localhost:3000/getRestaurant'));
+    final response = await http.get(Uri.parse('http://192.168.2.65:3000/getRestaurant'));
     if (response.statusCode == 200) {
       final List<dynamic> responseData = json.decode(response.body)['restaurants'];
       setState(() {
@@ -173,6 +173,7 @@ final authProvider = Provider.of<AuthProvider>(context, listen: false);
     Container(
       color: const Color.fromARGB(181, 123, 106, 106),
       padding: const EdgeInsets.all(8.0),
+      
       child: Row(
         children: [
           Expanded(

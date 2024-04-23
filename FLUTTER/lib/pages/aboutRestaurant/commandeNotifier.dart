@@ -73,7 +73,7 @@ class CommandesModel with ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/getCommandesEncours?id_user=$idUser'),
+        Uri.parse('http://192.168.2.65:3000/getCommandesEncours?id_user=$idUser'),
       );
       if (response.statusCode == 200) {
         final dynamic responseBody = jsonDecode(response.body);
@@ -126,7 +126,7 @@ class CommandesModel with ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/getCommandesPasse?id_user=$idUser'),
+        Uri.parse('http://192.168.2.65:3000/getCommandesPasse?id_user=$idUser'),
       );
       if (response.statusCode == 200) {
         final dynamic responseBody = jsonDecode(response.body);

@@ -43,7 +43,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   Future<void> getUserData() async {
     try {
       final response = await http
-          .get(Uri.parse('http://localhost:3000/getUser?email=$_email'));
+          .get(Uri.parse('http://192.168.2.65:3000/getUser?email=$_email'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic>? userData =
@@ -119,7 +119,7 @@ Future<bool> saveNameToStorage(String name) async {
 
     try {
       final response = await http.put(
-        Uri.parse('http://localhost:3000/updateUser?email=$_email'),
+        Uri.parse('http://192.168.2.65:3000/updateUser?email=$_email'),
         body: jsonEncode(updatedData),
         headers: {
           'Content-Type': 'application/json',

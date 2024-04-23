@@ -101,6 +101,6 @@ app.post('/createRestaurant',upload.fields([{ name: 'logo', maxCount: 1 }, { nam
 app.get('/getRestau',Restaurant.getRestau);
 app.get('/getRestaurant',Restaurant.getRestaurant);
 app.get('/getAllRestaurantNames',Restaurant.getAllRestaurantNames);
-app.listen(PORT, () => {
+app.listen(PORT,'0.0.0.0', () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

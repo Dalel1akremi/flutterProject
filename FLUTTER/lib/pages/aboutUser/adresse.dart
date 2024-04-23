@@ -49,7 +49,7 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
     
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/getGeocodedDetails?_id=$_userId'),
+        Uri.parse('http://192.168.2.65:3000/getGeocodedDetails?_id=$_userId'),
       );
 
       if (response.statusCode == 200) {
@@ -86,7 +86,7 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
 
  
     Panier().setUserAddress('$country, $city, $street, $streetNumber');
-    String apiUrl = 'http://localhost:3000/searchAddress?_id=$_userId';
+    String apiUrl = 'http://192.168.2.65:3000/searchAddress?_id=$_userId';
 
     try {
       final response = await http.post(
@@ -172,7 +172,7 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
     try {
       final response = await http.put(
         Uri.parse(
-            'http://localhost:3000/updateGeocodedDetails?_id=$_userId'),
+            'http://192.168.2.65:3000/updateGeocodedDetails?_id=$_userId'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'country': countryController.text,

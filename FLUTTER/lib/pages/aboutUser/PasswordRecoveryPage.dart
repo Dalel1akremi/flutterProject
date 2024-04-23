@@ -26,7 +26,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://localhost:3000/reset_password'), 
+            'http://192.168.2.65:3000/reset_password'), 
         body: {'email': email},
       );
 
@@ -69,7 +69,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://localhost:3000/validate_code'), 
+            'http://192.168.2.65:3000/validate_code'), 
         body: {'email': email, 'validationCode': validationCode},
       );
 

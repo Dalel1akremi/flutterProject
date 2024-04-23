@@ -75,7 +75,7 @@ if (kDebugMode) {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    const String apiUrl = "http://localhost:3000/login";
+    const String apiUrl = "http://192.168.2.65:3000/login";
 
     try {
       final response = await http.post(
