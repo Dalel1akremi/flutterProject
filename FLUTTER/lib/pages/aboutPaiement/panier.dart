@@ -9,10 +9,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PanierPage extends StatefulWidget {
   const PanierPage({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _PanierPageState createState() => _PanierPageState();
 }
 
@@ -94,13 +95,14 @@ Future<void> initAuthProvider() async {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: const Text("Panier"),
-      ),
-      body: Column(
+ Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      backgroundColor: const Color.fromARGB(222, 212, 133, 14),
+      title: const Text("Panier"),
+    ),
+    body: SingleChildScrollView(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
@@ -146,43 +148,43 @@ Future<void> initAuthProvider() async {
             color: Colors.black,
             thickness: 2,
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: panier.length,
-              itemBuilder: (context, index) {
-                final article = panier[index];
-                return ListTile(
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: panier.length,
+            itemBuilder: (context, index) {
+              final article = panier[index];
+              return ListTile(
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${article.quantite} x ${article.nom}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: article.elementsChoisis
+                          .map((element) => Text('     $element'))
+                          .toList(),
+                    ),
+                    if (article.remarque.isNotEmpty)
                       Text(
-                        '${article.quantite} x ${article.nom}',
+                        'Remarque: ${article.remarque}',
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: article.elementsChoisis
-                            .map((element) => Text('     $element'))
-                            .toList(),
-                      ),
-                      if (article.remarque.isNotEmpty)
-                        Text(
-                          'Remarque: ${article.remarque}',
-                          style: const TextStyle(
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                    ],
-                  ),
-                  trailing: Text('Prix: ${article.prix} €'),
-                  onTap: () {
-                    showUpdateQuantityDialog(article);
-                  },
-                );
-              },
-            ),
+                  ],
+                ),
+                trailing: Text('Prix: ${article.prix} €'),
+                onTap: () {
+                  showUpdateQuantityDialog(article);
+                },
+              );
+            },
           ),
           const Divider(
             color: Colors.black,
@@ -199,6 +201,7 @@ Future<void> initAuthProvider() async {
                 // Vérifier si un token est présent dans le stockage local
                 if (token != null && token.isNotEmpty) {
                   // Utilisateur authentifié, naviguer vers la page de paiement
+                  // ignore: use_build_context_synchronously
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -208,6 +211,7 @@ Future<void> initAuthProvider() async {
                 } else {
                   // Utilisateur non authentifié, naviguer vers la page de connexion
                   panier.origin = 'panier';
+                  // ignore: use_build_context_synchronously
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const loginPage()),
@@ -247,8 +251,9 @@ Future<void> initAuthProvider() async {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   void showEditDialog() async {
     Map<String, dynamic>? newSelections = await showDialog(
@@ -273,6 +278,7 @@ Future<void> initAuthProvider() async {
 
                 // Vérifier si un token est présent dans le stockage local
                 if (token != null && token.isNotEmpty) {
+                        // ignore: use_build_context_synchronously
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -281,6 +287,7 @@ Future<void> initAuthProvider() async {
                         );
                       } else {
                         panier.origin = 'livraison';
+                        // ignore: use_build_context_synchronously
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -322,6 +329,7 @@ Future<void> initAuthProvider() async {
                         selectedTime = pickedTime;
                       });
                     } else {
+                      // ignore: use_build_context_synchronously
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
