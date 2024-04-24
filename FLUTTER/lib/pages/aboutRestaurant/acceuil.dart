@@ -201,118 +201,145 @@ final authProvider = Provider.of<AuthProvider>(context, listen: false);
         ],
       ),
     ),),
-   Expanded( 
-  child: filteredRestaurants.isNotEmpty
-      ? ListView.builder(
-          itemCount: filteredRestaurants.length * 2 - 1,
-          itemBuilder: (context, index) {
-            if (index.isEven) {
-              final restaurantIndex = index ~/ 2;
-              final restaurant = filteredRestaurants[restaurantIndex];
-              return Container(
-                width: MediaQuery.of(context).size.width * 0.08, 
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 248, 240, 240), 
-                  borderRadius: BorderRadius.circular(16.0), 
-                  boxShadow: [
-                    BoxShadow(
-                      color:const  Color.fromARGB(255, 248, 240, 240).withOpacity(0.5), // Couleur de l'ombre
-                      spreadRadius: 2, 
-                      blurRadius: 5, 
-                      offset: const Offset(0, 3), 
-                    ),
-                  ],
-                ),  
-                child: GestureDetector(
-                  onTap: () {
-                    Panier().setSelectedRestaurant(restaurant);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RestaurantDetail(),
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      leading: SizedBox(
-                        width: 70,
-                        height: 60,
-                        child: Image.network(
-                          restaurant.logo,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            restaurant.nom,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(restaurant.adresse),
-                        ],
-                      ),
-                      subtitle: Row(
-                        children: [
-                          ...restaurant.modeDeRetrait.map((mode) {
-                            IconData iconData;
-                            switch (mode) {
-                              case 'En Livraison':
-                                iconData = Icons.delivery_dining;
-                                break;
-                              case 'A Emporter':
-                                iconData = Icons.takeout_dining;
-                                break;
-                              case 'Sur place':
-                                iconData = Icons.restaurant;
-                                break;
-                              default:
-                                iconData = Icons.error;
-                            }
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Icon(iconData),
-                            );
-                          }),
-                          ...restaurant.modeDePaiement.map((mode) {
-                            IconData? iconData;
-                            switch (mode) {
-                              case 'Espèces':
-                                iconData = Icons.monetization_on;
-                                break;
-                              case 'Carte bancaire':
-                                iconData = Icons.credit_card;
-                                break;
-                              case 'Tickets Restaurant':
-                                iconData = Icons.book;
-                                break;
-                              default:
-                                iconData = null;
-                            }
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Icon(iconData),
-                            );
-                          }),
-                        ],
-                      ),
+   Expanded(
+  child: filteredRestaurants.isNotEmpty?
+ListView.builder(
+  itemCount: filteredRestaurants.length * 2 - 1,
+  itemBuilder: (context, index) {
+    if (index.isEven) {
+      final restaurantIndex = index ~/ 2;
+      final restaurant = filteredRestaurants[restaurantIndex];
+      return Container(
+        width: MediaQuery.of(context).size.width * 0.08,
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 248, 240, 240),
+          borderRadius: BorderRadius.circular(16.0),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 248, 240, 240).withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: GestureDetector(
+          onTap: () {
+            Panier().setSelectedRestaurant(restaurant);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const RestaurantDetail(),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+              leading: SizedBox(
+                width: 70,
+                height: 60,
+                child: Image.network(
+                  restaurant.logo,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    restaurant.nom,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-              );
-            } else {
-              return Container(
-                height: 2,
-                color: const Color.fromARGB(181, 158, 156, 156),
-              );
-            }
-          },
-        )
+                  Text(restaurant.adresse),
+                  const SizedBox(height: 32),
+                ],
+              ),
+              subtitle: Row(
+                children: [
+                  ...restaurant.modeDeRetrait.map((mode) {
+                    IconData iconData;
+                    Color iconColor;
+                    switch (mode) {
+                      case 'En Livraison':
+                        iconData = Icons.delivery_dining;
+                        iconColor = Colors.blue; // Couleur de l'icône pour le mode de livraison
+                        break;
+                      case 'A Emporter':
+                        iconData = Icons.takeout_dining;
+                        iconColor = Colors.green; // Couleur de l'icône pour le mode à emporter
+                        break;
+                      case 'Sur place':
+                        iconData = Icons.restaurant;
+                        iconColor = Colors.orange; // Couleur de l'icône pour le mode sur place
+                        break;
+                      default:
+                        iconData = Icons.error;
+                        iconColor = Colors.black;
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: iconColor, // Couleur du cercle autour de l'icône
+                        ),
+                        padding: const EdgeInsets.all(8.0), // Ajustez la taille du cercle selon vos préférences
+                        child: Icon(
+                          iconData,
+                          color: Colors.white, // Couleur de l'icône à l'intérieur du cercle
+                        ),
+                      ),
+                    );
+                  }),
+                  ...restaurant.modeDePaiement.map((mode) {
+                    IconData? iconData;
+                    switch (mode) {
+                      case 'Espèces':
+                        iconData = Icons.monetization_on;
+                        break;
+                      case 'Carte bancaire':
+                        iconData = Icons.credit_card;
+                        break;
+                      case 'Tickets Restaurant':
+                        iconData = Icons.book;
+                        break;
+                      default:
+                        iconData = null;
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.blueGrey, // Couleur du cercle autour de l'icône
+                        ),
+                        padding: const EdgeInsets.all(8.0), // Ajustez la taille du cercle selon vos préférences
+                        child: Icon(
+                          iconData ?? Icons.error, // Assurez-vous que l'icône n'est pas nulle
+                          color: Colors.white, // Couleur de l'icône à l'intérieur du cercle
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        height: 2,
+        color: const Color.fromARGB(181, 158, 156, 156),
+      );
+    }
+  },
+)
+
       : const Center(
           child: Text('Aucun restaurant trouvé pour cette adresse.'),
         ),
