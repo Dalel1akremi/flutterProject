@@ -20,9 +20,10 @@ class Restaurant {
 }
 
 class SalesTermsPage extends StatefulWidget {
-  const SalesTermsPage({Key? key}) : super(key: key);
+  const SalesTermsPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SalesTermsPageState createState() => _SalesTermsPageState();
 }
 
@@ -129,6 +130,7 @@ class _SalesTermsPageState extends State<SalesTermsPage> {
                           ? Text(_selectedRestaurant!)
                           : const Text('Choisissez un restaurant'),
                     ),
+                    controller: _expansionTileController,
                     children: restaurants.map((restaurant) {
                       return ListTile(
                         title: Text(restaurant.nom),
@@ -140,7 +142,6 @@ class _SalesTermsPageState extends State<SalesTermsPage> {
                         },
                       );
                     }).toList(),
-                    controller: _expansionTileController,
                   ),),
                   const Padding(
                     padding: EdgeInsets.all(8.0),

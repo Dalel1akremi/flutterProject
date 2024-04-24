@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 
@@ -276,7 +278,7 @@ final authProvider = Provider.of<AuthProvider>(context, listen: false);
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Icon(iconData),
                             );
-                          }).toList(),
+                          }),
                           ...restaurant.modeDePaiement.map((mode) {
                             IconData? iconData;
                             switch (mode) {
@@ -296,7 +298,7 @@ final authProvider = Provider.of<AuthProvider>(context, listen: false);
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Icon(iconData),
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),

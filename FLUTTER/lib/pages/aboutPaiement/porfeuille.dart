@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import this
 
 class Portefeuille extends StatefulWidget {
-  const Portefeuille({Key? key}) : super(key: key);
+  const Portefeuille({super.key});
 
   @override
   _PortefeuilleState createState() => _PortefeuilleState();

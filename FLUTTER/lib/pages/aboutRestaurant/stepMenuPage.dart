@@ -16,7 +16,7 @@ class StepMenuPage extends StatefulWidget {
   final List<dynamic> id_Steps;
 
   const StepMenuPage({
-    Key? key,
+    super.key,
     // ignore: non_constant_identifier_names
     required this.id_item,
     required this.nom,
@@ -25,7 +25,7 @@ class StepMenuPage extends StatefulWidget {
     // ignore: non_constant_identifier_names
     required this.id_Steps,
     
-  }) : super(key: key);
+  });
 
   @override
   // ignore: library_private_types_in_public_api

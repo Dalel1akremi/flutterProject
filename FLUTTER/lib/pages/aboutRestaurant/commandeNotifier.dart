@@ -55,6 +55,7 @@ class CommandesModel with ChangeNotifier {
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       await checkEncoursState(context);
+      // ignore: use_build_context_synchronously
       await checkPassState(context);
     });
   }

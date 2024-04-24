@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_super_parameters, use_build_context_synchronously
 
 import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/foundation.dart';

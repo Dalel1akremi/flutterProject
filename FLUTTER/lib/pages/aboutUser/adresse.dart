@@ -6,9 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './../global.dart';
 
 class AddressSearchScreen extends StatefulWidget {
-  const AddressSearchScreen({Key? key}) : super(key: key);
+  const AddressSearchScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddressSearchScreenState createState() => _AddressSearchScreenState();
 }
 

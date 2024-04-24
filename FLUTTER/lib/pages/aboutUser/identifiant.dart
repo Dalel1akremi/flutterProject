@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'profile.dart';
 
 class ProfileDetailsPage extends StatefulWidget {
-  const ProfileDetailsPage({Key? key}) : super(key: key);
+  const ProfileDetailsPage({super.key});
 
   @override
   _ProfileDetailsPageState createState() => _ProfileDetailsPageState();
@@ -46,11 +48,10 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
           .get(Uri.parse('http://192.168.2.65:3000/getUser?email=$_email'));
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic>? userData =
+        final Map<String, dynamic> userData =
             json.decode(response.body) as Map<String, dynamic>;
        
-        if (userData != null &&
-            userData.containsKey('nom') &&
+        if (userData.containsKey('nom') &&
             userData.containsKey('prenom') &&
             userData.containsKey('telephone')) {
           setState(() {
@@ -83,30 +84,28 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
       await prefs.setString('token', token);
       await prefs.setString('userId', userId);
       await prefs.setString('userEmail', userEmail);
-      // Sauvegarder d'autres données si nécessaire
-      return true; // Indiquer que les données ont été sauvegardées avec succès
-    } catch (e) {
+      return true; 
+      } catch (e) {
       if (kDebugMode) {
         print('Failed to save data to local storage: $e');
       }
-      return false; // Indiquer que les données n'ont pas été sauvegardées avec succès
-    }
+      return false;
+       }
   }
 Future<bool> saveNameToStorage(String name) async {
   try {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('nom', name);
-    return true; // Indiquer que les données ont été sauvegardées avec succès
-  } catch (e) {
+    return true;
+    } catch (e) {
     if (kDebugMode) {
       print('Failed to save name to local storage: $e');
     }
-    return false; // Indiquer que les données n'ont pas été sauvegardées avec succès
-  }
+    return false;
+     }
 }
 
   Future<void> updateUserData(BuildContext context, String userEmail) async {
-    // Récupération du fournisseur d'authentification depuis le contexte
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? '';
     final String userId = prefs.getString('userId') ?? '';

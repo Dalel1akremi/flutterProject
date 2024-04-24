@@ -10,8 +10,8 @@ import './../aboutUser/login.dart';
 
 class RestaurantDetail extends StatefulWidget {
   const RestaurantDetail({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _RestaurantDetailState createState() => _RestaurantDetailState();

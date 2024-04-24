@@ -16,14 +16,14 @@ class ItemDetailsPage extends StatelessWidget {
   final List<dynamic> id_Steps;
 
   const ItemDetailsPage({
-    Key? key,
+    super.key,
     required this.id_item,
     required this.nom,
     required this.img,
     required this.prix,
     required this.id_Steps,
     required this.id_rest,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

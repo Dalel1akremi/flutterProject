@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, unused_local_variable, avoid_web_libraries_in_flutter
+// ignore_for_file: use_build_context_synchronously, unused_local_variable, avoid_web_libraries_in_flutter, library_prefixes
 
 import 'package:demo/pages/aboutPaiement/panier.dart';
 import 'package:demo/pages/aboutRestaurant/conditionDuitilisation.dart';
@@ -22,8 +22,8 @@ import 'package:demo/pages/aboutUser/auth_provider.dart' as CustomAuthProvider;
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
   const loginPage({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -156,7 +158,9 @@ if (kDebugMode) {
         throw Exception('Sign-in failed');
       }
     } catch (error) {
-      print('Error signing in: $error');
+      if (kDebugMode) {
+        print('Error signing in: $error');
+      }
       rethrow;
     }
   }
@@ -165,7 +169,9 @@ if (kDebugMode) {
     try {
       await signInWithCredential(credential); // Utilisation de signInWithCredential pour Google sign-in
     } catch (error) {
-      print('Error signing in with Google: $error');
+      if (kDebugMode) {
+        print('Error signing in with Google: $error');
+      }
       rethrow;
     }
   }
@@ -182,7 +188,6 @@ if (kDebugMode) {
     await prefs.remove('telephone');
     await prefs.remove('nom');
   
-    // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const loginPage()),

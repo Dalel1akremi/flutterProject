@@ -16,7 +16,7 @@ void main() {
 }
 
 class CommandeApp extends StatefulWidget {
-  const CommandeApp({Key? key}) : super(key: key);
+  const CommandeApp({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -56,11 +56,11 @@ class CommandeScreen extends StatelessWidget {
   final Panier panier;
 
   const CommandeScreen({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTabTapped,
     required this.panier,
-  }) : super(key: key);
+  });
 
   Future<void> makePhoneCall(String phoneNumber) async {
     if (kDebugMode) {

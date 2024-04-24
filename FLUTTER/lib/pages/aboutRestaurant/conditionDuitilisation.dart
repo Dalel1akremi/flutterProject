@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 class TermsOfUsePage extends StatelessWidget {
-  const TermsOfUsePage({Key? key}) : super(key: key);
+  const TermsOfUsePage({super.key});
 
   @override
   Widget build(BuildContext context) {

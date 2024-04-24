@@ -1,7 +1,7 @@
 import 'package:demo/pages/aboutRestaurant/commandeNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './pages/aboutUser/auth_provider.dart'as customAuth;
+import './pages/aboutUser/auth_provider.dart';
 import './pages/aboutRestaurant/acceuil.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -23,13 +23,13 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-         ChangeNotifierProvider(create: (_) => customAuth.AuthProvider()), 
+         ChangeNotifierProvider(create: (_) => AuthProvider()), 
          ChangeNotifierProvider(create: (_) => CommandesModel()),
       ],
       child: const MaterialApp(
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
 }
 
 class AppStart extends StatelessWidget {
-  const AppStart({Key? key}) : super(key: key);
+  const AppStart({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class AppStart extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

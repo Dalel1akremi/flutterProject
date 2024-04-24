@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:demo/pages/aboutUser/adresse.dart';
 import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/foundation.dart';
@@ -194,14 +196,10 @@ Future<void> initAuthProvider() async {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async {
-                // Récupérer le token depuis le stockage local
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 String? token = prefs.getString('token');
 
-                // Vérifier si un token est présent dans le stockage local
                 if (token != null && token.isNotEmpty) {
-                  // Utilisateur authentifié, naviguer vers la page de paiement
-                  // ignore: use_build_context_synchronously
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -209,9 +207,7 @@ Future<void> initAuthProvider() async {
                     ),
                   );
                 } else {
-                  // Utilisateur non authentifié, naviguer vers la page de connexion
                   panier.origin = 'panier';
-                  // ignore: use_build_context_synchronously
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const loginPage()),
@@ -276,9 +272,7 @@ Future<void> initAuthProvider() async {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                 String? token = prefs.getString('token');
 
-                // Vérifier si un token est présent dans le stockage local
                 if (token != null && token.isNotEmpty) {
-                        // ignore: use_build_context_synchronously
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -287,7 +281,6 @@ Future<void> initAuthProvider() async {
                         );
                       } else {
                         panier.origin = 'livraison';
-                        // ignore: use_build_context_synchronously
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -329,7 +322,6 @@ Future<void> initAuthProvider() async {
                         selectedTime = pickedTime;
                       });
                     } else {
-                      // ignore: use_build_context_synchronously
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
