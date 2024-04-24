@@ -164,6 +164,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
             : null,
       ),
     ),
+  
   ),
 ),
 
@@ -216,6 +217,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ],
                 ),
               ),
+            
               const SizedBox(height: 10),
               Container(
                 width: 1500,
