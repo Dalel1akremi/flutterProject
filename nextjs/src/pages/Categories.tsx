@@ -34,7 +34,7 @@ const CategoriesPage = () => {
 
   const getCategories = async (id_rest: string) => {
     try {
-      const response = await axios.get(`http://localhost:3000/getCategoriesAd?id_rest=${id_rest}`);
+      const response = await axios.get(`http://192.168.2.65:3000/getCategoriesAd?id_rest=${id_rest}`);
       setCategories(response.data.data);
     } catch (error) {
       console.error('Erreur lors de la récupération des catégories :', error);
@@ -45,7 +45,7 @@ const CategoriesPage = () => {
     try {
       setIsLoading(true);
       const newIsArchived = !isArchived; 
-      const response = await axios.put(`http://localhost:3000/ArchivedCategorie/${_id}`, { isArchived: newIsArchived });
+      const response = await axios.put(`http://192.168.2.65:3000/ArchivedCategorie/${_id}`, { isArchived: newIsArchived });
       console.log('Réponse de l\'API pour ArchiverStep:', response.data);
       setCategories(prevCategories =>
         prevCategories.map(category =>
@@ -68,7 +68,7 @@ const CategoriesPage = () => {
 
   const handleUpdateCategory = async (id_cat: string) => {
     try {
-      await axios.put(`http://localhost:3000/updateCategory/${id_cat}`, { nom_cat: newCategoryName });
+      await axios.put(`http://192.168.2.65:3000/updateCategory/${id_cat}`, { nom_cat: newCategoryName });
       getCategories(idRest);
       setEditingCategoryId('');
       setNewCategoryName('');

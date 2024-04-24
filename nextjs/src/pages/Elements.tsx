@@ -33,7 +33,7 @@ const Steps = () => {
       try {
         const decodedToken = jwt.decode(token) as { [key: string]: any };
         const { id_rest } = decodedToken;
-        const response = await axios.get(`http://localhost:3000/getStepsByRestaurantId?id_rest=${id_rest}`);
+        const response = await axios.get(`http://192.168.2.65:3000/getStepsByRestaurantId?id_rest=${id_rest}`);
         setSteps(response.data.steps);
       } catch (error) {
         console.error('Erreur lors de la récupération des steps :', error);
@@ -58,7 +58,7 @@ const Steps = () => {
   const handleObligationToggle = async (stepId: string, currentValue: boolean) => {
     try {
       setIsLoading(true);
-      await axios.put(`http://localhost:3000/ObligationStep/${stepId}`, { is_Obligatoire: !currentValue });
+      await axios.put(`http://192.168.2.65:3000/ObligationStep/${stepId}`, { is_Obligatoire: !currentValue });
       setSteps(prevSteps =>
         prevSteps.map(step =>
           step._id === stepId ? { ...step, is_Obligatoire: !currentValue } : step
@@ -107,7 +107,7 @@ const Steps = () => {
   
       setSteps(updatedSteps);
   
-      await axios.put(`http://localhost:3000/updateStep?_id=${_id}`, {
+      await axios.put(`http://192.168.2.65:3000/updateStep?_id=${_id}`, {
         nom_Step: editedItem.nom_Step,
         id_items: updatedIdItems,
       });
@@ -123,7 +123,7 @@ const Steps = () => {
   const handleArchivedToggle = async (_id: string, isArchived: boolean) => {
     try {
       setIsLoading(true);
-      const response = await axios.put(`http://localhost:3000/ArchiverStep/${_id}`, { isArchived: !isArchived });
+      const response = await axios.put(`http://192.168.2.65:3000/ArchiverStep/${_id}`, { isArchived: !isArchived });
       console.log('Réponse de l\'API pour ArchiverStep:', response.data); 
       setSteps(prevSteps =>
         prevSteps.map(step =>

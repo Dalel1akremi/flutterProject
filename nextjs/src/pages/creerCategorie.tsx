@@ -1,81 +1,123 @@
-import { useState, useEffect } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import Navbar from '../styles/navbar';
-import jwt from 'jsonwebtoken'; // Importer la bibliothèque jwt pour décoder le token
-import React from 'react';
+import jwt from 'jsonwebtoken';
+import { useRouter } from 'next/router';
 
-const CreateCategoriePage = () => {
+interface FormData {
+  nom_cat: string;
+  id_rest: string;
+  image: File | null;
+  [key: string]: string | File | null;
+}
+
+export default function AddCategorie() {
+  const [formData, setFormData] = useState<FormData>({
+    nom_cat: '',
+    id_rest: '',
+    image: null,
+  });
+
+  const [message, setMessage] = useState<string>('');
+  const [isError, setIsError] = useState<boolean>(false);
   const router = useRouter();
-  const [nomCat, setNomCat] = useState('');
-  const [message, setMessage] = useState('');
-  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
+    // Decode token and set restaurant ID
     const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/connexion');
+    if (token) {
+      const decodedToken = jwt.decode(token) as { [key: string]: any };
+      const { id_rest } = decodedToken;
+      setFormData(prevState => ({
+        ...prevState,
+        id_rest: decodedToken.id_rest,
+      }));
     }
   }, []);
 
-  const handleCreateCategorie = async () => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ?? [];
+    if (files.length > 0) {
+      setFormData(prevState => ({
+        ...prevState,
+        image: files[0],
+      }));
+    }
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      if (token) {
-        const decodedToken = jwt.decode(token) as { [key: string]: any };
-        const { id_rest } = decodedToken; 
-  
-        const nomCatNormalized = nomCat.charAt(0).toUpperCase() + nomCat.slice(1).toLowerCase();
-  
-        const response = await axios.post('http://localhost:3000/createCategorie', {
-          nom_cat: nomCatNormalized,
-          id_rest: id_rest, 
-        });
-  
-        if (response.data.status === 200) {
-          setMessage('Catégorie créée avec succès');
-          router.push('/Categories');
-          setIsError(false); 
-        } else {
-          setMessage(response.data.message);
-          setIsError(true); 
+      const formDataToSend = new FormData();
+      for (const key in formData) {
+        const value = formData[key];
+        if (value !== null) {
+          if (key === 'image') {
+            formDataToSend.append(key, value as File);
+          } else {
+            formDataToSend.append(key, value.toString());
+          }
         }
-      } 
-    } catch (error: any) {
-      setIsError(true); 
-      if (error.response && error.response.data.status === 400 && error.response.data.message === 'Cette catégorie existe déjà') {
-        setMessage('erreur,Cette catégorie existe déjà');
-      } else {
-        setMessage('Une erreur est survenue lors de la création de la catégorie');
       }
+
+      const response = await axios.post('http://192.168.2.65:3000/createCategorie', formDataToSend);
+      setMessage(response.data.message);
+      setIsError(false);
+      setFormData({
+        nom_cat: '',
+        id_rest: '', // Reset id_rest if needed
+        image: null,
+      });
+      router.push('/Categories'); // Fix the redirection URL
+    } catch (error: any) {
+      setMessage(error.response.data.message);
+      setIsError(true);
+      console.error('Error adding categorie:', error);
     }
   };
 
   return (
     <div>
       <Navbar />
-      <div style={{ maxWidth: '400px', margin: 'auto', textAlign: 'center' }}>
-        <h1 style={{ marginBottom: '20px' }}>Créer une nouvelle catégorie</h1>
-        <input
-          type="text"
-          placeholder="Nom de la catégorie"
-          value={nomCat}
-          onChange={e => setNomCat(e.target.value)}
-          style={{ marginBottom: '10px', padding: '8px', borderRadius: '5px', border: '1px solid #ccc', width: '100%' }}
-        />
-
-        <button onClick={handleCreateCategorie} style={{ padding: '10px 20px', borderRadius: '5px', background: '#007bff', color: '#fff', border: 'none', cursor: 'pointer' }}>Créer</button>
-        
-        {/* Utilisation d'une classe CSS dynamique en fonction de isError */}
-        <div style={{ marginTop: '20px', backgroundColor: message.includes('succès') ? 'green' : message.includes('erreur') ? 'red' : 'white', padding: '10px', borderRadius: '5px', color: 'white' }}>
-  {message}
-</div>
-
-
+      <div className="container">
+        <h1>Ajouter un nouvel item</h1>
+        <form onSubmit={handleSubmit} className="form">
+          {/* Form inputs */}
+          <div className="formGroup">
+            <label className="input-label">Nom:</label>
+            <input type="text" className="input" name="nom_cat" placeholder="Nom" value={formData.nom_cat} onChange={handleChange} required />
+          </div>
+          
+          <div className="formGroup">
+            <label className="input-label">Image:</label>
+            <input type="file" className="file-input" accept="image/*" onChange={handleImageChange} />
+          </div>
+          <button type="submit" className="submit-button">Ajouter</button>
+        </form>
       </div>
+      {message && (
+        <div 
+          className={isError ? "error-message" : "success-message"}
+          style={{
+            textAlign: 'center',
+            backgroundColor: isError ? 'red' : 'green',
+            padding: '10px',
+            margin: '20px auto',
+            borderRadius: '5px',
+            width: 'fit-content',
+          }}
+        >
+          {message}
+        </div>
+      )}
     </div>
   );
-};
-
-
-export default CreateCategoriePage;
+}
