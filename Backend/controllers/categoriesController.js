@@ -45,7 +45,10 @@ const createCategorie = async (req, res) => {
 const getCategories = async (req, res) => {
   try {
     const { id_rest } = req.query;
-    const categories = await Categories.find({ id_rest: id_rest ,'isArchived': false}, 'nom_cat  id_cat ,image, isArchived');
+    const categories = await Categories.find(
+      { id_rest: id_rest, 'isArchived': false }, 
+      'nom_cat id_cat image isArchived'
+    );
     res.status(200).json({
       status: 200,
       message: "Succès de récupération des catégories",
@@ -59,6 +62,7 @@ const getCategories = async (req, res) => {
     });
   }
 };
+
 const getCategoriesAd = async (req, res) => {
   try {
     const { id_rest } = req.query;
