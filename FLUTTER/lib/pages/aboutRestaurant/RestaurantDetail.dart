@@ -140,34 +140,33 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height / 2,
-                  width: 1000,
-                  child: Container(
-                    height: restaurantLogo != null
-                        ? MediaQuery.of(context).size.height / 3.5
-                        : 0,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      image: restaurantImage != null
-                          ? DecorationImage(
-                              image: NetworkImage(restaurantImage),
-                              fit: BoxFit.contain)
-                          : null,
-                      borderRadius: BorderRadius.circular(15.0),     
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.white.withOpacity(0.5),
-                          spreadRadius: 5,
-                          blurRadius: 1,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+  Center(
+  child: SizedBox(
+    height: MediaQuery.of(context).size.height / 3,
+    width: 2000,
+    child: Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),     
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 1,
+            offset: const Offset(0, 3),
+          ),
+        ],
+        image: restaurantImage != null
+            ? DecorationImage(
+                image: NetworkImage(restaurantImage),
+                fit: BoxFit.cover,
+              )
+            : null,
+      ),
+    ),
+  ),
+),
+
    Container(
   decoration: BoxDecoration(
     border: Border.all(color: const Color.fromARGB(255, 234, 231, 231)),
