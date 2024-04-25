@@ -313,7 +313,7 @@ ListView.builder(
                     return Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration:const BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.blueGrey, // Couleur du cercle autour de l'icône
                         ),
