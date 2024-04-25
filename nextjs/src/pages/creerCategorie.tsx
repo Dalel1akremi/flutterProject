@@ -76,7 +76,7 @@ export default function AddCategorie() {
         id_rest: '', // Reset id_rest if needed
         image: null,
       });
-      router.push('/Categories'); // Fix the redirection URL
+      router.push('/categories'); // Rediriger vers la bonne URL
     } catch (error: any) {
       setMessage(error.response.data.message);
       setIsError(true);
