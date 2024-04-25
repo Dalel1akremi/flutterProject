@@ -89,37 +89,43 @@ class _PortefeuilleState extends State<Portefeuille> {
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: const Text('Portefeuille payline'),
       ),
-       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
+     body: SingleChildScrollView(
+  padding: const EdgeInsets.all(16.0),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Container(
+        height: MediaQuery.of(context).size.height / 3,
+        decoration: BoxDecoration(
+          image: const DecorationImage(
+            image: AssetImage('images/paiement.png'), 
+            fit: BoxFit.fitHeight,
+          ),
+          borderRadius: BorderRadius.circular(15.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 1,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+      ), 
+      const Divider(),
+      const Text(
+        'Enregistre ma carte',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18.0,
+        ),
+      ),
+      const SizedBox(height: 8.0),  
+      Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: MediaQuery.of(context).size.height / 3,
-              decoration: BoxDecoration(
-                image: const DecorationImage(
-                  image: AssetImage('images/paiement.png'), 
-                  fit: BoxFit.fitHeight,
-                ),
-                borderRadius: BorderRadius.circular(15.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.white.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 1,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-            ), 
-             const Divider(),
-            const Text('Enregistre ma carte'),
-             Form(
-          key: _formKey,
-          
-          child: Column(
-           
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
               TextFormField(
                 controller: cardNumberController,
                 decoration: const InputDecoration(
