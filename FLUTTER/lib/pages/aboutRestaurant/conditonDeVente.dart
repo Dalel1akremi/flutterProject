@@ -42,7 +42,7 @@ class _SalesTermsPageState extends State<SalesTermsPage> {
 
   Future<List<Restaurant>> _fetchRestaurants() async {
     final response = await http
-        .get(Uri.parse('http://192.168.2.65:3000/getAllRestaurantNames'));
+        .get(Uri.parse('http://192.168.2.61:3000/getAllRestaurantNames'));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);

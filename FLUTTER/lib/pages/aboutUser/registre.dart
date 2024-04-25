@@ -66,7 +66,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       String email,
       String password,
       String confirmPassword) async {
-    const String apiUrl = "http://192.168.2.65:3000/register";
+    const String apiUrl = "http://192.168.2.61:3000/register";
 
     try {
       final response = await http.post(

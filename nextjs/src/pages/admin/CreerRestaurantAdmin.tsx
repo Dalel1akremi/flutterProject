@@ -112,7 +112,7 @@ const CreateRestaurantPage = () => {
         }
       }
 
-      const response = await axios.post('http://localhost:3000/createRestaurant', formDataToSend, {
+      const response = await axios.post('http://192.168.2.61:3000/createRestaurant', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

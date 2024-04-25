@@ -40,7 +40,7 @@ class _NextPageState extends State<NextPage> {
       if (idRest == null) {
         throw Exception('Restaurant ID is null');
       }
-      final response = await http.get(Uri.parse('http://192.168.2.65:3000/getCategories?id_rest=$idRest'));
+      final response = await http.get(Uri.parse('http://192.168.2.61:3000/getCategories?id_rest=$idRest'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body)['data'];
@@ -63,7 +63,7 @@ class _NextPageState extends State<NextPage> {
       if (idRest == null) {
         throw Exception('Restaurant ID is null');
       }
-      final response = await http.get(Uri.parse('http://192.168.2.65:3000/getItem?id_cat=$idCat&id_rest=$idRest'));
+      final response = await http.get(Uri.parse('http://192.168.2.61:3000/getItem?id_cat=$idCat&id_rest=$idRest'));
 
       if (response.statusCode == 200) {
         final List<dynamic>? responseData = json.decode(response.body)['formattedItems'];

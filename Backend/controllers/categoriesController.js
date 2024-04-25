@@ -3,7 +3,7 @@ const createCategorie = async (req, res) => {
   try {
     const { body, file } = req;
     let { nom_cat, id_rest } = body;
-    const imageUrl = file ? `http://192.168.2.65:3000/images/${file.filename}` : null;
+    const imageUrl = file ? `http://192.168.2.61:3000/images/${file.filename}` : null;
     nom_cat = nom_cat.charAt(0).toUpperCase() + nom_cat.slice(1).toLowerCase();
     const existingCategorie = await Categories.findOne({ nom_cat, id_rest });
 

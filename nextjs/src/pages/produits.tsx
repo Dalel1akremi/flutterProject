@@ -55,7 +55,7 @@ const Produits = () => {
         const decodedToken = jwt.decode(token) as { [key: string]: any };
         const { id_rest } = decodedToken;
         setIsLoading(true);
-        const response = await axios.get(`http://192.168.2.65:3000/getItemsByRestaurantId?id_rest=${id_rest}`);
+        const response = await axios.get(`http://192.168.2.61:3000/getItemsByRestaurantId?id_rest=${id_rest}`);
         setItems(response.data.items);
         setIsLoading(false);
       } catch (error) {
@@ -74,7 +74,7 @@ const Produits = () => {
           item._id === itemId ? { ...item, isArchived: !currentValue } : item
         )
       );
-      await axios.put(`http://192.168.2.65:3000/ArchiverItem/${itemId}`, { isArchived: !currentValue });
+      await axios.put(`http://192.168.2.61:3000/ArchiverItem/${itemId}`, { isArchived: !currentValue });
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut isArchived :', error);
     }
@@ -100,7 +100,7 @@ const Produits = () => {
   const getNomStepById = async (id_Step: number) => {
     try {
       console.log('Appel de getNomItemById avec id_item :', id_Step);
-      const response = await axios.get(`http://192.168.2.65:3000/getNomStepById/${id_Step}`);
+      const response = await axios.get(`http://192.168.2.61:3000/getNomStepById/${id_Step}`);
       console.log('Réponse de getNomItemById :', response.data);
       setStepName(response.data.nom_Step);
       setSelectedStepId(id_Step);
@@ -119,7 +119,7 @@ const Produits = () => {
       }
       const { _id } = editedItem!;
       setIsLoading(true);
-      await axios.put(`http://192.168.2.65:3000/updateItem?itemId=${_id}`, {
+      await axios.put(`http://192.168.2.61:3000/updateItem?itemId=${_id}`, {
         nom: editedItem?.nom,
         prix: editedPrix,
         description: editedDescription,
@@ -130,7 +130,7 @@ const Produits = () => {
         id_Steps: editedIdSteps 
       });
   
-      const response = await axios.get(`http://192.168.2.65:3000/getItemById?itemId=${_id}`);
+      const response = await axios.get(`http://192.168.2.61:3000/getItemById?itemId=${_id}`);
       setEditedItem(response.data.data);
       setEditingItemId(null);
       setEditedPrix(null);

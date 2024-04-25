@@ -101,7 +101,7 @@ Future<void> initAuthProvider() async {
         title: const Text("Panier"),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),

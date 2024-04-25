@@ -72,7 +72,7 @@ export default function AddRedirect() {
       }
       
 
-      const response = await axios.post('http://192.168.2.65:3000/createRedirect', formDataToSend);
+      const response = await axios.post('http://192.168.2.61:3000/createRedirect', formDataToSend);
       setMessage(response.data.message);
       setIsError(false);
       setFormData({

@@ -118,7 +118,7 @@ Future<bool> saveNameToStorage(String name) async {
 
     try {
       final response = await http.put(
-        Uri.parse('http://192.168.2.65:3000/updateUser?email=$_email'),
+        Uri.parse('http://192.168.2.61:3000/updateUser?email=$_email'),
         body: jsonEncode(updatedData),
         headers: {
           'Content-Type': 'application/json',

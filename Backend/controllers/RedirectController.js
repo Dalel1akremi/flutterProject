@@ -16,7 +16,7 @@ const createRedirect  = async (req, res) => {
       is_Menu,
       id_rest,
     } = body;
-    const imageUrl = file ? `http://192.168.2.65:3000/images/${file.filename}` : null;
+    const imageUrl = file ? `http://192.168.2.61:3000/images/${file.filename}` : null;
     const validatedPrix = parseFloat(prix);
     const validatedIsArchived = Boolean(isArchived);
     const validatedQuantite = parseInt(quantite);

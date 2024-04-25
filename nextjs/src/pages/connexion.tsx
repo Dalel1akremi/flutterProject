@@ -23,7 +23,7 @@ const Connexion = () => {
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://192.168.2.65:3000/loginAdmin', formData);
+      const response = await axios.post('http://192.168.2.61:3000/loginAdmin', formData);
       localStorage.setItem('token', response.data.token);
       setSuccessMessage(response.data.message);
       setErrorMessage('');
