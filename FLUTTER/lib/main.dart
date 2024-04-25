@@ -60,8 +60,8 @@ class HomeScreen extends StatelessWidget {
           Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: BoxDecoration(
-              image: const DecorationImage(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
                 image: AssetImage('images/acceuil.jpeg'),
                 fit: BoxFit.cover,
               ),
@@ -82,7 +82,7 @@ class HomeScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-              const SizedBox(height: 30),  // Espace entre les textes et les boutons
+              const SizedBox(height: 30),  
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
