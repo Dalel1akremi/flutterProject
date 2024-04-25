@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:demo/pages/aboutUser/adresse.dart';
 import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/foundation.dart';
@@ -11,11 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PanierPage extends StatefulWidget {
   const PanierPage({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _PanierPageState createState() => _PanierPageState();
 }
 
@@ -97,14 +94,13 @@ Future<void> initAuthProvider() async {
   }
 
   @override
- Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-      title: const Text("Panier"),
-    ),
-    body: SingleChildScrollView(
-      child: Column(
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
+        title: const Text("Panier"),
+      ),
+      body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
@@ -150,43 +146,43 @@ Future<void> initAuthProvider() async {
             color: Colors.black,
             thickness: 2,
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: panier.length,
-            itemBuilder: (context, index) {
-              final article = panier[index];
-              return ListTile(
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${article.quantite} x ${article.nom}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: article.elementsChoisis
-                          .map((element) => Text('     $element'))
-                          .toList(),
-                    ),
-                    if (article.remarque.isNotEmpty)
+          Expanded(
+            child: ListView.builder(
+              itemCount: panier.length,
+              itemBuilder: (context, index) {
+                final article = panier[index];
+                return ListTile(
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        'Remarque: ${article.remarque}',
+                        '${article.quantite} x ${article.nom}',
                         style: const TextStyle(
-                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                  ],
-                ),
-                trailing: Text('Prix: ${article.prix} €'),
-                onTap: () {
-                  showUpdateQuantityDialog(article);
-                },
-              );
-            },
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: article.elementsChoisis
+                            .map((element) => Text('     $element'))
+                            .toList(),
+                      ),
+                      if (article.remarque.isNotEmpty)
+                        Text(
+                          'Remarque: ${article.remarque}',
+                          style: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                    ],
+                  ),
+                  trailing: Text('Prix: ${article.prix} €'),
+                  onTap: () {
+                    showUpdateQuantityDialog(article);
+                  },
+                );
+              },
+            ),
           ),
           const Divider(
             color: Colors.black,
@@ -196,10 +192,13 @@ Future<void> initAuthProvider() async {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async {
+                // Récupérer le token depuis le stockage local
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 String? token = prefs.getString('token');
 
+                // Vérifier si un token est présent dans le stockage local
                 if (token != null && token.isNotEmpty) {
+                  // Utilisateur authentifié, naviguer vers la page de paiement
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -207,6 +206,7 @@ Future<void> initAuthProvider() async {
                     ),
                   );
                 } else {
+                  // Utilisateur non authentifié, naviguer vers la page de connexion
                   panier.origin = 'panier';
                   Navigator.push(
                     context,
@@ -247,9 +247,8 @@ Future<void> initAuthProvider() async {
           ),
         ],
       ),
-    ),
-  );
-}
+    );
+  }
 
   void showEditDialog() async {
     Map<String, dynamic>? newSelections = await showDialog(
@@ -272,6 +271,7 @@ Future<void> initAuthProvider() async {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                 String? token = prefs.getString('token');
 
+                // Vérifier si un token est présent dans le stockage local
                 if (token != null && token.isNotEmpty) {
                         Navigator.push(
                           context,
