@@ -95,11 +95,12 @@ class _PortefeuilleState extends State<Portefeuille> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Container(
-        height: MediaQuery.of(context).size.height / 3,
+        width: MediaQuery.of(context).size.width, 
+        height: MediaQuery.of(context).size.width / 2,  
         decoration: BoxDecoration(
           image: const DecorationImage(
             image: AssetImage('images/paiement.png'), 
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.contain,  
           ),
           borderRadius: BorderRadius.circular(15.0),
           boxShadow: [
