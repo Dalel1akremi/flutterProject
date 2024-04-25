@@ -4,7 +4,7 @@
     <application
         android:label="RestoList FR"
         android:name="${applicationName}"
-        android:icon="@mipmap/restaurant"
+        android:icon="@mipmap/res"
         tools:replace="android:label"
         android:usesCleartextTraffic="true">
         <activity
