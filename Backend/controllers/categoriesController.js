@@ -2,10 +2,9 @@ const mongoose = require('mongoose');
 const Categories = require('../models/categoriesModel');
 const createCategorie = async (req, res) => {
   try {
-    let { nom_cat, id_rest } = req.body;
-    const file=res.file;
+    const { body, file } = req;
+    let { nom_cat, id_rest } = body;
     const imageUrl = file ? `http://192.168.2.65:3000/images/${file.filename}` : null;
- 
     nom_cat = nom_cat.charAt(0).toUpperCase() + nom_cat.slice(1).toLowerCase();
     const existingCategorie = await Categories.findOne({ nom_cat, id_rest });
 
