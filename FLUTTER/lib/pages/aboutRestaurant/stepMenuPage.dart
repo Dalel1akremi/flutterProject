@@ -103,11 +103,11 @@ class _StepMenuPageState extends State<StepMenuPage> {
           title: Text(widget.nom),
           backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         ),
-        body: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+        body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
                 Image.network(
                   widget.img,
                   width: 300,
@@ -236,11 +236,17 @@ class _StepMenuPageState extends State<StepMenuPage> {
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
-                    onPressed: areAllRequiredElementsSelected()
-                        ? () {
+                 ],
+          ),
+        ),
+      ),
+                bottomNavigationBar: Container(
+          color: Colors.white, 
+          child:Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ElevatedButton(
+            onPressed: areAllRequiredElementsSelected()
+                ? () {
                             Article article = Article(
                               id_item: widget.id_item,
                               nom: widget.nom,
@@ -302,10 +308,10 @@ class _StepMenuPageState extends State<StepMenuPage> {
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-        ));
+        ),
+            );
+         
+  
   }
 
   void toggleListeVisibility(String stepName) {
