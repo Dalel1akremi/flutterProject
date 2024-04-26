@@ -47,7 +47,7 @@ const CommandesPage = () => {
 
   const fetchCommandes = async (id_rest: any) => {
     try {
-      const response = await axios.get<Commande[]>(`http://localhost:3000/getCommandes?id_rest=${id_rest}`);
+      const response = await axios.get<Commande[]>(`http://192.168.2.61:3000/getCommandes?id_rest=${id_rest}`);
       setCommandes(response.data);
     } catch (error) {
       console.error('Erreur lors de la récupération des commandes :', error);
