@@ -422,74 +422,102 @@ Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
           .addAll(modepaiement.split(',').map((mode) => mode.trim()));
     }
   bool showCreditCardCheckbox = selectedPaymentMethods.contains('Carte bancaire');
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: const Text("Récapitulatif de la commande "),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+  return Scaffold(
+  appBar: AppBar(
+    backgroundColor: const Color.fromARGB(222, 212, 133, 14),
+    title: const Text("Récapitulatif de la commande "),
+  ),
+  body: SingleChildScrollView(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Commande ${mapRetraitMode(newSelectedMode ?? panier.getSelectedRetraitMode() ?? '')}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Commande ${mapRetraitMode(newSelectedMode ?? panier.getSelectedRetraitMode() ?? '')}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          'Heure de retrait : ${newSelectedTime != null ? newSelectedTime!.format(context) : panier.getCurrentSelectedTime().format(context)}',
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Heure de retrait : ${newSelectedTime != null ? newSelectedTime!.format(context) : panier.getCurrentSelectedTime().format(context)}',
-                            ),
-                            const Divider(),
-                          ],
-                        ),
-                        Text(
-                          (newSelectedMode ??
-                                      panier.getSelectedRetraitMode() ??
-                                      '') ==
-                                  'En Livraison'
-                              ? 'Adresse: ${panier.getUserAddress()}'
-                              : '',
-                          style: const TextStyle(fontSize: 16),
-                        ),
+                        const Divider(),
                       ],
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      showEditDialog();
-                    },
-                  ),
-                ],
+                    Text(
+                      (newSelectedMode ?? panier.getSelectedRetraitMode() ?? '') == 'En Livraison'
+                          ? 'Adresse: ${panier.getUserAddress()}'
+                          : '',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () {
+                  showEditDialog();
+                },
+              ),
+            ],
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Montant',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            const Spacer(),
+            Text(
+              '\$${panier.getTotalPrix()}',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const Divider(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Total',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Spacer(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const Text(
-                  'Montant',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                if (panier.getSelectedRetraitMode() == 'En Livraison')
+                  const Text(
+                    '+ Frais de livraison : \$7',
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-                const Spacer(),
                 Text(
-                  '\$${panier.getTotalPrix()}',
+                  '\$${(panier.getSelectedRetraitMode() == 'En Livraison') ? (panier.getTotalPrix() + 7) : panier.getTotalPrix()}',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -497,145 +525,115 @@ Future<void> compareCVV(String hashedCVV, String enteredCVV) async {
                 ),
               ],
             ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Total',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (panier.getSelectedRetraitMode() == 'En Livraison')
-                      const Text(
-                        '+ Frais de livraison : \$7',
-                        style: TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                    Text(
-                      '\$${(panier.getSelectedRetraitMode() == 'En Livraison') ? (panier.getTotalPrix() + 7) : panier.getTotalPrix()}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const Divider(),
-            const Text(
-              'Moyens de paiement',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Column(
-              children: [
-             if (showCreditCardCheckbox)
-                CheckboxListTile(
-                  title: const Text('Carte bancaire'),
-                  value: isCreditCardChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      isCreditCardChecked = value ?? false;
-                      if (isCreditCardChecked) {
-                        enableInStoreCheckbox = false;
-                        selectedPaymentMethod = null;
-                        fetchUserCreditCards();
-                      }
-                    });
-                  },
-                ),
-if (isCreditCardChecked && userCreditCards.isNotEmpty)
-  Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'Sélectionnez une carte bancaire :',
-        style: TextStyle(fontSize: 16, color: Colors.blue),
-      ),
-      ...userCreditCards.map((card) => RadioListTile(
-            title: Text(card.maskedCardNumber),
-            value: card.fullCardNumber,
-            groupValue: selectedCreditCard,
-            onChanged: (value) {
-              setState(() {
-                selectedCreditCard = value.toString();
-                showCVVDialog(card.cvv);
-              });
-            },
-          )),
-    ],
-  ),
-CheckboxListTile(
-  title: const Text('En magasin'),
-  value: enableInStoreCheckbox,
-  onChanged: (bool? value) {
-    setState(() {
-      enableInStoreCheckbox = value ?? false;
-      if (enableInStoreCheckbox) {
-        isCreditCardChecked = false;
-        selectedCreditCard = null; 
-      }
-    });
-  },
-),
-if (enableInStoreCheckbox)
-  Column(
-    children: [
-      for (var method in selectedPaymentMethods)
-        RadioListTile<String>(
-          title: Text(method),
-          value: method,
-          groupValue: selectedPaymentMethod,
-          onChanged: (String? value) {
-            setState(() {
-              selectedPaymentMethod = value;
-            });
-          },
-        ),
-    ],
-
-
-  
-                  ),
-              ],
-            ),
-      ElevatedButton(
-  onPressed: () async {
-    bool paymentHandled = await handlePayment(); // Attendre que handlePayment soit terminé
-
-    if (paymentHandled) {
-      Panier().viderPanier(); // Attendre que le panier soit vidé
-      // Naviguer vers la page CommandeApp
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const CommandeApp()),
-      );
-    }
-  },
-  style: ElevatedButton.styleFrom(
-    minimumSize: const Size(double.infinity, 50),
-    backgroundColor: Colors.green,
-  ),
-  child: const Text(
-    'Valider la commande',
-    style: TextStyle(color: Colors.white),
-  ),
-),
-
           ],
         ),
+        const Divider(),
+        const Text(
+          'Moyens de paiement',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Column(
+          children: [
+            if (showCreditCardCheckbox)
+              CheckboxListTile(
+                title: const Text('Carte bancaire'),
+                value: isCreditCardChecked,
+                onChanged: (bool? value) {
+                  setState(() {
+                    isCreditCardChecked = value ?? false;
+                    if (isCreditCardChecked) {
+                      enableInStoreCheckbox = false;
+                      selectedPaymentMethod = null;
+                      fetchUserCreditCards();
+                    }
+                  });
+                },
+              ),
+            if (isCreditCardChecked && userCreditCards.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Sélectionnez une carte bancaire :',
+                    style: TextStyle(fontSize: 16, color: Colors.blue),
+                  ),
+                  ...userCreditCards.map((card) => RadioListTile(
+                        title: Text(card.maskedCardNumber),
+                        value: card.fullCardNumber,
+                        groupValue: selectedCreditCard,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedCreditCard = value.toString();
+                            showCVVDialog(card.cvv);
+                          });
+                        },
+                      )),
+                ],
+              ),
+            CheckboxListTile(
+              title: const Text('En magasin'),
+              value: enableInStoreCheckbox,
+              onChanged: (bool? value) {
+                setState(() {
+                  enableInStoreCheckbox = value ?? false;
+                  if (enableInStoreCheckbox) {
+                    isCreditCardChecked = false;
+                    selectedCreditCard = null;
+                  }
+                });
+              },
+            ),
+            if (enableInStoreCheckbox)
+              Column(
+                children: [
+                  for (var method in selectedPaymentMethods)
+                    RadioListTile<String>(
+                      title: Text(method),
+                      value: method,
+                      groupValue: selectedPaymentMethod,
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedPaymentMethod = value;
+                        });
+                      },
+                    ),
+                ],
+              ),
+          ],
+        ),
+      ],
+    ),
+  ),
+  bottomNavigationBar: Container(
+    color: Colors.white,
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ElevatedButton(
+        onPressed: () async {
+          bool paymentHandled = await handlePayment();
+
+          if (paymentHandled) {
+            Panier().viderPanier();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const CommandeApp()),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(double.infinity, 50),
+          backgroundColor: Colors.green,
+        ),
+        child: const Text(
+          'Valider la commande',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 }

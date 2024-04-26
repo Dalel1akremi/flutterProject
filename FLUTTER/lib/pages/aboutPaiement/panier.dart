@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:demo/pages/aboutUser/adresse.dart';
 import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/foundation.dart';
@@ -101,7 +103,7 @@ Future<void> initAuthProvider() async {
         title: const Text("Panier"),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -114,9 +116,7 @@ Future<void> initAuthProvider() async {
                   ),
                   padding: const EdgeInsets.all(10),
                   child: Icon(
-                    getModeIcon(newSelectedMode ??
-                        panier.getSelectedRetraitMode() ??
-                        ''),
+                    getModeIcon(newSelectedMode ?? panier.getSelectedRetraitMode() ?? ''),
                     color: Colors.black,
                   ),
                 ),
@@ -192,13 +192,9 @@ Future<void> initAuthProvider() async {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async {
-                // Récupérer le token depuis le stockage local
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 String? token = prefs.getString('token');
-
-                // Vérifier si un token est présent dans le stockage local
                 if (token != null && token.isNotEmpty) {
-                  // Utilisateur authentifié, naviguer vers la page de paiement
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -206,7 +202,6 @@ Future<void> initAuthProvider() async {
                     ),
                   );
                 } else {
-                  // Utilisateur non authentifié, naviguer vers la page de connexion
                   panier.origin = 'panier';
                   Navigator.push(
                     context,
@@ -271,7 +266,6 @@ Future<void> initAuthProvider() async {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                 String? token = prefs.getString('token');
 
-                // Vérifier si un token est présent dans le stockage local
                 if (token != null && token.isNotEmpty) {
                         Navigator.push(
                           context,
@@ -375,7 +369,7 @@ Future<void> initAuthProvider() async {
       setState(() {
         newSelectedMode = newSelections['retraitMode'];
         newSelectedTime = newSelections['selectedTime'];
-        panier.updateCommandeDetails(panier.getSelectedRetraitMode() ?? '',
+        panier.updateCommandeDetails(newSelectedMode ??panier.getSelectedRetraitMode() ?? '',
             newSelectedTime ?? panier.getCurrentSelectedTime());
       });
     }
