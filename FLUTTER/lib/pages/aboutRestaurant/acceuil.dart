@@ -64,7 +64,7 @@ class Restaurant {
     return Restaurant(
       id: json['id_rest'],
       logo: json['logo'],
-      image:json['image'],
+      image: json['image'],
       nom: json['nom'],
       adresse: json['adresse'],
       modeDeRetrait: List<String>.from(json['ModeDeRetrait']),
@@ -75,8 +75,6 @@ class Restaurant {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
- 
 
   @override
   Widget build(BuildContext context) {
@@ -93,19 +91,15 @@ class MyApp extends StatelessWidget {
 class AcceuilScreen extends StatefulWidget {
   const AcceuilScreen({super.key});
 
-
-
   @override
   // ignore: library_private_types_in_public_api
   _RestaurantListState createState() => _RestaurantListState();
-  
-  void initState() {
 
+  void initState() {
     _printStorageContent();
-    
   }
- 
-   Future<void> _printStorageContent() async {
+
+  Future<void> _printStorageContent() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (kDebugMode) {
       print('Token: ${prefs.getString('token')}');
@@ -123,7 +117,6 @@ class AcceuilScreen extends StatefulWidget {
       print('Telephone: ${prefs.getString('telephone')}');
     }
   }
-
 }
 
 class _RestaurantListState extends State<AcceuilScreen> {
@@ -138,12 +131,15 @@ class _RestaurantListState extends State<AcceuilScreen> {
   }
 
   Future<void> fetchRestaurants() async {
-    final response = await http.get(Uri.parse('http://192.168.2.61:3000/getRestaurant'));
+    final response =
+        await http.get(Uri.parse('http://192.168.2.61:3000/getRestaurant'));
     if (response.statusCode == 200) {
-      final List<dynamic> responseData = json.decode(response.body)['restaurants'];
+      final List<dynamic> responseData =
+          json.decode(response.body)['restaurants'];
       setState(() {
-        restaurants = responseData.map((json) => Restaurant.fromJson(json)).toList();
-        filterRestaurants(); 
+        restaurants =
+            responseData.map((json) => Restaurant.fromJson(json)).toList();
+        filterRestaurants();
       });
     } else {
       throw Exception('Failed to load restaurants');
@@ -152,14 +148,17 @@ class _RestaurantListState extends State<AcceuilScreen> {
 
   void filterRestaurants() {
     setState(() {
-      filteredRestaurants = restaurants.where((restaurant) =>
-          restaurant.adresse.toLowerCase().contains(searchQuery.toLowerCase())).toList();
+      filteredRestaurants = restaurants
+          .where((restaurant) => restaurant.adresse
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase()))
+          .toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     authProvider.initTokenFromStorage();
 
     return Scaffold(
@@ -170,40 +169,41 @@ final authProvider = Provider.of<AuthProvider>(context, listen: false);
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
-     body: Column(
-  children: [
-    Padding(
-  padding: const EdgeInsets.only(bottom: 16.0),
-  child:Container(
-      color: const Color.fromARGB(181, 123, 106, 106),
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
+      body: Column(
         children: [
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.location_on),
-                hintText: 'Saisissez votre adresse',
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Container(
+              color: const Color.fromARGB(181, 123, 106, 106),
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.location_on),
+                        hintText: 'Saisissez votre adresse',
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value;
+                        });
+                      },
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      filterRestaurants();
+                    },
+                  ),
+                ],
               ),
-              onChanged: (value) {
-                setState(() {
-                  searchQuery = value;
-                });
-              },
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              filterRestaurants();
-            },
-          ),
-        ],
-      ),
-    ),),
-   Expanded(
-  child: filteredRestaurants.isNotEmpty?
-ListView.builder(
+          Expanded(
+            child: filteredRestaurants.isNotEmpty
+             ?ListView.builder(
   itemCount: filteredRestaurants.length * 2 - 1,
   itemBuilder: (context, index) {
     if (index.isEven) {
@@ -234,7 +234,7 @@ ListView.builder(
             );
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0), // Ajoutez cet espacement vertical
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
               leading: SizedBox(
@@ -266,7 +266,7 @@ ListView.builder(
                     switch (mode) {
                       case 'En Livraison':
                         iconData = Icons.delivery_dining;
-                        iconColor = Colors.blue; 
+                        iconColor = Colors.blue;
                         break;
                       case 'A Emporter':
                         iconData = Icons.takeout_dining;
@@ -274,7 +274,7 @@ ListView.builder(
                         break;
                       case 'Sur place':
                         iconData = Icons.restaurant;
-                        iconColor = Colors.orange; 
+                        iconColor = Colors.orange;
                         break;
                       default:
                         iconData = Icons.error;
@@ -285,12 +285,12 @@ ListView.builder(
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: iconColor, 
+                          color: iconColor,
                         ),
-                        padding: const EdgeInsets.all(8.0), 
+                        padding: const EdgeInsets.all(8.0),
                         child: Icon(
                           iconData,
-                          color: Colors.white, 
+                          color: Colors.white,
                         ),
                       ),
                     );
@@ -313,14 +313,14 @@ ListView.builder(
                     return Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Container(
-                        decoration:const BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.blueGrey, 
+                          color: Colors.blueGrey,
                         ),
                         padding: const EdgeInsets.all(8.0),
                         child: Icon(
-                          iconData ?? Icons.error, 
-                          color: Colors.white, 
+                          iconData ?? Icons.error,
+                          color: Colors.white,
                         ),
                       ),
                     );
@@ -333,20 +333,18 @@ ListView.builder(
       );
     } else {
       return Container(
-        height: 2,
-        color: const Color.fromARGB(181, 158, 156, 156),
+        height: 14.0, 
       );
     }
   },
 )
-
-      : const Center(
-          child: Text('Aucun restaurant trouvé pour cette adresse.'),
-        ),
-),
-
-  ],
-),
+  
+                : const Center(
+                    child: Text('Aucun restaurant trouvé pour cette adresse.'),
+                  ),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -372,29 +370,28 @@ ListView.builder(
           if (index == 1) {
             Navigator.push(
               context,
-             MaterialPageRoute(builder: (context) => const CommandeApp()),
+              MaterialPageRoute(builder: (context) => const CommandeApp()),
             );
           }
           if (index == 2) {
- Future<void> onPressed() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('token');
-  if (token != null && token.isNotEmpty) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ProfilPage()),
-    );
-  } else {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const loginPage()), 
-    );
-  }
-}
+            Future<void> onPressed() async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              String? token = prefs.getString('token');
+              if (token != null && token.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilPage()),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const loginPage()),
+                );
+              }
+            }
 
-  onPressed();
-}
-
+            onPressed();
+          }
         },
       ),
     );
