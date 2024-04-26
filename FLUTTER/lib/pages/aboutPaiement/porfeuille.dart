@@ -79,6 +79,19 @@ class _PortefeuilleState extends State<Portefeuille> {
 
     return null;
   }
+@override
+void initState() {
+  super.initState();
+  expirationDateController.addListener(() {
+    final text = expirationDateController.text;
+    if (text.length == 2 && !text.contains('/')) {
+      expirationDateController.value = expirationDateController.value.copyWith(
+        text: '$text/',
+        selection: TextSelection.collapsed(offset: text.length + 1),
+      );
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -140,16 +153,16 @@ class _PortefeuilleState extends State<Portefeuille> {
                   LengthLimitingTextInputFormatter(16)
                 ],
               ),
-              TextFormField(
-                controller: expirationDateController,
-                decoration: const InputDecoration(
-                  labelText: 'Date d\'expiration (MM/YY)',
-                  prefixIcon: Icon(Icons.calendar_today),
-                ),
-                validator: validateExpirationDate,
-                keyboardType: TextInputType.number,
-                inputFormatters: [LengthLimitingTextInputFormatter(5)],
-              ),
+             TextFormField(
+    controller: expirationDateController,
+    decoration: const InputDecoration(
+      labelText: 'Date d\'expiration (MM/YY)',
+      prefixIcon: Icon(Icons.calendar_today),
+    ),
+    validator: validateExpirationDate,
+    keyboardType: TextInputType.number,
+    inputFormatters: [LengthLimitingTextInputFormatter(5)],
+  ),
               TextFormField(
                 controller: cvvController,
                 decoration: const InputDecoration(
