@@ -266,15 +266,15 @@ ListView.builder(
                     switch (mode) {
                       case 'En Livraison':
                         iconData = Icons.delivery_dining;
-                        iconColor = Colors.blue; // Couleur de l'icône pour le mode de livraison
+                        iconColor = Colors.blue; 
                         break;
                       case 'A Emporter':
                         iconData = Icons.takeout_dining;
-                        iconColor = Colors.green; // Couleur de l'icône pour le mode à emporter
+                        iconColor = Colors.green;
                         break;
                       case 'Sur place':
                         iconData = Icons.restaurant;
-                        iconColor = Colors.orange; // Couleur de l'icône pour le mode sur place
+                        iconColor = Colors.orange; 
                         break;
                       default:
                         iconData = Icons.error;
@@ -285,12 +285,12 @@ ListView.builder(
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: iconColor, // Couleur du cercle autour de l'icône
+                          color: iconColor, 
                         ),
-                        padding: const EdgeInsets.all(8.0), // Ajustez la taille du cercle selon vos préférences
+                        padding: const EdgeInsets.all(8.0), 
                         child: Icon(
                           iconData,
-                          color: Colors.white, // Couleur de l'icône à l'intérieur du cercle
+                          color: Colors.white, 
                         ),
                       ),
                     );
@@ -315,12 +315,12 @@ ListView.builder(
                       child: Container(
                         decoration:const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.blueGrey, // Couleur du cercle autour de l'icône
+                          color: Colors.blueGrey, 
                         ),
-                        padding: const EdgeInsets.all(8.0), // Ajustez la taille du cercle selon vos préférences
+                        padding: const EdgeInsets.all(8.0),
                         child: Icon(
-                          iconData ?? Icons.error, // Assurez-vous que l'icône n'est pas nulle
-                          color: Colors.white, // Couleur de l'icône à l'intérieur du cercle
+                          iconData ?? Icons.error, 
+                          color: Colors.white, 
                         ),
                       ),
                     );
@@ -379,8 +379,6 @@ ListView.builder(
  Future<void> onPressed() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
-
-  // Check if a token is present in local storage
   if (token != null && token.isNotEmpty) {
     Navigator.push(
       context,
