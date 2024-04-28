@@ -111,18 +111,7 @@ class CommandeScreen extends StatelessWidget {
                     onTabTapped(index);
                   },
                 ),
-                const Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    currentIndex == 1
-                        ? const Icon(Icons.history, size: 30)
-                        : const Icon(Icons.hourglass_bottom),
-                  ],
-                ),
-          const Divider(),
-
-
+             
             Expanded(
               child: TabBarView(
                 children: [
