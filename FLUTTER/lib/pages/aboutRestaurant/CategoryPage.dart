@@ -16,11 +16,12 @@ class NextPage extends StatefulWidget {
   final List<Article> panier;
 
   const NextPage({
-    Key? key,
+    super.key,
     required this.panier,
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _NextPageState createState() => _NextPageState();
 }
 

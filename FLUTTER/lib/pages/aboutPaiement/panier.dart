@@ -11,10 +11,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PanierPage extends StatefulWidget {
   const PanierPage({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _PanierPageState createState() => _PanierPageState();
 }
 

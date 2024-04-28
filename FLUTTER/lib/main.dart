@@ -79,18 +79,18 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
+              const Text(
                 'Découvrir',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 30, color: Colors.white),
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Rechercher les restaurants les mieux notés à proximité de votre région',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
              Center(
   child: GestureDetector(
     onTap: () {
@@ -101,7 +101,7 @@ class HomeScreen extends StatelessWidget {
         ),
       );
     },
-    child: Text(
+    child: const Text(
       'Commencer',
       style: TextStyle(
         fontSize: 28,
