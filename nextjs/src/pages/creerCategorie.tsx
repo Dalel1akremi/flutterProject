@@ -68,7 +68,7 @@ export default function AddCategorie() {
         }
       }
 
-      const response = await axios.post('http://192.168.2.61:3000/createCategorie', formDataToSend);
+      const response = await axios.post('http://192.168.1.6:3000/createCategorie', formDataToSend);
       setMessage(response.data.message);
       setIsError(false);
       setFormData({

@@ -10,7 +10,7 @@ const Restaurant = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get('http://192.168.2.61:3000/getRestaurant');
+        const response = await axios.get('http://192.168.1.6:3000/getRestaurant');
         setRestaurants(response.data.restaurants);
         setLoading(false);
       } catch (error) {

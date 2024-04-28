@@ -84,7 +84,7 @@ export default function AddItem() {
         }
       }
 
-      const response = await axios.post('http://192.168.2.61:3000/createItem', formDataToSend);
+      const response = await axios.post('http://192.168.1.6:3000/createItem', formDataToSend);
       setMessage(response.data.message);
       
       setIsError(false);

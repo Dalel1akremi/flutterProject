@@ -34,11 +34,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-mongoose
-  .connect('mongodb+srv://dalelakremi2020:Omiyoussef2020@cluster0.0c5rw0u.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+mongoose.connect('mongodb://127.0.0.1:27017/registration', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+
   .then(() => console.log('Now connected to MongoDB!'))
   .catch((err) => console.error('Something went wrong', err));
 

@@ -45,7 +45,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.2.61:3000/registerAdmin', formData);
+      const response = await axios.post('http://192.168.1.6:3000/registerAdmin', formData);
       alert(response.data.message); // Afficher le message de succès
       router.push('/connexion');
       setFormData({

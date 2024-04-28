@@ -70,7 +70,7 @@ class _LoginPageState extends State<loginPage> {
             context,
             MaterialPageRoute(builder: (context) => const PanierPage()),
           );
-        } else if (panier.origin == 'Restaurant' && isLoggedIn) {
+        } else if (panier.origin == 'Restaurant') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const RestaurantDetail()),
@@ -274,6 +274,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                 'En continuant, vous acceptez nos : ',
                 style: TextStyle(fontSize: 14.0),
               ),
+               const SizedBox(height: 10), 
              RichText(
                 text: TextSpan(
                   text: '- Conditions Générales d\'utilisation ',
@@ -327,6 +328,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                     },
                 ),
               ),
+               const SizedBox(height: 10), 
 ElevatedButton.icon(
   onPressed: () => _signInWithGoogle(context),
   icon: const Icon(Icons.login_rounded),

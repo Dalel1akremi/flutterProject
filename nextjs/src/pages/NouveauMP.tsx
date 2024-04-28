@@ -30,7 +30,7 @@ const NouveauMotDePasseAdmin = () => {
     }
 
     try {
-      const response = await fetch(`http://192.168.2.61:3000/newPasswordAdmin?email=${email}`, {
+      const response = await fetch(`http://192.168.1.6:3000/newPasswordAdmin?email=${email}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

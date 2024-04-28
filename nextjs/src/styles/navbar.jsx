@@ -18,7 +18,7 @@ export default function Navbar() {
         }
         const decodedToken = jwt.decode(token);
         const { id_rest: decodedRestaurantId } = decodedToken;
-        const response = await axios.get('http://192.168.2.61:3000/getRestau');
+        const response = await axios.get('http://192.168.1.6:3000/getRestau');
         const { restaurants } = response.data;
         const matchedRestaurant = restaurants.find(restaurant => restaurant.id_rest === decodedRestaurantId);
         if (matchedRestaurant) {

@@ -47,7 +47,7 @@ const CommandesPage = () => {
 
   const fetchCommandes = async (id_rest: any) => {
     try {
-      const response = await axios.get<Commande[]>(`http://192.168.2.61:3000/getCommandes?id_rest=${id_rest}`);
+      const response = await axios.get<Commande[]>(`http://192.168.1.6:3000/getCommandes?id_rest=${id_rest}`);
       setCommandes(response.data);
     } catch (error) {
       console.error('Erreur lors de la récupération des commandes :', error);
@@ -57,7 +57,7 @@ const CommandesPage = () => {
   const handleStateChange = async (id: string, newState: string) => {
     try {
       // Mettre à jour l'état de la commande dans le backend
-      const response = await axios.put(`http://192.168.2.61:3000/commandes?commandeId=${id}&newState=${newState}`);
+      const response = await axios.put(`http://192.168.1.6:3000/commandes?commandeId=${id}&newState=${newState}`);
   
       // Mettre à jour l'état de la commande dans le state local
       setCommandes(prevCommandes =>
@@ -88,7 +88,7 @@ const CommandesPage = () => {
   const sendNotification = async (idRest: string | null) => {
     try {
       // Appeler l'API pour envoyer la notification
-      const response = await axios.post(`http://192.168.2.61:3000/sendNotification?id_rest=${idRest}`);
+      const response = await axios.post(`http://192.168.1.6:3000/sendNotification?id_rest=${idRest}`);
       console.log('Notification sent successfully:', response.data);
     } catch (error: any) {
       console.error('Error sending notification:', error.message);

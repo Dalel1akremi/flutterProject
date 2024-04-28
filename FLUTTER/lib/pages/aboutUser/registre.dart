@@ -66,7 +66,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       String email,
       String password,
       String confirmPassword) async {
-    const String apiUrl = "http://192.168.2.61:3000/register";
+    const String apiUrl = "http://192.168.1.6:3000/register";
 
     try {
       final response = await http.post(
@@ -184,8 +184,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   if (value!.length != 13) {
                     return 'Le numéro de téléphone doit comporter 13 chiffres';
                   }
-                  if (!RegExp(r'^033[0-9]+$').hasMatch(value)) {
-                    return 'Le numéro de téléphone doit commencer par « 033 » et contenir uniquement des chiffres.';
+                  if (!RegExp(r'^0033[0-9]+$').hasMatch(value)) {
+                    return 'Le numéro de téléphone doit commencer par « 0033 » et contenir uniquement des chiffres.';
                   }
                   return null;
                 },

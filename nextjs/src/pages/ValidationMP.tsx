@@ -25,7 +25,7 @@ const ValidationMP = () => {
 
   const handleResetPassword = async () => {
     try {
-      const response = await axios.post('http://192.168.2.61:3000/validate_codeAdmin', { email, validationCode  });
+      const response = await axios.post('http://192.168.1.6:3000/validate_codeAdmin', { email, validationCode  });
       setMessage(response.data.message);
       if (response.data.success) {
         setResetStep(3);
