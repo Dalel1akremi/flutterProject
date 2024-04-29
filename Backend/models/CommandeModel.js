@@ -21,7 +21,7 @@ const commandeSchema = new mongoose.Schema({
       
     },
   ],
-  id_user: {type : String ,ref:'User'},
+  email: {type : String ,ref:'User'},
   temps: { type: String  }, 
   mode_retrait: { type: String },
   montant_Total:{ type: Number  }, 
