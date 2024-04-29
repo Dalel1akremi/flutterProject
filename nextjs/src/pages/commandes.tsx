@@ -10,6 +10,8 @@ interface Commande {
   numero_commande: string;
   etat: string;
   id_items: Item[];
+  id_rest:number;
+  email:string;
 }
 
 interface Item {
@@ -19,6 +21,7 @@ interface Item {
   quantite?: number;
   remarque?: string;
   elements_choisis: string[];
+  
 }
 
 const CommandesPage = () => {
@@ -73,24 +76,24 @@ const CommandesPage = () => {
   
       // Si le nouvel état est "Prête", appeler la fonction sendNotification
       if (newState === "Prête") {
-        await sendNotification(idRest); // Appeler la fonction sendNotification avec l'identifiant du restaurant
+        await sendNotification(commandes.find(commande => commande._id === id)?.id_rest || 0, commandes.find(commande => commande._id === id)?.email || ''); // Utilisez id_rest et email de la commande
       }
     } catch (error: any) {
       console.error('Error updating commande:', error.message);
       if (error.response && error.response.data && error.response.data.message) {
-        setErrorMessage(error.response.data.message); // Mettre à jour l'état errorMessage pour afficher dans l'alerte
+        setErrorMessage(error.response.data.message);
       } else {
         setErrorMessage('Une erreur est survenue lors de la mise à jour de l\'état de la commande.');
       }
     }
-  };
-  
+};
+
   
 
-  const sendNotification = async (idRest: string | null) => {
+  const sendNotification = async (id_rest: number ,email:string) => {
     try {
       const MY_IP = process.env.MY_IP || '127.0.0.1';
-      const response = await axios.post(`http://${MY_IP}:3000/sendNotification?id_rest=${idRest}`);
+      const response = await axios.post(`http://${MY_IP}:3000/sendNotification?id_rest=${id_rest}&email=${email}`);
       console.log('Notification sent successfully:', response.data);
     } catch (error: any) {
       console.error('Error sending notification:', error.message);
@@ -115,7 +118,7 @@ const CommandesPage = () => {
           {commandes.map((commande, index) => (
             <tr key={index}>
               <td>{commande.numero_commande}</td>
-              <td>{commande.userEmail}</td>
+              <td>{commande.email}</td>
               <td>
                 <select
                   value={commande.etat}

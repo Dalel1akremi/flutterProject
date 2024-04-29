@@ -71,12 +71,12 @@ class CommandesModel with ChangeNotifier {
       return [];
     }
 
-    final idUser = authProvider.userId;
+    final email = authProvider.email;
 
     try {
       String myIp = Global.myIp;
       final response = await http.get(
-        Uri.parse('http://$myIp:3000/getCommandesEncours?id_user=$idUser'),
+        Uri.parse('http://$myIp:3000/getCommandesEncours?email=$email'),
       );
       if (response.statusCode == 200) {
         final dynamic responseBody = jsonDecode(response.body);
@@ -125,12 +125,12 @@ class CommandesModel with ChangeNotifier {
 
   Future<List<Map<String, dynamic>>> fetchCommandesPass(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final idUser = authProvider.userId;
+    final email = authProvider.email;
 
     try {
      String myIp = Global.myIp;
       final response = await http.get(
-        Uri.parse('http://$myIp:3000/getCommandesPasse?id_user=$idUser'),
+        Uri.parse('http://$myIp:3000/getCommandesPasse?email=$email'),
       );
       if (response.statusCode == 200) {
         final dynamic responseBody = jsonDecode(response.body);

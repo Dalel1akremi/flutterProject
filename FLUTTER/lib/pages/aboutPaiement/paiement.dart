@@ -57,10 +57,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> createCommande() async {
     try {
-      String? userId = authProvider.userId;
+      String? userEmail = authProvider.email;
 
-      if (userId == null) {
-        print('User ID not available.');
+      if (userEmail == null) {
+        print('email not available.');
         return;
       }
       final int? idRest = Panier().getIdRestaurant();
@@ -86,10 +86,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
           'remarque': article.remarque,
         };
       }).toList();
-String myIp = Global.myIp;      var response = await http.post(
+String myIp = Global.myIp;   
+   var response = await http.post(
         
         Uri.parse(
-            'http://$myIp:3000/createCommande?id_user=$userId&id_rest=$idRest'),
+            'http://$myIp:3000/createCommande?email=$userEmail&id_rest=$idRest'),
         body: jsonEncode({
           'id_items': idItems,
         }),
