@@ -148,3 +148,7 @@ class Step {
     required this.id_items,
   });
 }
+class Global {
+  // ignore: constant_identifier_names
+  static const String myIp = "192.168.2.61";
+}
