@@ -68,9 +68,10 @@ class ItemDetailsPage extends StatelessWidget {
       if (idRest == null) {
         throw Exception('Restaurant ID is null');
       }
+      String myIp = Global.myIp;
       final response = await http.get(
         Uri.parse(
-            'http://192.168.2.61:3000/getRedirect?id_item=$id_item&id_rest=$idRest'),
+            'http://$myIp:3000/getRedirect?id_item=$id_item&id_rest=$idRest'),
       );
       if (response.statusCode == 200) {
         final dynamic responseData = json.decode(response.body)['data'];

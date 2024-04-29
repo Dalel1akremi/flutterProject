@@ -5,7 +5,6 @@ import './pages/aboutUser/auth_provider.dart';
 import './pages/aboutRestaurant/acceuil.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -29,8 +28,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-         ChangeNotifierProvider(create: (_) => AuthProvider()), 
-         ChangeNotifierProvider(create: (_) => CommandesModel()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => CommandesModel()),
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -82,7 +81,7 @@ class HomeScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-              const SizedBox(height: 30),  
+              const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -92,7 +91,7 @@ class HomeScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black.withOpacity(0.07), 
+                  backgroundColor: Colors.black.withOpacity(0.07),
                 ),
                 child: const Text(
                   'Commencer',

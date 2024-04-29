@@ -33,8 +33,8 @@ const Profile = () => {
 
         const decodedToken = jwt.decode(token) as { [key: string]: any };
         const { email } = decodedToken;
-
-        const response = await axios.get(`http://192.168.2.61:3000/getAdminByEmail?email=${email}`);
+        const MY_IP = process.env.MY_IP || '127.0.0.1';
+        const response = await axios.get(`http://${MY_IP}:3000/getAdminByEmail?email=${email}`);
         setAdminData(response.data);
         setLoading(false);
       } catch (error) {
@@ -68,8 +68,8 @@ const Profile = () => {
       if (!adminData) {
         throw new Error('Aucune donnée d\'administrateur trouvée');
       }
-  
-      const response = await axios.post(`http://192.168.2.61:3000/updateAdmin?email=${adminData.email}`, {
+      const MY_IP = process.env.MY_IP || '127.0.0.1';
+      const response = await axios.post(`http://${MY_IP}:3000/updateAdmin?email=${adminData.email}`, {
         nom: editedNom,
         prenom: editedPrenom,
         telephone: editedTelephone,

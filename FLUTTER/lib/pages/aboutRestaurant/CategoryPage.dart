@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import './../aboutPaiement/panier.dart';
 import 'ItemDetailsPage.dart';
 import 'stepMenuPage.dart';
@@ -40,7 +39,8 @@ class _NextPageState extends State<NextPage> {
       if (idRest == null) {
         throw Exception('Restaurant ID is null');
       }
-      final response = await http.get(Uri.parse('http://192.168.2.61:3000/getCategories?id_rest=$idRest'));
+      String myIp = Global.myIp;
+      final response = await http.get(Uri.parse('http://$myIp:3000/getCategories?id_rest=$idRest'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body)['data'];
@@ -63,7 +63,8 @@ class _NextPageState extends State<NextPage> {
       if (idRest == null) {
         throw Exception('Restaurant ID is null');
       }
-      final response = await http.get(Uri.parse('http://192.168.2.61:3000/getItem?id_cat=$idCat&id_rest=$idRest'));
+      String myIp = Global.myIp;
+      final response = await http.get(Uri.parse('http://$myIp:3000/getItem?id_cat=$idCat&id_rest=$idRest'));
 
       if (response.statusCode == 200) {
         final List<dynamic>? responseData = json.decode(response.body)['formattedItems'];

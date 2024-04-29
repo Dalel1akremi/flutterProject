@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, file_names
 
 import 'dart:convert';
+import 'package:demo/pages/global.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -41,8 +42,9 @@ class _SalesTermsPageState extends State<SalesTermsPage> {
   }
 
   Future<List<Restaurant>> _fetchRestaurants() async {
+   String myIp = Global.myIp;
     final response = await http
-        .get(Uri.parse('http://192.168.2.61:3000/getAllRestaurantNames'));
+        .get(Uri.parse('http://$myIp:3000/getAllRestaurantNames'));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);

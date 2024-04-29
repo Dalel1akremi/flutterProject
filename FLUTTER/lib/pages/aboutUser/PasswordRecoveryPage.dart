@@ -1,5 +1,6 @@
 // ignore_for_file: dead_code, use_build_context_synchronously, avoid_print, library_private_types_in_public_api, file_names
 
+import 'package:demo/pages/global.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'NouveauPasswordPage.dart';
@@ -22,11 +23,12 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
 
   Future<void> sendResetPasswordRequest() async {
     final String email = emailController.text;
+    String myIp = Global.myIp;
 
     try {
       final response = await http.post(
         Uri.parse(
-            'http://192.168.2.61:3000/reset_password'), 
+            'http://$myIp:3000/reset_password'), 
         body: {'email': email},
       );
 
@@ -67,9 +69,11 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
     final String validationCode = validationCodeController.text;
 
     try {
+         String myIp = Global.myIp;
+
       final response = await http.post(
         Uri.parse(
-            'http://192.168.2.61:3000/validate_code'), 
+            'http://$myIp:3000/validate_code'), 
         body: {'email': email, 'validationCode': validationCode},
       );
 

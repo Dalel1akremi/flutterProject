@@ -27,8 +27,8 @@ const CreateStep = () => {
     setIsLoading(true);
     try {
       const idItemsArray = idItems.split(',').map(id => ({ id_item: id.trim() }));
-  
-      const response = await axios.post('http://192.168.2.61:3000/createStep', {
+      const MY_IP = process.env.MY_IP || '127.0.0.1';
+      const response = await axios.post(`http://${MY_IP}:3000/createStep`, {
         nom_Step: nomStep,
         id_items: idItemsArray,
         is_Obligatoire: isObligatoire,

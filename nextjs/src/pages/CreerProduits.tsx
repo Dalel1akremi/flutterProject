@@ -83,8 +83,8 @@ export default function AddItem() {
           }
         }
       }
-
-      const response = await axios.post('http://192.168.2.61:3000/createItem', formDataToSend);
+      const MY_IP = process.env.MY_IP || '127.0.0.1';
+      const response = await axios.post(`http://${MY_IP}:3000/createItem`, formDataToSend);
       setMessage(response.data.message);
       
       setIsError(false);
