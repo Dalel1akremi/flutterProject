@@ -227,7 +227,7 @@ const updateCommandeState = async (req, res) => {
       const commandes = await Commande.find({email, etat: { $in: etats } });
   
       if (!commandes || commandes.length === 0) {
-        console.error(`No past commandes found for email ${email}.`);
+        
         return res.status(404).json({ error: `No past commandes found for email ${email}.` });
       }
       const commandesAvecRestaurants = [];
