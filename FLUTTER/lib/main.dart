@@ -1,3 +1,4 @@
+import 'package:demo/pages/aboutRestaurant/RestaurantDetail.dart';
 import 'package:demo/pages/aboutRestaurant/commandeNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,8 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+ static const String restaurantDetailRoute = '/RestaurantDetail';
+  static const String acceuilScreenRoute = '/AcceuilScreen';
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -30,9 +32,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CommandesModel()),
       ],
-      child: const MaterialApp(
+     child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: AppStart(),
+        initialRoute: '/',
+        routes: {
+          restaurantDetailRoute: (context) => const RestaurantDetail(),
+          acceuilScreenRoute: (context) => const AcceuilScreen(),
+        },
+        home: const AppStart(),
       ),
     );
   }
