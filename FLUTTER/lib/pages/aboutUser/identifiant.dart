@@ -45,8 +45,9 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
 
   Future<void> getUserData() async {
     try {
+      String myIp = Global.myIp;
       final response = await http
-          .get(Uri.parse('http://192.168.2.65:3000/getUser?email=$_email'));
+          .get(Uri.parse('http://$myIp:3000/getUser?email=$_email'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> userData =
@@ -117,7 +118,8 @@ Future<bool> saveNameToStorage(String name) async {
       'telephone': numeroController.text,
     };
 
-    try {    String myIp = Global.myIp;
+    try {    
+      String myIp = Global.myIp;
 
       final response = await http.put(
         
