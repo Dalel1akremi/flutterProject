@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore, unnecessary_null_comparison, use_build_context_synchronously, unused_element
 import 'package:demo/pages/aboutRestaurant/DesignRestaurantDetaild.dart';
+import 'package:demo/pages/aboutRestaurant/acceuil.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -130,7 +131,12 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: Text(restaurantName ?? 'Restaurant Detail'),
-      ),
+       leading: IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        Navigator.pushReplacementNamed(context, '/AcceuilScreen'); // Aller directement à la page d'accueil
+      },
+    ),),
       body: Center(
         child: SingleChildScrollView(
           child: Column(

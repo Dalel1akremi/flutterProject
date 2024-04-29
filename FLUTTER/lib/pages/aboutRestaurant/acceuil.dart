@@ -3,6 +3,7 @@
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 
+import 'package:demo/main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -169,6 +170,13 @@ class _RestaurantListState extends State<AcceuilScreen> {
           'Liste des restaurants',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
+         leading: IconButton(
+      icon: const Icon(Icons.arrow_back),
+      
+         onPressed: () {
+        Navigator.pushReplacementNamed(context, '/');
+      },
+    ),
       ),
       body: Column(
         children: [
