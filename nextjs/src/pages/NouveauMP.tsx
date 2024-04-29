@@ -30,7 +30,8 @@ const NouveauMotDePasseAdmin = () => {
     }
 
     try {
-      const response = await fetch(`http://192.168.1.6:3000/newPasswordAdmin?email=${email}`, {
+      const MY_IP = process.env.MY_IP || '127.0.0.1';
+      const response = await fetch(`http://${MY_IP}:3000/newPasswordAdmin?email=${email}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

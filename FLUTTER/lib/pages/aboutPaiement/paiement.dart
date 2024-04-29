@@ -86,10 +86,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
           'remarque': article.remarque,
         };
       }).toList();
-
-      var response = await http.post(
+String myIp = Global.myIp;      var response = await http.post(
+        
         Uri.parse(
-            'http://192.168.1.6:3000/createCommande?id_user=$userId&id_rest=$idRest'),
+            'http://$myIp:3000/createCommande?id_user=$userId&id_rest=$idRest'),
         body: jsonEncode({
           'id_items': idItems,
         }),
@@ -148,10 +148,11 @@ Future<void> makePaymentWithCreditCard() async {
       CreditCard selectedCard = userCreditCards
           .firstWhere((card) => card.fullCardNumber == selectedCreditCard);
       String cardId = selectedCard._id;
-
+String myIp = Global.myIp;
       var response = await http.post(
+        
         Uri.parse(
-            'http://192.168.1.6:3000/recupererCarteParId?email=${authProvider.email}&cardId=$cardId'),
+            'http://$myIp:3000/recupererCarteParId?email=${authProvider.email}&cardId=$cardId'),
         body: jsonEncode({'montant': panier.getTotalPrix()}),
         headers: {'Content-Type': 'application/json'},
       );
@@ -171,34 +172,33 @@ Future<void> makePaymentWithCreditCard() async {
   
 }
 
-  Future<void> fetchUserCreditCards() async {
-    String? userEmail = authProvider.email;
-    if (userEmail != null) {
-      try {
-        var response = await http.get(Uri.parse(
-            'http://192.168.1.6:3000/recupererCartesUtilisateur?email=$userEmail'));
-        if (response.statusCode == 200) {
-          var responseData = json.decode(response.body);
-          if (responseData is Map && responseData.containsKey('cards')) {
-            setState(() {
-              userCreditCards = (responseData['cards'] as List)
-                  .map((data) =>
-                      CreditCard(data['cardNumber'], data['cvv'], data['_id']))
-                  .toList();
-            });
-          } else {
-            throw Exception('Invalid response format: $responseData');
-          }
+ Future<void> fetchUserCreditCards() async {
+  String? userEmail = authProvider.email;
+  if (userEmail != null) {
+    try {
+      String myIp = Global.myIp;
+      final response = await http.get(Uri.parse('http://$myIp:3000/recupererCartesUtilisateur?email=$userEmail'));
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData is Map && responseData.containsKey('cards')) {
+          setState(() {
+            userCreditCards = (responseData['cards'] as List)
+                .map((data) =>
+                    CreditCard(data['cardNumber'], data['cvv'], data['_id']))
+                .toList();
+          });
         } else {
-          throw Exception(
-              'Failed to load user credit cards: ${response.statusCode}');
+          throw Exception('Invalid response format: $responseData');
         }
-      } catch (e) {
-        print('Error fetching user credit cards: $e');
+      } else {
+        throw Exception('Failed to load user credit cards: ${response.statusCode}');
       }
+    } catch (error) {
+      print('Error fetching user credit cards: $error');
     }
   }
-
+}
   Future<void> initAuthProvider() async {
     await authProvider.initTokenFromStorage();
     setState(() {});

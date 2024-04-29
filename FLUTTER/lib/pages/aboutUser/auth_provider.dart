@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:demo/pages/global.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -77,11 +78,11 @@ if (kDebugMode) {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    const String apiUrl = "http://192.168.1.6:3000/login";
-
+   String myIp = Global.myIp;
+  
     try {
       final response = await http.post(
-        Uri.parse(apiUrl),
+        Uri.parse("http://$myIp:3000/login"),
         headers: {
           'Content-Type': 'application/json',
         },

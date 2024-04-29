@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:demo/pages/aboutUser/auth_provider.dart';
 import 'package:demo/pages/aboutUser/profile.dart';
+import 'package:demo/pages/global.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
@@ -212,10 +213,11 @@ void initState() {
   );
 }
 Future<void> sendPaymentRequest() async {
+  String myIp = Global.myIp;
    SharedPreferences prefs = await SharedPreferences.getInstance();
   String? email = prefs.getString('email');
   String apiUrl =
-      'http://192.168.1.6:3000/porfeuille?email=$email';
+      'http://$myIp:3000/porfeuille?email=$email';
 
   Map<String, dynamic> paymentData = {
     "cardNumber": cardNumberController.text,

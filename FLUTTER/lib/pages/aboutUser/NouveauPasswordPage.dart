@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, use_super_parameters, use_build_context_synchronously
 
 import 'package:demo/pages/aboutUser/login.dart';
+import 'package:demo/pages/global.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -49,10 +50,13 @@ bool obscureConfirmPassword = true;
     final String confirmNewPassword = confirmNewPasswordController.text;
 
     if (widget.email != null) {
+          String myIp = Global.myIp;
+
       try {
         final response = await http.put(
+          
           Uri.parse(
-              'http://192.168.1.6:3000/new_password?email=${Uri.encodeQueryComponent(widget.email!)}'),
+              'http://$myIp:3000/new_password?email=${Uri.encodeQueryComponent(widget.email!)}'),
           body: {
             'newPassword': newPassword,
             'confirmNewPassword': confirmNewPassword,

@@ -18,7 +18,8 @@ const Redirect = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://192.168.1.6:3000/getRedirectAd?id_item=${id_item}&id_rest=${id_rest}`);
+        const MY_IP = process.env.MY_IP || '127.0.0.1';
+        const response = await axios.get(`http://${MY_IP}:3000/getRedirectAd?id_item=${id_item}&id_rest=${id_rest}`);
         setRedirectData(response.data.data); 
       } catch (error) {
         console.error('Erreur lors de la récupération des données redirect :', error);
@@ -36,14 +37,15 @@ const Redirect = () => {
 const handleArchivedToggle = async (_id: string, currentValue: boolean) => {
   try {
     console.log('ID de redirection à archiver:', _id);
-    await axios.put(`http://192.168.1.6:3000/ArchiverRedirect/${_id}`, { isArchived: !currentValue });
+    const MY_IP = process.env.MY_IP || '127.0.0.1';
+    await axios.put(`http://${MY_IP}:3000/ArchiverRedirect/${_id}`, { isArchived: !currentValue });
 
     setRedirectData(prevItems =>
       prevItems.map(item =>
         item._id.toString() === _id ? { ...item, isArchived: !currentValue } : item
       )
     );
-    const response = await axios.get(`http://192.168.1.6:3000/getRedirectAd?id_item=${id_item}&id_rest=${id_rest}`);
+    const response = await axios.get(`http://${MY_IP}:3000/getRedirectAd?id_item=${id_item}&id_rest=${id_rest}`);
     setRedirectData(response.data.data);
 
   } catch (error) {
@@ -66,15 +68,16 @@ const handleEditRedirect = (item: any) => {
 const handleUpdateRedirect = async () => {
   try {
     const { _id } = editedItem!;
-    await axios.put(`http://192.168.1.6:3000/updateRedirect/${_id}`, {
+    const MY_IP = process.env.MY_IP || '127.0.0.1';
+    await axios.put(`http://${MY_IP}:3000/updateRedirect/${_id}`, {
       nom: editedItem?.nom,
       prix: editedPrix,
       description: editedDescription,
       quantite: editedQuantite,
       max_quantite: editedMaxQuantite,
     });
-
-    const response = await axios.get(`http://192.168.1.6:3000/getRedirect?id_item=${id_item}&id_rest=${id_rest}`);
+    
+    const response = await axios.get(`http://${MY_IP}:3000/getRedirect?id_item=${id_item}&id_rest=${id_rest}`);
     setRedirectData(response.data.data);
 
    

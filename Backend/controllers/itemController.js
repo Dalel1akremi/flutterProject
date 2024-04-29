@@ -1,5 +1,6 @@
 const Item = require('../models/itemModel');
 const Step=require('./../models/StepModel');
+require('dotenv').config();
 exports.createItem = async (req, res) => {
   try {
     const { body, file } = req;
@@ -16,7 +17,7 @@ exports.createItem = async (req, res) => {
       id_rest,
     } = body;
 
-    const imageUrl = file ? `http://192.168.1.6:3000/images/${file.filename}` : null;
+    const imageUrl = file ? `http://${process.env.MY_IP}:3000/images/${file.filename}` : null;
 
     const validatedPrix = parseFloat(prix);
     const validatedQuantite = parseInt(quantite);

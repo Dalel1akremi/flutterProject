@@ -131,8 +131,9 @@ class _RestaurantListState extends State<AcceuilScreen> {
   }
 
   Future<void> fetchRestaurants() async {
+    String myIp = Global.myIp;
     final response =
-        await http.get(Uri.parse('http://192.168.1.6:3000/getRestaurant'));
+        await http.get(Uri.parse('http://$myIp:3000/getRestaurant'));
     if (response.statusCode == 200) {
       final List<dynamic> responseData =
           json.decode(response.body)['restaurants'];
@@ -400,6 +401,7 @@ class _RestaurantListState extends State<AcceuilScreen> {
 
             onPressed();
           }
+           
         },
       ),
     );

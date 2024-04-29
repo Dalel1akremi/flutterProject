@@ -111,8 +111,8 @@ const CreateRestaurantPage = () => {
           }
         }
       }
-
-      const response = await axios.post('http://192.168.1.6:3000/createRestaurant', formDataToSend, {
+      const MY_IP = process.env.MY_IP || '127.0.0.1';
+      const response = await axios.post(`http://${MY_IP}:3000/createRestaurant`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

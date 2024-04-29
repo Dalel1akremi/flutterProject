@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'dart:convert';
+import 'package:demo/pages/global.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -116,9 +117,11 @@ Future<bool> saveNameToStorage(String name) async {
       'telephone': numeroController.text,
     };
 
-    try {
+    try {    String myIp = Global.myIp;
+
       final response = await http.put(
-        Uri.parse('http://192.168.1.6:3000/updateUser?email=$_email'),
+        
+        Uri.parse('http://$myIp:3000/updateUser?email=$_email'),
         body: jsonEncode(updatedData),
         headers: {
           'Content-Type': 'application/json',

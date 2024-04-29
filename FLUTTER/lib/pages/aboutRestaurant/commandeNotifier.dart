@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:demo/pages/aboutUser/auth_provider.dart';
+import 'package:demo/pages/global.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -73,8 +74,9 @@ class CommandesModel with ChangeNotifier {
     final idUser = authProvider.userId;
 
     try {
+      String myIp = Global.myIp;
       final response = await http.get(
-        Uri.parse('http://192.168.1.6:3000/getCommandesEncours?id_user=$idUser'),
+        Uri.parse('http://$myIp:3000/getCommandesEncours?id_user=$idUser'),
       );
       if (response.statusCode == 200) {
         final dynamic responseBody = jsonDecode(response.body);
@@ -126,8 +128,9 @@ class CommandesModel with ChangeNotifier {
     final idUser = authProvider.userId;
 
     try {
+     String myIp = Global.myIp;
       final response = await http.get(
-        Uri.parse('http://192.168.1.6:3000/getCommandesPasse?id_user=$idUser'),
+        Uri.parse('http://$myIp:3000/getCommandesPasse?id_user=$idUser'),
       );
       if (response.statusCode == 200) {
         final dynamic responseBody = jsonDecode(response.body);

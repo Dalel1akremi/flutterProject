@@ -1,6 +1,7 @@
 // controllers/itemController.js
 
 const Redirect =require( '../models/RedirectModel');
+require('dotenv').config();
 const createRedirect  = async (req, res) => {
   try {
     const { body, file } = req;
@@ -16,7 +17,7 @@ const createRedirect  = async (req, res) => {
       is_Menu,
       id_rest,
     } = body;
-    const imageUrl = file ? `http://192.168.1.6:3000/images/${file.filename}` : null;
+    const imageUrl = file ? `http://${process.env.MY_IP}:3000/images/${file.filename}` : null;
     const validatedPrix = parseFloat(prix);
     const validatedIsArchived = Boolean(isArchived);
     const validatedQuantite = parseInt(quantite);

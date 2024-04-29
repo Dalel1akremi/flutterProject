@@ -1,4 +1,5 @@
 const Restaurant = require('./../models/RestaurantModel');
+require('dotenv').config();
 const createRestaurant = async (req, res) => {
   try {
     const { body, files } = req; 
@@ -14,8 +15,8 @@ const createRestaurant = async (req, res) => {
     if (existingEmail) {
       return res.status(400).json({ success: false, status: 400, message: ' l\'e-mail du restaurant existe déjà' });
     }
-    const logoUrl = files.logo ? `http://192.168.1.6:3000/images/${files.logo[0].filename}` : null;
-    const imageUrl = files.image ? `http://192.168.1.6:3000/images/${files.image[0].filename}` : null;
+    const logoUrl = files.logo ? `http://${process.env.MY_IP}:3000/images/${files.logo[0].filename}` : null;
+    const imageUrl = files.image ? `http://${process.env.MY_IP}:3000/images/${files.image[0].filename}` : null;
 
     const filteredModesDeRetraitArray = ModeDeRetrait.trim().split(',').filter(mode => mode.trim() !== '');
     const filteredModesDePaiementArray = ModeDePaiement.split(',').filter(mode => mode.trim() !== '');
