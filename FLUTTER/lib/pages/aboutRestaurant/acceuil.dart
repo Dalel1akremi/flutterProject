@@ -164,20 +164,7 @@ class _RestaurantListState extends State<AcceuilScreen> {
     authProvider.initTokenFromStorage();
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: const Text(
-          'Liste des restaurants',
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        ),
-         leading: IconButton(
-      icon: const Icon(Icons.arrow_back),
-      
-         onPressed: () {
-        Navigator.pushReplacementNamed(context, '/');
-      },
-    ),
-      ),
+     
       body: Column(
         children: [
           Padding(
@@ -362,56 +349,6 @@ class _RestaurantListState extends State<AcceuilScreen> {
           const Divider(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '',
-          ),
-        ],
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AcceuilScreen()),
-            );
-          }
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CommandeApp()),
-            );
-          }
-          if (index == 2) {
-            Future<void> onPressed() async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              String? token = prefs.getString('token');
-              if (token != null && token.isNotEmpty) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfilPage()),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const loginPage()),
-                );
-              }
-            }
-
-            onPressed();
-          }
-           
-        },
-      ),
-    );
+     );
   }
 }
