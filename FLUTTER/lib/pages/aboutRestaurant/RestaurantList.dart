@@ -126,7 +126,15 @@ class _RestaurantListState extends State<RestaurantScreen> {
                   Navigator.pushReplacementNamed(context, '/');
                 },
               )
-            : null,
+            : IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  setState(() {
+                    _selectedIndex = 0;
+                    _updateAppBarTitle();
+                  });
+                },
+              ),
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
