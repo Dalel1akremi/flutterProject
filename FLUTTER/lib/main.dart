@@ -1,5 +1,7 @@
 import 'package:demo/pages/aboutRestaurant/RestaurantDetail.dart';
+import 'package:demo/pages/aboutRestaurant/RestaurantList.dart';
 import 'package:demo/pages/aboutRestaurant/commandeNotifier.dart';
+import 'package:demo/pages/aboutUser/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './pages/aboutUser/auth_provider.dart';
@@ -25,6 +27,8 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
  static const String restaurantDetailRoute = '/RestaurantDetail';
   static const String acceuilScreenRoute = '/AcceuilScreen';
+  static const String restaurantListRoute = '/RestaurantScreen';
+    static const String connexionRoute = '/connexion';
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -34,12 +38,15 @@ class MyApp extends StatelessWidget {
       ],
      child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        home: const AppStart(),
         initialRoute: '/',
         routes: {
+          restaurantListRoute:(context)=> const RestaurantScreen(index: 0,),
           restaurantDetailRoute: (context) => const RestaurantDetail(),
           acceuilScreenRoute: (context) => const AcceuilScreen(),
+          connexionRoute:(context) => const loginPage(),
         },
-        home: const AppStart(),
+        
       ),
     );
   }
@@ -67,8 +74,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AcceuilScreen(),
-                ),
+                builder: (context) => const RestaurantScreen(index: 0),                 ),
               );
             },
             child: Container(
