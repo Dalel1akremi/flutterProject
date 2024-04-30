@@ -134,9 +134,11 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
        leading: IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
-        Navigator.pushReplacementNamed(context, '/AcceuilScreen'); // Aller directement à la page d'accueil
+        Navigator.pushReplacementNamed(context, '/RestaurantScreen'); // Aller directement à la page d'accueil
       },
-    ),),
+    ),
+    ),
+
       body: Center(
         child: SingleChildScrollView(
           child: Column(
