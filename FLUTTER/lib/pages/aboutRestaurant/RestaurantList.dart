@@ -97,7 +97,7 @@ class _RestaurantListState extends State<RestaurantScreen> {
       _updateAppBarTitle();
     }
     if (panier.origine == 'accueil') {
-      _selectedIndex = 0;
+      _selectedIndex = 2;
       _updateAppBarTitle();
     }
   }

@@ -142,7 +142,6 @@ Future<bool> saveNameToStorage(String name) async {
         );
 
        if (savedSuccessfully) {
-    // Enregistrer le nom mis à jour dans le stockage local
     final bool nameSaved = await saveNameToStorage(nomController.text);
     if (!nameSaved) {
       if (kDebugMode) {
@@ -184,6 +183,7 @@ Future<bool> saveNameToStorage(String name) async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: const Text('Identifiant'),

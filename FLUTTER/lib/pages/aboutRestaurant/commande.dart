@@ -78,13 +78,10 @@ class CommandeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    
-    final isLoggedIn = authProvider.isAuthenticated;
-
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+          backgroundColor: Colors.white,
         body: Column(
           children: [
                 TabBar(

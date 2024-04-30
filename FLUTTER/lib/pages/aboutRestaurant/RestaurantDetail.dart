@@ -1,6 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore, unnecessary_null_comparison, use_build_context_synchronously, unused_element
 import 'package:demo/pages/aboutRestaurant/DesignRestaurantDetaild.dart';
-import 'package:demo/pages/aboutRestaurant/acceuil.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -128,23 +127,17 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     String? restaurantLogo = Panier().getSelectedRestaurantLogo();
     String? restaurantImage = Panier().getSelectedRestaurantImage();
     return Scaffold(
+         backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: Text(restaurantName ?? 'Restaurant Detail'),
-       leading: IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        Navigator.pushReplacementNamed(context, '/RestaurantScreen'); // Aller directement à la page d'accueil
-      },
-    ),
-    ),
-
-      body: Center(
-        child: SingleChildScrollView(
+        
+      ),
+      body: SingleChildScrollView(
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(1.0),
                 height: MediaQuery.of(context).size.height / 3,
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -228,7 +221,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: GlowRadioButton(
-                                  label: mode.trim(), // Utilisez le label ici
+                                  label: mode.trim(), 
                                   value: mode.trim(),
                                   groupValue: selectedRetraitMode,
                                   onChanged: (value) {
@@ -249,7 +242,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
             ],
           ),
         ),
-      ),
+    
   bottomNavigationBar: Container(
   color: Colors.white,
   child: Padding(
