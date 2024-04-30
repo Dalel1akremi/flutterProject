@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
-
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -123,6 +123,7 @@ class _RestaurantListState extends State<AcceuilScreen> {
   late List<Restaurant> restaurants = [];
   late List<Restaurant> filteredRestaurants = [];
   late String searchQuery = '';
+String iconPath = '';
 
   @override
   void initState() {
@@ -157,7 +158,7 @@ class _RestaurantListState extends State<AcceuilScreen> {
     });
   }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     authProvider.initTokenFromStorage();
@@ -170,189 +171,158 @@ class _RestaurantListState extends State<AcceuilScreen> {
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Container(
-              color: const Color.fromARGB(181, 123, 106, 106),
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.location_on),
-                        hintText: 'Saisissez votre adresse',
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Container(
+                color: const Color.fromARGB(181, 123, 106, 106),
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.location_on),
+                          hintText: 'Saisissez votre adresse',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            searchQuery = value;
+                          });
+                        },
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          searchQuery = value;
-                        });
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        filterRestaurants();
                       },
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      filterRestaurants();
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: filteredRestaurants.isNotEmpty
-                ? ListView.builder(
-                    itemCount: filteredRestaurants.length * 2 - 1,
-                    itemBuilder: (context, index) {
-                      if (index.isEven) {
-                        final restaurantIndex = index ~/ 2;
-                        final restaurant = filteredRestaurants[restaurantIndex];
-                        return Container(
-                          width: MediaQuery.of(context).size.width * 0.08,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 248, 240, 240),
-                            borderRadius: BorderRadius.circular(16.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color.fromARGB(255, 248, 240, 240)
-                                    .withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
+            filteredRestaurants.isNotEmpty
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height - 150,
+                    child: ListView.builder(
+                      itemCount: filteredRestaurants.length,
+                      itemBuilder: (context, index) {
+                        final restaurant = filteredRestaurants[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Panier().setSelectedRestaurant(restaurant);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RestaurantDetail(),
                               ),
-                            ],
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              Panier().setSelectedRestaurant(restaurant);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const RestaurantDetail(),
+                            );
+                          },
+                          child: Card(
+                            margin: const EdgeInsets.all(8.0),
+                            child: ListTile(
+                              leading: SizedBox(
+                                width: 70,
+                                height: 60,
+                                child: Image.network(
+                                  restaurant.logo,
+                                  fit: BoxFit.cover,
                                 ),
-                              );
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                leading: SizedBox(
-                                  width: 70,
-                                  height: 60,
-                                  child: Image.network(
-                                    restaurant.logo,
-                                    fit: BoxFit.cover,
+                              ),
+                              title: Text(
+                                restaurant.nom,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(restaurant.adresse),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [
+                                      ...restaurant.modeDeRetrait.map((mode) {
+                                        switch (mode) {
+                                          case 'En Livraison':
+                                            iconPath = 'images/delivery.svg';
+                                            break;
+                                          case 'A Emporter':
+                                            iconPath = 'images/emporter.svg';
+                                            break;
+                                          case 'Sur place':
+                                            iconPath = 'images/surplace.svg';
+                                            break;
+                                          default:
+                                            iconPath = 'images/no-pictures.svg';
+                                        }
+                                        return Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color.fromARGB(222, 212, 133, 14),
+                                            ),
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: SvgPicture.asset(
+                                              iconPath,
+                                              color: Colors.white,
+                                              width: 25,
+                                              height: 25,
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                      ...restaurant.modeDePaiement.map((mode) {
+                                        switch (mode) {
+                                          case 'Espèces':
+                                            iconPath = 'images/euro.svg';
+                                            break;
+                                          case 'Carte bancaire':
+                                            iconPath = 'images/cb.svg';
+                                            break;
+                                          case 'Tickets Restaurant':
+                                            iconPath = 'images/cheque.svg';
+                                            break;
+                                          default:
+                                            iconPath = 'images/error_icon.svg';
+                                        }
+                                        return Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color.fromARGB(181, 123, 106, 106),
+                                            ),
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: SvgPicture.asset(
+                                              iconPath,
+                                              color: Colors.white,
+                                              width: 25,
+                                              height: 25,
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    ],
                                   ),
                                 ),
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      restaurant.nom,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(restaurant.adresse),
-                                    const SizedBox(height: 32),
-                                  ],
-                                ),
-                                subtitle: Row(
-                                  children: [
-                                    ...restaurant.modeDeRetrait.map((mode) {
-                                      IconData iconData;
-                                      Color iconColor;
-                                      switch (mode) {
-                                        case 'En Livraison':
-                                          iconData = Icons.delivery_dining;
-                                          iconColor =
-                                             const Color.fromARGB(222, 212, 133, 14);
-                                          break;
-                                        case 'A Emporter':
-                                          iconData = Icons.takeout_dining;
-                                          iconColor =
-                                             const Color.fromARGB(222, 212, 133, 14);
-                                          break;
-                                        case 'Sur place':
-                                          iconData = Icons.restaurant;
-                                          iconColor = const Color.fromARGB(222, 212, 133, 14);
-                                          break;
-                                        default:
-                                          iconData = Icons.error;
-                                          iconColor = const Color.fromARGB(181, 123, 106, 106);
-                                      }
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: iconColor,
-                                          ),
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Icon(
-                                            iconData,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                    ...restaurant.modeDePaiement.map((mode) {
-                                      IconData? iconData;
-                                      switch (mode) {
-                                        case 'Espèces':
-                                          iconData = Icons.monetization_on;
-                                          break;
-                                        case 'Carte bancaire':
-                                          iconData = Icons.credit_card;
-                                          break;
-                                        case 'Tickets Restaurant':
-                                          iconData = Icons.book;
-                                          break;
-                                        default:
-                                          iconData = null;
-                                      }
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8.0),
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Color.fromARGB(181, 123, 106, 106),
-                                          ),
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Icon(
-                                            iconData ?? Icons.error,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  ],
-                                ),
-                              ),
+                              ],
+                            ),
+
                             ),
                           ),
                         );
-                      } else {
-                        return Container(
-                          height: 14.0,
-                        );
-                      }
-                    },
+                      },
+                    ),
                   )
                 : const Center(
                     child: Text('Aucun restaurant trouvé pour cette adresse.'),
                   ),
-          ),
-          const Divider(),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
@@ -401,7 +371,6 @@ class _RestaurantListState extends State<AcceuilScreen> {
 
             onPressed();
           }
-           
         },
       ),
     );
