@@ -85,21 +85,6 @@ class CommandeScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-          title: const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text(
-                  'Mes commandes',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
         body: Column(
           children: [
                 TabBar(
@@ -167,51 +152,6 @@ class CommandeScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: currentIndex,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: '',
-            ),
-          ],
-          onTap: (index) {
-            onTabTapped(index);
-            if (index == 0) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AcceuilScreen()),
-              );
-            }
-            if (index == 1) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CommandeApp()),
-              );
-            }
-            if (index == 2) {
-              if (isLoggedIn) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfilPage()),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const loginPage()),
-                );
-              }
-            }
-          },
         ),
       ),
     );

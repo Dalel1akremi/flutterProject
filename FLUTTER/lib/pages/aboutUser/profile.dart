@@ -1,12 +1,8 @@
-import 'dart:async';
 import 'package:demo/pages/aboutUser/identifiant.dart';
 import 'package:demo/pages/global.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_provider.dart';
-import './../aboutRestaurant/acceuil.dart';
-import './../aboutRestaurant/commande.dart';
 import './../aboutPaiement/porfeuille.dart';
 import 'adresse.dart';
 
@@ -19,22 +15,7 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
-   late String _nom = '';
   int currentIndex = 2;
-  
-
-  @override
-  void initState() {
-    super.initState();
-    initProfilData();
-  }
- Future<void> initProfilData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _nom = prefs.getString('nom') ?? '';
-    });
-  }
- 
     void onTabTapped(int index) {
     setState(() {
       currentIndex = index;
@@ -44,10 +25,6 @@ class _ProfilPageState extends State<ProfilPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: Text('Bonjour $_nom'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
          child: SingleChildScrollView(
@@ -227,44 +204,6 @@ class _ProfilPageState extends State<ProfilPage> {
         ),
       ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '',
-          ),
-        ],
-        onTap: (index) {
-          onTabTapped(index);
-          if (index == 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AcceuilScreen()),
-            );
-          }
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CommandeApp()),
-            );
-          }
-          if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) =>  const ProfilPage()),
-            );
-          }
-        },
-      ),
-    );
+      );
   }
 }
