@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, unused_local_variable, avoid_web_libraries_in_flutter, library_prefixes
 
 import 'package:demo/pages/aboutPaiement/panier.dart';
+import 'package:demo/pages/aboutRestaurant/RestaurantList.dart';
 import 'package:demo/pages/aboutRestaurant/conditionDuitilisation.dart';
 import 'package:demo/pages/aboutRestaurant/conditonDeVente.dart';
 import 'package:demo/pages/aboutRestaurant/confidentialite.dart';
@@ -18,7 +19,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:demo/pages/aboutUser/auth_provider.dart' as CustomAuthProvider;
 
-
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
   const loginPage({
@@ -35,30 +35,36 @@ class _LoginPageState extends State<loginPage> {
   String email = '';
   String password = '';
   Panier panier = Panier();
- late final GoogleSignIn googleSignIn = GoogleSignIn(clientId: '800045568375-qveeo76qnq8p14jmtn6jcsh087uild6p.apps.googleusercontent.com');
+  late final GoogleSignIn googleSignIn = GoogleSignIn(
+      clientId:
+          '800045568375-qveeo76qnq8p14jmtn6jcsh087uild6p.apps.googleusercontent.com');
 
-   CustomAuthProvider.AuthProvider? authProvider;
- bool obscurePassword = true;
- @override
+  CustomAuthProvider.AuthProvider? authProvider;
+  bool obscurePassword = true;
+  @override
   void initState() {
     super.initState();
-    authProvider = Provider.of<CustomAuthProvider.AuthProvider>(context, listen: false);
+    authProvider =
+        Provider.of<CustomAuthProvider.AuthProvider>(context, listen: false);
   }
+
   void _submit(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-     final authProvider = Provider.of<CustomAuthProvider.AuthProvider>(context, listen: false);
+        final authProvider = Provider.of<CustomAuthProvider.AuthProvider>(
+            context,
+            listen: false);
 
         final loginData = await authProvider.login(email, password);
         final userId = loginData['userId'];
         final nom = loginData['nom'];
 
-     bool isLoggedIn = authProvider.currentUser != null;
+        bool isLoggedIn = authProvider.currentUser != null;
 
-          if (panier.origin == 'google') {
+        if (panier.origin == 'google') {
           await _signInWithGoogle(context);
-          return; 
+          return;
         }
         if (panier.origin == 'panier') {
           Navigator.push(
@@ -75,10 +81,11 @@ class _LoginPageState extends State<loginPage> {
             context,
             MaterialPageRoute(builder: (context) => const RestaurantDetail()),
           );
-        } else {
-          Navigator.pushReplacement(
+        } else if (panier.origin == 'RestList') {
+          panier.origine = 'RestList';
+          Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ProfilPage()),
+            MaterialPageRoute(builder: (context) => const RestaurantScreen(index: 2,)),
           );
         }
       } catch (error) {
@@ -100,48 +107,49 @@ class _LoginPageState extends State<loginPage> {
       }
     }
   }
+
   void togglePasswordVisibility() {
     setState(() {
       obscurePassword = !obscurePassword;
     });
   }
-  
-Future<void> _signInWithGoogle(BuildContext context) async {
-  if (authProvider == null) {
-    return;
-  }
-  try {
-    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-    if (googleUser != null) {
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    if (authProvider == null) {
+      return;
+    }
+    try {
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-      final AuthCredential authCredential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
 
-      await authProvider!.firebaseAuth.signInWithCredential(authCredential);  
-      if (authProvider!.firebaseAuth.currentUser != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ProfilPage()),
+        final AuthCredential authCredential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
         );
-      }
-    }
-  } catch (error) {
-    if (kDebugMode) {
-      print('Error during Google sign in: $error');
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Erreur lors de la connexion avec Google'),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-}
 
+        await authProvider!.firebaseAuth.signInWithCredential(authCredential);
+        if (authProvider!.firebaseAuth.currentUser != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfilPage()),
+          );
+        }
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print('Error during Google sign in: $error');
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erreur lors de la connexion avec Google'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,41 +157,49 @@ Future<void> _signInWithGoogle(BuildContext context) async {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: const Text('Connexion'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            panier.origin = "accueil";
+            Navigator.pushReplacementNamed(
+                context, '/RestaurantScreen'); 
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-         child: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text(
-                'E-mail',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Text(
+                  'E-mail',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
+                  ),
                 ),
-              ),
-              TextFormField(
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Enter a valid email address';
-                  }
-                  if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
-                      .hasMatch(value!)) {
-                    return 'Enter a valid email address';
-                  }
-                  return null;
-                },
-                onSaved: (value) => email = value ?? '',
-                decoration: const InputDecoration(
-                  labelText: 'Saisissez votre e-mail',
-                  prefixIcon: Icon(Icons.email),
+                TextFormField(
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Enter a valid email address';
+                    }
+                    if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                        .hasMatch(value!)) {
+                      return 'Enter a valid email address';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => email = value ?? '',
+                  decoration: const InputDecoration(
+                    labelText: 'Saisissez votre e-mail',
+                    prefixIcon: Icon(Icons.email),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16.0),
-              const Text(
+                const SizedBox(height: 16.0),
+                const Text(
                   'Mot de passe',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -204,145 +220,146 @@ Future<void> _signInWithGoogle(BuildContext context) async {
                     suffixIcon: GestureDetector(
                       onTap: togglePasswordVisibility,
                       child: Icon(
-                        obscurePassword ? Icons.visibility_off : Icons.visibility,
+                        obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                         color: Colors.grey,
                       ),
                     ),
                   ),
                   obscureText: obscurePassword,
                 ),
-
-              const SizedBox(height: 8.0),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const PasswordRecoveryPage(),
-                      ),
-                    );
-                  },
-                  child: RichText(
-                    text: const TextSpan(
-                      text: 'Mot de passe oublié',
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Colors.blue,
+                const SizedBox(height: 8.0),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PasswordRecoveryPage(),
+                        ),
+                      );
+                    },
+                    child: RichText(
+                      text: const TextSpan(
+                        text: 'Mot de passe oublié',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: Colors.blue,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () => _submit(context),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.black,
-                ),
-                child: const Text(
-                  'Connexion',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              const Align(
-                alignment: Alignment.center,
-                child: Text('ou'),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => RegistrationPage()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.white,
-                ),
-                child: const Text(
-                  'Inscription',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              const Text(
-                'En continuant, vous acceptez nos : ',
-                style: TextStyle(fontSize: 14.0),
-              ),
-               const SizedBox(height: 10), 
-             RichText(
-                text: TextSpan(
-                  text: '- Conditions Générales d\'utilisation ',
-                  style: const TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () => _submit(context),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    backgroundColor: Colors.black,
                   ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const TermsOfUsePage()),
-                      );
-                    },
-                ),
-              ),
-              const SizedBox(height: 10),  
-              RichText(
-                text: TextSpan(
-                  text: '- Conditions Générales de Vente',
-                  style: const TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
+                  child: const Text(
+                    'Connexion',
+                    style: TextStyle(color: Colors.white),
                   ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SalesTermsPage()),
-                      );
-                    },
                 ),
-              ),
-              const SizedBox(height: 10),  
-              RichText(
-                text: TextSpan(
-                  text: '- Politique de confidentialité',
-                  style: const TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
+                const SizedBox(height: 16.0),
+                const Align(
+                  alignment: Alignment.center,
+                  child: Text('ou'),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegistrationPage()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    backgroundColor: Colors.white,
                   ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PrivacyPolicyPage()),
-                      );
-                    },
+                  child: const Text(
+                    'Inscription',
+                    style: TextStyle(color: Colors.black),
+                  ),
                 ),
-              ),
-               const SizedBox(height: 10), 
-ElevatedButton.icon(
-  onPressed: () => _signInWithGoogle(context),
-  icon: const Icon(Icons.login_rounded),
-  label: const Text('Connexion avec Google'),
-  style: ElevatedButton.styleFrom(
-    minimumSize: const Size(double.infinity, 50),
-    backgroundColor: Colors.red,
-  ),
-),
-
-            ],
+                const SizedBox(height: 16.0),
+                const Text(
+                  'En continuant, vous acceptez nos : ',
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                const SizedBox(height: 10),
+                RichText(
+                  text: TextSpan(
+                    text: '- Conditions Générales d\'utilisation ',
+                    style: const TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Colors.blue,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const TermsOfUsePage()),
+                        );
+                      },
+                  ),
+                ),
+                const SizedBox(height: 10),
+                RichText(
+                  text: TextSpan(
+                    text: '- Conditions Générales de Vente',
+                    style: const TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Colors.blue,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SalesTermsPage()),
+                        );
+                      },
+                  ),
+                ),
+                const SizedBox(height: 10),
+                RichText(
+                  text: TextSpan(
+                    text: '- Politique de confidentialité',
+                    style: const TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Colors.blue,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const PrivacyPolicyPage()),
+                        );
+                      },
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton.icon(
+                  onPressed: () => _signInWithGoogle(context),
+                  icon: const Icon(Icons.login_rounded),
+                  label: const Text('Connexion avec Google'),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    backgroundColor: Colors.red,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }
