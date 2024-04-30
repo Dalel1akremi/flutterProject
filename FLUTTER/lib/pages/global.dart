@@ -16,6 +16,7 @@ class Panier extends Iterable<Article> {
   Restaurant? selectedRestaurant;
   String? userAddress;
   String? origin;
+  String? origine;
   void viderPanier() {
     articles.clear();
   }
@@ -24,6 +25,7 @@ class Panier extends Iterable<Article> {
   }
 
   void getOrigin() {}
+  void getOrigine(){}
 
   void ajouterElementChoisi(String element) {
     elementsChoisis.add(element);
