@@ -102,6 +102,7 @@ const handleUpdateRedirect = async () => {
       <table>
         <thead>
           <tr>
+            <th>ID</th>
             <th>Nom</th>
             <th>Prix</th>
             <th>Description</th>
@@ -115,6 +116,7 @@ const handleUpdateRedirect = async () => {
         <tbody>
     {redirectData.map((item, index) => (
       <tr key={index}>
+        <td>{item.id_item}</td>
         <td>
           {editingItemId === item._id ? (
             <input 

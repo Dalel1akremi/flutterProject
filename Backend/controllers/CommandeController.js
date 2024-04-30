@@ -1,6 +1,5 @@
 const Commande = require ('./../models/CommandeModel');
 const Item = require ('./../models/itemModel');
-const  User = require('./../models/userModel');
 const Restaurant = require('./../models/RestaurantModel');
 const  nodemailer = require("nodemailer");
 const createCommande = async (req, res) => {
@@ -180,7 +179,6 @@ const updateCommandeState = async (req, res) => {
 
     let errorMessage;
 
-    // Vérifier l'ordre des états
     if (newStateCleaned === 'Validée' || newStateCleaned === 'Non validée') {
       if (commande.etat !== 'Encours') {
         errorMessage = `Erreur de modification! Vous ne pouvez pas changer de l'état "${commande.etat}" à l'état "${newStateCleaned}" directement. Veuillez la modifier depuis "Encours"`;
@@ -203,7 +201,6 @@ const updateCommandeState = async (req, res) => {
       return res.status(400).json({ message: errorMessage });
     }
 
-    // Mettre à jour l'état de la commande
     commande.etat = newStateCleaned;
     await commande.save();
     return res.status(200).json({ message: `Commande with ID ${commandeId} updated successfully to "${newStateCleaned}".` });
@@ -263,7 +260,6 @@ const sendNotification = async (req, res) => {
   const { id_rest, email } = req.query;
   
   try {
-    // Recherchez le restaurant correspondant dans la base de données en utilisant son identifiant
     const restaurant = await Restaurant.findOne({ id_rest });
     const utilisateur = await Commande.findOne({ email });
 
@@ -274,24 +270,34 @@ const sendNotification = async (req, res) => {
       return res.status(404).json({ error: 'Utilisateur not found' });
     }
 
-    // Récupérez l'adresse email et le nom du restaurant
     const restEmail = restaurant.email;
     const restaurantName = restaurant.nom;
+    let transporter;
+
+    if (restEmail === 'meltingpot449@gmail.com') {
+      transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: restEmail,
+          pass: 'zcvy livf qkty thhr', 
+        },
+      });
+    } else if (restEmail === 'yakinebenali5@gmail.com') {
+      transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: restEmail,
+          pass: 'ynwl lomd mvak lnsv', 
+        },
+      });
+    }
 
     const mailOptions = {
       from: `"Assistant de restaurant" <${restEmail}>`,
-      to: utilisateur.email, // Utilisez utilisateur.email comme destinataire
+      to: utilisateur.email,
       subject: `Votre commande est prête `,
       text: `Bonjour,\nVotre commande est prête au restaurant ${restaurantName}. Venez la récupérer dès que possible.\nCordialement, Assistant de restaurant`,
     };
-
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: restEmail,
-        pass: 'zcvy livf qkty thhr',
-      },
-    });
 
     await transporter.sendMail(mailOptions);
     console.log('email sent successfully');
@@ -301,8 +307,6 @@ const sendNotification = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-
-
 
 module.exports = {
   createCommande,

@@ -48,6 +48,7 @@ dependencies:
   mongo_dart: ^0.10.0  
   firebase_auth: ^4.19.2
   firebase_core: ^2.30.0
+  flutter_svg: ^0.22.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -75,6 +76,13 @@ flutter:
     - images/First.png
     - images/paiement.png
     - images/acceuil.jpeg
+    - images/delivery.svg
+    - images/surplace.svg
+    - images/emporter.svg
+    - images/euro.svg
+    - images/cb.svg
+    - images/cheque.svg
+    - images/no-pictures.svg
     
   #   - images/a_dot_ham.jpeg
 

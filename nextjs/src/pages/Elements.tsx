@@ -47,7 +47,8 @@ const Steps = () => {
   const getNomItemById = async (id_item: number) => {
     try {
       console.log('Appel de getNomItemById avec id_item :', id_item);
-      const response = await axios.get(`http://localhost:3000/getNomItemById/${id_item}`);
+      const MY_IP = process.env.MY_IP || '127.0.0.1';
+      const response = await axios.get(`http://${MY_IP}:3000/getNomItemById/${id_item}`);
       console.log('Réponse de getNomItemById :', response.data);
       setItemName(response.data.nom);
       setSelectedItemId(id_item);
@@ -78,7 +79,7 @@ const Steps = () => {
     setEditedItem({ 
       ...step,
     });
-    setEditedIdItems(step.id_items ? step.id_items.map(item => item.id_item).join(',') : ''); // Mise à jour de la valeur de editedIdItems
+    setEditedIdItems(step.id_items ? step.id_items.map(item => item.id_item).join(',') : ''); 
   };
   
   const handleSave = async (_id: string) => {
@@ -97,8 +98,8 @@ const Steps = () => {
       const updatedSteps = [...steps];
       const updatedIdItems = editedIdItems ? editedIdItems.split(',').map((id: string) => ({
         id_item: parseInt(id),
-        nom: '', // Vous devez fournir la valeur appropriée pour cette propriété
-        _id: ''   // Vous devez fournir la valeur appropriée pour cette propriété
+        nom: '',
+        _id: '' 
       })) : [];
   
       updatedSteps[modifiedStepIndex] = {

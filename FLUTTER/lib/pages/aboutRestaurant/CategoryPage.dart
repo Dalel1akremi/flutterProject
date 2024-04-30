@@ -141,91 +141,118 @@ class _NextPageState extends State<NextPage> {
           },
         ),
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 90,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _categories.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedCategoryIndex = index;
-                    });
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / _categories.length,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    color: _selectedCategoryIndex == index ? Colors.grey[200] : Colors.white,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.network(
-                            _categories[index].imageUrl,
-                            width: 50,
-                            height: 50,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            _categories[index].nomCat,
-                            style: TextStyle(
-                              color: _selectedCategoryIndex == index ? Colors.purple : Colors.black,
-                            ),
-                          ),
-                        ],
+        backgroundColor: Colors.white,
+
+   body: Column(
+    
+  children: [
+  
+SingleChildScrollView(
+  scrollDirection: Axis.horizontal,
+  child: Wrap(
+    spacing: 8, 
+    children: _categories.map((category) {
+      int index = _categories.indexOf(category);
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedCategoryIndex = index;
+          });
+        },
+        child: Stack(
+          children: [
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              elevation: _selectedCategoryIndex == index ? 4 : 0,
+              color: _selectedCategoryIndex == index ? Colors.grey[200] : Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.network(
+                      category.imageUrl,
+                      width: 50,
+                      height: 50,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      category.nomCat,
+                      style: TextStyle(
+                        color: _selectedCategoryIndex == index ? Colors.purple : Colors.black,
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Expanded(
-            child: Center(
-              child: _buildMenuForCategory(_categories.isNotEmpty ? _categories[_selectedCategoryIndex] : Category(idCat: 1, nomCat: '', imageUrl: '')),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                if (totalPrice > 0) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PanierPage(),
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(150, 50),
-                backgroundColor: Colors.green,
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+            ),
+            Positioned(
+              bottom: 0, 
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 2, 
+                decoration: BoxDecoration(
+                  color: _selectedCategoryIndex == index ? Colors.purple : Colors.transparent,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(10.0),
+                    bottomRight: Radius.circular(10.0),
                   ),
-                  const Text(
-                    'Paiement',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    ' $totalPrice €',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }).toList(),
+  ),
+),
+
+    Expanded(
+      child: Center(
+        child: _buildMenuForCategory(_categories.isNotEmpty ? _categories[_selectedCategoryIndex] : Category(idCat: 1, nomCat: '', imageUrl: '')),
+      ),
+    ),
+    Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ElevatedButton(
+        onPressed: () {
+          if (totalPrice > 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PanierPage(),
+              ),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(150, 50),
+          backgroundColor: Colors.green,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const Text(
+              'Paiement',
+              style: TextStyle(color: Colors.white),
+            ),
+            Text(
+              ' $totalPrice €',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
                     ),
                   ),
                 ],
@@ -285,14 +312,18 @@ class _NextPageState extends State<NextPage> {
                     );
                   }
                 },
+                
                 child: Container(
+                  
                   padding: const EdgeInsets.all(16),
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: const Color.fromARGB(181, 237, 231, 231),
                     borderRadius: BorderRadius.circular(8),
                   ),
+                  
                   child: Row(
+                    
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.network(
