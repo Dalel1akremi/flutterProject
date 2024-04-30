@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'stepDetailsPage.dart';
-
 class ItemDetailsPage extends StatelessWidget {
   final int id_item;
   final String img;
@@ -16,7 +15,7 @@ class ItemDetailsPage extends StatelessWidget {
   final List<dynamic> id_Steps;
 
   const ItemDetailsPage({
-    super.key,
+    super.key, 
     required this.id_item,
     required this.nom,
     required this.img,
@@ -28,6 +27,7 @@ class ItemDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, 
       appBar: AppBar(
         title: Text(nom),
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -61,8 +61,7 @@ class ItemDetailsPage extends StatelessWidget {
     );
   }
 
-  Future<List<Map<String, dynamic>>> fetchItemDetails(
-      int id_item, int id_rest) async {
+  Future<List<Map<String, dynamic>>> fetchItemDetails(int id_item, int id_rest) async {
     try {
       final int? idRest = Panier().getIdRestaurant();
       if (idRest == null) {
@@ -70,8 +69,7 @@ class ItemDetailsPage extends StatelessWidget {
       }
       String myIp = Global.myIp;
       final response = await http.get(
-        Uri.parse(
-            'http://$myIp:3000/getRedirect?id_item=$id_item&id_rest=$idRest'),
+        Uri.parse('http://$myIp:3000/getRedirect?id_item=$id_item&id_rest=$idRest'),
       );
       if (response.statusCode == 200) {
         final dynamic responseData = json.decode(response.body)['data'];
@@ -83,8 +81,7 @@ class ItemDetailsPage extends StatelessWidget {
           throw Exception('Response data is invalid.');
         }
       } else {
-        throw Exception(
-            'Failed to fetch menu. Status code: ${response.statusCode}');
+        throw Exception('Failed to fetch menu. Status code: ${response.statusCode}');
       }
     } catch (error) {
       if (kDebugMode) {
@@ -111,12 +108,11 @@ class ItemDetailsPage extends StatelessWidget {
         );
       },
       child: SingleChildScrollView(
-        // Ajout du SingleChildScrollView
         child: Container(
           padding: const EdgeInsets.all(16),
           margin: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: const Color.fromARGB(181, 237, 231, 231),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
