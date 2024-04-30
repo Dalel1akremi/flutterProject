@@ -23,7 +23,6 @@ export default function AddCategorie() {
   const router = useRouter();
 
   useEffect(() => {
-    // Decode token and set restaurant ID
     const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwt.decode(token) as { [key: string]: any };
@@ -73,10 +72,10 @@ export default function AddCategorie() {
       setIsError(false);
       setFormData({
         nom_cat: '',
-        id_rest: '', // Reset id_rest if needed
+        id_rest: '', 
         image: null,
       });
-      router.push('/categories'); // Rediriger vers la bonne URL
+      router.push('/Categories'); 
     } catch (error: any) {
       setMessage(error.response.data.message);
       setIsError(true);
@@ -90,7 +89,7 @@ export default function AddCategorie() {
       <div className="container">
         <h1>Ajouter un nouvel item</h1>
         <form onSubmit={handleSubmit} className="form">
-          {/* Form inputs */}
+  
           <div className="formGroup">
             <label className="input-label">Nom:</label>
             <input type="text" className="input" name="nom_cat" placeholder="Nom" value={formData.nom_cat} onChange={handleChange} required />
