@@ -131,7 +131,15 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: Text(restaurantName ?? 'Restaurant Detail'),
-      ),
+         leading: IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        panier.origine = 'RestList';
+        Navigator.pushReplacementNamed(
+          context, '/RestaurantScreen'); 
+      },
+    ),
+    ),
       body: SingleChildScrollView(
         child: Column(
           children: [
