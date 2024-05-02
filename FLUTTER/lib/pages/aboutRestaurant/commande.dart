@@ -5,11 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import './acceuil.dart';
-import '../aboutUser/login.dart';
 import './../global.dart';
 import 'package:demo/pages/aboutUser/auth_provider.dart';
-import 'package:demo/pages/aboutUser/profile.dart';
 
 void main() {
   runApp(const CommandeApp());
