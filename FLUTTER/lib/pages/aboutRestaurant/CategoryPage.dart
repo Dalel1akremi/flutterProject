@@ -11,13 +11,13 @@ import 'ItemDetailsPage.dart';
 import 'stepMenuPage.dart';
 import './../global.dart';
 
-class NextPage extends StatefulWidget {  
+class NextPage extends StatefulWidget {
   final List<Article> panier;
-
+   
   const NextPage({
-    super.key,
+    Key? key,
     required this.panier,
-  });
+  }) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -55,40 +55,6 @@ class _NextPageState extends State<NextPage> {
       if (kDebugMode) {
         print('Error fetching categories: $error');
       }
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
-    try {
-      final int? idRest = Panier().getIdRestaurant();
-      if (idRest == null) {
-        throw Exception('Restaurant ID is null');
-      }
-      String myIp = Global.myIp;
-      final response = await http.get(Uri.parse('http://$myIp:3000/getItem?id_cat=$idCat&id_rest=$idRest'));
-
-      if (response.statusCode == 200) {
-        final List<dynamic>? responseData = json.decode(response.body)['formattedItems'];
-
-        if (responseData != null && responseData.isNotEmpty) {
-          return responseData.map<Map<String, dynamic>>((item) => item as Map<String, dynamic>).toList();
-        } else {
-          if (kDebugMode) {
-            print('Error fetching menu: Response data is null or empty');
-          }
-          return [];
-        }
-      } else {
-        if (kDebugMode) {
-          print('Error fetching menu. Status code: ${response.statusCode}');
-        }
-        throw Exception('Failed to fetch menu. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      if (kDebugMode) {
-        print('Error fetching menu: $error');
-      }
-      return [];
     }
   }
 
@@ -141,118 +107,116 @@ class _NextPageState extends State<NextPage> {
           },
         ),
       ),
-        backgroundColor: Colors.white,
-
-   body: Column(
-    
-  children: [
-  
-SingleChildScrollView(
-  scrollDirection: Axis.horizontal,
-  child: Wrap(
-    spacing: 8, 
-    children: _categories.map((category) {
-      int index = _categories.indexOf(category);
-      return GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedCategoryIndex = index;
-          });
-        },
-        child: Stack(
-          children: [
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              elevation: _selectedCategoryIndex == index ? 4 : 0,
-              color: _selectedCategoryIndex == index ? Colors.grey[200] : Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.network(
-                      category.imageUrl,
-                      width: 50,
-                      height: 50,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      category.nomCat,
-                      style: TextStyle(
-                        color: _selectedCategoryIndex == index ? Colors.purple : Colors.black,
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+Container(
+  height: 80,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(20.0),
+    border: Border.all(color: Colors.black),
+  ),
+  child: SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    child: Row(
+      children: List.generate(
+        _categories.length,
+        (index) {
+          return Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedCategoryIndex = index;
+                  });
+                },
+                child: Container(
+                  width: 150, 
+                  height: 120, 
+                  margin: const EdgeInsets.symmetric(horizontal: 4), // Add some spacing between cards
+                  child: Card(
+                    elevation: _selectedCategoryIndex == index ? 8 : 0,
+                    color: _selectedCategoryIndex == index ? Colors.grey[200] : Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.network(
+                            _categories[index].imageUrl,
+                            width: 50,
+                            height: 50,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            _categories[index].nomCat,
+                            style: TextStyle(
+                              color: _selectedCategoryIndex == index ? Colors.purple : Colors.black,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0, 
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 2, 
-                decoration: BoxDecoration(
-                  color: _selectedCategoryIndex == index ? Colors.purple : Colors.transparent,
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(10.0),
-                    bottomRight: Radius.circular(10.0),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    }).toList(),
+              if (index != _categories.length - 1) 
+                const VerticalDivider(
+                  color: Colors.black,
+                  thickness: 1,
+                  width: 0,
+                ),
+            ],
+          );
+        },
+      ),
+    ),
   ),
 ),
 
-    Expanded(
-      child: Center(
-        child: _buildMenuForCategory(_categories.isNotEmpty ? _categories[_selectedCategoryIndex] : Category(idCat: 1, nomCat: '', imageUrl: '')),
-      ),
-    ),
-    Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton(
-        onPressed: () {
-          if (totalPrice > 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PanierPage(),
-              ),
-            );
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(150, 50),
-          backgroundColor: Colors.green,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+Expanded(
+            child: Center(
+              child: _buildMenuForCategory(_categories.isNotEmpty ? _categories[_selectedCategoryIndex] : Category(idCat: 1, nomCat: '', imageUrl: '')),
             ),
-            const Text(
-              'Paiement',
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              ' $totalPrice €',
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                if (totalPrice > 0) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PanierPage(),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(150, 50),
+                backgroundColor: Colors.green,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    ' $numberOfItems article${numberOfItems != 1 ? 's' : ''}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const Text(
+                    'Paiement',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    ' $totalPrice €',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -312,18 +276,14 @@ SingleChildScrollView(
                     );
                   }
                 },
-                
                 child: Container(
-                  
                   padding: const EdgeInsets.all(16),
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(181, 237, 231, 231),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  
                   child: Row(
-                    
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.network(
@@ -372,6 +332,40 @@ SingleChildScrollView(
         }
       },
     );
+  }
+
+  Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
+    try {
+      final int? idRest = Panier().getIdRestaurant();
+      if (idRest == null) {
+        throw Exception('Restaurant ID is null');
+      }
+      String myIp = Global.myIp;
+      final response = await http.get(Uri.parse('http://$myIp:3000/getItem?id_cat=$idCat&id_rest=$idRest'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic>? responseData = json.decode(response.body)['formattedItems'];
+
+        if (responseData != null && responseData.isNotEmpty) {
+          return responseData.map<Map<String, dynamic>>((item) => item as Map<String, dynamic>).toList();
+        } else {
+          if (kDebugMode) {
+            print('Error fetching menu: Response data is null or empty');
+          }
+          return [];
+        }
+      } else {
+        if (kDebugMode) {
+          print('Error fetching menu. Status code: ${response.statusCode}');
+        }
+        throw Exception('Failed to fetch menu. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print('Error fetching menu: $error');
+      }
+      return [];
+    }
   }
 }
 
