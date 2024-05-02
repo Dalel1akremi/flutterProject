@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'dart:convert';
+import 'package:demo/pages/aboutRestaurant/RestaurantList.dart';
 import 'package:demo/pages/global.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   late String numero;
   late String userId;
   late String _email = '';
-
+  Panier panier = Panier();
   final TextEditingController nomController = TextEditingController();
   final TextEditingController prenomController = TextEditingController();
   final TextEditingController numeroController = TextEditingController();
@@ -153,14 +154,11 @@ Future<bool> saveNameToStorage(String name) async {
       print('Data not saved.');
     }
   }
-
-
-     
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProfilPage(),
-          ),
+       panier.origine = 'accueil';
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RestaurantScreen(index: 2,)),
+         
         );
       } else {
         if (kDebugMode) {
