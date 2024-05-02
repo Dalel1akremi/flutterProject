@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, library_private_types_in_public_api
 
 import 'dart:convert';
+import 'package:demo/pages/aboutRestaurant/RestaurantList.dart';
 import 'package:demo/pages/aboutUser/auth_provider.dart';
 import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:demo/pages/global.dart';
@@ -23,7 +24,7 @@ class _PortefeuilleState extends State<Portefeuille> {
       TextEditingController();
   final TextEditingController cvvController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  Panier panier = Panier();
   String? validateCardNumber(String? value) {
     if (value == null || value.isEmpty) {
       return 'Veuillez saisir le numéro de carte';
@@ -184,11 +185,12 @@ void initState() {
                   if (_formKey.currentState?.validate() ?? false) {
                     try {
                       await sendPaymentRequest();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ProfilPage()),
-                      );
+                      panier.origine = 'accueil';
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RestaurantScreen(index: 2,)),
+         
+        );
                     } catch (error) {
                       print('Error during payment: $error');
                     }
