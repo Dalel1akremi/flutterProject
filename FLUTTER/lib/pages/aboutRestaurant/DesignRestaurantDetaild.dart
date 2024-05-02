@@ -55,7 +55,7 @@ class _GlowRadioButtonState extends State<GlowRadioButton> {
             child: widget.value == widget.groupValue
                 ? const Icon(
                     Icons.check,
-                    color: const Color.fromARGB(222, 212, 133, 14),
+                    color: Color.fromARGB(222, 212, 133, 14),
                     size: 18,
                   )
                 : null,
