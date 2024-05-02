@@ -93,11 +93,15 @@ class _RestaurantListState extends State<RestaurantScreen> {
     ];
     initProfilData();
     if (panier.origin == 'RestList') {
-      _selectedIndex = 2;
+      _selectedIndex = 0;
       _updateAppBarTitle();
     }
     if (panier.origine == 'accueil') {
       _selectedIndex = 2;
+      _updateAppBarTitle();
+    }
+     if (panier.origine == 'commandes') {
+      _selectedIndex = 1;
       _updateAppBarTitle();
     }
   }
