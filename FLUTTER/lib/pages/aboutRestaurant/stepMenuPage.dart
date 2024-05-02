@@ -99,6 +99,7 @@ class _StepMenuPageState extends State<StepMenuPage> {
     int totalPrice = _value * widget.prix;
 
     return Scaffold(
+         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(widget.nom),
           backgroundColor: const Color.fromARGB(222, 212, 133, 14),

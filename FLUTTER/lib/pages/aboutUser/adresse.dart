@@ -204,6 +204,7 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Addresse '),
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),

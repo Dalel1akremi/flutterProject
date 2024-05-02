@@ -55,6 +55,7 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
     int totalPrice = _value * widget.prix;
 
  return Scaffold(
+  backgroundColor: Colors.white,
   appBar: AppBar(
     title: Text(widget.nom),
     backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -66,9 +67,9 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
         children: [
         Center(
   child: FractionallySizedBox(
-    widthFactor: 1.0, // Pour prendre toute la largeur disponible
+    widthFactor: 1.0,
     child: Container(
-      height: MediaQuery.of(context).size.height / 3, // Hauteur définie
+      height: MediaQuery.of(context).size.height / 3, 
       decoration: BoxDecoration(
         image: DecorationImage(
           image: NetworkImage(
