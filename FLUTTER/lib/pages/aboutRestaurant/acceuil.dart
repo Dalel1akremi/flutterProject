@@ -281,7 +281,7 @@ String iconPath = '';
                                             iconPath = 'images/cheque.svg';
                                             break;
                                           default:
-                                            iconPath = 'images/error_icon.svg';
+                                            iconPath = 'images/no-pictures.svg';
                                         }
                                         return Padding(
                                           padding: const EdgeInsets.only(right: 8.0),
