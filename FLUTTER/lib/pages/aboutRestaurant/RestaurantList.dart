@@ -1,6 +1,6 @@
+// ignore_for_file: file_names, library_private_types_in_public_api
 import 'package:demo/pages/aboutRestaurant/acceuil.dart';
 import 'package:demo/pages/global.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,7 +54,7 @@ class Restaurant {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
 
 class RestaurantScreen extends StatefulWidget {
   final int index;
-  const RestaurantScreen({Key? key, required this.index}) : super(key: key);
+  const RestaurantScreen({super.key, required this.index});
   @override
   _RestaurantListState createState() => _RestaurantListState();
 }

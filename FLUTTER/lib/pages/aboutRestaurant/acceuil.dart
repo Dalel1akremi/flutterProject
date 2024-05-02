@@ -8,10 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import './../aboutRestaurant/commande.dart';
-import './../aboutUser/login.dart';
 import "./RestaurantDetail.dart";
-import '../aboutUser/profile.dart';
 import './../aboutUser/auth_provider.dart';
 import './../global.dart';
 
@@ -281,7 +278,7 @@ String iconPath = '';
                                             iconPath = 'images/cheque.svg';
                                             break;
                                           default:
-                                            iconPath = 'images/error_icon.svg';
+                                            iconPath = 'images/no-pictures.svg';
                                         }
                                         return Padding(
                                           padding: const EdgeInsets.only(right: 8.0),
