@@ -34,13 +34,13 @@ const registerUser = async (req, res) => {
       }
 
       const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
-
+      const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = new User({
           nom,
           prenom,
           telephone,
           email,
-          password,
+          password: hashedPassword,
           validationCode,
 
       });
