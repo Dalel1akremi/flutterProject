@@ -6,73 +6,141 @@ const  nodemailer = require("nodemailer");
 
 const GeocodedAd=require ('../models/AdresseModel');
 const axios = require('axios');
+
+
 const registerUser = async (req, res) => {
   const { nom, prenom, telephone, email, password, confirmPassword } = req.body;
 
   try {
- 
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-  
-      return res.status(400).json({ message: 'User with this email already exists' });
+      if (existingUser.isEmailConfirmed) {
+        return res.status(400).json({ message: 'Un utilisateur avec cet e-mail existe déjà' });
+      } else {
+        const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        existingUser.validationCode = validationCode;
+        await existingUser.save();
+
+        sendConfirmationEmail(email, validationCode);
+
+        return res.status(400).json({ message: 'Vous avez déjà un compte avec cet e-mail. Veuillez confirmer votre e-mail.' });
+      }
     }
 
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match' });
+      return res.status(400).json({ message: 'Les mots de passe ne correspondent pas' });
     }
 
+    // Hasher le mot de passe avec bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     const newUser = new User({
       nom,
       prenom,
       telephone,
       email,
-      password: hashedPassword,
-      
+      password: hashedPassword, // Enregistrer le mot de passe haché dans la base de données
+      validationCode,
     });
-
     await newUser.save();
 
-    res.status(201).json({ message: 'User registered successfully' });
+    sendConfirmationEmail(email, validationCode);
+
+    return res.status(200).json({ success: true, message: 'Veuillez vérifier votre email pour activer votre compte.' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ success: false, message: 'Erreur lors de l\'enregistrement de l\'utilisateur' });
   }
 };
+
+
+const confirmEmail = async (req, res) => {
+  const {email, code } = req.body;
+
+  try {
+      const user = await User.findOne({ email });
+      console.log(user);
+      if (!user) {
+          return res.status(404).json({ message: 'Utilisateur non trouvé' });
+      }
+
+      if (user.validationCode !== code) {
+          return res.status(400).json({ message: 'Code de confirmation incorrect' });
+      }
+
+      user.isEmailConfirmed = true;
+      await user.save();
+
+      return res.status(200).json({ message: 'Email confirmé avec succès' });
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Erreur lors de la confirmation de l\'email' });
+  }
+};
+
+const sendConfirmationEmail = (email, validationCode) => {
+  const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+          user: 'meltingpot449@gmail.com',
+          pass: 'zcvy livf qkty thhr',
+      },
+  });
+
+  const mailOptions = {
+      from: '"Assistant de restaurant" <meltingpot449@gmail.com>',
+      to: email,
+      subject: 'Confirmation de votre compte',
+      text: `Votre code de confirmation est : ${validationCode}`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+          console.error(error);
+      } else {
+          console.log('Email sent successfully: ' + info.response);
+      }
+  });
+};
+
+
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-  
     const user = await User.findOne({ email });
 
     if (!user) {
-      
       return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    if (!user.isEmailConfirmed) {
+      return res.status(401).json({ message: 'Email not confirmed' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-   
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-
     const token = jwt.sign(
-      { userId: user._id, email: user.email ,nom: user.nom,telephone:user.telephone},
+      { userId: user._id, email: user.email, nom: user.nom, telephone: user.telephone },
       'your-secret-key',
-      { expiresIn: '7d' } 
+      { expiresIn: '7d' }
     );
 
-    res.status(200).json({ token, userId: user._id,nom: user.nom,telephone:user.telephone, message: 'Login successful' });
+    res.status(200).json({ token, userId: user._id, nom: user.nom, telephone: user.telephone, message: 'Login successful' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 const reset_password = async (req, res) => {
   const { email } = req.body;
 
@@ -401,6 +469,7 @@ const updateGeocodedDetails = async (req, res) => {
 
 module.exports = {
   registerUser,
+  confirmEmail,
   loginUser,
   reset_password,
   validate_code,
