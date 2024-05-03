@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   password: String,
   validationCode: String, 
   validationCodeTimestamp: Date,
+  isEmailConfirmed: { type: Boolean, default: false },
 });
 userSchema.pre('save', async function (next) {
   try {
