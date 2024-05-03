@@ -111,11 +111,11 @@ class _NextPageState extends State<NextPage> {
       body: Column(
         children: [
 Padding(
-  padding: const EdgeInsets.only(top: 16.0), // Ajouter de l'espace en haut
+  padding: const EdgeInsets.only(top: 16.0), 
   child: Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0), // Ajouter de l'espace à gauche et à droite
+    padding: const EdgeInsets.symmetric(horizontal: 16.0),
     child: Padding(
-      padding: const EdgeInsets.only(bottom: 16.0), // Ajouter de l'espace en bas
+      padding: const EdgeInsets.only(bottom: 16.0), 
       child: SizedBox(
         height: 80,
         child: SingleChildScrollView(
@@ -134,7 +134,7 @@ Padding(
                       },
                       child: Card(
                         surfaceTintColor: Colors.white,
-                        color: _selectedCategoryIndex == index ? const  Color.fromARGB(255, 252, 240, 222) : Colors.white, 
+                        color: _selectedCategoryIndex == index ? const  Color.fromARGB(255, 253, 242, 226) : Colors.white, 
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8), 
                           side: const BorderSide(
@@ -181,7 +181,7 @@ Padding(
   ),
 ),
 
-Expanded(
+       Expanded(
             child: Center(
               child: _buildMenuForCategory(_categories.isNotEmpty ? _categories[_selectedCategoryIndex] : Category(idCat: 1, nomCat: '', imageUrl: '')),
             ),
@@ -248,109 +248,122 @@ Widget _buildMenuForCategory(Category category) {
         return const Text('No menu items available.');
       } else {
         return Padding(
-  padding: const EdgeInsets.only(top: 16.0),
-   child: GridView.builder(
-  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 2, 
-    crossAxisSpacing: 6, 
-    mainAxisSpacing: 6, 
-  ),
-  itemCount: snapshot.data!.length,
-  itemBuilder: (context, index) {
-    var menuItem = snapshot.data![index];
-    return GestureDetector(
-      onTap: () {
-         if (menuItem['is_Redirect'] == true) {
-                  final int? idRest = Panier().getIdRestaurant();
-                  if (idRest == null) {
-                    throw Exception('Restaurant ID is null');
-                  }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ItemDetailsPage(
-                        id_item: menuItem['id_item'],
-                        nom: menuItem['nom'] ?? 'Default Name',
-                        img: menuItem['image'],
-                        prix: menuItem['prix'],
-                        id_Steps: menuItem['id_Steps'] ?? [],
-                        id_rest: menuItem['idRest'] ?? 0,
-                      ),
-                    ),
-                  );
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => StepMenuPage(
-                        id_item: menuItem['id_item'],
-                        nom: menuItem['nom'],
-                        img: menuItem['image'],
-                        prix: menuItem['prix'],
-                        id_Steps: menuItem['id_Steps'] ?? [],
-                      ),
-                    ),
-                  );
-                }
-      },
-      child: Card(
-         surfaceTintColor: Colors.orange.withOpacity(0.4),
-        elevation: 4,
-        margin: const EdgeInsets.all(8),  
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(8), 
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.network(
-                  menuItem['image'],
-                  width:120, 
-                  height: 80, 
-                  fit: BoxFit.cover, 
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '${menuItem['nom']}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14, // Réduisez la taille de la police
-                  ),
-                ),
-                const SizedBox(height: 2), // Réduisez l'espacement entre les éléments
-                Text(
-                  menuItem['description'] ?? '',
-                  maxLines: 2, // Limitez le texte à deux lignes
-                  overflow: TextOverflow.ellipsis, // Ajoutez des points de suspension pour le texte dépassant
-                  style: const TextStyle(
-                    fontSize: 12, // Réduisez la taille de la police
-                  ),
-                ),
-                const SizedBox(height: 2), // Réduisez l'espacement entre les éléments
-                if (!(menuItem['is_Redirect'] == true))
-                  Text(
-                    'Prix: ${menuItem['prix']}€',
-                    style: const TextStyle(
-                      fontSize: 12, // Réduisez la taille de la police
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-              ],
+          padding: const EdgeInsets.only(top: 16.0),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, 
+              crossAxisSpacing: 6, 
+              mainAxisSpacing: 6,
+              childAspectRatio: 0.8, 
             ),
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              var menuItem = snapshot.data![index];
+              return GestureDetector(
+                onTap: () {
+                  if (menuItem['is_Redirect'] == true) {
+                    final int? idRest = Panier().getIdRestaurant();
+                    if (idRest == null) {
+                      throw Exception('Restaurant ID is null');
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ItemDetailsPage(
+                          id_item: menuItem['id_item'],
+                          nom: menuItem['nom'] ?? 'Default Name',
+                          img: menuItem['image'],
+                          prix: menuItem['prix'],
+                          id_Steps: menuItem['id_Steps'] ?? [],
+                          id_rest: menuItem['idRest'] ?? 0,
+                        ),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StepMenuPage(
+                          id_item: menuItem['id_item'],
+                          nom: menuItem['nom'],
+                          img: menuItem['image'],
+                          prix: menuItem['prix'],
+                          id_Steps: menuItem['id_Steps'] ?? [],
+                        ),
+                      ),
+                    );
+                  }
+                },
+            child:Card(
+  surfaceTintColor: Colors.orange.withOpacity(0.4),
+  elevation: 4,
+  margin: const EdgeInsets.all(8),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(8),
+  ),
+  color: Colors.white,
+  child: Stack(
+    children: [
+      Container(
+        height: 150, 
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(8),
+            topRight: Radius.circular(8),
+          ),
+          image: DecorationImage(
+            image: NetworkImage(menuItem['image']),
+            fit: BoxFit.cover,
           ),
         ),
       ),
+      const SizedBox(height: 8), 
+      Padding(
+        padding: const EdgeInsets.fromLTRB(8, 158, 8, 8), // Ajuster en conséquence
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '${menuItem['nom']}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              menuItem['description'] ?? '',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 2),
+            if (!(menuItem['is_Redirect'] == true))
+              Text(
+                'Prix: ${menuItem['prix']}€',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
+      ),
+    ],
+  ),
+)
+
     );
-  },
-));
-  }
+            },
+          ),
+        );
+      }
     },
   );
 }
+
 
   Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
     try {
