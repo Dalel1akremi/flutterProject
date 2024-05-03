@@ -1,4 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, file_names, duplicate_ignore, unnecessary_null_comparison, use_build_context_synchronously, unused_element
+// import 'dart:ffi';
+
 import 'package:demo/pages/aboutRestaurant/DesignRestaurantDetaild.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -137,13 +139,12 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     alignment: Alignment.bottomCenter,
     clipBehavior: Clip.none,
     children: [
-     
       // Image du restaurant
       Container(
         padding: const EdgeInsets.all(1.0),
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(50)),
+          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(40)),
           boxShadow: [
             BoxShadow(
               color: Colors.white.withOpacity(0.5),
@@ -160,19 +161,19 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               : null,
         ),
       ),
-       // Bouton de retour
+      // Conteneur pour l'icône du bouton de retour
       Positioned(
         top: 20.0,
-        left:10.0,
+        left: 10.0,
         child: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white,
+            color: const Color.fromARGB(255, 243, 226, 201).withOpacity(0.4),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.orange.withOpacity(0.4),
                 spreadRadius: 1,
                 blurRadius: 3,
                 offset: const Offset(0, 2),
@@ -188,45 +189,39 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           ),
         ),
       ),
-      // Nom du restaurant
+      // Row pour le logo du restaurant et le conteneur du nom du restaurant
       Positioned(
-        bottom: -40,
-        left: 60.0,
+        bottom: -35,
         child: Container(
-          width: 350,
-          height: 80,
+          width: 400,
+          margin: const EdgeInsetsDirectional.only(start: 40, end: 40),
+          height: 70, 
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(bottomRight: Radius.circular(50)),
+            borderRadius: const BorderRadius.only(
+              bottomRight: Radius.circular(50),
+              bottomLeft: Radius.circular(50),
+              topLeft: Radius.circular(50)
+            ),
             color: Colors.white,
             boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              restaurantName ?? 'Restaurant Detail',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.5),
+          spreadRadius: 1,
+          blurRadius: 3,
+          offset: const Offset(0, 2),
         ),
-      ),
-      // Logo du restaurant
-      if (restaurantLogo != null)
-        Positioned(
-          left: 16.0,
-          bottom: -40,
-          child: Container(
+      ],
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (restaurantLogo != null)
+          Container(
             clipBehavior: Clip.hardEdge,
-            height: 80,
+            height: 100,
             width: 80,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(style: BorderStyle.solid, color: Colors.white, width: 4),
               color: Colors.white,
             ),
             child: Image.network(
@@ -234,19 +229,38 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
               fit: BoxFit.fill,
             ),
           ),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  restaurantName ?? 'Restaurant Detail',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                // Ajoutez ici d'autres éléments s'il y en a
+              ],
+            ),
+          ),
         ),
-    ],
+      ],
+    ),
+  ),
+)
+],
+  
   ),
 ),
-          
+       
             const SizedBox(height: 50),
-SizedBox(
-  width: double.infinity,
-  child: Padding(
-    padding: const EdgeInsets.all(5), // Padding autour des deux cartes
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch, // Ajuste la largeur des enfants pour remplir la largeur disponible
-      children: [
+    SizedBox(
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.all(5), 
+        child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch, // Ajuste la largeur des enfants pour remplir la largeur disponible
+        children: [
         Card(
           surfaceTintColor: Colors.orange.withOpacity(0.4),
           color: Colors.white,
