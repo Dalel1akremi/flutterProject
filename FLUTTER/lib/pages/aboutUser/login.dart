@@ -82,11 +82,8 @@ class _LoginPageState extends State<loginPage> {
             MaterialPageRoute(builder: (context) => const RestaurantDetail()),
           );
         } else if (panier.origin == 'RestList') {
-          panier.origine = 'accueil';
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const RestaurantScreen(index: 2,)),
-          );
+          panier.origine = "accueil";
+          Navigator.pushReplacementNamed(context, '/RestaurantScreen');
         }
       } catch (error) {
         if (kDebugMode) {
@@ -162,8 +159,7 @@ class _LoginPageState extends State<loginPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             panier.origine = "accueil";
-            Navigator.pushReplacementNamed(
-                context, '/RestaurantScreen'); 
+            Navigator.pushReplacementNamed(context, '/RestaurantScreen');
           },
         ),
       ),
