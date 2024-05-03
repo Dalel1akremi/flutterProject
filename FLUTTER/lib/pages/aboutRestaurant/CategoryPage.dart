@@ -2,8 +2,10 @@
 // ignore_for_file: file_names, duplicate_ignore
 
 import 'package:demo/pages/aboutRestaurant/RestaurantDetail.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import './../aboutPaiement/panier.dart';
@@ -13,7 +15,7 @@ import './../global.dart';
 
 class NextPage extends StatefulWidget {
   final List<Article> panier;
-   
+
   const NextPage({
     Key? key,
     required this.panier,
@@ -41,15 +43,18 @@ class _NextPageState extends State<NextPage> {
         throw Exception('Restaurant ID is null');
       }
       String myIp = Global.myIp;
-      final response = await http.get(Uri.parse('http://$myIp:3000/getCategories?id_rest=$idRest'));
+      final response = await http
+          .get(Uri.parse('http://$myIp:3000/getCategories?id_rest=$idRest'));
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = json.decode(response.body)['data'];
         setState(() {
-          _categories = responseData.map((json) => Category.fromJson(json)).toList();
+          _categories =
+              responseData.map((json) => Category.fromJson(json)).toList();
         });
       } else {
-        throw Exception('Failed to fetch categories. Status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to fetch categories. Status code: ${response.statusCode}');
       }
     } catch (error) {
       if (kDebugMode) {
@@ -80,7 +85,8 @@ class _NextPageState extends State<NextPage> {
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: const Text('Confirmation'),
-                  content: const Text('Vous avez des articles dans votre panier. Voulez-vous le vider ?'),
+                  content: const Text(
+                      'Vous avez des articles dans votre panier. Voulez-vous le vider ?'),
                   actions: <Widget>[
                     TextButton(
                       onPressed: () {
@@ -110,80 +116,88 @@ class _NextPageState extends State<NextPage> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-Padding(
-  padding: const EdgeInsets.only(top: 16.0), 
-  child: Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-    child: Padding(
-      padding: const EdgeInsets.only(bottom: 16.0), 
-      child: SizedBox(
-        height: 80,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-              _categories.length,
-              (index) {
-                return Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedCategoryIndex = index;
-                        });
-                      },
-                      child: Card(
-                        surfaceTintColor: Colors.white,
-                        color: _selectedCategoryIndex == index ? const  Color.fromARGB(255, 253, 242, 226) : Colors.white, 
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8), 
-                          side: const BorderSide(
-                            color: Color.fromARGB(222, 212, 133, 14), // Border color of the card for all categories
-                            width: 2, 
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: SizedBox(
+                  height: 80,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: List.generate(
+                        _categories.length,
+                        (index) {
+                          return Row(
                             children: [
-                              Image.network(
-                                _categories[index].imageUrl,
-                                width: 50,
-                                height: 50,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                _categories[index].nomCat,
-                                style: TextStyle(
-                                  color: _selectedCategoryIndex == index ? Colors.purple : Colors.black,
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedCategoryIndex = index;
+                                  });
+                                },
+                                child: Card(
+                                  surfaceTintColor: Colors.white,
+                                  color: _selectedCategoryIndex == index
+                                      ? const Color.fromARGB(255, 253, 242, 226)
+                                      : Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: const BorderSide(
+                                      color: Color.fromARGB(222, 212, 133,
+                                          14), // Border color of the card for all categories
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.network(
+                                          _categories[index].imageUrl,
+                                          width: 50,
+                                          height: 50,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          _categories[index].nomCat,
+                                          style: TextStyle(
+                                            color:
+                                                _selectedCategoryIndex == index
+                                                    ? Colors.purple
+                                                    : Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
+                              if (index != _categories.length - 1)
+                                const VerticalDivider(
+                                  color: Colors.white,
+                                  thickness: 1,
+                                  width: 0,
+                                ),
                             ],
-                          ),
-                        ),
+                          );
+                        },
                       ),
                     ),
-                    if (index != _categories.length - 1)
-                      const VerticalDivider(
-                        color: Colors.white,
-                        thickness: 1,
-                        width: 0,
-                      ),
-                  ],
-                );
-              },
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-    ),
-  ),
-),
-
-       Expanded(
+          Expanded(
             child: Center(
-              child: _buildMenuForCategory(_categories.isNotEmpty ? _categories[_selectedCategoryIndex] : Category(idCat: 1, nomCat: '', imageUrl: '')),
+              child: _buildMenuForCategory(_categories.isNotEmpty
+                  ? _categories[_selectedCategoryIndex]
+                  : Category(idCat: 1, nomCat: '', imageUrl: '')),
             ),
           ),
           const SizedBox(width: 16),
@@ -236,134 +250,121 @@ Padding(
     );
   }
 
-Widget _buildMenuForCategory(Category category) {
-  return FutureBuilder<List<Map<String?, dynamic>>>(
-    future: fetchMenu(category.idCat),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      } else if (snapshot.hasError) {
-        return Text('Error loading menu: ${snapshot.error}');
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return const Text('No menu items available.');
-      } else {
-        return Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, 
-              crossAxisSpacing: 6, 
-              mainAxisSpacing: 6,
-              childAspectRatio: 0.8, 
-            ),
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              var menuItem = snapshot.data![index];
-              return GestureDetector(
-                onTap: () {
-                  if (menuItem['is_Redirect'] == true) {
-                    final int? idRest = Panier().getIdRestaurant();
-                    if (idRest == null) {
-                      throw Exception('Restaurant ID is null');
-                    }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ItemDetailsPage(
-                          id_item: menuItem['id_item'],
-                          nom: menuItem['nom'] ?? 'Default Name',
-                          img: menuItem['image'],
-                          prix: menuItem['prix'],
-                          id_Steps: menuItem['id_Steps'] ?? [],
-                          id_rest: menuItem['idRest'] ?? 0,
-                        ),
+  Widget _buildMenuForCategory(Category category) {
+    return FutureBuilder<List<Map<String?, dynamic>>>(
+      future: fetchMenu(category.idCat),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error loading menu: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Text('No menu items available.');
+        } else {
+          return Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 6,
+                mainAxisSpacing: 6,
+                childAspectRatio: 0.8,
+              ),
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                var menuItem = snapshot.data![index];
+                return GestureDetector(
+                    onTap: () {
+                      if (menuItem['is_Redirect'] == true) {
+                        final int? idRest = Panier().getIdRestaurant();
+                        if (idRest == null) {
+                          throw Exception('Restaurant ID is null');
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ItemDetailsPage(
+                              id_item: menuItem['id_item'],
+                              nom: menuItem['nom'] ?? 'Default Name',
+                              img: menuItem['image'],
+                              prix: menuItem['prix'],
+                              id_Steps: menuItem['id_Steps'] ?? [],
+                              id_rest: menuItem['idRest'] ?? 0,
+                            ),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StepMenuPage(
+                              id_item: menuItem['id_item'],
+                              nom: menuItem['nom'],
+                              img: menuItem['image'],
+                              prix: menuItem['prix'],
+                              id_Steps: menuItem['id_Steps'] ?? [],
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Card(
+                      surfaceTintColor: Colors.orange.withOpacity(0.4),
+                      elevation: 4,
+                      clipBehavior: Clip.hardEdge,
+                      margin: const EdgeInsets.all(8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => StepMenuPage(
-                          id_item: menuItem['id_item'],
-                          nom: menuItem['nom'],
-                          img: menuItem['image'],
-                          prix: menuItem['prix'],
-                          id_Steps: menuItem['id_Steps'] ?? [],
-                        ),
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              width:MediaQuery.of(context).size.width,
+                              child: Image.network(
+                                menuItem['image'],
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height:5),
+                          Text(
+                            '${menuItem['nom']}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            menuItem['description'] ?? '',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                           Text(
+                              menuItem['is_Redirect']==true?'':
+                              'Prix: ${menuItem['prix']}€',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height:5)
+                        ],
                       ),
-                    );
-                  }
-                },
-            child:Card(
-  surfaceTintColor: Colors.orange.withOpacity(0.4),
-  elevation: 4,
-  margin: const EdgeInsets.all(8),
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(8),
-  ),
-  color: Colors.white,
-  child: Stack(
-    children: [
-      Container(
-        height: 150, 
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
-          ),
-          image: DecorationImage(
-            image: NetworkImage(menuItem['image']),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-      const SizedBox(height: 8), 
-      Padding(
-        padding: const EdgeInsets.fromLTRB(8, 158, 8, 8), // Ajuster en conséquence
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '${menuItem['nom']}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
+                    ));
+              },
             ),
-            const SizedBox(height: 2),
-            Text(
-              menuItem['description'] ?? '',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
-              ),
-            ),
-            const SizedBox(height: 2),
-            if (!(menuItem['is_Redirect'] == true))
-              Text(
-                'Prix: ${menuItem['prix']}€',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-          ],
-        ),
-      ),
-    ],
-  ),
-)
-
+          );
+        }
+      },
     );
-            },
-          ),
-        );
-      }
-    },
-  );
-}
-
+  }
 
   Future<List<Map<String, dynamic>>> fetchMenu(int idCat) async {
     try {
@@ -372,13 +373,17 @@ Widget _buildMenuForCategory(Category category) {
         throw Exception('Restaurant ID is null');
       }
       String myIp = Global.myIp;
-      final response = await http.get(Uri.parse('http://$myIp:3000/getItem?id_cat=$idCat&id_rest=$idRest'));
+      final response = await http.get(
+          Uri.parse('http://$myIp:3000/getItem?id_cat=$idCat&id_rest=$idRest'));
 
       if (response.statusCode == 200) {
-        final List<dynamic>? responseData = json.decode(response.body)['formattedItems'];
+        final List<dynamic>? responseData =
+            json.decode(response.body)['formattedItems'];
 
         if (responseData != null && responseData.isNotEmpty) {
-          return responseData.map<Map<String, dynamic>>((item) => item as Map<String, dynamic>).toList();
+          return responseData
+              .map<Map<String, dynamic>>((item) => item as Map<String, dynamic>)
+              .toList();
         } else {
           if (kDebugMode) {
             print('Error fetching menu: Response data is null or empty');
@@ -389,7 +394,8 @@ Widget _buildMenuForCategory(Category category) {
         if (kDebugMode) {
           print('Error fetching menu. Status code: ${response.statusCode}');
         }
-        throw Exception('Failed to fetch menu. Status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to fetch menu. Status code: ${response.statusCode}');
       }
     } catch (error) {
       if (kDebugMode) {
@@ -415,7 +421,9 @@ class Category {
     final int? categoryId = json['id_cat'] as int?;
     final String? categoryNomCat = json['nom_cat'] as String?;
     final String? categoryImageUrl = json['image'] as String?;
-    if (categoryId != null && categoryNomCat != null && categoryImageUrl != null) {
+    if (categoryId != null &&
+        categoryNomCat != null &&
+        categoryImageUrl != null) {
       return Category(
         idCat: categoryId,
         nomCat: categoryNomCat,
@@ -423,7 +431,8 @@ class Category {
       );
     } else {
       if (kDebugMode) {
-        print("Warning: 'id_cat', 'nom_cat' or 'image_url' is null in JSON data. Using default values.");
+        print(
+            "Warning: 'id_cat', 'nom_cat' or 'image_url' is null in JSON data. Using default values.");
       }
       return Category(idCat: 0, nomCat: 'Default Category', imageUrl: '');
     }
