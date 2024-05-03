@@ -128,62 +128,117 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     String? restaurantImage = Panier().getSelectedRestaurantImage();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(222, 212, 133, 14),
-        title: Text(restaurantName ?? 'Restaurant Detail'),
-         leading: IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        panier.origine = 'RestList';
-        Navigator.pushReplacementNamed(
-          context, '/RestaurantScreen'); 
-      },
-    ),
-    ),
+    
       body: Expanded(
         child: Column(
           children: [
-            Expanded(
-            child:Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(1.0),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(bottomRight: Radius.circular(50)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                    image: restaurantImage != null
-                        ? DecorationImage(
-                            image: NetworkImage(restaurantImage),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-               ),
-              if (restaurantLogo != null)
-                        Positioned(
-                          left: 16.0,
-                          bottom: -40,
-                          child:  CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.white,
-                            child: Image.network(
-                              restaurantLogo,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        ),
-              ],
+ Expanded(
+  child: Stack(
+    alignment: Alignment.bottomCenter,
+    clipBehavior: Clip.none,
+    children: [
+     
+      // Image du restaurant
+      Container(
+        padding: const EdgeInsets.all(1.0),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(50)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3),
             ),
+          ],
+          image: restaurantImage != null
+              ? DecorationImage(
+                  image: NetworkImage(restaurantImage),
+                  fit: BoxFit.cover,
+                )
+              : null,
+        ),
+      ),
+       // Bouton de retour
+      Positioned(
+        top: 20.0,
+        left:10.0,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 3,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              panier.origine = 'RestList';
+              Navigator.pushReplacementNamed(context, '/RestaurantScreen');
+            },
+          ),
+        ),
+      ),
+      // Nom du restaurant
+      Positioned(
+        bottom: -40,
+        left: 60.0,
+        child: Container(
+          width: 350,
+          height: 80,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(bottomRight: Radius.circular(50)),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 3,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              restaurantName ?? 'Restaurant Detail',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+          ),
+        ),
+      ),
+      // Logo du restaurant
+      if (restaurantLogo != null)
+        Positioned(
+          left: 16.0,
+          bottom: -40,
+          child: Container(
+            clipBehavior: Clip.hardEdge,
+            height: 80,
+            width: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(style: BorderStyle.solid, color: Colors.white, width: 4),
+              color: Colors.white,
+            ),
+            child: Image.network(
+              restaurantLogo,
+              fit: BoxFit.fill,
+            ),
+          ),
+        ),
+    ],
+  ),
+),
+          
             const SizedBox(height: 50),
 SizedBox(
   width: double.infinity,
@@ -274,6 +329,7 @@ SizedBox(
        ],
         ),
       ),
+     
       bottomNavigationBar: Container(
         color: Colors.white,
         child: Padding(
