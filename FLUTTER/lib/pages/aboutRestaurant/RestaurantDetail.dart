@@ -209,38 +209,40 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                       ],
                     ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (restaurantLogo != null)
-                          Container(
-                            clipBehavior: Clip.hardEdge,
-                            height: 100,
-                            width: 80,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                            ),
-                            child: Image.network(
-                              restaurantLogo,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        Expanded(
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  restaurantName ?? 'Restaurant Detail',
-                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    if (restaurantLogo != null)
+      Container(
+        clipBehavior: Clip.hardEdge,
+        height: 100,
+        width: 80,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          border: Border.all(color: Colors.grey.withOpacity(0.5), width: 2), // Contour de cercle gris
+        ),
+        child: Image.network(
+          restaurantLogo,
+          fit: BoxFit.fill,
+        ),
+      ),
+    Expanded(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              restaurantName ?? 'Restaurant Detail',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ],
+),
+
                   ),
                 ),
               ],
