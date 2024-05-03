@@ -213,7 +213,9 @@ String iconPath = '';
                             );
                           },
                           child: Card(
+                            surfaceTintColor: const Color.fromARGB(255, 241, 157, 30).withOpacity(0.4),
                             margin: const EdgeInsets.all(8.0),
+                            color: const Color.fromARGB(255, 253, 246, 238),
                             child: ListTile(
                               leading: SizedBox(
                                 width: 70,
