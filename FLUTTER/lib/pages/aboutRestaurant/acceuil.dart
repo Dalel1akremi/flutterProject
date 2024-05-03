@@ -222,7 +222,7 @@ String iconPath = '';
                                 height: 60,
                                 child: Image.network(
                                   restaurant.logo,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                 ),
                               ),
                               title: Text(
