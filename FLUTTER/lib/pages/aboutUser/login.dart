@@ -18,6 +18,7 @@ import './../aboutRestaurant/RestaurantDetail.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:demo/pages/aboutUser/auth_provider.dart' as CustomAuthProvider;
+import 'package:dio/dio.dart';
 
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
@@ -48,62 +49,67 @@ class _LoginPageState extends State<loginPage> {
         Provider.of<CustomAuthProvider.AuthProvider>(context, listen: false);
   }
 
-  void _submit(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      try {
-        final authProvider = Provider.of<CustomAuthProvider.AuthProvider>(
-            context,
-            listen: false);
+void _submit(BuildContext context) async {
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
+    try {
+      final authProvider = Provider.of<CustomAuthProvider.AuthProvider>(
+          context,
+          listen: false);
 
-        final loginData = await authProvider.login(email, password);
-        final userId = loginData['userId'];
-        final nom = loginData['nom'];
+      final loginData = await authProvider.login(email, password);
+      final userId = loginData['userId'];
+      final nom = loginData['nom'];
 
-        bool isLoggedIn = authProvider.currentUser != null;
+      bool isLoggedIn = authProvider.currentUser != null;
 
-        if (panier.origin == 'google') {
-          await _signInWithGoogle(context);
-          return;
-        }
-        if (panier.origin == 'panier') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const PaymentScreen()),
-          );
-        } else if (panier.origin == 'livraison') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const PanierPage()),
-          );
-        } else if (panier.origin == 'Restaurant') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const RestaurantDetail()),
-          );
-        } else if (panier.origin == 'RestList') {
-          panier.origine = "accueil";
-          Navigator.pushReplacementNamed(context, '/RestaurantScreen');
-        }
-      } catch (error) {
-        if (kDebugMode) {
-          print('Error during login: $error');
-        }
-        String errorMessage = 'Adresse ou Mot de passe invalide';
-
-        if (error is FormatException) {
-          errorMessage = 'Invalid response format from the server.';
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-          ),
-        );
+      if (panier.origin == 'google') {
+        await _signInWithGoogle(context);
+        return;
       }
+      if (panier.origin == 'panier') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PaymentScreen()),
+        );
+      } else if (panier.origin == 'livraison') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PanierPage()),
+        );
+      } else if (panier.origin == 'Restaurant') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RestaurantDetail()),
+        );
+      } else if (panier.origin == 'RestList') {
+        panier.origine = "accueil";
+        Navigator.pushReplacementNamed(context, '/RestaurantScreen');
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print('Error during login: $error');
+      }
+      String errorMessage = 'Adresse ou Mot de passe invalide';
+
+      if (error is FormatException) {
+        errorMessage = 'Invalid response format from the server.';
+      }
+
+      if (error is DioError) {
+        final responseData = error.response?.data;
+        errorMessage = responseData['message'] ?? 'Une erreur est survenue';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
+}
 
   void togglePasswordVisibility() {
     setState(() {
