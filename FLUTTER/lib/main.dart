@@ -2,6 +2,7 @@ import 'package:demo/pages/aboutRestaurant/RestaurantDetail.dart';
 import 'package:demo/pages/aboutRestaurant/RestaurantList.dart';
 import 'package:demo/pages/aboutRestaurant/commandeNotifier.dart';
 import 'package:demo/pages/aboutUser/login.dart';
+import 'package:demo/pages/global.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './pages/aboutUser/auth_provider.dart';
@@ -57,12 +58,13 @@ class AppStart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const HomeScreen();
+    return  HomeScreen();
   }
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+   HomeScreen({super.key});
+  final Panier panier = Panier();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,13 +72,10 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                builder: (context) => const RestaurantScreen(index: 0),                 ),
-              );
-            },
+           onTap: () {
+            panier.origine = "acceuil";
+            Navigator.pushReplacementNamed(context, '/RestaurantScreen');
+          },
             child: Container(
               width: double.infinity,
               height: double.infinity,
