@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:demo/pages/global.dart';
 
 class RegistrationPage extends StatefulWidget {
+  const RegistrationPage({super.key});
+
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
 }
@@ -93,7 +95,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         final String userId = data['userId'];
 
         log('Signup successful! Token: $token, UserId: $userId');
-        await showConfirmationDialog(context); // Call confirmation dialog here
+        await showConfirmationDialog(context);
       } else {
         final data = json.decode(response.body);
         final String message = data['message'];
@@ -112,12 +114,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               backgroundColor: Colors.green,
             ),
           );
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const loginPage(),
-            ),
-          );
+        await showConfirmationDialog(context);
         }
       }
     } catch (error) {
@@ -147,8 +144,8 @@ Future<void> showConfirmationDialog(BuildContext context) async {
           child: ListBody(
             children: <Widget>[
               TextFormField(
-                initialValue: email, // Pré-remplir l'email
-                enabled: false, // Désactiver la modification de l'email
+                initialValue: email,
+                enabled: false, 
                 decoration: const InputDecoration(labelText: 'Email'),
               ),
               TextFormField(
@@ -161,10 +158,16 @@ Future<void> showConfirmationDialog(BuildContext context) async {
           ),
         ),
         actions: <Widget>[
+           TextButton(
+            child: const Text('Annuler'),
+            onPressed: () {
+              Navigator.of(context).pop(); 
+            },
+          ),
           TextButton(
             child: const Text('Valider'),
             onPressed: () {
-              // Envoyer le code de confirmation au serveur
+ 
               confirmEmail(context, confirmationCode);
             },
           ),
@@ -198,8 +201,7 @@ Future<void> showConfirmationDialog(BuildContext context) async {
           backgroundColor: Colors.green,
         ),
       );
-      
-      // Naviguer vers la page de connexion
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -366,7 +368,7 @@ Future<void> showConfirmationDialog(BuildContext context) async {
                     minimumSize: const Size(double.infinity, 50),
                     backgroundColor: Colors.black,
                   ),
-                  child:const  Text(
+                  child: const Text(
                     'Registre',
                     style: TextStyle(color: Colors.white),
                   ),
