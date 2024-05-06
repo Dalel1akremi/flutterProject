@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:demo/pages/aboutRestaurant/DesignRestaurantDetaild.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +16,7 @@ class RestaurantDetail extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _RestaurantDetailState createState() => _RestaurantDetailState();
 }
 
@@ -68,6 +71,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
       if (selectedDateTime.isBefore(initialDateTime)) {
         showDialog(
+          // ignore: use_build_context_synchronously
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
@@ -100,6 +104,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
 
           if (token != null && token.isNotEmpty) {
             Navigator.push(
+              // ignore: use_build_context_synchronously
               context,
               MaterialPageRoute(
                 builder: (context) => const AddressSearchScreen(),
@@ -108,6 +113,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
           } else {
             panier.origin = 'Restaurant';
             Navigator.push(
+              // ignore: use_build_context_synchronously
               context,
               MaterialPageRoute(builder: (context) => const loginPage()),
             );

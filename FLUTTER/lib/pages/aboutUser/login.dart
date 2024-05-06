@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, unused_local_variable, avoid_web_libraries_in_flutter, library_prefixes
 
 import 'package:demo/pages/aboutPaiement/panier.dart';
-import 'package:demo/pages/aboutRestaurant/RestaurantList.dart';
 import 'package:demo/pages/aboutRestaurant/conditionDuitilisation.dart';
 import 'package:demo/pages/aboutRestaurant/conditonDeVente.dart';
 import 'package:demo/pages/aboutRestaurant/confidentialite.dart';
@@ -273,7 +272,7 @@ class _LoginPageState extends State<loginPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => RegistrationPage()),
+                          builder: (context) => const RegistrationPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

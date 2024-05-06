@@ -137,9 +137,13 @@ Future<Map<String, dynamic>> login(String email, String password) async {
     }
   }catch (error) {
   if (error is String) {
-    print('Error during login: $error'); // Afficher le message d'erreur dans le terminal
+    if (kDebugMode) {
+      print('Error during login: $error');
+    } // Afficher le message d'erreur dans le terminal
   } else {
-    print('Error during login: $error');
+    if (kDebugMode) {
+      print('Error during login: $error');
+    }
   }
   
   rethrow;
