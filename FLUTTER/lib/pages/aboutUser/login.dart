@@ -87,19 +87,7 @@ void _submit(BuildContext context) async {
           Navigator.pushReplacementNamed(context, '/RestaurantScreen');
         }
       } catch (error) {
-        if (kDebugMode) {
-          print('Error during login: $error');
-        }
-        String errorMessage = 'Adresse ou Mot de passe invalide';
-
-      if (error is FormatException) {
-        errorMessage = 'Invalid response format from the server.';
-      }
-
-      if (error is DioError) {
-        final responseData = error.response?.data;
-        errorMessage = responseData['message'] ?? 'Une erreur est survenue';
-      }
+        String errorMessage = error.toString();
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

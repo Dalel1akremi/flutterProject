@@ -77,60 +77,75 @@ if (kDebugMode) {
 
   }
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
-   String myIp = Global.myIp;
+Future<Map<String, dynamic>> login(String email, String password) async {
+  String myIp = Global.myIp;
   
-    try {
-      final response = await http.post(
-        Uri.parse("http://$myIp:3000/login"),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
-      );
+  try {
+    final response = await http.post(
+      Uri.parse("http://$myIp:3000/login"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+    );
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final token = data['token'];
-        final userId = data['userId'];
-        final nom = data['nom'];
-        final telephone=data['telephone'];
-        // Mettez à jour l'état de l'authentification
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final token = data['token'];
+      final userId = data['userId'];
+      final nom = data['nom'];
+      final telephone = data['telephone'];
+      final message = data['message']; // Message renvoyé par le backend
+
+      // Mettre à jour l'état de l'authentification
       _token = token;
       _userId = userId;
       _nom = nom;
       _email = email;
       _telephone = telephone;
-        if (kDebugMode) {
-          print('login successful!UserId:$userId,nom:$nom,telephone:$telephone');
-        }
-        // Save token to storage before setting it
-        await saveTokenToStorage(token, userId, email,nom,telephone);
-
-        _token = token;
-        _userId = data['userId'];
-        if (kDebugMode) {
-          print('User ID from server response: $userId');
-        }
-        if (kDebugMode) {
-          print('User email from server response: $email');
-        }
-        notifyListeners();
-        return {
-          'token': token,
-          'userId': userId,
-          'nom': nom,
-        }; // Return the necessary data
-      } else {
-        throw Exception('Login failed');
+      
+      if (kDebugMode) {
+        print('login successful! UserId: $userId, nom: $nom, telephone: $telephone');
       }
-    } catch (error) {
-      rethrow;
+      
+      // Enregistrer le token localement avant de le définir
+      await saveTokenToStorage(token, userId, email, nom, telephone);
+
+      _token = token;
+      _userId = data['userId'];
+      
+      if (kDebugMode) {
+        print('User ID from server response: $userId');
+        print('User email from server response: $email');
+      }
+      
+      notifyListeners();
+      
+      return {
+        'token': token,
+        'userId': userId,
+        'nom': nom,
+        'message': message, // Retourner également le message renvoyé par le backend
+      };
+    } else {
+      final data = json.decode(response.body);
+      final errorMessage = data['message']; // Message d'erreur renvoyé par le backend
+      throw Exception(errorMessage);
     }
+  }catch (error) {
+  if (error is String) {
+    print('Error during login: $error'); // Afficher le message d'erreur dans le terminal
+  } else {
+    print('Error during login: $error');
   }
+  
+  rethrow;
+}
+
+}
 
   Future<void> signInWithCredential(AuthCredential credential) async { // Utilisation de AuthCredential au lieu de OAuthCredential
     try {
