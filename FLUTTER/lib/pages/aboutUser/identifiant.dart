@@ -153,7 +153,7 @@ Future<bool> saveNameToStorage(String name) async {
       print('Data not saved.');
     }
   }
-       panier.origine = 'accueil';
+       panier.origine = 'profil';
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const RestaurantScreen(index: 2,)),
