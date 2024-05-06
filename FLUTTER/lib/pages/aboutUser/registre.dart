@@ -220,7 +220,7 @@ Future<void> showConfirmationDialog(BuildContext context) async {
   } catch (error) {
     log('Error during email confirmation: $error');
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Error during email confirmation.'),
         backgroundColor: Colors.red,
       ),
@@ -347,7 +347,7 @@ Future<void> showConfirmationDialog(BuildContext context) async {
                 ),
                 TextFormField(
                   validator: (value) {
-                    if (value?.isEmpty ?? true || value != password) {
+                    if (value?.isEmpty ?? true ) {
                       return 'Les mots de passe ne correspondent pas';
                     }
                     return null;
@@ -362,13 +362,13 @@ Future<void> showConfirmationDialog(BuildContext context) async {
                 const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () => _submit(context),
-                  child: const Text(
-                    'Registre',
-                    style: TextStyle(color: Colors.white),
-                  ),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
                     backgroundColor: Colors.black,
+                  ),
+                  child:const  Text(
+                    'Registre',
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ],
