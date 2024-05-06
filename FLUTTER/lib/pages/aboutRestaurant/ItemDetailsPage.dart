@@ -106,7 +106,7 @@ Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
             id_Steps: item['id_Steps'] ?? [],
             id_item: item['id_item'] ?? 0,
             nom: item['nom'] ?? '',
-            img: 'http://$myIp:3000/'+ item['image'] ?? '',
+            img: 'http://$myIp:3000/'+ item['image'] ,
             prix: (item['prix'] ?? 0).toInt(),
           ),
         ),
