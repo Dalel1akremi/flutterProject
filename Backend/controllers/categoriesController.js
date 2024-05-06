@@ -1,10 +1,10 @@
 const Categories = require('../models/categoriesModel');
-require('dotenv').config();
+
 const createCategorie = async (req, res) => {
   try {
     const { body, file } = req;
     let { nom_cat, id_rest } = body;
-    const imageUrl = file ? `http://${process.env.MY_IP}:3000/images/${file.filename}` : null;
+    const imageUrl = file ? `images/${file.filename}` : null;
     nom_cat = nom_cat.charAt(0).toUpperCase() + nom_cat.slice(1).toLowerCase();
     const existingCategorie = await Categories.findOne({ nom_cat, id_rest });
 
