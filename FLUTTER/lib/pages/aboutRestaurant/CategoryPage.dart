@@ -1,5 +1,5 @@
 // ignore: file_names
-// ignore_for_file: file_names, duplicate_ignore
+// ignore_for_file: file_names, duplicate_ignore, prefer_interpolation_to_compose_strings
 
 import 'package:demo/pages/aboutRestaurant/RestaurantDetail.dart';
 import 'package:flutter/foundation.dart';
@@ -27,7 +27,7 @@ class NextPage extends StatefulWidget {
 class _NextPageState extends State<NextPage> {
   List<Category> _categories = [];
   int _selectedCategoryIndex = 0;
-
+    String myIp = Global.myIp;
   @override
   void initState() {
     super.initState();
@@ -40,7 +40,7 @@ class _NextPageState extends State<NextPage> {
       if (idRest == null) {
         throw Exception('Restaurant ID is null');
       }
-      String myIp = Global.myIp;
+  
       final response = await http
           .get(Uri.parse('http://$myIp:3000/getCategories?id_rest=$idRest'));
 
@@ -145,7 +145,7 @@ class _NextPageState extends State<NextPage> {
                                     borderRadius: BorderRadius.circular(8),
                                     side: const BorderSide(
                                       color: Color.fromARGB(222, 212, 133,
-                                          14), // Border color of the card for all categories
+                                          14),
                                       width: 2,
                                     ),
                                   ),
@@ -284,7 +284,7 @@ class _NextPageState extends State<NextPage> {
                             builder: (context) => ItemDetailsPage(
                               id_item: menuItem['id_item'],
                               nom: menuItem['nom'] ?? 'Default Name',
-                              img: menuItem['image'],
+                              img:'http://$myIp:3000/'+menuItem['image'],
                               prix: menuItem['prix'],
                               id_Steps: menuItem['id_Steps'] ?? [],
                               id_rest: menuItem['idRest'] ?? 0,
@@ -298,7 +298,7 @@ class _NextPageState extends State<NextPage> {
                             builder: (context) => StepMenuPage(
                               id_item: menuItem['id_item'],
                               nom: menuItem['nom'],
-                              img: menuItem['image'],
+                              img: 'http://$myIp:3000/'+menuItem['image'],
                               prix: menuItem['prix'],
                               id_Steps: menuItem['id_Steps'] ?? [],
                             ),
@@ -321,7 +321,7 @@ class _NextPageState extends State<NextPage> {
                             child: SizedBox(
                               width:MediaQuery.of(context).size.width,
                               child: Image.network(
-                                menuItem['image'],
+                               'http://$myIp:3000/'+menuItem['image'],
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -419,13 +419,14 @@ class Category {
     final int? categoryId = json['id_cat'] as int?;
     final String? categoryNomCat = json['nom_cat'] as String?;
     final String? categoryImageUrl = json['image'] as String?;
+      String myIp = Global.myIp;
     if (categoryId != null &&
         categoryNomCat != null &&
         categoryImageUrl != null) {
       return Category(
         idCat: categoryId,
         nomCat: categoryNomCat,
-        imageUrl: categoryImageUrl,
+        imageUrl: 'http://$myIp:3000/'+ categoryImageUrl,
       );
     } else {
       if (kDebugMode) {
