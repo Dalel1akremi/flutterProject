@@ -92,11 +92,11 @@ class _RestaurantListState extends State<RestaurantScreen> {
       ProfilPage(),
     ];
     initProfilData();
-    if (panier.origin == 'RestList') {
+    if (panier.origin == 'acceuil') {
       _selectedIndex = 0;
       _updateAppBarTitle();
     }
-    if (panier.origine == 'accueil') {
+    if (panier.origine == 'profil') {
       _selectedIndex = 2;
       _updateAppBarTitle();
     }
