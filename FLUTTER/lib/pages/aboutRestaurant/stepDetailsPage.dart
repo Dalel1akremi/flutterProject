@@ -89,21 +89,22 @@ class _StepDetailsPageState extends State<StepDetailsPage> {
       ),
     ),
   ),
+  
 ),
 
-          const SizedBox(height: 20),
-           const Text(
-                    "Remarque: ",
-                    style: TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+        
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                 
+                   const SizedBox(height: 20),
+           const Text(
+                    "Remarque: ",
+                    style: TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(
                     width: 300,
                     height: 100,

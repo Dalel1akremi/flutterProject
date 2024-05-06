@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'stepDetailsPage.dart';
+
 class ItemDetailsPage extends StatelessWidget {
   final int id_item;
   final String img;
@@ -15,7 +16,7 @@ class ItemDetailsPage extends StatelessWidget {
   final List<dynamic> id_Steps;
 
   const ItemDetailsPage({
-    super.key, 
+    super.key,
     required this.id_item,
     required this.nom,
     required this.img,
@@ -27,7 +28,7 @@ class ItemDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(nom),
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
@@ -61,7 +62,8 @@ class ItemDetailsPage extends StatelessWidget {
     );
   }
 
-  Future<List<Map<String, dynamic>>> fetchItemDetails(int id_item, int id_rest) async {
+  Future<List<Map<String, dynamic>>> fetchItemDetails(
+      int id_item, int id_rest) async {
     try {
       final int? idRest = Panier().getIdRestaurant();
       if (idRest == null) {
@@ -69,7 +71,8 @@ class ItemDetailsPage extends StatelessWidget {
       }
       String myIp = Global.myIp;
       final response = await http.get(
-        Uri.parse('http://$myIp:3000/getRedirect?id_item=$id_item&id_rest=$idRest'),
+        Uri.parse(
+            'http://$myIp:3000/getRedirect?id_item=$id_item&id_rest=$idRest'),
       );
       if (response.statusCode == 200) {
         final dynamic responseData = json.decode(response.body)['data'];
@@ -81,7 +84,8 @@ class ItemDetailsPage extends StatelessWidget {
           throw Exception('Response data is invalid.');
         }
       } else {
-        throw Exception('Failed to fetch menu. Status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to fetch menu. Status code: ${response.statusCode}');
       }
     } catch (error) {
       if (kDebugMode) {
@@ -91,73 +95,80 @@ class ItemDetailsPage extends StatelessWidget {
     }
   }
 
-  Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StepDetailsPage(
-              id_Steps: item['id_Steps'] ?? [],
-              id_item: item['id_item'] ?? 0,
-              nom: item['nom'] ?? '',
-              img: item['image'] ?? '',
-              prix: (item['prix'] ?? 0).toInt(),
-            ),
+Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StepDetailsPage(
+            id_Steps: item['id_Steps'] ?? [],
+            id_item: item['id_item'] ?? 0,
+            nom: item['nom'] ?? '',
+            img: item['image'] ?? '',
+            prix: (item['prix'] ?? 0).toInt(),
           ),
-        );
-      },
-      child: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(181, 237, 231, 231),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.network(
-                item['image'] ?? '',
-                width: 150,
-                height: 100,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item['nom'] ?? '',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      item['description'] ?? '',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Prix: ${item['prix'] ?? ''}€',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
+        ),
+      );
+    },
+    child: Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: SizedBox(
+        height: 150, 
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0), 
+          child: Card(
+            surfaceTintColor: Colors.orange.withOpacity(0.4),
+            elevation: 4,
+            color: Colors.white,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 150, 
+                  height: 150, 
+                  child: Image.network(
+                    item['image'],
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item['nom'] ?? '',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        item['description'] ?? '',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Prix: ${item['prix'] ?? ''}€',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
