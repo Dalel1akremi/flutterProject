@@ -31,7 +31,6 @@ class AuthProvider with ChangeNotifier {
   String? get email => _email;
   String? get telephone => _telephone;
 
-  // Méthode pour initialiser le token depuis le stockage
   Future<void> initTokenFromStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('token');
@@ -39,8 +38,7 @@ class AuthProvider with ChangeNotifier {
     _nom = prefs.getString('nom');
     _email = prefs.getString('email');
     _telephone = prefs.getString('telephone');
-    notifyListeners(); // notifier les écouteurs une fois que les valeurs ont été récupérées
-  
+    notifyListeners(); 
 if (kDebugMode) {
       print('User ID from storage: $_userId');
     }
@@ -55,7 +53,6 @@ if (kDebugMode) {
     } 
     notifyListeners();
   }
-  // Méthode pour vérifier si un utilisateur est authentifié
   bool get isAuthenticated => _token != null;
 
   Future<void> saveTokenToStorage(String token, String userId, String email,String nom,String telephone) async {
@@ -98,9 +95,8 @@ Future<Map<String, dynamic>> login(String email, String password) async {
       final userId = data['userId'];
       final nom = data['nom'];
       final telephone = data['telephone'];
-      final message = data['message']; // Message renvoyé par le backend
+      final message = data['message']; 
 
-      // Mettre à jour l'état de l'authentification
       _token = token;
       _userId = userId;
       _nom = nom;
@@ -111,7 +107,6 @@ Future<Map<String, dynamic>> login(String email, String password) async {
         print('login successful! UserId: $userId, nom: $nom, telephone: $telephone');
       }
       
-      // Enregistrer le token localement avant de le définir
       await saveTokenToStorage(token, userId, email, nom, telephone);
 
       _token = token;

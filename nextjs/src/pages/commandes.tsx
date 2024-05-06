@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from '../styles/navbar';
 import { useRouter } from 'next/router';
-import jwt from 'jsonwebtoken'; // Importer le package jsonwebtoken
+import jwt from 'jsonwebtoken'; 
 
 interface Commande {
   _id: string;
@@ -61,10 +61,8 @@ const CommandesPage = () => {
   const handleStateChange = async (id: string, newState: string) => {
     try {
       const MY_IP = process.env.MY_IP || '127.0.0.1';
-      // Mettre à jour l'état de la commande dans le backend
       const response = await axios.put(`http://${MY_IP}:3000/commandes?commandeId=${id}&newState=${newState}`);
   
-      // Mettre à jour l'état de la commande dans le state local
       setCommandes(prevCommandes =>
         prevCommandes.map(commande => {
           if (commande._id === id) {
@@ -74,7 +72,6 @@ const CommandesPage = () => {
         })
       );
   
-      // Si le nouvel état est "Prête", appeler la fonction sendNotification
       if (newState === "Prête") {
         await sendNotification(commandes.find(commande => commande._id === id)?.id_rest || 0, commandes.find(commande => commande._id === id)?.email || ''); // Utilisez id_rest et email de la commande
       }

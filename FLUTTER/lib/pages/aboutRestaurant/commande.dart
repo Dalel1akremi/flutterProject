@@ -1,5 +1,4 @@
 // ignore_for_file: deprecated_member_use
-
 import 'package:demo/pages/aboutRestaurant/commandeNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -7,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import './../global.dart';
 import 'package:demo/pages/aboutUser/auth_provider.dart';
-
 void main() {
   runApp(const CommandeApp());
 }
