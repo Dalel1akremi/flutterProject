@@ -148,7 +148,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   padding: const EdgeInsets.all(1.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(bottomRight: Radius.circular(40)),
+                    borderRadius: const BorderRadius.only(bottomRight: Radius.circular(40),bottomLeft: Radius.circular(40)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.white.withOpacity(0.5),
@@ -166,22 +166,15 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ),
                 ),
                 Positioned(
-                  top: 20.0,
+                  top: 40.0,
                   left: 10.0,
                   child: Container(
                     width: 40,
                     height: 40,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      color: const Color.fromARGB(255, 243, 226, 201).withOpacity(0.4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.orange.withOpacity(0.4),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                      color: Colors.orange,
+                    
                     ),
                     child: IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.black),
@@ -193,62 +186,53 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                   ),
                 ),
                 Positioned(
-                  bottom: -35,
-                  child: Container(
-                    width: 400,
-                    margin: const EdgeInsetsDirectional.only(start: 40, end: 40),
-                    height: 70,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        bottomRight: Radius.circular(50),
-                        bottomLeft: Radius.circular(50),
-                        topLeft: Radius.circular(50),
-                      ),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: const Offset(0, 2),
+                  bottom: -50,
+                  child: Stack(
+                    alignment: Alignment.centerLeft,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width-60,
+                        height: 60,
+                        alignment: Alignment.centerLeft,
+                        decoration:  BoxDecoration(
+                          color: Colors.white,
+                         boxShadow:[
+                          BoxShadow(
+                            color:Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 3,
+                            offset: const Offset(0, 2)
+                          )
+                         ],
+                          borderRadius: const  BorderRadius.all(
+                            Radius.circular(30)
+                          ),   
                         ),
-                      ],
-                    ),
-                    child: Row(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    if (restaurantLogo != null)
-      Container(
-        clipBehavior: Clip.hardEdge,
-        height: 100,
-        width: 80,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          border: Border.all(color: Colors.grey.withOpacity(0.5), width: 2), // Contour de cercle gris
-        ),
-        child: Image.network(
-          restaurantLogo,
-          fit: BoxFit.fill,
-        ),
-      ),
-    Expanded(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              restaurantName ?? 'Restaurant Detail',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-    ),
-  ],
-),
-
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 90),
+                          child: Text(
+                            restaurantName ?? 'Restaurant Detail',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold,),
+                          ),
+                        ),
+                      
+                      ),
+                      if (restaurantLogo != null)
+                            Container(
+                              clipBehavior: Clip.hardEdge,
+                              height: 100,
+                              width: 80,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                border: Border.all(color: Colors.grey.withOpacity(0.5), width: 2), // Contour de cercle gris
+                              ),
+                              child: Image.network(
+                                restaurantLogo,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                    ],
                   ),
                 ),
               ],
