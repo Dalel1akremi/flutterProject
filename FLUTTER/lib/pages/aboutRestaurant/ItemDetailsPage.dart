@@ -116,7 +116,7 @@ Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
       child: SizedBox(
         height: 150, 
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0), 
+          padding: const EdgeInsets.symmetric(horizontal: 7.0), 
           child: Card(
             surfaceTintColor: Colors.orange.withOpacity(0.4),
             elevation: 4,
