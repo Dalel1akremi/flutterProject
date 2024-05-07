@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, prefer_interpolation_to_compose_strings
 
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
@@ -58,10 +58,11 @@ class Restaurant {
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
+     String myIp = Global.myIp;
     return Restaurant(
       id: json['id_rest'],
-      logo: json['logo'],
-      image: json['image'],
+      logo: 'http://$myIp:3000/'+ json['logo'],
+      image: 'http://$myIp:3000/'+ json['image'],
       nom: json['nom'],
       adresse: json['adresse'],
       modeDeRetrait: List<String>.from(json['ModeDeRetrait']),

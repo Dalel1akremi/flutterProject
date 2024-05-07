@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, non_constant_identifier_names
+// ignore_for_file: file_names, non_constant_identifier_names, prefer_interpolation_to_compose_strings
 
 import 'dart:convert';
 import 'package:demo/pages/global.dart';
@@ -96,6 +96,7 @@ class ItemDetailsPage extends StatelessWidget {
   }
 
 Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
+       String myIp = Global.myIp;
   return GestureDetector(
     onTap: () {
       Navigator.push(
@@ -105,7 +106,7 @@ Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
             id_Steps: item['id_Steps'] ?? [],
             id_item: item['id_item'] ?? 0,
             nom: item['nom'] ?? '',
-            img: item['image'] ?? '',
+            img: 'http://$myIp:3000/'+ item['image'] ,
             prix: (item['prix'] ?? 0).toInt(),
           ),
         ),
@@ -128,7 +129,7 @@ Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
                   width: 150, 
                   height: 150, 
                   child: Image.network(
-                    item['image'],
+                    'http://$myIp:3000/'+item['image'],
                     fit: BoxFit.cover,
                   ),
                 ),
