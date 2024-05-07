@@ -33,7 +33,6 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Les mots de passe ne correspondent pas' });
     }
 
-    // Hasher le mot de passe avec bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -43,7 +42,7 @@ const registerUser = async (req, res) => {
       prenom,
       telephone,
       email,
-      password: hashedPassword, // Enregistrer le mot de passe haché dans la base de données
+      password: hashedPassword,
       validationCode,
     });
     await newUser.save();
@@ -75,7 +74,7 @@ const confirmEmail = async (req, res) => {
       user.isEmailConfirmed = true;
       await user.save();
 
-      return res.status(200).json({ message: 'Email confirmé avec succès' });
+      return res.status(200).json({ message: 'Email confirmé avec succè' });
   } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Erreur lors de la confirmation de l\'email' });
@@ -102,7 +101,7 @@ const sendConfirmationEmail = (email, validationCode) => {
       if (error) {
           console.error(error);
       } else {
-          console.log('Email sent successfully: ' + info.response);
+          console.log('Email envoyé avec succée: ' + info.response);
       }
   });
 };
@@ -115,17 +114,17 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: ' Email invalide ' });
     }
 
     if (!user.isEmailConfirmed) {
-      return res.status(401).json({ message: 'Email not confirmed' });
+      return res.status(401).json({ message: 'Email non confirmé' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Mot de passe invalide' });
     }
 
     const token = jwt.sign(
