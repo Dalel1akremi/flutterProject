@@ -40,62 +40,86 @@ class _LoginPageState extends State<loginPage> {
 
   CustomAuthProvider.AuthProvider? authProvider;
   bool obscurePassword = true;
+  bool isFormValid = false;
   @override
   void initState() {
     super.initState();
     authProvider =
         Provider.of<CustomAuthProvider.AuthProvider>(context, listen: false);
   }
-
-  void _submit(BuildContext context) async {
+void _validateForm() {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      try {
-        final authProvider = Provider.of<CustomAuthProvider.AuthProvider>(
-            context,
-            listen: false);
-
-        final loginData = await authProvider.login(email, password);
-        final userId = loginData['userId'];
-        final nom = loginData['nom'];
-
-        bool isLoggedIn = authProvider.currentUser != null;
-
-        if (panier.origin == 'google') {
-          await _signInWithGoogle(context);
-          return;
-        }
-        if (panier.origin == 'panier') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const PaymentScreen()),
-          );
-        } else if (panier.origin == 'livraison') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const PanierPage()),
-          );
-        } else if (panier.origin == 'Restaurant') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const RestaurantDetail()),
-          );
-        } else if (panier.origin == 'RestList') {
-          panier.origine = "profil";
-          Navigator.pushReplacementNamed(context, '/RestaurantScreen');
-        }
-      } catch (error) {
-        String errorMessage = error.toString();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      setState(() {
+        isFormValid = true;
+      });
+    } else {
+      setState(() {
+        isFormValid = false;
+      });
     }
   }
+ void _submit(BuildContext context) async {
+
+  _validateForm();
+
+  if (isFormValid) {
+
+    _formKey.currentState!.save();
+    
+    try {
+      final authProvider = Provider.of<CustomAuthProvider.AuthProvider>(
+          context,
+          listen: false);
+
+      final loginData = await authProvider.login(email, password);
+      final userId = loginData['userId'];
+      final nom = loginData['nom'];
+
+      bool isLoggedIn = authProvider.currentUser != null;
+
+      if (panier.origin == 'google') {
+        await _signInWithGoogle(context);
+        return;
+      }
+      if (panier.origin == 'panier') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PaymentScreen()),
+        );
+      } else if (panier.origin == 'livraison') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PanierPage()),
+        );
+      } else if (panier.origin == 'Restaurant') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RestaurantDetail()),
+        );
+      } else if (panier.origin == 'RestList') {
+        panier.origine = "profil";
+        Navigator.pushReplacementNamed(context, '/RestaurantScreen');
+      }
+    } catch (error) {
+      String errorMessage = error.toString();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } else {
+    // Form is not valid, display error message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Veuillez saisir des informations valides.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
 
   void togglePasswordVisibility() {
     setState(() {
@@ -142,6 +166,7 @@ class _LoginPageState extends State<loginPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -195,7 +220,7 @@ class _LoginPageState extends State<loginPage> {
                     prefixIcon: Icon(Icons.email),
                   ),
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: 10),
                 const Text(
                   'Mot de passe',
                   style: TextStyle(
@@ -226,7 +251,7 @@ class _LoginPageState extends State<loginPage> {
                   ),
                   obscureText: obscurePassword,
                 ),
-                const SizedBox(height: 8.0),
+                const SizedBox(height: 10),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -249,24 +274,24 @@ class _LoginPageState extends State<loginPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16.0),
+               const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () => _submit(context),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: Colors.black,
-                  ),
-                  child: const Text(
-                    'Connexion',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                const SizedBox(height: 16.0),
+        onPressed: () => _submit(context),
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(double.infinity, 50),
+          backgroundColor: isFormValid ? Colors.green : Colors.black, // Changer la couleur du bouton en fonction de l'état de validation
+        ),
+        child: const Text(
+          'Connexion',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+              const SizedBox(height: 10),
                 const Align(
                   alignment: Alignment.center,
                   child: Text('ou'),
                 ),
-                const SizedBox(height: 16.0),
+               const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -284,7 +309,7 @@ class _LoginPageState extends State<loginPage> {
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
-                const SizedBox(height: 16.0),
+                 const SizedBox(height: 10),
                 const Text(
                   'En continuant, vous acceptez nos : ',
                   style: TextStyle(fontSize: 14.0),
@@ -344,15 +369,32 @@ class _LoginPageState extends State<loginPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                ElevatedButton.icon(
-                  onPressed: () => _signInWithGoogle(context),
-                  icon: const Icon(Icons.login_rounded),
-                  label: const Text('Connexion avec Google'),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: Colors.red,
-                  ),
-                ),
+           Center(
+  child: GestureDetector(
+    onTap: () => _signInWithGoogle(context),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 50,
+          height: 50,
+          child: Image.asset('images/google_logo.png'),
+        ),
+        const SizedBox(height: 10),
+        RichText(
+          text: const TextSpan(
+            text: 'Connecter avec Google',
+            style: TextStyle(
+              color: Colors.black, 
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
               ],
             ),
           ),
