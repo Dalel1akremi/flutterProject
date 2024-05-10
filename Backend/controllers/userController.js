@@ -34,7 +34,22 @@ const registerGoogle = async (req, res) => {
   }
 };
 
+const checkUser= async (req, res) => {
+  const { email } = req.query;
 
+  try {
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      res.status(200).json({ message: 'Utilisateur trouvé' });
+    } else {
+      res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur lors de la recherche de l\'utilisateur' });
+  }
+};
 const registerUser = async (req, res) => {
   const { nom, prenom, telephone, email, password, confirmPassword } = req.body;
 
@@ -506,4 +521,5 @@ module.exports = {
   getGeocodedDetails,
   updateGeocodedDetails,
   registerGoogle,
+  checkUser,
 };
