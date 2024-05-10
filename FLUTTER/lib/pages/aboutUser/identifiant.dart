@@ -1,5 +1,4 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
-
 import 'dart:convert';
 import 'package:demo/pages/aboutRestaurant/RestaurantList.dart';
 import 'package:demo/pages/global.dart';
@@ -15,7 +14,6 @@ class ProfileDetailsPage extends StatefulWidget {
   @override
   _ProfileDetailsPageState createState() => _ProfileDetailsPageState();
 }
-
 class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   late String nom;
   late String prenom;
