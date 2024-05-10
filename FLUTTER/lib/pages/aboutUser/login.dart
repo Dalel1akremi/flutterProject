@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'PasswordRecoveryPage.dart';
 import 'registre.dart';
 import './../aboutPaiement/paiement.dart';
@@ -150,7 +151,10 @@ Future<void> _signInWithGoogle(BuildContext context) async {
       nom = nameParts.isNotEmpty ? nameParts.first : '';
       prenom = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
    bool userExists = await checkUserExists(email);
-
+final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', email);
+      await prefs.setString('nom', nom);
+      await prefs.setString('prenom', prenom);
       if (!userExists) {
 
         String myIp = Global.myIp;
