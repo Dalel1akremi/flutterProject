@@ -6,7 +6,6 @@ import 'package:demo/pages/aboutPaiement/panier.dart';
 import 'package:demo/pages/aboutRestaurant/conditionDuitilisation.dart';
 import 'package:demo/pages/aboutRestaurant/conditonDeVente.dart';
 import 'package:demo/pages/aboutRestaurant/confidentialite.dart';
-import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -118,7 +117,6 @@ class _LoginPageState extends State<loginPage> {
         );
       }
     } else {
-      // Form is not valid, display error message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Veuillez saisir des informations valides.'),
