@@ -7,6 +7,39 @@ const  nodemailer = require("nodemailer");
 const GeocodedAd=require ('../models/AdresseModel');
 const axios = require('axios');
 
+const registerGoogle = async (req, res) => {
+  const { nom, email } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      // Vous pouvez ajouter une logique ici si nécessaire pour gérer les utilisateurs existants avec Google SignIn
+      // Par exemple, vous pouvez simplement retourner un message indiquant que l'utilisateur existe déjà.
+      return res.status(400).json({ message: 'Un utilisateur avec cet e-mail existe déjà' });
+    }
+
+    // Créez un nouvel utilisateur avec des champs vides et sans confirmation d'e-mail
+    const newUser = new User({
+      nom,
+      email,
+      // Vous pouvez laisser les autres champs vides ou les initialiser selon vos besoins
+      // Si nécessaire, vous pouvez définir des valeurs par défaut ou les laisser vides.
+      prenom: '',
+      telephone: '',
+      password: '', // Vous pouvez laisser vide ou initialiser avec une valeur par défaut si nécessaire
+      validationCode: '', // Vous pouvez laisser vide
+      isEmailConfirmed: true, // Vous pouvez définir si l'e-mail est confirmé ou non
+    });
+    await newUser.save();
+
+    return res.status(200).json({ success: true, message: 'Utilisateur enregistré avec succès.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Erreur lors de l\'enregistrement de l\'utilisateur' });
+  }
+};
+
 
 const registerUser = async (req, res) => {
   const { nom, prenom, telephone, email, password, confirmPassword } = req.body;
@@ -478,4 +511,5 @@ module.exports = {
   searchAddress,
   getGeocodedDetails,
   updateGeocodedDetails,
+  registerGoogle,
 };

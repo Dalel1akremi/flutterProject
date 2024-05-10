@@ -47,6 +47,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/register', userController.registerUser);
+app.post('/registerGoogle', userController.registerGoogle);
 app.post('/confirmEmail', userController.confirmEmail);
 app.post('/registerAdmin', AdminController.registerAdmin);
 app.post('/login', userController.loginUser);

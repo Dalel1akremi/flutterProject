@@ -7,20 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './pages/aboutUser/auth_provider.dart';
 import './pages/aboutRestaurant/acceuil.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyBB0RXK1lHpKPfmD_a-L3OtaOzJBpG1SbY",
-      authDomain: "speedy-cedar-413809.firebaseapp.com",
-      projectId: "speedy-cedar-413809",
-      storageBucket: "speedy-cedar-413809.appspot.com",
-      messagingSenderId: "800045568375",
-      appId: "1:800045568375:web:db95405a19d6d393f55172",
-    ),
-  );
   runApp(const MyApp());
 }
 

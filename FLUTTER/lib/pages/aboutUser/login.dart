@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, unused_local_variable, avoid_web_libraries_in_flutter, library_prefixes
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:demo/pages/aboutPaiement/panier.dart';
 import 'package:demo/pages/aboutRestaurant/conditionDuitilisation.dart';
 import 'package:demo/pages/aboutRestaurant/conditonDeVente.dart';
@@ -15,8 +17,8 @@ import './../aboutPaiement/paiement.dart';
 import './../global.dart';
 import './../aboutRestaurant/RestaurantDetail.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:demo/pages/aboutUser/auth_provider.dart' as CustomAuthProvider;
+
 
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
@@ -40,14 +42,17 @@ class _LoginPageState extends State<loginPage> {
 
   CustomAuthProvider.AuthProvider? authProvider;
   bool obscurePassword = true;
-  bool isFormValid = false;
+   bool isFormValid = false;
+ 
+
   @override
   void initState() {
     super.initState();
     authProvider =
         Provider.of<CustomAuthProvider.AuthProvider>(context, listen: false);
   }
-void _validateForm() {
+
+  void _validateForm() {
     if (_formKey.currentState!.validate()) {
       setState(() {
         isFormValid = true;
@@ -58,68 +63,70 @@ void _validateForm() {
       });
     }
   }
- void _submit(BuildContext context) async {
 
-  _validateForm();
+  void _submit(BuildContext context) async {
+    _validateForm();
 
-  if (isFormValid) {
+    if (isFormValid) {
+      _formKey.currentState!.save();
 
-    _formKey.currentState!.save();
-    
-    try {
-      final authProvider = Provider.of<CustomAuthProvider.AuthProvider>(
-          context,
-          listen: false);
+      try {
+        final authProvider = Provider.of<CustomAuthProvider.AuthProvider>(
+            context,
+            listen: false);
 
-      final loginData = await authProvider.login(email, password);
-      final userId = loginData['userId'];
-      final nom = loginData['nom'];
+        final loginData = await authProvider.login(email, password);
+        final userId = loginData['userId'];
+        final nom = loginData['nom'];
 
-      bool isLoggedIn = authProvider.currentUser != null;
+        if (panier.origin == 'google') {
+          await _signInWithGoogle(context);
+          final googleUser = await googleSignIn.signIn();
+          final googleEmail = googleUser?.email;
+          if (kDebugMode) {
+            print('Email associé au compte Google : $googleEmail');
+          }
+          return;
+        }
+        if (panier.origin == 'panier') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PaymentScreen()),
+          );
+        } else if (panier.origin == 'livraison') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PanierPage()),
+          );
+        } else if (panier.origin == 'Restaurant') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RestaurantDetail()),
+          );
+        } else if (panier.origin == 'RestList') {
+          panier.origine = "profil";
+          Navigator.pushReplacementNamed(context, '/RestaurantScreen');
+        }
+      } catch (error) {
+        String errorMessage = error.toString();
 
-      if (panier.origin == 'google') {
-        await _signInWithGoogle(context);
-        return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
-      if (panier.origin == 'panier') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PaymentScreen()),
-        );
-      } else if (panier.origin == 'livraison') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PanierPage()),
-        );
-      } else if (panier.origin == 'Restaurant') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const RestaurantDetail()),
-        );
-      } else if (panier.origin == 'RestList') {
-        panier.origine = "profil";
-        Navigator.pushReplacementNamed(context, '/RestaurantScreen');
-      }
-    } catch (error) {
-      String errorMessage = error.toString();
-
+    } else {
+      // Form is not valid, display error message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
+        const SnackBar(
+          content: Text('Veuillez saisir des informations valides.'),
           backgroundColor: Colors.red,
         ),
       );
     }
-  } else {
-    // Form is not valid, display error message
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Veuillez saisir des informations valides.'),
-        backgroundColor: Colors.red,
-      ),
-    );
   }
-}
 
   void togglePasswordVisibility() {
     setState(() {
@@ -127,66 +134,86 @@ void _validateForm() {
     });
   }
 
-  Future<void> _signInWithGoogle(BuildContext context) async {
-    if (authProvider == null) {
-      return;
-    }
-    try {
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+ Future<void> _signInWithGoogle(BuildContext context) async {
+  try {
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-      if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
+    if (googleUser != null) {
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-        final AuthCredential authCredential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
+      final String name = googleUser.displayName ?? '';
+      final String email = googleUser.email;
+      
 
-        await authProvider!.firebaseAuth.signInWithCredential(authCredential);
-        if (authProvider!.firebaseAuth.currentUser != null) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const ProfilPage()),
-          );
-        }
-      }
-    } catch (error) {
-      if (kDebugMode) {
-        print('Error during Google sign in: $error');
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erreur lors de la connexion avec Google'),
-          backgroundColor: Colors.red,
-        ),
+      String myIp = Global.myIp;
+
+      final response = await http.post(
+        Uri.parse("http://$myIp:3000/registerGoogle"),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'nom': name,
+          'email': email,
+        }),
       );
-    }
-  }
 
-  @override
+      if (response.statusCode == 200) {
+       panier.origine = "profil";
+          Navigator.pushReplacementNamed(context, '/RestaurantScreen');
+      } else {
+
+        if (kDebugMode) {
+          print('Erreur lors de l\'appel à l\'API: ${response.statusCode}');
+        }
+ 
+        if (kDebugMode) {
+          print('Détails de l\'erreur: ${response.body}');
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erreur lors de la connexion avec Google'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  } catch (error) {
+    if (kDebugMode) {
+      print('Error during Google sign in: $error');
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Erreur lors de la connexion avec Google'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
+@override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: const Text('Connexion'),
-        leading: authProvider!.currentUser != null
-      ? IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            panier.origine = "profil";
-            Navigator.pushReplacementNamed(context, '/RestaurantScreen');
-          },
-        )
-      : IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            panier.origine = "acceuil";
-            Navigator.pushReplacementNamed(context, '/RestaurantScreen');
-          },
-        ),
+        leading: authProvider != null
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  panier.origine = "profil";
+                  Navigator.pushReplacementNamed(context, '/RestaurantScreen');
+                },
+              )
+            : IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  panier.origine = "acceuil";
+                  Navigator.pushReplacementNamed(context, '/RestaurantScreen');
+                },
+              ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -274,24 +301,24 @@ void _validateForm() {
                     ),
                   ),
                 ),
-               const SizedBox(height: 10),
+                const SizedBox(height: 10),
                 ElevatedButton(
-        onPressed: () => _submit(context),
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 50),
-          backgroundColor: isFormValid ? Colors.green : Colors.black, // Changer la couleur du bouton en fonction de l'état de validation
-        ),
-        child: const Text(
-          'Connexion',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-              const SizedBox(height: 10),
+                  onPressed: () => _submit(context),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    backgroundColor: isFormValid ? Colors.green : Colors.black,
+                  ),
+                  child: const Text(
+                    'Connexion',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 10),
                 const Align(
                   alignment: Alignment.center,
                   child: Text('ou'),
                 ),
-               const SizedBox(height: 10),
+                const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -309,7 +336,7 @@ void _validateForm() {
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
-                 const SizedBox(height: 10),
+                const SizedBox(height: 10),
                 const Text(
                   'En continuant, vous acceptez nos : ',
                   style: TextStyle(fontSize: 14.0),
@@ -369,32 +396,31 @@ void _validateForm() {
                   ),
                 ),
                 const SizedBox(height: 10),
-           Center(
-  child: GestureDetector(
-    onTap: () => _signInWithGoogle(context),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: 50,
-          height: 50,
-          child: Image.asset('images/google_logo.png'),
-        ),
-        const SizedBox(height: 10),
-        RichText(
-          text: const TextSpan(
-            text: 'Connecter avec Google',
-            style: TextStyle(
-              color: Colors.black, 
-              fontSize: 16,
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-),
-
+                Center(
+                  child: GestureDetector(
+                    onTap: () => _signInWithGoogle(context),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: Image.asset('images/google_logo.png'),
+                        ),
+                        const SizedBox(height: 10),
+                        RichText(
+                          text: const TextSpan(
+                            text: 'Connecter avec Google',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
