@@ -141,22 +141,27 @@ class _LoginPageState extends State<loginPage> {
           await googleUser.authentication;
 
       final String name = googleUser.displayName ?? '';
-      final String email = googleUser.email;
-      
+      final String email = googleUser.email;     
+          String nom = '';
+          String prenom = '';
+          List<String> nameParts = name.split(' ');
+          nom = nameParts[0];
+          if (nameParts.length > 1) {
+            prenom = nameParts.sublist(1).join(' '); 
+          }
+                String myIp = Global.myIp;
 
-      String myIp = Global.myIp;
-
-      final response = await http.post(
-        Uri.parse("http://$myIp:3000/registerGoogle"),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'nom': name,
-          'email': email,
-        }),
-      );
-
+              final response = await http.post(
+            Uri.parse("http://$myIp:3000/registerGoogle"),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'nom': nom,
+              'prenom': prenom,
+              'email': email,
+            }),
+          );
       if (response.statusCode == 200) {
        panier.origine = "profil";
           Navigator.pushReplacementNamed(context, '/RestaurantScreen');

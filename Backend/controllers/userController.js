@@ -8,7 +8,7 @@ const GeocodedAd=require ('../models/AdresseModel');
 const axios = require('axios');
 
 const registerGoogle = async (req, res) => {
-  const { nom, email } = req.body;
+  const { nom,prenom, email } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -19,7 +19,7 @@ const registerGoogle = async (req, res) => {
   const newUser = new User({
       nom,
       email,
-       prenom: '',
+       prenom,
       telephone: '',
       password: '', 
       validationCode: '',
