@@ -6,7 +6,6 @@ import 'package:demo/pages/aboutPaiement/panier.dart';
 import 'package:demo/pages/aboutRestaurant/conditionDuitilisation.dart';
 import 'package:demo/pages/aboutRestaurant/conditonDeVente.dart';
 import 'package:demo/pages/aboutRestaurant/confidentialite.dart';
-import 'package:demo/pages/aboutUser/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +17,6 @@ import './../global.dart';
 import './../aboutRestaurant/RestaurantDetail.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:demo/pages/aboutUser/auth_provider.dart' as CustomAuthProvider;
-
 
 // ignore: camel_case_types
 class loginPage extends StatefulWidget {
@@ -42,8 +40,7 @@ class _LoginPageState extends State<loginPage> {
 
   CustomAuthProvider.AuthProvider? authProvider;
   bool obscurePassword = true;
-   bool isFormValid = false;
- 
+  bool isFormValid = false;
 
   @override
   void initState() {
@@ -118,7 +115,6 @@ class _LoginPageState extends State<loginPage> {
         );
       }
     } else {
-      // Form is not valid, display error message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Veuillez saisir des informations valides.'),
@@ -134,65 +130,75 @@ class _LoginPageState extends State<loginPage> {
     });
   }
 
- Future<void> _signInWithGoogle(BuildContext context) async {
-  try {
-    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-    if (googleUser != null) {
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
 
-      final String name = googleUser.displayName ?? '';
-      final String email = googleUser.email;
-      
-
-      String myIp = Global.myIp;
-
-      final response = await http.post(
-        Uri.parse("http://$myIp:3000/registerGoogle"),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'nom': name,
-          'email': email,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-       panier.origine = "profil";
-          Navigator.pushReplacementNamed(context, '/RestaurantScreen');
-      } else {
-
+       final String name = googleUser.displayName ?? '';
+        final String email = googleUser.email;
+        late String nom;
+        late String prenom;
+        int firstSpaceIndex = name.indexOf(' ');
+        String firstName = firstSpaceIndex != -1 ? name.substring(0, firstSpaceIndex) : name;
+        String lastName = firstSpaceIndex != -1 ? name.substring(firstSpaceIndex + 1) : '';
         if (kDebugMode) {
-          print('Erreur lors de l\'appel à l\'API: ${response.statusCode}');
+          print(firstName);
         }
- 
         if (kDebugMode) {
-          print('Détails de l\'erreur: ${response.body}');
+          print(lastName);
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erreur lors de la connexion avec Google'),
-            backgroundColor: Colors.red,
-          ),
+
+        String myIp = Global.myIp;
+
+        final response = await http.post(
+          Uri.parse("http://$myIp:3000/registerGoogle"),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'nom': firstName,
+            'prenom': lastName,
+            'email': email,
+          }),
         );
-      }
-    }
-  } catch (error) {
-    if (kDebugMode) {
-      print('Error during Google sign in: $error');
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Erreur lors de la connexion avec Google'),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-}
 
-@override
+        if (response.statusCode == 200) {
+          panier.origine = "profil";
+          Navigator.pushReplacementNamed(context, '/RestaurantScreen');
+        } else {
+          if (kDebugMode) {
+            print('Erreur lors de l\'appel à l\'API: ${response.statusCode}');
+          }
+
+          if (kDebugMode) {
+            print('Détails de l\'erreur: ${response.body}');
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Erreur lors de la connexion avec Google'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print('Error during Google sign in: $error');
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erreur lors de la connexion avec Google'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
