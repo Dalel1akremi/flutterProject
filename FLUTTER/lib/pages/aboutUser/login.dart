@@ -132,7 +132,7 @@ class _LoginPageState extends State<loginPage> {
     });
   }
 
- Future<void> _signInWithGoogle(BuildContext context) async {
+Future<void> _signInWithGoogle(BuildContext context) async {
   try {
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
@@ -141,46 +141,39 @@ class _LoginPageState extends State<loginPage> {
           await googleUser.authentication;
 
       final String name = googleUser.displayName ?? '';
-      final String email = googleUser.email;     
-          String nom = '';
-          String prenom = '';
-          List<String> nameParts = name.split(' ');
-          nom = nameParts[0];
-          if (nameParts.length > 1) {
-            prenom = nameParts.sublist(1).join(' '); 
-          }
-                String myIp = Global.myIp;
+      final String email = googleUser.email;
+      
+      String nom = '';
+      String prenom = '';
 
-              final response = await http.post(
-            Uri.parse("http://$myIp:3000/registerGoogle"),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              'nom': nom,
-              'prenom': prenom,
-              'email': email,
-            }),
-          );
-      if (response.statusCode == 200) {
-       panier.origine = "profil";
-          Navigator.pushReplacementNamed(context, '/RestaurantScreen');
-      } else {
+      List<String> nameParts = name.split(' ');
+      nom = nameParts.isNotEmpty ? nameParts.first : '';
+      prenom = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+   bool userExists = await checkUserExists(email);
 
-        if (kDebugMode) {
-          print('Erreur lors de l\'appel à l\'API: ${response.statusCode}');
-        }
- 
-        if (kDebugMode) {
-          print('Détails de l\'erreur: ${response.body}');
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erreur lors de la connexion avec Google'),
-            backgroundColor: Colors.red,
-          ),
+      if (!userExists) {
+
+        String myIp = Global.myIp;
+
+        final response = await http.post(
+          Uri.parse("http://$myIp:3000/registerGoogle"),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'nom': nom,
+            'prenom': prenom,
+            'email': email,
+          }),
         );
+
+        if (response.statusCode != 200) {
+          throw Exception('Erreur lors de l\'appel à l\'API: ${response.statusCode}');
+        }
       }
+
+      panier.origine = "profil";
+      Navigator.pushReplacementNamed(context, '/RestaurantScreen');
     }
   } catch (error) {
     if (kDebugMode) {
@@ -192,6 +185,26 @@ class _LoginPageState extends State<loginPage> {
         backgroundColor: Colors.red,
       ),
     );
+  }
+}
+
+Future<bool> checkUserExists(String email) async {
+  try {
+    String myIp = Global.myIp;
+    final response = await http.get(Uri.parse("http://$myIp:3000/checkUser?email=$email"));
+
+    if (response.statusCode == 200) {
+ return true;
+    } else if (response.statusCode == 404) {
+ return false;
+    } else {
+  throw Exception('Erreur lors de la vérification de l\'existence de l\'utilisateur: ${response.statusCode}');
+    }
+  } catch (error) {
+  if (kDebugMode) {
+    print('Erreur lors de la vérification de l\'existence de l\'utilisateur: $error');
+  }
+    return false;
   }
 }
 
