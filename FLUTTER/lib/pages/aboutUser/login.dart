@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'PasswordRecoveryPage.dart';
 import 'registre.dart';
 import './../aboutPaiement/paiement.dart';
@@ -142,15 +143,14 @@ class _LoginPageState extends State<loginPage> {
         final String email = googleUser.email;
         late String nom;
         late String prenom;
+        
         int firstSpaceIndex = name.indexOf(' ');
         String firstName = firstSpaceIndex != -1 ? name.substring(0, firstSpaceIndex) : name;
         String lastName = firstSpaceIndex != -1 ? name.substring(firstSpaceIndex + 1) : '';
-        if (kDebugMode) {
-          print(firstName);
-        }
-        if (kDebugMode) {
-          print(lastName);
-        }
+final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', email);
+      await prefs.setString('nom', firstName);
+      await prefs.setString('prenom', lastName);
 
         String myIp = Global.myIp;
 
