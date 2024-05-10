@@ -16,7 +16,7 @@ const registerGoogle = async (req, res) => {
 
     if (existingUser) {
    return res.status(400).json({ message: 'Un utilisateur avec cet e-mail existe déjà' });
-      return res.status(400).json({ message: 'Un utilisateur avec cet e-mail existe déjà' });
+ 
     }
 
     const newUser = new User({
