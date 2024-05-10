@@ -1,13 +1,11 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
-
 import 'dart:convert';
 import 'package:demo/pages/aboutRestaurant/RestaurantList.dart';
 import 'package:demo/pages/global.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
-import 'package:demo/pages/aboutUser/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileDetailsPage extends StatefulWidget {
@@ -16,7 +14,6 @@ class ProfileDetailsPage extends StatefulWidget {
   @override
   _ProfileDetailsPageState createState() => _ProfileDetailsPageState();
 }
-
 class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   late String nom;
   late String prenom;
@@ -108,74 +105,86 @@ Future<bool> saveNameToStorage(String name) async {
 }
 
   Future<void> updateUserData(BuildContext context, String userEmail) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? '';
-    final String userId = prefs.getString('userId') ?? '';
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String token = prefs.getString('token') ?? '';
+  final String userId = prefs.getString('userId') ?? '';
+  // Récupérer les données mises à jour depuis les contrôleurs
+  final String nom = nomController.text;
+  final String prenom = prenomController.text;
+  final String telephone = numeroController.text;
 
-    final Map<String, dynamic> updatedData = {
-      'nom': nomController.text,
-      'prenom': prenomController.text,
-      'telephone': numeroController.text,
-    };
+  if (telephone.length != 13) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Le numéro de téléphone doit contenir exactement 13 chiffres.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return;
+  }
 
-    try {    
-      String myIp = Global.myIp;
+  final Map<String, dynamic> updatedData = {
+    'nom': nom,
+    'prenom': prenom,
+    'telephone': telephone,
+  };
 
-      final response = await http.put(
-        
-        Uri.parse('http://$myIp:3000/updateUser?email=$_email'),
-        body: jsonEncode(updatedData),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
+  try {    
+    String myIp = Global.myIp;
+
+    final response = await http.put(
+      Uri.parse('http://$myIp:3000/updateUser?email=$_email'),
+      body: jsonEncode(updatedData),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      await getUserData();
+      
+      final bool savedSuccessfully = await saveTokenToStorage(
+        token,
+        userId,
+        _email,
+        nom,
+        telephone,
       );
 
-      if (response.statusCode == 200) {
-        await getUserData();
-        final bool savedSuccessfully = await saveTokenToStorage(
-          token,
-          userId,
-          _email,
-          nomController.text,
-          numeroController.text,
-        );
-
-       if (savedSuccessfully) {
-    final bool nameSaved = await saveNameToStorage(nomController.text);
-    if (!nameSaved) {
-      if (kDebugMode) {
-        print('Failed to save name to local storage.');
-      }
-    }
-  } else {
-    if (kDebugMode) {
-      print('Data not saved.');
-    }
-  }
-       panier.origine = 'profil';
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const RestaurantScreen(index: 2,)),
-         
-        );
+      if (savedSuccessfully) {
+        final bool nameSaved = await saveNameToStorage(nom);
+        if (!nameSaved) {
+          if (kDebugMode) {
+            print('Failed to save name to local storage.');
+          }
+        }
       } else {
         if (kDebugMode) {
-          print('Failed to update user data. Response: ${response.body}');
+          print('Data not saved.');
         }
-        throw Exception('Failed to update user data');
       }
-    } catch (error) {
+
+      panier.origine = 'profil';
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const RestaurantScreen(index: 2,)),
+      );
+    } else {
       if (kDebugMode) {
-        print('Context: $context');
-        print('Token: $token');
-        print('UserId: $userId');
-        print(
-            'AuthProvider: ${Provider.of<AuthProvider>(context, listen: false)}');
-        print(' during HTTP request: $error');
+        print('Failed to update user data. Response: ${response.body}');
       }
+      throw Exception('Failed to update user data');
+    }
+  } catch (error) {
+    if (kDebugMode) {
+      print('Context: $context');
+      print('Token: $token');
+      print('UserId: $userId');
+      print(' during HTTP request: $error');
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -235,11 +244,16 @@ Future<bool> saveNameToStorage(String name) async {
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: TextField(
-                    controller: numeroController,
-                    decoration: const InputDecoration(),
-                  ),
-                ),
+      child: TextField(
+        controller: numeroController,
+        decoration: const InputDecoration(),
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(13) 
+        ],
+      ),
+    ),
               ],
             ),
             Row(
