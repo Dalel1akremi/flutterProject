@@ -8,12 +8,14 @@ const GeocodedAd=require ('../models/AdresseModel');
 const axios = require('axios');
 
 const registerGoogle = async (req, res) => {
+  
   const { nom, prenom, email } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
+   return res.status(400).json({ message: 'Un utilisateur avec cet e-mail existe déjà' });
       return res.status(400).json({ message: 'Un utilisateur avec cet e-mail existe déjà' });
     }
 
