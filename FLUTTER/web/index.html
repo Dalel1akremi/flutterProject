@@ -14,24 +14,9 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>demo</title>
+  <title>Restaurant</title>
   <link rel="manifest" href="manifest.json">
 
-  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBB0RXK1lHpKPfmD_a-L3OtaOzJBpG1SbY",
-      authDomain: "speedy-cedar-413809.firebaseapp.com",
-      projectId: "speedy-cedar-413809",
-      storageBucket: "speedy-cedar-413809.appspot.com",
-      messagingSenderId: "800045568375",
-      appId: "1:800045568375:web:db95405a19d6d393f55172",
-    };
-
-    firebase.initializeApp(firebaseConfig);
-  </script>
 
   <script src="https://apis.google.com/js/platform.js" async defer></script>
 
@@ -40,19 +25,6 @@
 </head>
 <body>
 
-  <script>
-    document.getElementById('btn-google-login').addEventListener('click', () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithPopup(provider)
-        .then((result) => {
-          const user = result.user;
-          console.log("Utilisateur connecté:", user);
-        })
-        .catch((error) => {
-          console.error("Erreur de connexion:", error);
-        });
-    });
-  </script>
 
   <script>
     window.addEventListener('load', function() {
