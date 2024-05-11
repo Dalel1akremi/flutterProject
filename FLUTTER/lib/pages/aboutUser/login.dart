@@ -135,6 +135,7 @@ class _LoginPageState extends State<loginPage> {
 
 Future<void> _signInWithGoogle(BuildContext context) async {
   try {
+     await googleSignIn.signOut(); 
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
     if (googleUser != null) {
