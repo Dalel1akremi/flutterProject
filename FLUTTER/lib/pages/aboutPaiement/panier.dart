@@ -56,31 +56,13 @@ class _PanierPageState extends State<PanierPage> {
   void initState() {
     super.initState();
     initAuthProvider();
-    _printStorageContent();
+
     panier = Panier();
   }
 Future<void> initAuthProvider() async {
     await authProvider.initTokenFromStorage();
 
     setState(() {});
-  }
-   Future<void> _printStorageContent() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (kDebugMode) {
-      print('Token: ${prefs.getString('token')}');
-    }
-    if (kDebugMode) {
-      print('UserId: ${prefs.getString('userId')}');
-    }
-    if (kDebugMode) {
-      print('Nom: ${prefs.getString('nom')}');
-    }
-    if (kDebugMode) {
-      print('Email: ${prefs.getString('email')}');
-    }
-    if (kDebugMode) {
-      print('Telephone: ${prefs.getString('telephone')}');
-    }
   }
 
   String mapRetraitMode(String value) {

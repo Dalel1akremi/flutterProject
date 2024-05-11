@@ -36,19 +36,6 @@ class AuthProvider with ChangeNotifier {
     _email = prefs.getString('email');
     _telephone = prefs.getString('telephone');
     notifyListeners(); 
-if (kDebugMode) {
-      print('User ID from storage: $_userId');
-    }
-    if (kDebugMode) {
-      print('Email from storage: $_email');
-    }
-    if (kDebugMode) {
-      print('Telephone from storage: $_telephone');
-    } 
-    if (kDebugMode) {
-      print('Nom from storage: $_nom');
-    } 
-    notifyListeners();
   }
   bool get isAuthenticated => _token != null;
 
@@ -60,17 +47,6 @@ if (kDebugMode) {
     await prefs.setString('nom',nom);
      await prefs.setString('telephone', telephone);
   }
-
-  Future<void> clearTokenFromStorage() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
-    await prefs.remove('userId');
-    await prefs.remove('email');
-    await prefs.remove('nom');
-    await prefs.remove('telephone');
-
-  }
-
 Future<Map<String, dynamic>> login(String email, String password) async {
   String myIp = Global.myIp;
   
@@ -120,18 +96,18 @@ Future<Map<String, dynamic>> login(String email, String password) async {
         'token': token,
         'userId': userId,
         'nom': nom,
-        'message': message, // Retourner également le message renvoyé par le backend
+        'message': message, 
       };
     } else {
       final data = json.decode(response.body);
-      final errorMessage = data['message']; // Message d'erreur renvoyé par le backend
+      final errorMessage = data['message'];
       throw Exception(errorMessage);
     }
   }catch (error) {
   if (error is String) {
     if (kDebugMode) {
       print('Error during login: $error');
-    } // Afficher le message d'erreur dans le terminal
+    } 
   } 
   
   rethrow;
