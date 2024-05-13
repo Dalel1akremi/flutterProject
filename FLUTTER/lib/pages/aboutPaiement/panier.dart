@@ -2,7 +2,6 @@
 
 import 'package:demo/pages/aboutUser/adresse.dart';
 import 'package:demo/pages/aboutUser/login.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import './../global.dart';
 import 'paiement.dart';
