@@ -93,7 +93,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
       } else {
         setState(() {
           selectedTime = pickedTime;
-          isModeRetraitSelected = true; // Met à jour le booléen
+          isModeRetraitSelected = true; 
         });
 
         Panier().updateCommandeDetails(selectedRetraitMode, selectedTime);
@@ -123,7 +123,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
     } else {
       setState(() {
         selectedRetraitMode = '';
-        isModeRetraitSelected = false; // Met à jour le booléen
+        isModeRetraitSelected = false; 
       });
     }
   }
@@ -225,7 +225,7 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white,
-                                border: Border.all(color: Colors.grey.withOpacity(0.5), width: 2), // Contour de cercle gris
+                                border: Border.all(color: Colors.grey.withOpacity(0.5), width: 2), 
                               ),
                               child: Image.network(
                                 restaurantLogo,
@@ -265,9 +265,11 @@ class _RestaurantDetailState extends State<RestaurantDetail> {
                                 color: Colors.green,
                               ),
                               const SizedBox(width: 5),
-                              Text(
+                              Expanded(
+                                child:Text(
                                 restaurantAdress ?? 'Restaurant Detail',
                                 style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
                               ),
                             ],
                           ),
