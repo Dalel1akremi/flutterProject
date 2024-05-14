@@ -94,12 +94,9 @@ class HomeScreen extends StatelessWidget {
              Center(
   child: GestureDetector(
     onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const AcceuilScreen(),
-        ),
-      );
+    
+         panier.origine = "acceuil";
+            Navigator.pushReplacementNamed(context, '/RestaurantScreen');      
     },
     child: const Text(
       'Commencer',
