@@ -211,15 +211,7 @@ Future<bool> checkUserExists(String email) async {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(222, 212, 133, 14),
         title: const Text('Connexion'),
-        leading: authProvider != null
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  panier.origine = "profil";
-                  Navigator.pushReplacementNamed(context, '/RestaurantScreen');
-                },
-              )
-            : IconButton(
+        leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   panier.origine = "acceuil";
