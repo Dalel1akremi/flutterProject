@@ -79,15 +79,6 @@ class _LoginPageState extends State<loginPage> {
         final userId = loginData['userId'];
         final nom = loginData['nom'];
 
-        if (panier.origin == 'google') {
-          await _signInWithGoogle(context);
-          final googleUser = await googleSignIn.signIn();
-          final googleEmail = googleUser?.email;
-          if (kDebugMode) {
-            print('Email associé au compte Google : $googleEmail');
-          }
-          return;
-        }
         if (panier.origin == 'panier') {
           Navigator.push(
             context,
