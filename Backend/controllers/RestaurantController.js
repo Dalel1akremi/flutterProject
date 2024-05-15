@@ -45,7 +45,7 @@ const createRestaurant = async (req, res) => {
 
 const getRestau = async (req, res) => {
   try {
-    const restaurants = await Restaurant.find({}, 'id_rest nom email');
+    const restaurants = await Restaurant.find({}, 'id_rest nom email logo');
 
     if (!restaurants || restaurants.length === 0) {
       return res.status(404).json({ success: false, status: 404, message: 'Aucun restaurant trouvé' });
@@ -54,6 +54,7 @@ const getRestau = async (req, res) => {
     const restaurantData = restaurants.map(restaurant => ({
       id_rest: restaurant.id_rest,
       nom: restaurant.nom,
+      logo: restaurant.logo,
       email:restaurant.email,
     }));
     
