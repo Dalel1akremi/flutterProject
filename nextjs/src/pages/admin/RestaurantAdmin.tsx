@@ -6,11 +6,11 @@ import styles from './../../styles/Navbar.module.css';
 const Restaurant = () => {
   const [restaurants, setRestaurants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const MY_IP = process.env.MY_IP || '127.0.0.1';
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const MY_IP = process.env.MY_IP || '127.0.0.1';
+      
         const response = await axios.get(`http://${MY_IP}:3000/getRestaurant`);
         setRestaurants(response.data.restaurants);
         setLoading(false);
@@ -24,6 +24,7 @@ const Restaurant = () => {
   }, []);
 
   return (
+    
     <div>
        <nav className={styles.navbar}>
       <div className={styles.left}>
@@ -39,6 +40,7 @@ const Restaurant = () => {
       </div>
 
       <div className="restaurants-list">
+        
         <table>
           <thead>
             <tr>
@@ -54,9 +56,10 @@ const Restaurant = () => {
           </thead>
           <tbody>
             {restaurants.map((restaurant, index) => (
+              
               <tr key={index}>
                 <td>
-                  <img src={restaurant.logo} alt={`Logo ${restaurant.nom}`} style={{ width: '50px', height: '50px' }} />
+                  <img src={`http://${MY_IP}:3000/${restaurant.logo}`} alt={`Logo ${restaurant.nom}`} style={{ width: '50px', height: '50px' }} />
                 </td>
                 <td>{restaurant.id_rest}</td>
                 <td>{restaurant.nom}</td>
