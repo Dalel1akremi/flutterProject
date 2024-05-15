@@ -52,6 +52,20 @@ const CreateRestaurantPage = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    if (name === 'numero_telephone') {
+      if (!/^\d{13}$/.test(value)) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        numero_telephone: 'Le numéro de téléphone doit contenir 13 chiffres.',
+      }));
+    } else {
+    
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        numero_telephone: '',
+      }));
+    }
+  }
     setFormData(prevState => ({
       ...prevState,
       [name]: name === 'id_rest' ? parseInt(value) : value,
@@ -145,7 +159,7 @@ const CreateRestaurantPage = () => {
     }
   };
 
-  const shouldDisplayRestaurantLink = router.pathname === '/Restaurant';
+ 
 
   return (
     <div>
@@ -196,8 +210,11 @@ const CreateRestaurantPage = () => {
               placeholder="Numéro de téléphone" 
               value={formData.numero_telephone} 
               onChange={handleChange} 
+              maxLength={13} 
+              pattern="\d*"
               required 
             />
+
             {errors.numero_telephone && <p className="error-message">{errors.numero_telephone}</p>}
           </div>
 
