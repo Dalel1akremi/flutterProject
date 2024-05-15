@@ -28,7 +28,7 @@ const Connexion = () => {
       localStorage.setItem('token', response.data.token);
       setSuccessMessage(response.data.message);
       setErrorMessage('');
-      router.push('/produits');
+      router.push('/');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setErrorMessage(error.response?.data.message || 'An error occurred');
