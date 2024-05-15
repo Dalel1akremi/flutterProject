@@ -33,7 +33,6 @@ const Connexion = () => {
       if (axios.isAxiosError(error)) {
         setErrorMessage(error.response?.data.message || 'An error occurred');
       } else {
-        // Gérer d'autres types d'erreur ici
         setErrorMessage('An unknown error occurred');
       }
       setSuccessMessage('');
