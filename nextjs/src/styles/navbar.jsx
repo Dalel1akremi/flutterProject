@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import AcmeLogo from "./AcmeLogo.jsx";
 import styles from './Navbar.module.css';
 import jwt from 'jsonwebtoken';
 import { useRouter } from 'next/router'; 
 
 export default function Navbar() {
   const [restaurantName, setRestaurantName] = useState('');
+  const [restaurantLogo, setRestaurantLogo] = useState('');
   const router = useRouter();
 
   useEffect(() => {
-    const fetchRestaurantName = async () => {
+    const fetchRestaurantData = async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -24,6 +24,7 @@ export default function Navbar() {
         const matchedRestaurant = restaurants.find(restaurant => restaurant.id_rest === decodedRestaurantId);
         if (matchedRestaurant) {
           setRestaurantName(matchedRestaurant.nom);
+          setRestaurantLogo(`http://${MY_IP}:3000/${matchedRestaurant.logo}`);
         } else {
           console.error('Aucun restaurant correspondant trouvé pour cet ID.');
         }
@@ -32,18 +33,22 @@ export default function Navbar() {
       }
     };
   
-    fetchRestaurantName();
+    fetchRestaurantData();
   }, []);
 
-  const shouldDisplayRestaurantLink = router.pathname === 'admin/RestaurantAdmin';
-
+  const shouldDisplayRestaurantLink = router.pathname === '/admin/RestaurantAdmin';
+ 
   return (
     <nav className={styles.navbar}>
       <div className={styles.left}>
-        <div className={styles.logo}><AcmeLogo /></div>
-        <div className={styles.logo}>{restaurantName || 'Nom du Restaurant'}</div>
+        <div className={styles.logo}>
+          <img src={restaurantLogo } alt="" style={{ width: '70px', height: '50px' }}/>
+        </div>
+        <div className={styles.restaurantName}>{restaurantName || 'Nom du Restaurant'}</div>
       </div>
+
       <div className={styles.center}>
+      <a href="/" className={styles.link}>Acceuil</a>
         <a href="/Categories" className={styles.link}>Catégories</a>
         <a href="/produits" className={styles.link}>Produits</a>
         <a href="/commandes" className={styles.link}>Commandes</a>
@@ -61,3 +66,4 @@ export default function Navbar() {
     </nav>
   );
 }
+ 
