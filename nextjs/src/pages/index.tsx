@@ -1,12 +1,18 @@
-// pages/index.tsx
+
 import React, { useEffect } from 'react';
 import Navbar from '@/styles/navbar';
+import router from 'next/router';
 
 
 const IndexPage = () => {
   useEffect(() => {
-    // Vérifier si un token est présent dans le stockage
+
     const token = localStorage.getItem('token');
+    if (token) {
+    }
+    else {
+      router.push('/connexion');
+    }
  
   }, []);
 
