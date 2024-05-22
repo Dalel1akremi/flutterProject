@@ -83,11 +83,10 @@ const CategoriesPage = () => {
   return (
     <div>
       <Navbar />
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h1>Liste des catégories</h1>
+      <h1>Liste des catégories</h1>
+      <div>         
           <Link href="/creerCategorie">
-            <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
+            <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '30px', marginLeft: '1250px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
           </Link>
         </div>
         <table>
@@ -135,7 +134,7 @@ const CategoriesPage = () => {
           </tbody>
         </table>
       </div>
-    </div>
+   
   );
 };
 
