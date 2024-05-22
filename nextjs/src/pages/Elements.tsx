@@ -145,10 +145,10 @@ const Steps = () => {
   return (
     <div>
       <Navbar />
+      <h1>Liste des étapes disponibles</h1>
       <div className="header">
-        <h1>Liste des étapes disponibles</h1>
         <Link href="/creerElement" passHref>
-          <button className="green-button">+</button>
+        <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1250px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
         </Link>
       </div>
       <table>
@@ -224,7 +224,7 @@ const Steps = () => {
               {editingItemId === step._id ? (
                 <button onClick={() => handleSave(step._id)}>Enregistrer</button>
               ) : (
-                <button onClick={() => handleEdit(step)}>Modifier</button>
+                <button onClick={() => handleEdit(step)}style={{ backgroundColor: 'blue', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>Modifier</button>
               )}
             </td>
             </tr>
