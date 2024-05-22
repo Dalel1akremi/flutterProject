@@ -184,10 +184,10 @@ const Produits = () => {
   return (
     <div>
       <Navbar />
+      <h1>Liste des produits disponibles</h1>
       <div className="header">
-        <h1>Liste des produits disponibles</h1>
         <Link href="/CreerProduits" passHref>
-          <button className="green-button">+</button>
+        <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1250px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
         </Link>
       </div>
       <table>
@@ -408,7 +408,7 @@ const Produits = () => {
                 {editingItemId === item._id ? (
                   <button onClick={handleEditItem}>Enregistrer</button>
                 ) : (
-                  <button onClick={() => startEditingItem(item)}>Modifier</button>
+                  <button onClick={() => startEditingItem(item)}style={{ backgroundColor: 'blue', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>Modifier</button>
                 )}
               </td>
             </tr>
