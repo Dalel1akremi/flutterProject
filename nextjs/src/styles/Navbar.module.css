@@ -3,9 +3,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color:rgba(212, 133, 14, 0.87);
+  background-color:#333;
 }
-
+.restaurantName{
+  font-size: 1.5rem;
+  color: white;
+}
 .link {
   color: #fff;
   text-decoration: none;
@@ -13,7 +16,7 @@
 }
 
 .link:hover {
-  background-color: wheat;
+  background-color: grey;
 }
 
 .left {
@@ -35,9 +38,8 @@
 }
 
 .logo {
-  color: #fff;
+  color: black;
   font-size: 1.5rem;
-  font-weight: bold;size: 1.5
- rem;
+  font-weight: bold;size: 1.5rem;
   font-weight: bold; margin-right: 1rem;
 }
