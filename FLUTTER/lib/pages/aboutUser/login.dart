@@ -168,7 +168,7 @@ final prefs = await SharedPreferences.getInstance();
         }
       }
 
-      panier.origine = "profil";
+      panier.origine = "acceuil";
       Navigator.pushReplacementNamed(context, '/RestaurantScreen');
     }
   } catch (error) {
