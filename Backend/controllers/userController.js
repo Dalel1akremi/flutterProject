@@ -293,12 +293,12 @@ const new_password = async (req, res) => {
 
     if (!existingUser) {
     
-      return res.status(404).json({ success: false, message: 'User not found.' });
+      return res.status(404).json({ success: false, message: 'Utilisateur non trouvé.' });
     }
 
 
     if (newPassword !== confirmNewPassword) {
-      return res.status(400).json({ success: false, message: 'Passwords do not match.' });
+      return res.status(400).json({ success: false, message: 'Les mots de passe ne correspondent pas.' });
     }
 
     
@@ -308,18 +308,18 @@ const new_password = async (req, res) => {
 
     await existingUser.save();
 
-    res.json({ success: true, message: 'Password updated successfully.' });
+    res.json({ success: true, message: 'Mot de passe mis à jour avec succès.' });
   } catch (error) {
     console.error(error);
 
    
     if (error.name === 'MongoError' && error.code === 11000) {
     
-      return res.status(400).json({ success: false, message: 'Duplicate key error.' });
+      return res.status(400).json({ success: false, message: 'Erreur de clé dupliquée.' });
     }
 
    
-    res.status(500).json({ success: false, message: 'Error updating password.' });
+    res.status(500).json({ success: false, message: 'Erreur lors de la mise à jour du mot de passe."' });
   }
 };
 
@@ -332,7 +332,7 @@ const getUser= async (req, res) => {
     if (user) {
       res.json(user);
     } else {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
   } catch (error) {
     console.error(error);
@@ -350,7 +350,7 @@ const updateUser = async (req, res) => {
 
     if (!existingUser) {
  
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
 
     
@@ -367,7 +367,7 @@ const updateUser = async (req, res) => {
 
     await existingUser.save();
 
-    res.status(200).json({ message: 'User updated successfully' });
+    res.status(200).json({ message: 'Utilisateur mis à jour avec succès.' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -409,7 +409,7 @@ const searchAddress = async (req, res) => {
 
       if (!firstGeocodedResult.address || !firstGeocodedResult.address.house_number) {
       
-        console.log("Street Number not available. Proceeding without validation.");
+        console.log("Numéro de rue non disponible. Procédure sans validation.");
       }
 
       const geocodedAddress = new GeocodedAd({
