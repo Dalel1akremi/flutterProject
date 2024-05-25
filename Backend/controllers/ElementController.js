@@ -1,4 +1,4 @@
-const Step = require('../models/StepModel');
+const Step = require('../models/ElementModel');
 const mongoose = require('mongoose');
 
 const createStep = async (req, res) => {

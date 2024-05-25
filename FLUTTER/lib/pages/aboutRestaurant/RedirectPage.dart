@@ -5,7 +5,7 @@ import 'package:demo/pages/global.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'stepDetailsPage.dart';
+import 'RedirectDetailsPage.dart';
 
 class ItemDetailsPage extends StatelessWidget {
   final int id_item;

@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import './../aboutPaiement/panier.dart';
-import 'ItemDetailsPage.dart';
-import 'stepMenuPage.dart';
+import 'RedirectPage.dart';
+import 'ProduitPage.dart';
 import './../global.dart';
 
 class NextPage extends StatefulWidget {
