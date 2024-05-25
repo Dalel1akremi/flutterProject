@@ -3,7 +3,7 @@
 import 'package:demo/pages/global.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'NouveauPasswordPage.dart';
+import 'NouveauMotdepasse.dart';
 
 class PasswordRecoveryPage extends StatefulWidget {
   const PasswordRecoveryPage({super.key});

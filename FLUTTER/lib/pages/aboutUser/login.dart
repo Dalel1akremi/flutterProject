@@ -11,7 +11,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'PasswordRecoveryPage.dart';
+import 'récupérationmotdepasse.dart';
 import 'registre.dart';
 import './../aboutPaiement/paiement.dart';
 import './../global.dart';
