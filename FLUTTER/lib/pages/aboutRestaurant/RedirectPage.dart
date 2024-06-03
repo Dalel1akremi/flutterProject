@@ -107,6 +107,7 @@ Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
             id_item: item['id_item'] ?? 0,
             nom: item['nom'] ?? '',
             img: 'http://$myIp:3000/'+ item['image'] ,
+            description: item['description'] ?? '',
             prix: (item['prix'] ?? 0).toInt(),
           ),
         ),
@@ -146,13 +147,15 @@ Widget buildItemDetails(BuildContext context, Map<String, dynamic> item) {
                         ),
                       ),
                       const SizedBox(height: 8),
+                     
                       Text(
-                        item['description'] ?? '',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 16,
-                        ),
-                      ),
+                            item['description'] ?? '',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
                       const SizedBox(height: 8),
                       Text(
                         'Prix: ${item['prix'] ?? ''}€',

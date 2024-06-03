@@ -300,6 +300,7 @@ class _NextPageState extends State<NextPage> {
                               nom: menuItem['nom'],
                               img: 'http://$myIp:3000/'+menuItem['image'],
                               prix: menuItem['prix'],
+                              description: menuItem['description'],
                               id_Steps: menuItem['id_Steps'] ?? [],
                             ),
                           ),
