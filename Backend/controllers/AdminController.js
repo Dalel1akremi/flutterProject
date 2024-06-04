@@ -75,7 +75,7 @@ const loginAdmin = async (req, res) => {
     res.status(200).json({ token, adminId: admin._id, nom: admin.nom, telephone: admin.telephone, message: 'connexion avec succée' });
     console.log(token);} catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'erreur server' });
   }
 };
 

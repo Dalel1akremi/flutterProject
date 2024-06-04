@@ -19,7 +19,7 @@ const IndexPage = () => {
   return (
     <div>
       <Navbar />
-      <h1>Bonjour me chers restaurateur</h1>
+      <h1>Bonjour mes chers restaurateurs</h1>
     
     </div>
   );
