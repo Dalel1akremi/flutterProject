@@ -171,30 +171,37 @@ class _StepMenuPageState extends State<StepMenuPage> {
               ),
               const Divider(),
               const SizedBox(height: 20),
-              SingleChildScrollView(
-                child: RichText(
-                  text: TextSpan(
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                    ),
-                    children: [
-                      const TextSpan(
-                        text: 'Description: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 8, 44, 74),
-                        ),
-                      ),
-                      TextSpan(
-                        text: widget.description,
-                      ),
-                    ],
-                  ),
+         SingleChildScrollView(
+  child: widget.description.isNotEmpty
+      ? Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
                 ),
+                children: [
+                  const TextSpan(
+                    text: 'Description: ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 8, 44, 74),
+                    ),
+                  ),
+                  TextSpan(
+                    text: widget.description,
+                  ),
+                ],
               ),
-              const Divider(),
-              Row(
+            ),
+            const Divider(),
+          ],
+        )
+      : Container(), 
+),
+  Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Column(
