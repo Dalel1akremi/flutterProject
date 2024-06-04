@@ -103,7 +103,7 @@ const Profile = () => {
       <div>
         <Navbar />
         <div className="container">
-          <h1>Profil de l'administrateur</h1>
+          <h1>Profil de Restaurateur</h1>
           <form className="form">
             <div className="formGroup">
               <label className="input-label">Nom:</label>

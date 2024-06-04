@@ -8,23 +8,19 @@ const registerAdmin = async (req, res) => {
   const { nom, prenom, telephone, email, password, confirmPassword,id_rest } = req.body;
 
   try {
-    // Check if a Admin with the same email already exists
     const existingAdmin = await Admin.findOne({ email });
 
     if (existingAdmin) {
-      // Admin with the same email already exists
-      return res.status(400).json({ message: 'Admin with this email already exists' });
+      return res.status(400).json({ message: 'email déja existe' });
     }
 
-    // Check if passwords match
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match' });
+      return res.status(400).json({ message: 'mot de passe incompatible' });
     }
 
-    // Hash the password before saving it
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new Admin with the hashed password
     const newAdmin = new Admin({
       nom,
       prenom,
@@ -34,10 +30,9 @@ const registerAdmin = async (req, res) => {
       id_rest,
     });
 
-    // Save the Admin to the database
     await newAdmin.save();
 
-    res.status(201).json({ message: 'Admin registered successfully' });
+    res.status(201).json({ message: 'inscrit avec succée' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -47,20 +42,18 @@ const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Recherche de l'administrateur dans la base de données
+
     const admin = await Admin.findOne({ email });
 
     if (!admin) {
-      // L'administrateur n'existe pas
-      return res.status(401).json({ message: 'Invalid email or password' });
+        return res.status(401).json({ message: 'email invalide' });
     }
 
-    // Vérification du mot de passe
+
     const passwordMatch = await bcrypt.compare(password, admin.password);
 
     if (!passwordMatch) {
-      // Mot de passe incorrect
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Mot de passe invalide' });
     }
 
     const tokenData = {
@@ -79,7 +72,7 @@ const loginAdmin = async (req, res) => {
 
   
 
-    res.status(200).json({ token, adminId: admin._id, nom: admin.nom, telephone: admin.telephone, message: 'Login successful' });
+    res.status(200).json({ token, adminId: admin._id, nom: admin.nom, telephone: admin.telephone, message: 'connexion avec succée' });
     console.log(token);} catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -96,7 +89,7 @@ const reset_passwordAdmin = async (req, res) => {
 
     if (!admin) {
   
-      return res.status(404).json({ message: 'Administrateur non trouvé.' });
+      return res.status(404).json({ message: 'restaurateur non trouvé.' });
     }
 
     const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -128,10 +121,10 @@ const reset_passwordAdmin = async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: 'Email not sent' });
+        res.status(500).json({ success: false, message: 'Email non envoyée' });
       } else {
-        console.log('Email sent successfully: ' + info.response);
-        res.json({ success: true, message: 'Email sent successfully' });
+        console.log('Email envoyée avec succée: ' + info.response);
+        res.json({ success: true, message: 'Email envoyée avec succée' });
       }
     });
   } catch (error) {
@@ -188,12 +181,12 @@ const new_passwordAdmin = async (req, res) => {
 
     if (!existingAdmin) {
     
-      return res.status(404).json({ success: false, message: 'Admin not found.' });
+      return res.status(404).json({ success: false, message: 'Admin non trouvé.' });
     }
 
 
     if (newPassword !== confirmNewPassword) {
-      return res.status(400).json({ success: false, message: 'Passwords do not match.' });
+      return res.status(400).json({ success: false, message: 'Mot de passe incompatible.' });
     }
 
     
@@ -203,7 +196,7 @@ const new_passwordAdmin = async (req, res) => {
 
     await existingAdmin.save();
 
-    res.json({ success: true, message: 'Password updated successfully.' });
+    res.json({ success: true, message: 'mot de passe changée avec succée.' });
   } catch (error) {
     console.error(error);
 
@@ -221,16 +214,15 @@ const new_passwordAdmin = async (req, res) => {
 
 
 const getAdminByEmail = async (req, res) => {
-  const { email } = req.query; // Utilisez req.query pour récupérer les paramètres de requête
-  
+  const { email } = req.query; 
   try {
-    // Recherche de l'administrateur par email
+
     const admin = await Admin.findOne({ email });
     
     if (admin) {
       res.json(admin);
     } else {
-      res.status(404).json({ message: 'Admin not found' });
+      res.status(404).json({ message: 'restaurateur introuvable' });
     }
   } catch (error) {
     console.error(error);
@@ -243,22 +235,19 @@ const updateAdmin = async (req, res) => {
   const { nom, prenom, telephone, email } = req.body;
 
   try {
-    // Recherche de l'administrateur par son email actuel
+
     const existingAdmin = await Admin.findOne({ email: req.query.email });
 
-    // Vérifie si l'administrateur existe
     if (!existingAdmin) {
-      return res.status(404).json({ message: 'Admin not found' });
+      return res.status(404).json({ message: 'restaurateur introuvable' });
     }
 
-    // Met à jour les champs nécessaires
     existingAdmin.nom = nom || existingAdmin.nom;
     existingAdmin.prenom = prenom || existingAdmin.prenom;
     existingAdmin.telephone = telephone || existingAdmin.telephone;
-    
-    // Vérifie si l'email a été modifié
+   
     if (email && email !== existingAdmin.email) {
-      // Vérifie si le nouvel email est unique
+
       const emailExists = await Admin.exists({ email });
       if (emailExists) {
         return res.status(400).json({ message: 'Email already in use' });
@@ -266,10 +255,9 @@ const updateAdmin = async (req, res) => {
       existingAdmin.email = email;
     }
 
-    // Enregistre les modifications
     await existingAdmin.save();
 
-    res.status(200).json({ message: 'Admin updated successfully' });
+    res.status(200).json({ message: 'restaurateur été modifié avec succée' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import jwt from 'jsonwebtoken';
 import router from 'next/router';
-import Navbar from '@/styles/navbar';
 const NouveauMotDePasseAdmin = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -45,7 +44,7 @@ const NouveauMotDePasseAdmin = () => {
          setSuccessMessage('Mot de passe mis à jour avec succès.');
          setTimeout(() => {
          setSuccessMessage(null);
-        router.push('/connexion'); // Naviguer vers la page d'accueil après 1000ms
+        router.push('/connexion');
       }, 1000);
       } else {
         setMessage(data.message);
@@ -63,9 +62,9 @@ const NouveauMotDePasseAdmin = () => {
 
   return (
                     <div>
-                    <Navbar />
+
                     <div className="container">
-      <h1>Modifier le mot de passe administrateur</h1>
+      <h1>Modifier le mot de passe restaurateur</h1>
       <form className="form" onSubmit={handleSubmit}>
         <div className="formGroup">
           <label className="input-label">Nouveau Mot de Passe:</label>

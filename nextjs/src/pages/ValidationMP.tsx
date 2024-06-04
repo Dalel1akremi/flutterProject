@@ -6,17 +6,14 @@ const ValidationMP = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [code, setCode] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [resetStep, setResetStep] = useState(1);
   const [validationCode, setValidationCode] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-                    // Récupérer l'email depuis les paramètres de requête
+   
                     const routerEmail = router.query.email;
-                
-                    // Vérifier si routerEmail est défini et s'il s'agit d'une chaîne de caractères
+
                     if (typeof routerEmail === 'string') {
                         setEmail(routerEmail);
                     }
