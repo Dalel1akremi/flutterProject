@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import jwt from 'jsonwebtoken';
+import React, { useState, useEffect } from 'react';
 import router from 'next/router';
+
 const NouveauMotDePasseAdmin = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -9,20 +9,24 @@ const NouveauMotDePasseAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-
+  useEffect(() => {
+    const email = localStorage.getItem('email');
+    if (!email) {
+      setError('Email not found in local storage');
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    try {
-                    const token = localStorage.getItem('token');
-                    if (!token) {
-                      throw new Error('Token not found');
-                    }
-            
-                    const decodedToken = jwt.decode(token) as { [key: string]: any };
-                    const { email } = decodedToken;
-            
-            
+    const email = localStorage.getItem('email');
+    if (!email) {
+      setMessage('Email not found in local storage');
+      return;
+    }
+
     if (newPassword !== confirmNewPassword) {
       setMessage('Les mots de passe ne correspondent pas.');
       return;
@@ -37,15 +41,15 @@ const NouveauMotDePasseAdmin = () => {
         },
         body: JSON.stringify({ newPassword, confirmNewPassword })
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
-         setSuccessMessage('Mot de passe mis à jour avec succès.');
-         setTimeout(() => {
-         setSuccessMessage(null);
-        router.push('/connexion');
-      }, 1000);
+        setSuccessMessage('Mot de passe mis à jour avec succès.');
+        setTimeout(() => {
+          setSuccessMessage(null);
+          router.push('/connexion');
+        }, 1000);
       } else {
         setMessage(data.message);
       }
@@ -53,17 +57,18 @@ const NouveauMotDePasseAdmin = () => {
       console.error('Error:', error);
       setMessage('Une erreur s\'est produite lors de la mise à jour du mot de passe.');
     }
-} catch (error) {
-                    console.error('Erreur lors de la récupération des données :', error);
-                    setError('Une erreur est survenue lors de la récupération des données.');
-                    setLoading(false);
-                  }
   };
 
-  return (
-                    <div>
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-                    <div className="container">
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  return (
+    <div className="container">
       <h1>Modifier le mot de passe restaurateur</h1>
       <form className="form" onSubmit={handleSubmit}>
         <div className="formGroup">
@@ -76,8 +81,8 @@ const NouveauMotDePasseAdmin = () => {
         </div>
         <button type="submit">Enregistrer</button>
       </form>
+      {message && <div style={{ backgroundColor: 'lightcoral', padding: '10px', marginTop: '10px' }}>{message}</div>}
       {successMessage && <div style={{ backgroundColor: 'lightgreen', padding: '10px', marginTop: '10px' }}>{successMessage}</div>}
-    </div>
     </div>
   );
 };
