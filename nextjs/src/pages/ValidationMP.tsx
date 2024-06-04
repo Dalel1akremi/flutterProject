@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -11,26 +12,38 @@ const ValidationMP = () => {
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-   
-                    const routerEmail = router.query.email;
+    const routerEmail = router.query.email;
 
-                    if (typeof routerEmail === 'string') {
-                        setEmail(routerEmail);
-                    }
-                }, [router.query]);
-                
+    if (typeof routerEmail === 'string') {
+      setEmail(routerEmail);
+      localStorage.setItem('email', routerEmail);
+      console.log('Email set from router query:', routerEmail);
+    } else {
+      const storedEmail = localStorage.getItem('email');
+      if (storedEmail) {
+        setEmail(storedEmail);
+        console.log('Email retrieved from localStorage:', storedEmail);
+      }
+    }
+  }, [router.query]);
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    localStorage.setItem('email', newEmail);
+  };
 
   const handleResetPassword = async () => {
     try {
       const MY_IP = process.env.MY_IP || '127.0.0.1';
-      const response = await axios.post(`http://${MY_IP}:3000/validate_codeAdmin`, { email, validationCode  });
+      const response = await axios.post(`http://${MY_IP}:3000/validate_codeAdmin`, { email, validationCode });
       setMessage(response.data.message);
       if (response.data.success) {
         setResetStep(3);
         router.push('/NouveauMP');
       }
-    } catch (error:any) {
-      setMessage(error.response.data.message || 'Une erreur est survenue');
+    } catch (error: any) {
+      setMessage(error.response?.data?.message || 'Une erreur est survenue');
     }
   };
 
@@ -39,7 +52,7 @@ const ValidationMP = () => {
       <h2>Validation du Code de Réinitialisation</h2>
       <div className="formGroup">
         <label className="input-label">Email:</label>
-        <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} />
+        <input className="input" type="email" value={email} onChange={handleEmailChange} />
       </div>
       <div className="formGroup">
         <label className="input-label">Code de Validation:</label>
