@@ -187,7 +187,7 @@ const Produits = () => {
       <h1>Liste des produits disponibles</h1>
       <div className="header">
         <Link href="/CreerProduits" passHref>
-        <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1250px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
+        <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1230px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
         </Link>
       </div>
       <table>
