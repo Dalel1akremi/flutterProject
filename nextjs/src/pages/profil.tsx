@@ -59,9 +59,6 @@ const Profile = () => {
     setEditedTelephone(event.target.value);
   };
 
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedEmail(event.target.value);
-  };
 
   const handleSubmit = async () => {
     try {
@@ -119,7 +116,7 @@ const Profile = () => {
             </div>
             <div className="formGroup">
               <label className="input-label">Email:</label>
-              <input className="input" type="email" value={editedEmail || adminData.email} onChange={handleEmailChange} />
+              <input className="input" type="email" value={ adminData.email}readOnly  />
             </div>
             <div className="formGroup">
               <label className="input-label">ID Restaurant:</label>
