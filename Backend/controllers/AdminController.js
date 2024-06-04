@@ -52,7 +52,7 @@ const loginAdmin = async (req, res) => {
 
     if (!admin) {
       // L'administrateur n'existe pas
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'email invalide' });
     }
 
     // Vérification du mot de passe
@@ -60,7 +60,7 @@ const loginAdmin = async (req, res) => {
 
     if (!passwordMatch) {
       // Mot de passe incorrect
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'mot de passe invalide' });
     }
 
     const tokenData = {
@@ -79,10 +79,10 @@ const loginAdmin = async (req, res) => {
 
   
 
-    res.status(200).json({ token, adminId: admin._id, nom: admin.nom, telephone: admin.telephone, message: 'Login successful' });
+    res.status(200).json({ token, adminId: admin._id, nom: admin.nom, telephone: admin.telephone, message: 'connecté avec succée' });
     console.log(token);} catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'erreur server' });
   }
 };
 
