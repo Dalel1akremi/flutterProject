@@ -26,7 +26,10 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
   String street = '';
   String streetNumber = '';
   late String _userId;
-
+ String countryError = '';
+  String cityError = '';
+  String streetError = '';
+  String streetNumberError = '';
   @override
   void initState() {
     super.initState();
@@ -86,7 +89,26 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
       return;
     }
 
- 
+  if (countryController.text.isEmpty ||
+        cityController.text.isEmpty ||
+        streetController.text.isEmpty ||
+        streetNumberController.text.isEmpty) {
+
+      setState(() {
+        countryError = countryController.text.isEmpty ? 'Le pays est requis.' : '';
+        cityError = cityController.text.isEmpty ? 'La ville est requise.' : '';
+        streetError = streetController.text.isEmpty ? 'La rue est requise.' : '';
+        streetNumberError = streetNumberController.text.isEmpty ? 'Le numéro de rue est requis.' : '';
+      });
+      return;
+    }
+
+    setState(() {
+      countryError = '';
+      cityError = '';
+      streetError = '';
+      streetNumberError = '';
+    });
     Panier().setUserAddress('$country, $city, $street, $streetNumber');
    String myIp = Global.myIp;
     String apiUrl = 'http://$myIp:3000/searchAddress?_id=$_userId';
@@ -244,40 +266,49 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
     );
   }
 
-  Widget _buildAddressInputFields() {
+   Widget _buildAddressInputFields() {
     return Column(
       children: [
         TextField(
           controller: countryController,
-          decoration: const InputDecoration(labelText: 'Pays'),
+          decoration: InputDecoration(
+            labelText: 'Pays',
+            errorText: countryError.isNotEmpty ? countryError : null,
+          ),
         ),
         TextField(
           controller: cityController,
-          decoration: const InputDecoration(labelText: 'Ville'),
+          decoration: InputDecoration(
+            labelText: 'Ville',
+            errorText: cityError.isNotEmpty ? cityError : null,
+          ),
         ),
         TextField(
           controller: streetController,
-          decoration: const InputDecoration(labelText: 'Rue'),
+          decoration: InputDecoration(
+            labelText: 'Rue',
+            errorText: streetError.isNotEmpty ? streetError : null,
+          ),
         ),
         TextField(
           controller: streetNumberController,
-          decoration: const InputDecoration(labelText: 'Numéro de Rue'),
+          decoration: InputDecoration(
+            labelText: 'Numéro de Rue',
+            errorText: streetNumberError.isNotEmpty ? streetNumberError : null,
+          ),
         ),
         const SizedBox(height: 20),
-         ElevatedButton(
-             
-                 onPressed: searchAddress,
-              
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-                backgroundColor: Colors.black,
-              ),
-              child: const Text(
-             'Enregistrer l\'adresse',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
+        ElevatedButton(
+          onPressed: searchAddress,
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 50),
+            backgroundColor: Colors.black,
+          ),
+          child: const Text(
+            'Enregistrer l\'adresse',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
       ],
     );
-  }
-}
+  }}
