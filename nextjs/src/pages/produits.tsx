@@ -166,6 +166,9 @@ const Produits = () => {
       setIsLoading(false);
     }
   };
+  const handleCreerProduitClick = () => {
+    router.push('/CreerProduits'); // Redirection vers la page de création de produit
+  };
 
   const handleRedirectClick = (item: Item) => {
     if (item.is_Redirect) {
@@ -179,9 +182,9 @@ const Produits = () => {
       <Navbar />
       <h1>Liste des produits disponibles</h1>
       <div className="header">
-        <Link href="/CreerProduits" passHref>
-          <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1230px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
-        </Link>
+        
+          <button  onClick={handleCreerProduitClick} style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1230px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
+       
       </div>
       <table>
         <thead>
