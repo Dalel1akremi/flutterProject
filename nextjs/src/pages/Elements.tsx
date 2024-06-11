@@ -122,7 +122,10 @@ const Steps = () => {
       console.error('Erreur lors de la mise à jour du nom du Step :', error);
     }
   };
-
+  
+  const handleCreerElementClick = () => {
+    router.push('/creerElement'); 
+  };
   const handleArchivedToggle = async (_id: string, isArchived: boolean) => {
     try {
       setIsLoading(true);
@@ -147,9 +150,9 @@ const Steps = () => {
       <Navbar />
       <h1>Liste des étapes disponibles</h1>
       <div className="header">
-        <Link href="/creerElement" passHref>
-        <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1250px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
-        </Link>
+        
+        <button onClick={handleCreerElementClick} style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1250px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
+       
       </div>
       <table>
         <thead>
