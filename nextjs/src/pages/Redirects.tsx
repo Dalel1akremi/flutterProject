@@ -92,12 +92,11 @@ const handleUpdateRedirect = async () => {
   return (
     <div>
       <Navbar />
-      <div className="header">
   <h1>Données Redirect</h1>
   <Link href={`/CreerRedirect?id_item=${id_item}`} passHref>
-    <button className="green-button">+</button>
-  </Link>
-</div>
+  <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1230px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
+        </Link>
+
 
       <table>
         <thead>
