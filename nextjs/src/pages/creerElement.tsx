@@ -61,7 +61,7 @@ const CreateStep = () => {
     <div>
       <Navbar />
       <div className="container">
-        <h1>Créer un Step</h1>
+        <h1>Créer un élement du produit</h1>
         <form onSubmit={handleSubmit}>
           <div className="formGroup">
             <label className="input-label">Nom du Step :</label>
