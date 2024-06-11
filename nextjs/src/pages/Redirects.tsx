@@ -179,12 +179,38 @@ const handleUpdateRedirect = async () => {
       />
     </td>
     <td>
-            {editingItemId === item._id ? (
-              <button onClick={handleUpdateRedirect}>Enregistrer</button>
-            ) : (
-              <button onClick={() => handleEditRedirect(item)}>Modifier</button>
-            )}
-          </td>
+  {editingItemId === item._id ? (
+    <button 
+      onClick={handleUpdateRedirect} 
+      disabled={!editedItem?.nom}
+      style={{
+        backgroundColor: editedItem?.nom ? 'blue' : 'gray',
+        color: 'white',
+        border: 'none',
+        padding: '5px 10px',
+        borderRadius: '5px',
+        cursor: editedItem?.nom ? 'pointer' : 'not-allowed'
+      }}
+    >
+      Enregistrer
+    </button>
+  ) : (
+    <button 
+      onClick={() => handleEditRedirect(item)}
+      style={{
+        backgroundColor: 'blue',
+        color: 'white',
+        border: 'none',
+        padding: '5px 10px',
+        borderRadius: '5px',
+        cursor: 'pointer'
+      }}
+    >
+      Modifier
+    </button>
+  )}
+</td>
+
   </tr>
 ))}
         </tbody>
