@@ -167,7 +167,7 @@ const Produits = () => {
     }
   };
   const handleCreerProduitClick = () => {
-    router.push('/CreerProduits'); // Redirection vers la page de création de produit
+    router.push('/CreerProduits'); 
   };
 
   const handleRedirectClick = (item: Item) => {

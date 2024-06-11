@@ -68,7 +68,7 @@ const CategoriesPage = () => {
     setNewCategoryName(nom_cat);
   };
   const handleCreerCategorieClick = () => {
-    router.push('/creerCategorie'); // Redirection vers la page de création de produit
+    router.push('/creerCategorie'); 
   };
   const handleUpdateCategory = async (id_cat: string) => {
     try {
