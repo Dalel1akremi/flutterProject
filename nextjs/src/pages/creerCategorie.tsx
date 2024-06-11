@@ -87,7 +87,7 @@ export default function AddCategorie() {
     <div>
       <Navbar />
       <div className="container">
-        <h1>Ajouter un nouvel item</h1>
+        <h1>Ajouter une nouvelle catégorie</h1>
         <form onSubmit={handleSubmit} className="form">
   
           <div className="formGroup">
