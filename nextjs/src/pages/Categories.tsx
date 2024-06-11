@@ -67,7 +67,9 @@ const CategoriesPage = () => {
     setEditingCategoryId(id_cat);
     setNewCategoryName(nom_cat);
   };
-
+  const handleCreerCategorieClick = () => {
+    router.push('/creerCategorie'); // Redirection vers la page de création de produit
+  };
   const handleUpdateCategory = async (id_cat: string) => {
     try {
       const MY_IP = process.env.MY_IP || '127.0.0.1';
@@ -85,9 +87,9 @@ const CategoriesPage = () => {
       <Navbar />
       <h1>Liste des catégories</h1>
       <div>         
-          <Link href="/creerCategorie">
-            <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '30px', marginLeft: '1250px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
-          </Link>
+          
+            <button  onClick={handleCreerCategorieClick} style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '30px', marginLeft: '1250px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
+  
         </div>
         <table>
           <thead>
