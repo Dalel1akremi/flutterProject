@@ -91,12 +91,14 @@ const handleUpdateRedirect = async () => {
 
   return (
     <div>
-      <Navbar />
-  <h1>Données Redirect</h1>
-  <Link href={`/CreerRedirect?id_item=${id_item}`} passHref>
-  <button style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1230px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
-        </Link>
-
+       <Navbar />
+      <h1>Données Redirect disponibles</h1>
+      <div className="header">
+      <button
+      onClick={() => window.location.href = `/CreerRedirect?id_item=${id_item}`}
+    style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '10px', marginLeft: '1230px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
+       
+      </div>
 
       <table>
         <thead>
