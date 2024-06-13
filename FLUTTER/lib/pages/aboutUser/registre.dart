@@ -36,7 +36,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       if (password != confirmPassword) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Passwords do not match.'),
+            content: Text('Les mots de passe ne correspondent pas.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -55,80 +55,96 @@ class _RegistrationPageState extends State<RegistrationPage> {
           password,
           confirmPassword,
         );
+      // ignore: empty_catches
       } catch (error) {
-        // Handle registration errors
+    
       }
     }
   }
 
-  Future<void> signUpUser(
-      BuildContext context,
-      String nom,
-      String prenom,
-      String telephone,
-      String email,
-      String password,
-      String confirmPassword) async {
-    String myIp = Global.myIp;
+Future<void> signUpUser(
+    BuildContext context,
+    String nom,
+    String prenom,
+    String telephone,
+    String email,
+    String password,
+    String confirmPassword) async {
+  String myIp = Global.myIp;
 
-    try {
-      final response = await http.post(
-        Uri.parse("http://$myIp:3000/register"),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'nom': nom,
-          'prenom': prenom,
-          'telephone': telephone,
-          'email': email,
-          'password': password,
-          'confirmPassword': confirmPassword,
-        }),
-      );
+  try {
+    final response = await http.post(
+      Uri.parse("http://$myIp:3000/register"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'nom': nom,
+        'prenom': prenom,
+        'telephone': telephone,
+        'email': email,
+        'password': password,
+        'confirmPassword': confirmPassword,
+      }),
+    );
 
-      log('Response: ${response.body}');
+    log('Response: ${response.body}');
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final String token = data['token'];
-        final String userId = data['userId'];
-
-        log('Signup successful! Token: $token, UserId: $userId');
-        await showConfirmationDialog(context);
-      } else {
-        final data = json.decode(response.body);
-        final String message = data['message'];
-
-        if (message.toLowerCase().contains('password')) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Password error: $message'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Signup done : $message'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        await showConfirmationDialog(context);
-        }
-      }
-    } catch (error) {
-      log('Error during signup: $error');
+    if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Error during signup.'),
-          backgroundColor: Colors.red,
+          content: Text('Veuillez vérifier votre email pour activer votre compte.'),
+          backgroundColor: Colors.green,
         ),
       );
       await showConfirmationDialog(context);
-    }
-  }
+    } else {
+      final data = json.decode(response.body);
+      final String message = data['message'];
 
+      if (message.toLowerCase().contains('un utilisateur avec cet e-mail existe déjà')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+         const  SnackBar(
+            content: Text('Un utilisateur avec cet e-mail existe déjà'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else if (message.toLowerCase().contains('veuillez confirmer votre e-mail')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+         const SnackBar(
+            content: Text('Vous avez déjà un compte avec cet e-mail. Veuillez confirmer votre e-mail.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        await showConfirmationDialog(context);
+      } else if (message.toLowerCase().contains('password')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Password error: $message'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Inscrit avec succès: $message'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        await showConfirmationDialog(context);
+      }
+    }
+  } catch (error) {
+    log('Erreur lors d\'inscription: $error');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Erreur lors d\'inscription.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    await showConfirmationDialog(context);
+  }
+}
  
  
 Future<void> showConfirmationDialog(BuildContext context) async {
