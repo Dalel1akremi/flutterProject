@@ -69,7 +69,9 @@ class _LoginPageState extends State<loginPage> {
 
     if (isFormValid) {
       _formKey.currentState!.save();
-
+    panier.origine = "acceuil";
+    Navigator.pushReplacementNamed(context, '/RestaurantScreen');
+  
       try {
         final authProvider = Provider.of<CustomAuthProvider.AuthProvider>(
             context,
@@ -316,6 +318,7 @@ Future<bool> checkUserExists(String email) async {
                     'Connexion',
                     style: TextStyle(color: Colors.white),
                   ),
+                  
                 ),
                 const SizedBox(height: 10),
                 const Align(
