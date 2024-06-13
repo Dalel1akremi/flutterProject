@@ -30,6 +30,9 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
   String cityError = '';
   String streetError = '';
   String streetNumberError = '';
+  String error = '';
+  String errorMessage = '';
+String successMessage = ''; 
   @override
   void initState() {
     super.initState();
@@ -79,68 +82,84 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
     }
   }
 
-  Future<void> searchAddress() async {
-    
-    if (hasAddress) {
-      if (kDebugMode) {
-        print(
-            'User already has an address: $country, $city, $street, $streetNumber');
-      }
-      return;
+Future<void> searchAddress() async {
+  if (hasAddress) {
+    if (kDebugMode) {
+      print('User already has an address: ${countryController.text}, ${cityController.text}, ${streetController.text}, ${streetNumberController.text}');
     }
-
-  if (countryController.text.isEmpty ||
-        cityController.text.isEmpty ||
-        streetController.text.isEmpty ||
-        streetNumberController.text.isEmpty) {
-
-      setState(() {
-        countryError = countryController.text.isEmpty ? 'Le pays est requis.' : '';
-        cityError = cityController.text.isEmpty ? 'La ville est requise.' : '';
-        streetError = streetController.text.isEmpty ? 'La rue est requise.' : '';
-        streetNumberError = streetNumberController.text.isEmpty ? 'Le numéro de rue est requis.' : '';
-      });
-      return;
-    }
-
-    setState(() {
-      countryError = '';
-      cityError = '';
-      streetError = '';
-      streetNumberError = '';
-    });
-    Panier().setUserAddress('$country, $city, $street, $streetNumber');
-   String myIp = Global.myIp;
-    String apiUrl = 'http://$myIp:3000/searchAddress?_id=$_userId';
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'country': countryController.text,
-          'city': cityController.text,
-          'street': streetController.text,
-          'streetNumber': streetNumberController.text,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        await fetchAddressDetails();
-        Panier().setUserAddress('$country, $city, $street, $streetNumber');
-      } else {
-        if (kDebugMode) {
-          print('Failed to fetch data. Status code: ${response.statusCode}');
-        }
-      }
-    } catch (error) {
-      if (kDebugMode) {
-        print('Error: $error');
-      }
-    }
+    return;
   }
 
-  Future<void> _showEditDialog() async {
+  if (countryController.text.isEmpty ||
+      cityController.text.isEmpty ||
+      streetController.text.isEmpty ||
+      streetNumberController.text.isEmpty) {
+    setState(() {
+      countryError = countryController.text.isEmpty ? 'Le pays est requis.' : '';
+      cityError = cityController.text.isEmpty ? 'La ville est requise.' : '';
+      streetError = streetController.text.isEmpty ? 'La rue est requise.' : '';
+      streetNumberError = streetNumberController.text.isEmpty ? 'Le numéro de rue est requis.' : '';
+    });
+    return;
+  }
+
+  setState(() {
+    countryError = '';
+    cityError = '';
+    streetError = '';
+    streetNumberError = '';
+    errorMessage = '';
+    successMessage = '';
+  });
+
+  Panier().setUserAddress('${countryController.text}, ${cityController.text}, ${streetController.text}, ${streetNumberController.text}');
+  String myIp = Global.myIp;
+  String apiUrl = 'http://$myIp:3000/searchAddress?_id=$_userId';
+
+  try {
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'country': countryController.text,
+        'city': cityController.text,
+        'street': streetController.text,
+        'streetNumber': streetNumberController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      await fetchAddressDetails();
+      Panier().setUserAddress('${countryController.text}, ${cityController.text}, ${streetController.text}, ${streetNumberController.text}');
+      setState(() {
+        successMessage = '';
+        errorMessage = 'Adresse non disponible.';
+      });
+    } else {
+      final responseBody = jsonDecode(response.body);
+      String errorMessageFromServer = responseBody['message'] ?? 'Failed to fetch data.';
+
+      if (kDebugMode) {
+        print('Failed to fetch data. Status code: ${response.statusCode}, Message: $errorMessageFromServer');
+      }
+
+      setState(() {
+        errorMessage = errorMessageFromServer;
+        successMessage = '';
+      });
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Error: $e');
+    }
+    setState(() {
+      errorMessage = 'Erreur lors de la connexion au serveur.';
+      successMessage = '';
+    });
+  }
+}
+
+    Future<void> _showEditDialog() async {
     countryController.text = country;
     cityController.text = city;
     streetController.text = street;
@@ -309,6 +328,17 @@ class _AddressSearchScreenState extends State<AddressSearchScreen> {
             style: TextStyle(color: Colors.white),
           ),
         ),
+         SizedBox(height: 20),
+          if (errorMessage.isNotEmpty)
+            Text(
+              errorMessage,
+              style: TextStyle(color: Colors.red),
+            ),
+          if (successMessage.isNotEmpty)
+            Text(
+              successMessage,
+              style: TextStyle(color: Colors.green),
+            ),
       ],
     );
   }}
