@@ -14,7 +14,7 @@ export default function Navbar() {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          throw new Error('Token not found in localStorage');
+          throw new Error('Token non trouvé dans localStorage');
         }
         const decodedToken = jwt.decode(token);
         const { id_rest: decodedRestaurantId } = decodedToken;
