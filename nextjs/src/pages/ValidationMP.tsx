@@ -17,12 +17,12 @@ const ValidationMP = () => {
     if (typeof routerEmail === 'string') {
       setEmail(routerEmail);
       localStorage.setItem('email', routerEmail);
-      console.log('Email set from router query:', routerEmail);
+      console.log("Email défini à partir de la requête du routeur.", routerEmail);
     } else {
       const storedEmail = localStorage.getItem('email');
       if (storedEmail) {
         setEmail(storedEmail);
-        console.log('Email retrieved from localStorage:', storedEmail);
+        console.log('Email récupéré depuis le stockage local :', storedEmail);
       }
     }
   }, [router.query]);
