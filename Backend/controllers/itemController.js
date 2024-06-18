@@ -275,13 +275,13 @@ exports.getItemById = async (req, res) => {
     const item = await Item.findOne({ _id: itemId });
 
     if (!item) {
-      return res.status(404).json({ message: 'Item not found' });
+      return res.status(404).json({ message: 'Item non trouvé' });
     }
 
     res.status(200).json(item);
   } catch (error) {
-    console.error('Error getting item by ID:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Erreur lors de la récupération de l\'item  par ID:', error);
+    res.status(500).json({ message: 'erreur interne du serveur' });
   }
 };
 exports.getNomItemById = async (req, res) => {
@@ -290,13 +290,13 @@ exports.getNomItemById = async (req, res) => {
     const item = await Item.findOne({ id_item: itemId }); 
 
     if (!item) {
-      return res.status(404).json({ message: 'Item not found' });
+      return res.status(404).json({ message: 'Item non trouvé' });
     }
 
     res.status(200).json({ nom: item.nom }); 
   } catch (error) {
-    console.error('Error getting item by ID:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Erreur lors de la récupération de l\'item par ID', error);
+    res.status(500).json({ message: 'erreur interne du serveur' });
   }
 };
 

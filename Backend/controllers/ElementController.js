@@ -27,11 +27,11 @@ const createStep = async (req, res) => {
         } else if (typeof idItem === 'object' && idItem.id_item) {
           return { id_item: parseInt(idItem.id_item.toString().trim(), 10) };
         } else {
-          throw new Error('Invalid id_item type');
+          throw new Error('Type de id_item invalide');
         }
       });
     } else {
-      throw new Error('Invalid id_items type');
+      throw new Error('Type de id_items invalide');
     }
 
     const newStep = new Step({
@@ -195,13 +195,13 @@ const getNomStepById = async (req, res) => {
     const step = await Step.findOne({ id_step: stepId }); 
 
     if (!step) {
-      return res.status(404).json({ message: 'Step not found' });
+      return res.status(404).json({ message: 'Step non trouvé' });
     }
 
     res.status(200).json({ nom_Step: step.nom_Step }); 
   } catch (error) {
-    console.error('Error getting step by ID:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Erreur lors de la récupération de l\'étape par ID:', error);
+    res.status(500).json({ message: 'Erreur interne du serveur' });
   }
 };
 module.exports = {

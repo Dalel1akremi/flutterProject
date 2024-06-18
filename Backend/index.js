@@ -40,8 +40,8 @@ connect('mongodb+srv://dalelakremi2020:Omiyoussef2020@cluster0.0c5rw0u.mongodb.n
   useUnifiedTopology: true,
 })
 
-  .then(() => console.log('Now connected to MongoDB!'))
-  .catch((err) => console.error('Something went wrong', err));
+  .then(() => console.log('Maintenant connecté à MongoDB!'))
+  .catch((err) => console.error('Quelque chose s\'est mal passé', err));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -106,5 +106,5 @@ app.get('/getRestau',Restaurant.getRestau);
 app.get('/getRestaurant',Restaurant.getRestaurant);
 app.get('/getAllRestaurantNames',Restaurant.getAllRestaurantNames);
 app.listen(PORT,'0.0.0.0', () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Le serveur est en cours d'exécution http://localhost:${PORT}`);
 });

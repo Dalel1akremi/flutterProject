@@ -53,7 +53,7 @@ const recupererCarteParId = async (req, res) => {
     const existingCard = await Payment.findOne({ email: email, _id: cardId });
 
     if (!existingCard) {
-      return res.status(404).json({ success: false, message: 'Card not found' });
+      return res.status(404).json({ success: false, message: 'Carte non trouvée' });
     }
     const montantAPayer = req.body.montant;
 
