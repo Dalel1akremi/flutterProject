@@ -59,7 +59,7 @@ class CommandeScreen extends StatelessWidget {
 
   Future<void> makePhoneCall(String phoneNumber) async {
     if (kDebugMode) {
-      print('Attempting to launch call to $phoneNumber');
+      print('Tentative de lancer un appel à $phoneNumber');
     }
 
     if (await canLaunch('tel:$phoneNumber')) {
@@ -124,7 +124,7 @@ class CommandeScreen extends StatelessWidget {
                               child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text('Erreur: ${snapshot.error}'));
                         } else {
                           final commandes =
                               snapshot.data as List<Map<String, dynamic>>;
