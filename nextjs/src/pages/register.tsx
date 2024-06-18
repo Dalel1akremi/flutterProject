@@ -47,7 +47,7 @@ const Register = () => {
     try {
       const MY_IP = process.env.MY_IP || '127.0.0.1';
       const response = await axios.post(`http://${MY_IP}:3000/registerAdmin`, formData);
-      alert(response.data.message); // Afficher le message de succès
+      alert(response.data.message); 
       router.push('/connexion');
       setFormData({
         nom: '',
@@ -59,7 +59,7 @@ const Register = () => {
         id_rest:'',
       });
     } catch (error: any) {
-      alert(error.response.data.message); // Afficher le message d'erreur
+      alert(error.response.data.message); 
     }
   };
 

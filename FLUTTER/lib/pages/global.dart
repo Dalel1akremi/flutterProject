@@ -152,5 +152,5 @@ class Step {
 }
 class Global {
   // ignore: constant_identifier_names
-  static const String myIp = "192.168.1.7";
+  static const String myIp = "192.168.1.19";
 }
