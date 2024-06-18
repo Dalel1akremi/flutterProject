@@ -94,7 +94,9 @@ String myIp = Global.myIp;
         body: jsonEncode({
           'id_items': idItems,
         }),
-        headers: {'Type de contenue': 'application/json'},
+         headers: {
+        'Content-Type': 'application/json',
+      },
       );
 
       if (response.statusCode == 201) {
@@ -106,6 +108,7 @@ String myIp = Global.myIp;
       print('Erreur de creation de Commande: $error');
     }
   }
+
 Future<bool> handlePayment() async {
   if (isCreditCardChecked && selectedCreditCard != null && isCVVValidated) {
     await createCommande(); 
