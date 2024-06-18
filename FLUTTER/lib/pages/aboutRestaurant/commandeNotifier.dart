@@ -116,7 +116,7 @@ class CommandesModel with ChangeNotifier {
           return [];
         }
       } else {
-        throw Exception('Failed to load commandes en cours');
+        throw Exception('Échec du chargement des commandes en cours');
       }
     } catch (error) {
       return [];
@@ -171,7 +171,7 @@ class CommandesModel with ChangeNotifier {
           return [];
         }
       } else {
-        throw Exception('Failed to load commandes');
+        throw Exception('Échec du chargement des commandes');
       }
     } catch (error) {
       return [];
