@@ -185,7 +185,7 @@ void initState() {
                   if (_formKey.currentState?.validate() ?? false) {
                     try {
                       await sendPaymentRequest();
-                      panier.origine = 'accueil';
+                      panier.origine = 'profil';
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const RestaurantScreen(index: 2,)),
