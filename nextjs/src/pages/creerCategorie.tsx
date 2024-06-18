@@ -79,7 +79,7 @@ export default function AddCategorie() {
     } catch (error: any) {
       setMessage(error.response.data.message);
       setIsError(true);
-      console.error('Error adding categorie:', error);
+      console.error('Erreur lors de l\'ajout de la categorie:', error);
     }
   };
 
@@ -104,7 +104,7 @@ export default function AddCategorie() {
       </div>
       {message && (
         <div 
-          className={isError ? "error-message" : "success-message"}
+          className={isError ? "message d'erreur" : "message de réussite"}
           style={{
             textAlign: 'center',
             backgroundColor: isError ? 'red' : 'green',

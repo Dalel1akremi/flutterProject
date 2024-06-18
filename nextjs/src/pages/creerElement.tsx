@@ -47,10 +47,10 @@ const CreateStep = () => {
         if (error.response) {
           setErrorMessage(error.response.data.message);
         } else {
-          setErrorMessage('Une erreur s\'est produite lors de la création du Step');
+          setErrorMessage('Une erreur s\'est produite lors de la création de l\élement');
         }
       } else {
-        setErrorMessage('Une erreur s\'est produite lors de la création du Step');
+        setErrorMessage('Une erreur s\'est produite lors de la création de l\élement');
       }
     }
   };

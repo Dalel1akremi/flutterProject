@@ -9,24 +9,18 @@ const Deconnexion = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      // Si le jeton n'existe pas, rediriger vers la page de connexion
       router.push('/connexion');
       return;
     }
-
-    // Afficher la boîte de dialogue de confirmation lorsque la page est chargée
     setConfirmLogout(true);
   }, []);
 
   const handleLogout = () => {
-    // Supprimer le jeton du stockage local
     localStorage.removeItem('token');
-    // Rediriger vers la page de connexion
     router.push('/connexion');
   };
 
   const handleCancel = () => {
-    // Rediriger vers la page d'accueil si l'utilisateur annule la déconnexion
     router.push('/');
   };
 

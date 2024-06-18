@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import Navbar from '../styles/navbar';
-import Link from 'next/link';
 import jwt from 'jsonwebtoken';
 
 interface Item {

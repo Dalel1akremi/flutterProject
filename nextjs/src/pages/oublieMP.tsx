@@ -14,8 +14,7 @@ const OublieMP = () => {
                       const MY_IP = process.env.MY_IP || '127.0.0.1';
                       const response = await axios.post(`http://${MY_IP}:3000/reset_passwordAdmin`, { email });
                       setMessage(response.data.message);
-                      // Rediriger vers la page "ValidationMP" avec l'e-mail et le code de validation dans les paramètres de l'URL
-                      router.push({
+                     router.push({
                         pathname: '/ValidationMP',
                         query: { email: email, validationCode: response.data.validationCode }
                       });

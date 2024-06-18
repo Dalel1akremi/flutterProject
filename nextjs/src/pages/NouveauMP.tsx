@@ -12,7 +12,7 @@ const NouveauMotDePasseAdmin = () => {
   useEffect(() => {
     const email = localStorage.getItem('email');
     if (!email) {
-      setError('Email not found in local storage');
+      setError('Email non trouvé dans local storage');
       setLoading(false);
     } else {
       setLoading(false);
@@ -23,7 +23,7 @@ const NouveauMotDePasseAdmin = () => {
     e.preventDefault();
     const email = localStorage.getItem('email');
     if (!email) {
-      setMessage('Email not found in local storage');
+      setMessage('Email non trouvé dans local storage');
       return;
     }
 

@@ -39,7 +39,6 @@ export default function AddItem() {
   const [isError, setIsError] = useState<boolean>(false);
 
   useEffect(() => {
-    // Decode token and set restaurant ID
     const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwt.decode(token) as { [key: string]: any };
@@ -162,7 +161,7 @@ export default function AddItem() {
       </div>
       {message && (
   <div 
-    className={isError ? "error-message" : "success-message"}
+    className={isError ? "message d'erreur" : "message de réussite"}
     style={{
       textAlign: 'center',
       backgroundColor: isError ? 'red' : 'green',

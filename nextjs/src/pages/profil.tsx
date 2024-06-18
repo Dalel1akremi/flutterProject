@@ -28,7 +28,7 @@ const Profile = () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          throw new Error('Token not found');
+          throw new Error('Token non trouvé');
         }
 
         const decodedToken = jwt.decode(token) as { [key: string]: any };

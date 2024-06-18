@@ -31,9 +31,9 @@ const Connexion = () => {
       router.push('/');
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setErrorMessage(error.response?.data.message || 'An error occurred');
+        setErrorMessage(error.response?.data.message || 'Une erreur s\'est produite');
       } else {
-        setErrorMessage('An unknown error occurred');
+        setErrorMessage('Une erreur s\'est produite');
       }
       setSuccessMessage('');
     }

@@ -2,7 +2,7 @@ import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../styles/navbar';
 import jwt from 'jsonwebtoken';
-import { useRouter } from 'next/router'; // Import de useRouter
+import { useRouter } from 'next/router'; 
 
 interface RedirectFormData {
   nom: string;
@@ -91,7 +91,7 @@ export default function AddRedirect() {
     } catch (error: any) {
       setMessage(error.response.data.message);
       setIsError(true);
-      console.error('Error adding redirect:', error);
+      console.error('Erreur lors de l\'ajout de la redirect', error);
     }
   };
 
@@ -152,7 +152,7 @@ export default function AddRedirect() {
         </form>
         {message && (
           <div 
-            className={isError ? "error-message" : "success-message"}
+            className={isError ? "message d'erreur" : "message de réussite"}
             style={{
               textAlign: 'center',
               backgroundColor: isError ? 'red' : 'green',

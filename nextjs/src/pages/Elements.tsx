@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../styles/navbar';
-import Link from 'next/link';
 import router from 'next/router';
 import jwt from 'jsonwebtoken';
 interface Step {
@@ -37,7 +36,7 @@ const Steps = () => {
         const response = await axios.get(`http://${MY_IP}:3000/getStepsByRestaurantId?id_rest=${id_rest}`);
         setSteps(response.data.steps);
       } catch (error) {
-        console.error('Erreur lors de la récupération des steps :', error);
+        console.error('Erreur lors de la récupération des elements :', error);
       }
     };
 
@@ -69,7 +68,7 @@ const Steps = () => {
       );
       setIsLoading(false);
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de l\'obligation de l\'étape :', error);
+      console.error('Erreur lors de la mise à jour de l\'obligation de l\'élement :', error);
       setIsLoading(false);
     }
   };
@@ -119,7 +118,7 @@ const Steps = () => {
       setEditedItem(null);
       setEditedIdItems('');
     } catch (error) {
-      console.error('Erreur lors de la mise à jour du nom du Step :', error);
+      console.error('Erreur lors de la mise à jour du nom de l\'élement :', error);
     }
   };
   
@@ -139,7 +138,7 @@ const Steps = () => {
       );
       setIsLoading(false);
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de l\'archivage de l\'étape :', error);
+      console.error('Erreur lors de la mise à jour de l\'archivage de l\'élement :', error);
       setIsLoading(false);
     }
   };

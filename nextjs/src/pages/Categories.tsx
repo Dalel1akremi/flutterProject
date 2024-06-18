@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import Navbar from '@/styles/navbar';
 
 interface Category {
@@ -57,7 +56,7 @@ const CategoriesPage = () => {
       
       setIsLoading(false);
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de l\'archivage de l\'étape :', error);
+      console.error('Erreur lors de la mise à jour de l\'archivage de catégorie :', error);
       setIsLoading(false);
     }
   };
@@ -85,7 +84,7 @@ const CategoriesPage = () => {
   return (
     <div>
       <Navbar />
-      <h1>Liste des catégories</h1>
+      <h1>Liste des catégories disponibles</h1>
       <div>         
           
             <button  onClick={handleCreerCategorieClick} style={{ backgroundColor: 'green', color: 'white', border: 'none', padding: '10px 20px', marginBottom: '30px', marginLeft: '1250px', borderRadius: '5px', cursor: 'pointer' }}>+</button>
