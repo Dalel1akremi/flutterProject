@@ -175,7 +175,7 @@ final prefs = await SharedPreferences.getInstance();
     }
   } catch (error) {
     if (kDebugMode) {
-      print('Error during Google sign in: $error');
+      print('Erreur lors de la connexion à Google : $error');
     }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -239,11 +239,11 @@ Future<bool> checkUserExists(String email) async {
                 TextFormField(
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Enter a valid email address';
+                      return 'Entrez une adresse mail ';
                     }
                     if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
                         .hasMatch(value!)) {
-                      return 'Enter a valid email address';
+                      return 'Entrez une adresse mail valide';
                     }
                     return null;
                   },
@@ -264,7 +264,7 @@ Future<bool> checkUserExists(String email) async {
                 TextFormField(
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Enter your password';
+                      return 'Entrez un mot de passe ';
                     }
                     return null;
                   },
