@@ -179,7 +179,7 @@ const loginUser = async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    res.status(200).json({ token, userId: user._id, nom: user.nom, telephone: user.telephone, message: 'Login successful' });
+    res.status(200).json({ token, userId: user._id, nom: user.nom, telephone: user.telephone, message: 'Connexion réussie' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -230,8 +230,8 @@ const reset_password = async (req, res) => {
         console.error(error);
         res.status(500).json({ success: false, message: 'Email not sent' });
       } else {
-        console.log('Email sent successfully: ' + info.response);
-        res.json({ success: true, message: 'Email sent successfully' });
+        console.log('Email envoyé avec succès: ' + info.response);
+        res.json({ success: true, message: 'Email envoyé avec succès' });
       }
     });
   } catch (error) {
@@ -256,8 +256,8 @@ const validate_code = async (req, res) => {
     }
 
    
-    console.log('Stored Validation Code:', user.validationCode);
-    console.log('Entered Validation Code:', validationCode);
+    console.log('SCode de validation enregistré:', user.validationCode);
+    console.log('Code de validation saisi:', validationCode);
 
 
     if (user.validationCode !== validationCode) {

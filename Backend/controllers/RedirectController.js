@@ -23,21 +23,21 @@ const createRedirect  = async (req, res) => {
     const validatedMaxQuantite = parseInt(max_quantite);
     const validatedIsMenu = Boolean(is_Menu);
     if (isNaN(validatedPrix)) {
-      console.error('Invalid prix:', prix);
+      console.error(' Prix invalide:', prix);
     }
   
     if (isNaN(validatedQuantite)) {
-      console.error('Invalid quantite:', quantite);
+      console.error('Quantite invalide:', quantite);
     }
     if (isNaN(validatedMaxQuantite)) {
-      console.error('Invalid max_quantite:', max_quantite);
+      console.error('Max_quantite invalide:', max_quantite);
     }
 
     if (isNaN(validatedPrix) || isNaN(validatedQuantite) || isNaN(validatedMaxQuantite)) {
       
       res.json({
         status: 400,
-        message: 'Invalid data types in request body'
+        message: 'Types de données invalides dans le corps de la requête'
       });
       return;
     }
@@ -52,7 +52,7 @@ const createRedirect  = async (req, res) => {
       });
       return;
     }
-    console.log('New Redirect Data:', {
+    console.log('Nouvelles données de redirect:', {
       id_item,
       nom,
       prix:validatedPrix,
@@ -79,14 +79,14 @@ const createRedirect  = async (req, res) => {
     const savedRedirect = await newRedirect.save();
     res.json({
       status: 200,
-      message: 'Redirect created successfully',
+      message: 'Redirect crée avec succée ',
       data: savedRedirect,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: 'Error creating Redirect',
+      message: 'Erreur lors de création de  Redirect',
       error: error.message,
     });
   }

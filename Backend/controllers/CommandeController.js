@@ -8,14 +8,14 @@ const createCommande = async (req, res) => {
     const { email, id_rest } = req.query;
 
     if (!id_items || !Array.isArray(id_items) || id_items.length === 0) {
-      console.error('id_items are missing or not provided as an array in the request body.');
-      return res.status(400).json({ error: 'id_items are required and should be provided as an array in the request body.' });
+      console.error('Les id_items sont manquants ou non fournis sous forme de tableau dans le corps de la requête.');
+      return res.status(400).json({ error: 'Les id_items sont requis et doivent être fournis sous forme de tableau dans le corps de la requête.' });
     }
 
   
     if (!email) {
-      console.error('id_user is missing in the request query parameters.');
-      return res.status(400).json({ error: 'id_user is required in the request query parameters.' });
+      console.error('id_user est manquant dans les paramètres de requête.');
+      return res.status(400).json({ error: 'id_user est manquant dans les paramètres de requête.' });
     }
 
    
@@ -23,8 +23,8 @@ const createCommande = async (req, res) => {
 
     
     if (!restaurant) {
-      console.error(`Restaurant with id_rest ${id_rest} not found.`);
-      return res.status(404).json({ error: `Restaurant with id_rest ${id_rest} not found.` });
+      console.error(`Restaurant avec l'identifiant ${id_rest} non trouvé.`);
+      return res.status(404).json({ error: `Restaurant avec l'identifiant ${id_rest} non trouvé.` });
     }
 
     const numero_telephone = restaurant.numero_telephone;
@@ -33,8 +33,8 @@ const createCommande = async (req, res) => {
     const items = await Item.find({ id_item: { $in: itemIds } });
 
     if (items.length !== id_items.length) {
-      console.error('One or more items not found.');
-      return res.status(404).json({ error: 'One or more items not found.' });
+      console.error('Un ou plusieurs éléments non trouvés.');
+      return res.status(404).json({ error: 'Un ou plusieurs éléments non trouvés.' });
     }
 
 
@@ -42,8 +42,8 @@ const createCommande = async (req, res) => {
       const matchingItem = items.find(item => item.id_item === itemInput.id_item);
 
       if (!matchingItem) {
-        console.error(`Item with id_item ${itemInput.id_item} not found.`);
-        return res.status(404).json({ error: `Item with id_item ${itemInput.id_item} not found.` });
+        console.error(`Le produit avec id_item${itemInput.id_item} n'a pas été trouvé.`);
+        return res.status(404).json({ error: `Le produit avec id_item${itemInput.id_item} n'a pas été trouvé.` });
       }
 
       return {
@@ -74,16 +74,16 @@ const createCommande = async (req, res) => {
     const savedCommande = await newCommande.save();
     return res.status(201).json(savedCommande);
   } catch (error) {
-    console.error('Error creating Commande:', error.message);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Erreur lors de creation de  Commande:', error.message);
+    return res.status(500).json({ error: 'Erreur interne du serveur' });
   }
 }
 const getCommandesEncours = async (req, res) => {
   try {
     const email = req.query.email;
     if (!email) {
-      console.error('email is missing in the request query parameters.');
-      return res.status(400).json({ error: 'email is required in the request query parameters.' });
+      console.error('L\'email est manquant dans les paramètres de requête.');
+      return res.status(400).json({ error: 'L\'email est manquant dans les paramètres de requête.' });
     }
 
   
@@ -92,8 +92,8 @@ const getCommandesEncours = async (req, res) => {
     const commandes = await Commande.find({email, etat: { $in: etats } });
 
     if (!commandes || commandes.length === 0) {
-      console.error('No commandes found with the specified etats.');
-      return res.status(404).json({ error: 'No commandes found with the specified etats.' });
+      console.error('Aucune commande trouvée avec les états spécifiés.');
+      return res.status(404).json({ error: 'Aucune commande trouvée avec les états spécifiés.' });
     }
     const commandesAvecRestaurants = [];
     for (let commande of commandes) {
@@ -114,14 +114,14 @@ const getCommandesEncours = async (req, res) => {
           console.log('Restaurant introuvable pour id_rest:', id_rest);
         }
       } catch (error) {
-        console.error('Error retrieving restaurant name:', error.message);
+        console.error('Erreur lors de la récupération du nom du restaurant :', error.message);
        console.error('Erreur lors de la récupération du nom du restaurant pour la commande:', commande._id);
       }
     }
 
     return res.status(200).json(commandesAvecRestaurants);
   } catch (error) {
-    console.error('Error getting commandes with specified etats:', error.message);
+    console.error('Erreur lors de la récupération des commandes avec les états spécifiés :', error.message);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
@@ -148,7 +148,7 @@ const getCommandes = async (req, res) => {
     return res.status(200).json(commandes);
   } catch (error) {
     console.error('Error getting commandes for restaurant:', id_rest, error.message);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: 'Erreur interne du serveur' });
   }
 };
 
@@ -159,22 +159,22 @@ const updateCommandeState = async (req, res) => {
     const { commandeId, newState } = req.query;
 
     if (!commandeId || !newState) {
-      console.error('Commande ID or new state is missing in the request parameters.');
-      return res.status(400).json({ error: 'Commande ID and new state are required in the request parameters.' });
+      console.error('la commande ID ou le nouvel état est manquant dans les paramètres de la requête.');
+      return res.status(400).json({ error: 'la commande ID ou le nouvel état est manquant dans les paramètres de la requête.' });
     }
 
     const newStateCleaned = newState.trim();
 
     const allowedStates = ['Validée', 'En Préparation', 'Prête', 'Non validée', 'Passée'];
     if (!allowedStates.includes(newStateCleaned)) {
-      console.error(`Invalid state "${newStateCleaned}" specified.`);
-      return res.status(400).json({ error: `Invalid state "${newStateCleaned}" specified. Allowed states are: ${allowedStates.join(', ')}` });
+      console.error(`État invalide spécifié ${newStateCleaned}.`);
+      return res.status(400).json({ error: `État spécifié invalide ${newStateCleaned} Les états autorisés sont : ${allowedStates.join(', ')}` });
     }
 
     const commande = await Commande.findById(commandeId);
     if (!commande) {
-      console.error(`Commande with ID ${commandeId} not found.`);
-      return res.status(404).json({ error: `Commande with ID ${commandeId} not found.` });
+      console.error(`Commande avec ID ${commandeId} non trouvé.`);
+      return res.status(404).json({ error: `Commande avec ID ${commandeId} non trouvé.` });
     }
 
     let errorMessage;
@@ -203,9 +203,9 @@ const updateCommandeState = async (req, res) => {
 
     commande.etat = newStateCleaned;
     await commande.save();
-    return res.status(200).json({ message: `Commande with ID ${commandeId} updated successfully to "${newStateCleaned}".` });
+    return res.status(200).json({ message: `Commande avec l'ID ${commandeId} modifié avec succée à "${newStateCleaned}".` });
   } catch (error) {
-    console.error('Error updating commande state:', error.message);
+    console.error('erreur lors de modification de l\'etat  de commande :', error.message);
      return res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de l\'état de la commande.' });
   }
 };
@@ -216,8 +216,8 @@ const updateCommandeState = async (req, res) => {
       const email = req.query.email;
   
       if (!email) {
-        console.error('email is missing in the request query parameters.');
-        return res.status(400).json({ error: 'email is required in the request query parameters.' });
+        console.error('L`\'email est manquante dans les paramètres de la requête.');
+        return res.status(400).json({ error: 'email est requise dans les paramètres de la requête' });
       }
       const etats = ['Passée', 'Non validée'];
 
@@ -225,7 +225,7 @@ const updateCommandeState = async (req, res) => {
   
       if (!commandes || commandes.length === 0) {
         
-        return res.status(404).json({ error: `No past commandes found for email ${email}.` });
+        return res.status(404).json({ error: `Aucune commande passée n'a été trouvée pour cet e-mail ${email}.` });
       }
       const commandesAvecRestaurants = [];
       for (let commande of commandes) {
@@ -245,14 +245,14 @@ const updateCommandeState = async (req, res) => {
             console.log('Restaurant introuvable pour id_rest:', id_rest);
           }
         } catch (error) {
-          console.error('Error retrieving restaurant name:', error.message);
+          console.error('Erreur lors de la récupération du nom du restaurant :', error.message);
           console.error('Erreur lors de la récupération du nom du restaurant pour la commande:', commande._id);
         }
       }
       return res.status(200).json(commandesAvecRestaurants);
     } catch (error) {
-      console.error('Error getting past commandes:', error.message);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Erreur lors de la récupération des commandes passées :', error.message);
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 };
 
@@ -264,10 +264,10 @@ const sendNotification = async (req, res) => {
     const utilisateur = await Commande.findOne({ email });
 
     if (!restaurant) {
-      return res.status(404).json({ error: 'Restaurant not found' });
+      return res.status(404).json({ error: 'Restaurant non trouvé' });
     }
     if (!utilisateur) {
-      return res.status(404).json({ error: 'Utilisateur not found' });
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
 
     const restEmail = restaurant.email;
@@ -300,11 +300,11 @@ const sendNotification = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-    console.log('email sent successfully');
-    res.status(200).json({ message: 'Email sent successfully' });
+    console.log('Email envoyé avec succès');
+    res.status(200).json({ message: 'Email envoyé avec succès' });
   } catch (error) {
-    console.error('Error sending email:', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Erreur lors de  l\'envoie de l\€email:', error.message);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
   }
 };
 

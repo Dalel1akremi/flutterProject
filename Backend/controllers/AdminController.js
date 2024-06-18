@@ -35,7 +35,7 @@ const registerAdmin = async (req, res) => {
     res.status(201).json({ message: 'inscrit avec succée' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Erreur interne du serveur' });
   }
 };
 const loginAdmin = async (req, res) => {
@@ -75,7 +75,7 @@ const loginAdmin = async (req, res) => {
     res.status(200).json({ token, adminId: admin._id, nom: admin.nom, telephone: admin.telephone, message: 'connexion avec succée' });
     console.log(token);} catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'erreur server' });
+    res.status(500).json({ message: 'Erreur du serveur' });
   }
 };
 
@@ -94,7 +94,7 @@ const reset_passwordAdmin = async (req, res) => {
 
     const validationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    console.log('Generated Validation Code:', validationCode);
+    console.log('Code de validation généré:', validationCode);
 
     admin.validationCode = validationCode;
     admin.validationCodeTimestamp = Date.now();
@@ -145,8 +145,8 @@ const validate_codeAdmin = async (req, res) => {
     }
 
    
-    console.log('Stored Validation Code:', admin.validationCode);
-    console.log('Entered Validation Code:', validationCode);
+    console.log('Code de validation enregistré:', admin.validationCode);
+    console.log('Code de validation saisi:', validationCode);
 
 
     if (admin.validationCode !== validationCode) {
@@ -203,11 +203,11 @@ const new_passwordAdmin = async (req, res) => {
    
     if (error.name === 'MongoError' && error.code === 11000) {
     
-      return res.status(400).json({ success: false, message: 'Duplicate key error.' });
+      return res.status(400).json({ success: false, message: 'Erreur de clé dupliquée.' });
     }
 
    
-    res.status(500).json({ success: false, message: 'Error updating password.' });
+    res.status(500).json({ success: false, message: 'Erreur lors de la mise à jour du mot de passe.' });
   }
 };
 
@@ -226,7 +226,7 @@ const getAdminByEmail = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'erreur de serveur' });
   }
 };
 
@@ -250,7 +250,7 @@ const updateAdmin = async (req, res) => {
 
       const emailExists = await Admin.exists({ email });
       if (emailExists) {
-        return res.status(400).json({ message: 'Email already in use' });
+        return res.status(400).json({ message: 'Lemail est déjà utilisée' });
       }
       existingAdmin.email = email;
     }
@@ -260,7 +260,7 @@ const updateAdmin = async (req, res) => {
     res.status(200).json({ message: 'restaurateur été modifié avec succée' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Erreur interne du serveur' });
   }
 };
 
