@@ -64,24 +64,24 @@ class _SalesTermsPageState extends State<SalesTermsPage> {
           return restaurants;
         } else {
           if (kDebugMode) {
-            print('No restaurant details found in the response');
+            print('Aucun détail sur le restaurant trouvé dans la réponse');
           }
-          throw Exception('No restaurant details found in the response');
+          throw Exception('Aucun détail sur le restaurant trouvé dans la réponse');
         }
       } else {
         if (kDebugMode) {
-          print('Key "restaurants" not found in the response');
+          print('Clé "restaurants" introuvable dans la réponse');
         }
-        throw Exception('Key "restaurants" not found in the response');
+        throw Exception('Clé "restaurants" introuvable dans la réponse');
       }
     } else {
       if (kDebugMode) {
-        print('Error status code: ${response.statusCode}');
+        print('Code d\'état d\'erreur : ${response.statusCode}');
       }
       if (kDebugMode) {
-        print('Error response body: ${response.body}');
+        print('Corps de la réponse d\'erreur : ${response.body}');
       }
-      throw Exception('Failed to load restaurant details');
+      throw Exception('Échec du chargement des détails du restaurant');
     }
   }
 

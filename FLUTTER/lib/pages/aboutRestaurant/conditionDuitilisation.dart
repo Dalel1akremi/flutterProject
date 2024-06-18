@@ -74,7 +74,7 @@ class TermsOfUsePage extends StatelessWidget {
             ),
             SizedBox(height: 10.0),
             Text(
-              'Tout dysfonctionnement du serveur ou du réseau ne peut engager la responsabilité de l\'Éditeur.\n De même, la responsabilité de l\'application ne peut être engagée en cas de force majeure ou du fait imprévisible et insurmontable d\'un tiers.\n L\'application TEST DEV s\'engage à mettre en œuvre tous les moyens nécessaires pour garantir la sécurité et la confidentialité des données.',
+              'Tout disfonctionnement du serveur ou du réseau ne peut engager la responsabilité de l\'Éditeur.\n De même, la responsabilité de l\'application ne peut être engagée en cas de force majeure ou du fait imprévisible et insurmontable d\'un tiers.\n L\'application TEST DEV s\'engage à mettre en œuvre tous les moyens nécessaires pour garantir la sécurité et la confidentialité des données.',
             ),
             SizedBox(height: 20.0),
             Text(

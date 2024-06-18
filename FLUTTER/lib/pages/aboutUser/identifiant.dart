@@ -66,12 +66,12 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
         } 
       } else {
         if (kDebugMode) {
-          print('Failed to load user data. Response: ${response.body}');
+          print('Échec du chargement des données utilisateur. Réponse: ${response.body}');
         }
       }
     } catch (error) {
       if (kDebugMode) {
-        print('Error during HTTP request: $error');
+        print('Erreur lors de la requête HTTP : $error');
       }
     }
   }
@@ -86,7 +86,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
       return true; 
       } catch (e) {
       if (kDebugMode) {
-        print('Failed to save data to local storage: $e');
+        print('Échec de l\'enregistrement des données sur le stockage local : $e');
       }
       return false;
        }
@@ -98,7 +98,7 @@ Future<bool> saveNameToStorage(String name) async {
     return true;
     } catch (e) {
     if (kDebugMode) {
-      print('Failed to save name to local storage: $e');
+      print('Échec de l\'enregistrement du nom sur le stockage local : $e');
     }
     return false;
      }
@@ -156,12 +156,12 @@ Future<bool> saveNameToStorage(String name) async {
         final bool nameSaved = await saveNameToStorage(nom);
         if (!nameSaved) {
           if (kDebugMode) {
-            print('Failed to save name to local storage.');
+            print('Échec de l\'enregistrement du nom sur le stockage local.');
           }
         }
       } else {
         if (kDebugMode) {
-          print('Data not saved.');
+          print('Données non enregistrées.');
         }
       }
 
@@ -172,9 +172,9 @@ Future<bool> saveNameToStorage(String name) async {
       );
     } else {
       if (kDebugMode) {
-        print('Failed to update user data. Response: ${response.body}');
+        print('Échec de la mise à jour des données utilisateur. Réponse: ${response.body}');
       }
-      throw Exception('Failed to update user data');
+      throw Exception('Échec de la mise à jour des données utilisateur');
     }
   } catch (error) {
     if (kDebugMode) {

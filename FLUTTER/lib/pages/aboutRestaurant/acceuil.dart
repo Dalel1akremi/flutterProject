@@ -142,7 +142,7 @@ String iconPath = '';
         filterRestaurants();
       });
     } else {
-      throw Exception('Failed to load restaurants');
+      throw Exception('Échec du chargement des restaurants');
     }
   }
 

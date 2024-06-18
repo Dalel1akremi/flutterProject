@@ -77,7 +77,7 @@ Future<Map<String, dynamic>> login(String email, String password) async {
       _telephone = telephone;
       
       if (kDebugMode) {
-        print('login successful! UserId: $userId, nom: $nom, telephone: $telephone');
+        print('connexion réussie! UserId: $userId, nom: $nom, telephone: $telephone');
       }
       
       await saveTokenToStorage(token, userId, email, nom, telephone);
@@ -86,8 +86,8 @@ Future<Map<String, dynamic>> login(String email, String password) async {
       _userId = data['userId'];
       
       if (kDebugMode) {
-        print('User ID from server response: $userId');
-        print('User email from server response: $email');
+        print('User ID de la réponse du serveur : $userId');
+        print('User email de la réponse du serveur : $email');
       }
       
       notifyListeners();
@@ -106,7 +106,7 @@ Future<Map<String, dynamic>> login(String email, String password) async {
   }catch (error) {
   if (error is String) {
     if (kDebugMode) {
-      print('Error during login: $error');
+      print('Erreur lors de la connexion : $error');
     } 
   } 
   

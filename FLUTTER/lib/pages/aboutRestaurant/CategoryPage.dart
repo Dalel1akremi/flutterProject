@@ -38,7 +38,7 @@ class _NextPageState extends State<NextPage> {
     try {
       final int? idRest = Panier().getIdRestaurant();
       if (idRest == null) {
-        throw Exception('Restaurant ID is null');
+        throw Exception('L\'identifiant du restaurant est nul');
       }
   
       final response = await http
@@ -52,11 +52,11 @@ class _NextPageState extends State<NextPage> {
         });
       } else {
         throw Exception(
-            'Failed to fetch categories. Status code: ${response.statusCode}');
+            'Échec de la récupération des catégories. Code d\'état: ${response.statusCode}');
       }
     } catch (error) {
       if (kDebugMode) {
-        print('Error fetching categories: $error');
+        print('Erreur lors de la récupération des catégories: $error');
       }
     }
   }
@@ -255,9 +255,9 @@ class _NextPageState extends State<NextPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Text('Error loading menu: ${snapshot.error}');
+          return Text('Erreur de chargement du menu : ${snapshot.error}');
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Text('No menu items available.');
+          return const Text('Aucun élément de menu disponible.');
         } else {
           return Padding(
             padding: const EdgeInsets.only(top: 16.0),
@@ -276,7 +276,7 @@ class _NextPageState extends State<NextPage> {
                       if (menuItem['is_Redirect'] == true) {
                         final int? idRest = Panier().getIdRestaurant();
                         if (idRest == null) {
-                          throw Exception('Restaurant ID is null');
+                          throw Exception('L\'identifiant du restaurant est nul');
                         }
                         Navigator.push(
                           context,
@@ -385,20 +385,20 @@ class _NextPageState extends State<NextPage> {
               .toList();
         } else {
           if (kDebugMode) {
-            print('Error fetching menu: Response data is null or empty');
+            print('Erreur de menu de récupération : les données de réponse sont nulles ou vides');
           }
           return [];
         }
       } else {
         if (kDebugMode) {
-          print('Error fetching menu. Status code: ${response.statusCode}');
+          print('Erreur lors de la récupération du menu. Code d\'état : ${response.statusCode}');
         }
         throw Exception(
-            'Failed to fetch menu. Status code: ${response.statusCode}');
+            'Échec de la récupération du menu. Code d\'état : ${response.statusCode}');
       }
     } catch (error) {
       if (kDebugMode) {
-        print('Error fetching menu: $error');
+        print('Erreur lors de la récupération du menu : $error');
       }
       return [];
     }
@@ -432,9 +432,9 @@ class Category {
     } else {
       if (kDebugMode) {
         print(
-            "Warning: 'id_cat', 'nom_cat' or 'image_url' is null in JSON data. Using default values.");
+            "Avertissement: 'id_cat', 'nom_cat' ou 'image_url' est null dans JSON data. Utilisation des valeurs par défaut.");
       }
-      return Category(idCat: 0, nomCat: 'Default Category', imageUrl: '');
+      return Category(idCat: 0, nomCat: 'Catégorie par defaut', imageUrl: '');
     }
   }
 }

@@ -192,7 +192,7 @@ void initState() {
          
         );
                     } catch (error) {
-                      print('Error during payment: $error');
+                      print('Erreur lors du paiement: $error');
                     }
                   }
                 },

@@ -67,23 +67,23 @@ bool obscureConfirmPassword = true;
 
         if (response.statusCode == 200 && responseData['success']) {
           if (kDebugMode) {
-            print('Password updated successfully');
+            print('Mot de passe mis à jour avec succès');
           }
 
         
         } else {
           if (kDebugMode) {
-            print('Error updating password: ${responseData['message']}');
+            print('Erreur lors de la mise à jour du mot de passe : ${responseData['message']}');
           }
         }
       } catch (error) {
         if (kDebugMode) {
-          print('Error: $error');
+          print('Erreur: $error');
         }
       }
     } else {
       if (kDebugMode) {
-        print('Email is null. Cannot update password.');
+        print('L\'e-mail est nul. Impossible de mettre à jour le mot de passe.');
       }
     }
   }

@@ -81,17 +81,17 @@ class ItemDetailsPage extends StatelessWidget {
         } else if (responseData is Map<String, dynamic>) {
           return [responseData];
         } else {
-          throw Exception('Response data is invalid.');
+          throw Exception('Les données de réponse ne sont pas valides.');
         }
       } else {
         throw Exception(
-            'Failed to fetch menu. Status code: ${response.statusCode}');
+            'Échec de la récupération du menu. Code d\'état : ${response.statusCode}');
       }
     } catch (error) {
       if (kDebugMode) {
-        print('Error fetching menu: $error');
+        print('Erreur lors de la récupération du menu : $error');
       }
-      throw Exception('Failed to fetch menu: $error');
+      throw Exception('Échec de la récupération du menu : $error');
     }
   }
 

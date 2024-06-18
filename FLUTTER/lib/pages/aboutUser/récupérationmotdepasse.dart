@@ -34,23 +34,23 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
 
       if (response.statusCode == 200) {
         
-        print('Password reset email sent successfully');
+        print('E-mail de réinitialisation du mot de passe envoyé avec succès');
   
         setState(() {
           isEmailValid = true;
-          emailMessage = 'Email exists. You can proceed to reset.';
+          emailMessage = 'Le mail existe. Vous pouvez procéder à la réinitialisation.';
         });
       } else if (response.statusCode == 404) {
 
         setState(() {
           isEmailValid = false;
-          emailMessage = 'Email not found. Please enter a valid email.';
+          emailMessage = 'Email non trouvé. Veuillez entrer un email valide.';
         });
       } else {
 
         setState(() {
           isEmailValid = false;
-          emailMessage = 'Error sending password reset email: ${response.statusCode}';
+          emailMessage = 'Erreur lors de l\'envoi de l\'e-mail de réinitialisation du mot de passe : ${response.statusCode}';
         });
       }
     } catch (error) {
@@ -84,11 +84,11 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
         );
       } else {
         
-        print('Error validating code: ${response.statusCode}');
+        print('Erreur lors de la validation du code : ${response.statusCode}');
       }
     } catch (error) {
       
-      print('Error: $error');
+      print('Erreur: $error');
     }
   }
 
@@ -142,7 +142,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
               validator: (value) {
                 if (value?.isEmpty ?? true || !value!.contains('@')) {
            
-                  return 'Enter a valid email address';
+                  return 'Enterer une adresse email valide';
                 }
     
                 return null;
@@ -209,7 +209,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
               validator: (value) {
                 if (value?.isEmpty ?? true) {
                   
-                  return 'Enter the validation code';
+                  return 'Enterer le code de validation';
                 }
       
                 return null;
