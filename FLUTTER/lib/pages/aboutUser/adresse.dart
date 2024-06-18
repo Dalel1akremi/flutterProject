@@ -77,7 +77,7 @@ String successMessage = '';
       }
     } catch (error) {
       if (kDebugMode) {
-        print('Error fetching address details: $error');
+        print('Erreur lors de la récupération des détails de l\'adresse : $error');
       }
     }
   }
@@ -85,7 +85,7 @@ String successMessage = '';
 Future<void> searchAddress() async {
   if (hasAddress) {
     if (kDebugMode) {
-      print('User already has an address: ${countryController.text}, ${cityController.text}, ${streetController.text}, ${streetNumberController.text}');
+      print('L\'utilisateur a déjà une adresse : ${countryController.text}, ${cityController.text}, ${streetController.text}, ${streetNumberController.text}');
     }
     return;
   }
@@ -137,10 +137,10 @@ Future<void> searchAddress() async {
       });
     } else {
       final responseBody = jsonDecode(response.body);
-      String errorMessageFromServer = responseBody['message'] ?? 'Failed to fetch data.';
+      String errorMessageFromServer = responseBody['message'] ?? 'Échec de la récupération des données.';
 
       if (kDebugMode) {
-        print('Failed to fetch data. Status code: ${response.statusCode}, Message: $errorMessageFromServer');
+        print('Échec de la récupération des données. Code d\'état : ${response.statusCode}, Message: $errorMessageFromServer');
       }
 
       setState(() {
