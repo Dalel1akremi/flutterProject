@@ -236,10 +236,10 @@ Future<void> showConfirmationDialog(BuildContext context) async {
       );
     }
   } catch (error) {
-    log('Error during email confirmation: $error');
+    log('Erreur lors de la confirmation par e-mail : $error');
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Error during email confirmation.'),
+        content: Text('Erreur lors de la confirmation par e-mail :'),
         backgroundColor: Colors.red,
       ),
     );
