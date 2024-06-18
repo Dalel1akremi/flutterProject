@@ -94,16 +94,16 @@ String myIp = Global.myIp;
         body: jsonEncode({
           'id_items': idItems,
         }),
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Type de contenue': 'application/json'},
       );
 
       if (response.statusCode == 201) {
-        print('Commande created successfully.');
+        print('Commande crée avec succès.');
       } else {
-        print('Failed to create Commande: ${response.statusCode}');
+        print('Echec de creation de Commande: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error creating Commande: $error');
+      print('Erreur de creation de Commande: $error');
     }
   }
 Future<bool> handlePayment() async {
@@ -158,16 +158,16 @@ String myIp = Global.myIp;
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
-        print('Payment successful!');
+        print('Payement est effectué avec succès!');
         await createCommande(); 
       } else {
-        throw Exception('Failed to process payment: ${response.statusCode}');
+        throw Exception('Echec de paiement: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error processing payment: $e');
+      print('Erreur lors de paiement: $e');
     }
   } else {
-    print('Please select a credit card for payment.');
+    print('Veuillez selectionner une carte de credit  pour le  paiement.');
   }
 
   
@@ -190,13 +190,13 @@ String myIp = Global.myIp;
                 .toList();
           });
         } else {
-          throw Exception('Invalid response format: $responseData');
+          throw Exception('Format de reponse invalide : $responseData');
         }
       } else {
-        throw Exception('Failed to load user credit cards: ${response.statusCode}');
+        throw Exception('Échec du chargement des cartes de crédit des utilisateurs: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error fetching user credit cards: $error');
+      print('Erreur lors de la récupération des cartes de crédit des utilisateurs: $error');
     }
   }
 }
