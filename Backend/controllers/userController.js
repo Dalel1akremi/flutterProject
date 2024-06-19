@@ -15,8 +15,7 @@ const registerGoogle = async (req, res) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-   return res.status(400).json({ message: 'Un utilisateur avec cet e-mail existe déjà' });
- 
+      return res.status(400).json({ message: 'Un utilisateur avec cet e-mail existe déjà' });
     }
 
     const newUser = new User({
@@ -28,9 +27,10 @@ const registerGoogle = async (req, res) => {
       validationCode: '', 
       isEmailConfirmed: true,
     });
+
     await newUser.save();
 
-    return res.status(200).json({ success: true, message: 'Utilisateur enregistré avec succès.' });
+    return res.status(200).json({ success: true, message: 'Utilisateur enregistré avec succès.', userId: newUser._id });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: 'Erreur lors de l\'enregistrement de l\'utilisateur' });
@@ -38,14 +38,15 @@ const registerGoogle = async (req, res) => {
 };
 
 
-const checkUser= async (req, res) => {
+
+const checkUser = async (req, res) => {
   const { email } = req.query;
 
   try {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      res.status(200).json({ message: 'Utilisateur trouvé' });
+      res.status(200).json({ message: 'Utilisateur trouvé', userId: existingUser._id });
     } else {
       res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
@@ -54,6 +55,7 @@ const checkUser= async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la recherche de l\'utilisateur' });
   }
 };
+
 const registerUser = async (req, res) => {
   const { nom, prenom, telephone, email, password, confirmPassword } = req.body;
 

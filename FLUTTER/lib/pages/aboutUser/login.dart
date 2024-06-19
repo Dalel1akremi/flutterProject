@@ -128,12 +128,11 @@ class _LoginPageState extends State<loginPage> {
 
 Future<void> _signInWithGoogle(BuildContext context) async {
   try {
-     await googleSignIn.signOut(); 
+    await googleSignIn.signOut(); 
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
     if (googleUser != null) {
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       final String name = googleUser.displayName ?? '';
       final String email = googleUser.email;
@@ -144,13 +143,13 @@ Future<void> _signInWithGoogle(BuildContext context) async {
       List<String> nameParts = name.split(' ');
       nom = nameParts.isNotEmpty ? nameParts.first : '';
       prenom = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
-   bool userExists = await checkUserExists(email);
-final prefs = await SharedPreferences.getInstance();
+      bool userExists = await checkUserExists(email);
+      final prefs = await SharedPreferences.getInstance();
       await prefs.setString('email', email);
       await prefs.setString('nom', nom);
       await prefs.setString('prenom', prenom);
-      if (!userExists) {
 
+      if (!userExists) {
         String myIp = Global.myIp;
 
         final response = await http.post(
@@ -165,7 +164,15 @@ final prefs = await SharedPreferences.getInstance();
           }),
         );
 
-        if (response.statusCode != 200) {
+        if (response.statusCode == 200) {
+          final responseData = jsonDecode(response.body);
+          final String userId = responseData['userId'];
+
+          await prefs.setString('userId', userId);
+          if (kDebugMode) {
+            print('User ID saved in SharedPreferences: $userId');
+          }
+        } else {
           throw Exception('Erreur lors de l\'appel à l\'API: ${response.statusCode}');
         }
       }
