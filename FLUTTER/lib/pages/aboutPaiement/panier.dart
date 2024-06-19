@@ -176,9 +176,9 @@ Future<void> initAuthProvider() async {
             child: ElevatedButton(
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                String? token = prefs.getString('token');
-                 String? email = prefs.getString('email');
-                if (token != null && token.isNotEmpty || email!=null) {
+                  String? token = prefs.getString('token');
+          String? email = prefs.getString('email');
+          if (token != null && token.isNotEmpty || email!=null) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -248,9 +248,9 @@ Future<void> initAuthProvider() async {
                     selectedRetraitMode = newValue!;
                     if (selectedRetraitMode == 'En Livraison') {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
-                String? token = prefs.getString('token');
-
-                if (token != null && token.isNotEmpty) {
+                  String? token = prefs.getString('token');
+          String? email = prefs.getString('email');
+          if (token != null && token.isNotEmpty || email!=null) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(

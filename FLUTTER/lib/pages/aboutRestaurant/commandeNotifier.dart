@@ -67,9 +67,7 @@ class CommandesModel with ChangeNotifier {
 
   Future<List<Map<String, dynamic>>> fetchCommandesEncours(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    if (!authProvider.isAuthenticated) {
-      return [];
-    }
+   
 
     final email = authProvider.email;
 
