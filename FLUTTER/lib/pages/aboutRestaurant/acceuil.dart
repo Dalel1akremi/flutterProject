@@ -58,11 +58,11 @@ class Restaurant {
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
-     String myIp = Global.myIp;
+    String myIp = Global.myIp;
     return Restaurant(
       id: json['id_rest'],
-      logo: 'http://$myIp:3000/'+ json['logo'],
-      image: 'http://$myIp:3000/'+ json['image'],
+      logo: 'http://$myIp:3000/' + json['logo'],
+      image: 'http://$myIp:3000/' + json['image'],
       nom: json['nom'],
       adresse: json['adresse'],
       modeDeRetrait: List<String>.from(json['ModeDeRetrait']),
@@ -90,7 +90,6 @@ class AcceuilScreen extends StatefulWidget {
   const AcceuilScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _RestaurantListState createState() => _RestaurantListState();
 
   void initState() {
@@ -121,7 +120,7 @@ class _RestaurantListState extends State<AcceuilScreen> {
   late List<Restaurant> restaurants = [];
   late List<Restaurant> filteredRestaurants = [];
   late String searchQuery = '';
-String iconPath = '';
+  String iconPath = '';
 
   @override
   void initState() {
@@ -156,13 +155,12 @@ String iconPath = '';
     });
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     authProvider.initTokenFromStorage();
 
     return Scaffold(
-     
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -231,81 +229,94 @@ String iconPath = '';
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                               subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(restaurant.adresse),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: [
-                                      ...restaurant.modeDeRetrait.map((mode) {
-                                        switch (mode) {
-                                          case 'En Livraison':
-                                            iconPath = 'images/delivery.svg';
-                                            break;
-                                          case 'A Emporter':
-                                            iconPath = 'images/emporter.svg';
-                                            break;
-                                          case 'Sur place':
-                                            iconPath = 'images/surplace.svg';
-                                            break;
-                                          default:
-                                            iconPath = 'images/no-pictures.svg';
-                                        }
-                                        return Padding(
-                                          padding: const EdgeInsets.only(right: 8.0),
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Color.fromARGB(222, 212, 133, 14),
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(restaurant.adresse),
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        ...restaurant.modeDeRetrait.map((mode) {
+                                          switch (mode) {
+                                            case 'En Livraison':
+                                              iconPath = 'images/delivery.svg';
+                                              break;
+                                            case 'A Emporter':
+                                              iconPath = 'images/emporter.svg';
+                                              break;
+                                            case 'Sur place':
+                                              iconPath = 'images/surplace.svg';
+                                              break;
+                                            default:
+                                              iconPath = 'images/no-pictures.svg';
+                                          }
+                                          return Padding(
+                                            padding: const EdgeInsets.only(right: 8.0),
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Color.fromARGB(222, 212, 133, 14),
+                                              ),
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: iconPath.endsWith('.svg')
+                                                  ? SvgPicture.asset(
+                                                      iconPath,
+                                                      color: Colors.white,
+                                                      width: 20,
+                                                      height: 20,
+                                                    )
+                                                  : Image.asset(
+                                                      iconPath,
+                                                      color: Colors.white,
+                                                      width: 20,
+                                                      height: 20,
+                                                    ),
                                             ),
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: SvgPicture.asset(
-                                              iconPath,
-                                              color: Colors.white,
-                                              width: 20,
-                                              height: 20,
+                                          );
+                                        }),
+                                        ...restaurant.modeDePaiement.map((mode) {
+                                          switch (mode) {
+                                            case 'Espèces':
+                                              iconPath = 'images/euro.svg';
+                                              break;
+                                            case 'Carte bancaire':
+                                              iconPath = 'images/cb.svg';
+                                              break;
+                                            case 'Tickets Restaurant':
+                                              iconPath = 'images/ticket.png';
+                                              break;
+                                            default:
+                                              iconPath = 'images/no-pictures.svg';
+                                          }
+                                          return Padding(
+                                            padding: const EdgeInsets.only(right: 8.0),
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Color.fromARGB(181, 123, 106, 106),
+                                              ),
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: iconPath.endsWith('.svg')
+                                                  ? SvgPicture.asset(
+                                                      iconPath,
+                                                      color: Colors.white,
+                                                      width: 20,
+                                                      height: 20,
+                                                    )
+                                                  : Image.asset(
+                                                      iconPath,
+                                                    
+                                                      width: 20,
+                                                      height: 20,
+                                                    ),
                                             ),
-                                          ),
-                                        );
-                                      }),
-                                      ...restaurant.modeDePaiement.map((mode) {
-                                        switch (mode) {
-                                          case 'Espèces':
-                                            iconPath = 'images/euro.svg';
-                                            break;
-                                          case 'Carte bancaire':
-                                            iconPath = 'images/cb.svg';
-                                            break;
-                                          case 'Tickets Restaurant':
-                                            iconPath = 'images/cheque.svg';
-                                            break;
-                                          default:
-                                            iconPath = 'images/no-pictures.svg';
-                                        }
-                                        return Padding(
-                                          padding: const EdgeInsets.only(right: 8.0),
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Color.fromARGB(181, 123, 106, 106),
-                                            ),
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: SvgPicture.asset(
-                                              iconPath,
-                                              color: Colors.white,
-                                              width: 20,
-                                              height: 20,
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                    ],
+                                          );
+                                        }),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -318,6 +329,6 @@ String iconPath = '';
           ],
         ),
       ),
-     );
+    );
   }
 }
