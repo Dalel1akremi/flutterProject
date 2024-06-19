@@ -328,16 +328,16 @@ Future<void> searchAddress() async {
             style: TextStyle(color: Colors.white),
           ),
         ),
-         SizedBox(height: 20),
+         const SizedBox(height: 20),
           if (errorMessage.isNotEmpty)
             Text(
               errorMessage,
-              style: TextStyle(color: Colors.red),
+              style: const TextStyle(color: Colors.red),
             ),
           if (successMessage.isNotEmpty)
             Text(
               successMessage,
-              style: TextStyle(color: Colors.green),
+              style: const TextStyle(color: Colors.green),
             ),
       ],
     );

@@ -90,6 +90,7 @@ class AcceuilScreen extends StatefulWidget {
   const AcceuilScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _RestaurantListState createState() => _RestaurantListState();
 
   void initState() {
