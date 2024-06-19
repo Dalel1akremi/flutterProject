@@ -188,8 +188,8 @@ class _RestaurantListState extends State<RestaurantScreen> {
   void _checkTokenAndNavigate(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-
-    if (token != null) {
+ final email = prefs.getString('email');
+    if (token != null ||email!=null) {
       setState(() {
         _selectedIndex = 2;
       });

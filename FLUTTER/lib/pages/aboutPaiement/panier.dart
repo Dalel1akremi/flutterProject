@@ -177,7 +177,8 @@ Future<void> initAuthProvider() async {
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 String? token = prefs.getString('token');
-                if (token != null && token.isNotEmpty) {
+                 String? email = prefs.getString('email');
+                if (token != null && token.isNotEmpty || email!=null) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
