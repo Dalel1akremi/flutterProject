@@ -124,31 +124,40 @@ SingleChildScrollView(
 )
 ,
     const SizedBox(height: 20),
-    const Text(
-      "Remarque: ",
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    SizedBox(
-      width: 300,
-      height: 100,
-      child: Card(
-        elevation: 2,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: TextField(
-            controller: _remarkController,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              hintText: 'Entrez une remarque',
-            ),
-          ),
-        ),
-      ),
-    ),
-    const SizedBox(height: 20),
+  Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Remarque: ",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        width: 300,
+                        height: 100,
+                        child: Card(
+                          elevation: 2,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: TextField(
+                              controller: _remarkController,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Entrez une remarque',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+  const SizedBox(height: 20),
     Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
