@@ -143,16 +143,23 @@ Future<void> _signInWithGoogle(BuildContext context) async {
       List<String> nameParts = name.split(' ');
       nom = nameParts.isNotEmpty ? nameParts.first : '';
       prenom = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
-      bool userExists = await checkUserExists(email);
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('email', email);
       await prefs.setString('nom', nom);
       await prefs.setString('prenom', prenom);
 
-      if (!userExists) {
-        String myIp = Global.myIp;
+      String myIp = Global.myIp;
+      final checkUserResult = await checkUserExists(email);
 
-        final response = await http.post(
+      if (checkUserResult['exists'] == true) {
+        final String userId = checkUserResult['userId'];
+        await prefs.setString('userId', userId);
+        if (kDebugMode) {
+          print('User ID saved in SharedPreferences: $userId');
+        }
+      } else {
+        final registerResponse = await http.post(
           Uri.parse("http://$myIp:3000/registerGoogle"),
           headers: {
             'Content-Type': 'application/json',
@@ -164,8 +171,8 @@ Future<void> _signInWithGoogle(BuildContext context) async {
           }),
         );
 
-        if (response.statusCode == 200) {
-          final responseData = jsonDecode(response.body);
+        if (registerResponse.statusCode == 200) {
+          final responseData = jsonDecode(registerResponse.body);
           final String userId = responseData['userId'];
 
           await prefs.setString('userId', userId);
@@ -173,7 +180,7 @@ Future<void> _signInWithGoogle(BuildContext context) async {
             print('User ID saved in SharedPreferences: $userId');
           }
         } else {
-          throw Exception('Erreur lors de l\'appel à l\'API: ${response.statusCode}');
+          throw Exception('Erreur lors de l\'appel à l\'API: ${registerResponse.statusCode}');
         }
       }
 
@@ -193,23 +200,24 @@ Future<void> _signInWithGoogle(BuildContext context) async {
   }
 }
 
-Future<bool> checkUserExists(String email) async {
+Future<Map<String, dynamic>> checkUserExists(String email) async {
   try {
     String myIp = Global.myIp;
     final response = await http.get(Uri.parse("http://$myIp:3000/checkUser?email=$email"));
 
     if (response.statusCode == 200) {
- return true;
+      final responseData = jsonDecode(response.body);
+      return {'exists': true, 'userId': responseData['userId']};
     } else if (response.statusCode == 404) {
- return false;
+      return {'exists': false};
     } else {
-  throw Exception('Erreur lors de la vérification de l\'existence de l\'utilisateur: ${response.statusCode}');
+      throw Exception('Erreur lors de la vérification de l\'existence de l\'utilisateur: ${response.statusCode}');
     }
   } catch (error) {
-  if (kDebugMode) {
-    print('Erreur lors de la vérification de l\'existence de l\'utilisateur: $error');
-  }
-    return false;
+    if (kDebugMode) {
+      print('Erreur lors de la vérification de l\'existence de l\'utilisateur: $error');
+    }
+    return {'exists': false};
   }
 }
 
