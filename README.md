@@ -1,1 +1,3 @@
-réalisation d'une application mobile "Click and Collect" permettant de commander des produits en ligne, ainsi qu'une application web "back office" pour gérer les données.
+Notre projet de fin d'études, intitulé "Click and Collect", se compose de deux applications principales. La première est une application mobile développée en Flutter, Node.js et MongoDB, destinée aux utilisateurs finaux. Cette application regroupe un ensemble de restaurants, chacun disposant de ses propres catégories, produits, et détails spécifiques, facilitant ainsi une expérience utilisateur fluide pour les clients.
+
+La seconde partie est une application web de back-office, conçue avec Next.js, Node.js et MongoDB, dédiée aux restaurateurs. Cette plateforme permet une gestion efficace des stocks et des commandes, offrant aux restaurateurs des outils nécessaires pour optimiser leurs opérations et assurer une meilleure organisation.
